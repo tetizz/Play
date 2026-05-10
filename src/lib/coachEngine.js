@@ -25,23 +25,20 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
       note: withPhrase(
         move,
         game,
-        `Mubassar prep: ${move.san}. I am following the most-played repertoire move from this position.`,
+        `${move.san}. Your move.`,
         'book',
       ),
     }
   }
 
   if (engineMove) {
-    const sampleNote = bookChoice
-      ? ` The book sample here is only ${bookChoice.games} games, so I am trusting calculation instead.`
-      : ''
     return {
       move: engineMove,
-      note: `${buildEngineNote(game, engineMove, rating)}${sampleNote}`,
+      note: buildEngineNote(game, engineMove, rating),
     }
   }
 
-  const depth = rating >= 2500 ? 3 : rating >= 2200 ? 2 : 1
+  const depth = rating >= 2700 ? 4 : rating >= 2500 ? 3 : rating >= 2200 ? 2 : 1
   const candidates = game.moves({ verbose: true })
   if (!candidates.length) return { move: null, note: 'The game is over.' }
 
@@ -65,25 +62,36 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
 }
 
 export function calculationProfile(rating = 2300) {
+  if (rating >= 2700) return { depth: 12, moveTime: 1100, elo: 2700 }
   if (rating >= 2500) return { depth: 10, moveTime: 900, elo: 2500 }
   if (rating >= 2200) return { depth: 8, moveTime: 650, elo: 2300 }
   return { depth: 6, moveTime: 420, elo: 1600 }
 }
 
+export function shouldActivateBeltMode(history, humanColor) {
+  if (!history.length) return false
+  const humanMoves = history.filter((_, index) =>
+    humanColor === 'white' ? index % 2 === 0 : index % 2 === 1,
+  )
+  return humanColor === 'white'
+    ? isKingsIndianAttack(humanMoves)
+    : isKingsIndianDefense(humanMoves) || isPircDefense(humanMoves)
+}
+
 export function explainHumanMove(game, move) {
   if (move.flags.includes('c')) {
-    return `${move.san} wins material, but remember: after a capture, check whether the piece can stay there.`
+    return `${move.san}. Nice, you grabbed something. Now prove it does not get trapped.`
   }
   if (centerSquares.has(move.to)) {
-    return `${move.san} is a grown-up chess move: you are claiming central space instead of drifting.`
+    return `${move.san}. Good, you are fighting for the middle. Keep going.`
   }
   if (move.piece === 'n' || move.piece === 'b') {
-    return `${move.san} develops a piece. Good. Now connect that development to king safety.`
+    return `${move.san}. Development is fine. Now what is the threat?`
   }
   if (game.inCheck()) {
-    return `${move.san} gives check. Checks are forcing, but the follow-up has to be just as serious.`
+    return `${move.san}. Check. I respect forcing moves, but you need the follow-up.`
   }
-  return `${move.san} is on the board. Now ask what your opponent wants before you make the next move.`
+  return `${move.san}. Okay, now I get a turn.`
 }
 
 function findBookMove(game) {
@@ -223,20 +231,20 @@ function orderMoves(moves) {
 
 function buildCoachNote(game, move, score) {
   if (!move) return 'No legal moves.'
-  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. Checkmate. That is why forcing moves matter.`, 'search')
-  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A check with purpose: force the king, then improve the pieces.`, 'search')
-  if (move.captured) return withPhrase(move, game, `${move.san}. I am taking material because the tactic is clean enough to justify it.`, 'search')
-  if (centerSquares.has(move.to)) return withPhrase(move, game, `${move.san}. Central control first; attacks are easier when the middle belongs to you.`, 'search')
-  if (score > 80) return withPhrase(move, game, `${move.san}. The position is starting to lean my way, so I am increasing the pressure.`, 'great')
-  return withPhrase(move, game, `${move.san}. Quiet, useful, and hard to meet. That is often the NM way.`, 'search')
+  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. That is mate.`, 'search')
+  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. Your king has to answer me first.`, 'search')
+  if (move.captured) return withPhrase(move, game, `${move.san}. I like my material clean.`, 'search')
+  if (centerSquares.has(move.to)) return withPhrase(move, game, `${move.san}. I want the center.`, 'search')
+  if (score > 80) return withPhrase(move, game, `${move.san}. This is already getting uncomfortable for you.`, 'great')
+  return withPhrase(move, game, `${move.san}. Simple move, annoying position.`, 'search')
 }
 
 function buildEngineNote(game, move, rating) {
-  const depthText = rating >= 2500 ? 'about ten moves of calculation' : rating >= 2200 ? 'seven to eight moves of calculation' : 'a lighter training search'
-  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. The calculation ends in mate.`, 'engine')
-  if (move.captured) return withPhrase(move, game, `${move.san}. After ${depthText}, the tactic holds up.`, 'great')
-  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A forcing check from the calculation, still played in a human NM style.`, 'great')
-  return withPhrase(move, game, `${move.san}. I am using ${depthText} and choosing the most practical continuation.`, 'engine')
+  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. That is mate.`, 'engine')
+  if (move.captured) return withPhrase(move, game, `${move.san}. That tactic works.`, 'great')
+  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. You have to deal with the king first.`, 'great')
+  if (rating >= 2700) return withPhrase(move, game, `${move.san}. Belt mode does not give free moves.`, 'great')
+  return withPhrase(move, game, `${move.san}. This is the practical move.`, 'engine')
 }
 
 function withPhrase(move, game, note, source) {
@@ -255,4 +263,23 @@ function isFreePieceCapture(game, move) {
   const branch = new Chess(game.fen())
   branch.move(move)
   return !branch.moves({ verbose: true }).some((reply) => reply.to === move.to && reply.captured)
+}
+
+function isKingsIndianAttack(moves) {
+  const played = new Set(moves.map(cleanSan))
+  return played.has('Nf3') && played.has('g3') && (played.has('Bg2') || played.has('O-O'))
+}
+
+function isKingsIndianDefense(moves) {
+  const played = new Set(moves.map(cleanSan))
+  return played.has('Nf6') && played.has('g6') && (played.has('Bg7') || played.has('d6') || played.has('O-O'))
+}
+
+function isPircDefense(moves) {
+  const played = new Set(moves.map(cleanSan))
+  return played.has('d6') && played.has('Nf6') && (played.has('g6') || played.has('Bg7'))
+}
+
+function cleanSan(san) {
+  return san.replace(/[+#?!]+/g, '')
 }

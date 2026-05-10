@@ -40,10 +40,10 @@ export const coachPhrases = {
     'You let me have the center, now we play my game',
   ],
   engine: [
-    'I checked the line and this is the practical move',
-    'Calculation says this one is clean',
-    'I am choosing the move that gives you the hardest questions',
-    'This is not random, this is calculation',
+    'This one feels right',
+    'I like this move',
+    'Now you have to show me something',
+    'This is the annoying move',
   ],
   quiet: [
     'Quiet move, loud idea',

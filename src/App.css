@@ -393,12 +393,12 @@ button.selected {
 }
 
 .notation-panel {
-  min-height: 128px;
-  padding: 16px 18px;
+  min-height: 168px;
+  padding: 22px 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   color: #d7d3cc;
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .notation-header {
@@ -406,8 +406,14 @@ button.selected {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   font-weight: 800;
+}
+
+.notation-header > span {
+  color: #d9d1c6;
+  font-size: 24px;
+  font-weight: 500;
 }
 
 .notation-nav {
@@ -434,13 +440,38 @@ button.selected {
 }
 
 .notation-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-  max-height: 74px;
+  display: grid;
+  max-height: 180px;
   overflow-y: auto;
   color: #f1eadc;
   line-height: 1.5;
+}
+
+.notation-row {
+  display: grid;
+  grid-template-columns: 58px minmax(100px, 1fr) minmax(100px, 1fr);
+  align-items: center;
+  min-height: 48px;
+  padding: 0 14px;
+  color: #d8d4cf;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.notation-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.move-number {
+  color: #aaa49c;
+}
+
+.notation-row .current-move {
+  width: fit-content;
+  padding: 1px 8px 3px;
+  border-radius: 4px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .notation-list strong {

@@ -14,7 +14,7 @@ import {
   Undo2,
   Zap,
 } from 'lucide-react'
-import { calculationProfile, chooseCoachMove, explainHumanMove } from './lib/coachEngine'
+import { calculationProfile, chooseCoachMove, explainHumanMove, shouldActivateBeltMode } from './lib/coachEngine'
 import { reviewGame, reviewGameWithStockfish } from './lib/reviewEngine'
 import { createStockfishClient } from './lib/stockfishClient'
 import './App.css'
@@ -48,6 +48,7 @@ function App() {
   const [viewPly, setViewPly] = useState(0)
   const [finalReview, setFinalReview] = useState(null)
   const [reviewingGame, setReviewingGame] = useState(false)
+  const [beltMode, setBeltMode] = useState(false)
   const stockfishRef = useRef(null)
   const [messages, setMessages] = useState([
     {
@@ -132,6 +133,7 @@ function App() {
     setViewPly(0)
     setFinalReview(null)
     setReviewingGame(false)
+    setBeltMode(false)
     setMessages([
       {
         speaker: 'Mubassar',
@@ -150,6 +152,7 @@ function App() {
     setViewPly(0)
     setFinalReview(null)
     setReviewingGame(false)
+    setBeltMode(false)
     setMessages([
       {
         speaker: 'Mubassar',
@@ -167,25 +170,26 @@ function App() {
     setMessages((current) => [{ speaker: 'Mubassar', text }, ...current.slice(0, 4)])
   }
 
-  function playBotReply(nextGame) {
+  function playBotReply(nextGame, forceBeltMode = beltMode, preMoveLine = null) {
     if (nextGame.isGameOver()) return
     setThinking(true)
-    addCoachLine(thinkingLine(nextGame))
-    window.setTimeout(() => playBotReplyAsync(nextGame), 2000)
+    addCoachLine(preMoveLine || thinkingLine(nextGame))
+    window.setTimeout(() => playBotReplyAsync(nextGame, forceBeltMode), 2000)
   }
 
-  async function playBotReplyAsync(nextGame) {
+  async function playBotReplyAsync(nextGame, forceBeltMode = beltMode) {
+    const activeLevel = forceBeltMode ? 2700 : coachLevel
     let engineMove = null
     try {
       engineMove = await stockfishRef.current?.bestMove(
         nextGame.fen(),
-        calculationProfile(coachLevel),
+        calculationProfile(activeLevel),
       )
     } catch {
       setEngineStatus('JS fallback ready')
     }
 
-    const decision = chooseCoachMove(nextGame, coachLevel, engineMove)
+    const decision = chooseCoachMove(nextGame, activeLevel, engineMove)
     if (decision.move) {
       nextGame.move(decision.move)
       setLastBotMove({ from: decision.move.from, to: decision.move.to })
@@ -208,7 +212,14 @@ function App() {
     setLastBotMove(null)
     updateBoard(nextGame)
     addCoachLine(explainHumanMove(nextGame, move))
-    if (!nextGame.isGameOver()) playBotReply(nextGame)
+    const nextBeltMode = beltMode || shouldActivateBeltMode(nextGame.history(), color)
+    const beltLine = 'You are going to get belt for playing this trash opening. Activating belt mode.'
+    if (!beltMode && nextBeltMode) {
+      setBeltMode(true)
+    }
+    if (!nextGame.isGameOver()) {
+      playBotReply(nextGame, nextBeltMode, !beltMode && nextBeltMode ? beltLine : null)
+    }
     return true
   }
 
@@ -226,6 +237,7 @@ function App() {
     setLastBotMove(null)
     setFinalReview(null)
     setReviewingGame(false)
+    setBeltMode(false)
     addCoachLine('Undo is fine for training. Now improve the idea, not only the move.')
   }
 
@@ -335,6 +347,7 @@ function App() {
           moves={moveHistory}
           viewPly={activePly}
           latestPly={latestPly}
+          openingName={detectOpeningName(moveHistory)}
           onBack={() => setViewPly((current) => Math.max(0, current - 1))}
           onForward={() => setViewPly((current) => Math.min(latestPly, current + 1))}
         />
@@ -419,20 +432,22 @@ function PlayerStrip({ name, rating, title, country, bottom = false }) {
   )
 }
 
-function MoveHistory({ moves, viewPly, latestPly, onBack, onForward }) {
+function MoveHistory({ moves, viewPly, latestPly, openingName, onBack, onForward }) {
   const groupedMoves = []
   for (let index = 0; index < moves.length; index += 2) {
     groupedMoves.push({
       number: index / 2 + 1,
       white: moves[index],
       black: moves[index + 1],
+      whitePly: index + 1,
+      blackPly: index + 2,
     })
   }
 
   return (
     <section className="notation-panel" aria-label="Move history">
       <div className="notation-header">
-        <span>Moves</span>
+        <span>{openingName || 'Moves'}</span>
         <div className="notation-nav">
           <button type="button" onClick={onBack} disabled={viewPly === 0} aria-label="Previous move">
             <ChevronLeft size={24} />
@@ -450,10 +465,11 @@ function MoveHistory({ moves, viewPly, latestPly, onBack, onForward }) {
       <div className="notation-list">
         {groupedMoves.length ? (
           groupedMoves.map((move) => (
-            <span key={move.number}>
-              <strong>{move.number}.</strong> {move.white}
-              {move.black ? ` ${move.black}` : ''}
-            </span>
+            <div className="notation-row" key={move.number}>
+              <span className="move-number">{move.number}.</span>
+              <span className={viewPly === move.whitePly ? 'current-move' : ''}>{move.white}</span>
+              <span className={viewPly === move.blackPly ? 'current-move' : ''}>{move.black || ''}</span>
+            </div>
           ))
         ) : (
           <span className="notation-empty">Moves will appear here.</span>
@@ -546,6 +562,25 @@ function getGameState(game, thinking) {
   if (game.isDraw()) return 'Draw'
   if (game.inCheck()) return 'Check'
   return thinking ? 'Mubassar calculating' : 'Your move'
+}
+
+function detectOpeningName(moves) {
+  const clean = moves.map((move) => move.replace(/[+#?!]+/g, ''))
+  const whiteMoves = clean.filter((_, index) => index % 2 === 0)
+  const blackMoves = clean.filter((_, index) => index % 2 === 1)
+  if (whiteMoves.includes('Nf3') && whiteMoves.includes('g3') && (whiteMoves.includes('Bg2') || whiteMoves.includes('O-O'))) {
+    return "King's Indian Attack"
+  }
+  if (blackMoves.includes('d6') && blackMoves.includes('Nf6') && (blackMoves.includes('g6') || blackMoves.includes('Bg7'))) {
+    return 'Pirc Defense'
+  }
+  if (blackMoves.includes('Nf6') && blackMoves.includes('g6') && (blackMoves.includes('Bg7') || blackMoves.includes('d6') || blackMoves.includes('O-O'))) {
+    return "King's Indian Defense"
+  }
+  if (clean[0] === 'd4' && clean[1] === 'Nf6') return "Queen's Pawn Game"
+  if (clean[0] === 'e4' && clean[1] === 'c6') return 'Caro-Kann Defense'
+  if (clean[0] === 'd4' && clean[1] === 'd5') return "Queen's Pawn Game"
+  return moves.length ? 'Moves' : ''
 }
 
 function thinkingLine(game) {

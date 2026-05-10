@@ -1,5 +1,6 @@
 import { Chess } from 'chess.js'
 import { BOOK_MAX_PLIES, OPENING_BOOK } from '../data/openingBook'
+import { phraseForMove } from '../data/coachPhrases'
 
 const pieceValue = {
   p: 100,
@@ -12,23 +13,31 @@ const pieceValue = {
 
 const centerSquares = new Set(['d4', 'e4', 'd5', 'e5'])
 const nearCenterSquares = new Set(['c3', 'd3', 'e3', 'f3', 'c4', 'f4', 'c5', 'f5', 'c6', 'd6', 'e6', 'f6'])
+const MIN_CONFIDENT_BOOK_GAMES = 8
 
 export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
-  const bookMove = findBookMove(game)
-  if (bookMove) {
+  const engineMove = moveFromUci(game, engineUciMove)
+  const bookChoice = findBookMove(game)
+  if (bookChoice && isConfidentBookChoice(bookChoice, engineMove)) {
+    const { move } = bookChoice
     return {
-      move: bookMove,
-      note: `Mubassar prep: ${bookMove.san}. I am following the most-played repertoire move from this position.`,
+      move,
+      note: withPhrase(
+        move,
+        game,
+        `Mubassar prep: ${move.san}. I am following the most-played repertoire move from this position.`,
+        'book',
+      ),
     }
   }
 
-  if (engineUciMove) {
-    const engineMove = moveFromUci(game, engineUciMove)
-    if (engineMove) {
-      return {
-        move: engineMove,
-        note: buildEngineNote(engineMove, rating),
-      }
+  if (engineMove) {
+    const sampleNote = bookChoice
+      ? ` The book sample here is only ${bookChoice.games} games, so I am trusting calculation instead.`
+      : ''
+    return {
+      move: engineMove,
+      note: `${buildEngineNote(game, engineMove, rating)}${sampleNote}`,
     }
   }
 
@@ -51,7 +60,7 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
 
   return {
     move: best,
-    note: buildCoachNote(best, bestScore),
+    note: buildCoachNote(game, best, bestScore),
   }
 }
 
@@ -112,10 +121,16 @@ function bestRepertoireMove(game, options) {
   const candidates = sorted.length ? sorted : [...options].sort((a, b) => b.games - a.games)
 
   for (const option of candidates) {
-    if (option.force || !isClearlyBadBookMove(game, option.move)) return option.move
+    if (option.force || !isClearlyBadBookMove(game, option.move)) return option
   }
 
-  return candidates[0].move
+  return candidates[0]
+}
+
+function isConfidentBookChoice(choice, engineMove) {
+  if (choice.force) return true
+  if (!engineMove) return true
+  return choice.games >= MIN_CONFIDENT_BOOK_GAMES
 }
 
 function isStatisticallyPlayable(option) {
@@ -206,20 +221,37 @@ function orderMoves(moves) {
   })
 }
 
-function buildCoachNote(move, score) {
+function buildCoachNote(game, move, score) {
   if (!move) return 'No legal moves.'
-  if (move.san.includes('#')) return `${move.san}. Checkmate. That is why forcing moves matter.`
-  if (move.san.includes('+')) return `${move.san}. A check with purpose: force the king, then improve the pieces.`
-  if (move.captured) return `${move.san}. I am taking material because the tactic is clean enough to justify it.`
-  if (centerSquares.has(move.to)) return `${move.san}. Central control first; attacks are easier when the middle belongs to you.`
-  if (score > 80) return `${move.san}. The position is starting to lean my way, so I am increasing the pressure.`
-  return `${move.san}. Quiet, useful, and hard to meet. That is often the NM way.`
+  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. Checkmate. That is why forcing moves matter.`, 'search')
+  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A check with purpose: force the king, then improve the pieces.`, 'search')
+  if (move.captured) return withPhrase(move, game, `${move.san}. I am taking material because the tactic is clean enough to justify it.`, 'search')
+  if (centerSquares.has(move.to)) return withPhrase(move, game, `${move.san}. Central control first; attacks are easier when the middle belongs to you.`, 'search')
+  if (score > 80) return withPhrase(move, game, `${move.san}. The position is starting to lean my way, so I am increasing the pressure.`, 'search')
+  return withPhrase(move, game, `${move.san}. Quiet, useful, and hard to meet. That is often the NM way.`, 'search')
 }
 
-function buildEngineNote(move, rating) {
+function buildEngineNote(game, move, rating) {
   const depthText = rating >= 2500 ? 'about ten moves of calculation' : rating >= 2200 ? 'seven to eight moves of calculation' : 'a lighter training search'
-  if (move.san.includes('#')) return `${move.san}. The calculation ends in mate.`
-  if (move.captured) return `${move.san}. After ${depthText}, the tactic holds up.`
-  if (move.san.includes('+')) return `${move.san}. A forcing check from the engine line, still played in a human NM style.`
-  return `${move.san}. Out of book now, so I am using ${depthText} and choosing the most practical continuation.`
+  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. The calculation ends in mate.`, 'engine')
+  if (move.captured) return withPhrase(move, game, `${move.san}. After ${depthText}, the tactic holds up.`, 'engine')
+  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A forcing check from the engine line, still played in a human NM style.`, 'engine')
+  return withPhrase(move, game, `${move.san}. Out of book now, so I am using ${depthText} and choosing the most practical continuation.`, 'engine')
+}
+
+function withPhrase(move, game, note, source) {
+  const phrase = phraseForMove(move, {
+    isOpeningMove: game.history().length === 0,
+    isFreePieceCapture: isFreePieceCapture(game, move),
+    isCenterMove: centerSquares.has(move.to),
+    source,
+  })
+  return `${phrase.replace(/[.!?]+$/, '')}. ${note}`
+}
+
+function isFreePieceCapture(game, move) {
+  if (!move?.captured) return false
+  const branch = new Chess(game.fen())
+  branch.move(move)
+  return !branch.moves({ verbose: true }).some((reply) => reply.to === move.to && reply.captured)
 }

@@ -28,13 +28,18 @@ export function createStockfishClient() {
         emit('Stockfish ready')
       }
 
+      if (text.startsWith('info ')) {
+        const first = pending.values().next().value
+        if (first?.kind === 'eval') first.score = parseScore(text)
+      }
+
       if (text.startsWith('bestmove')) {
         const [, bestmove] = text.split(/\s+/)
         const first = pending.values().next().value
         if (first) {
           clearTimeout(first.timeout)
           pending.delete(first.id)
-          first.resolve(bestmove)
+          first.resolve(first.kind === 'eval' ? first.score : bestmove)
         }
       }
     }
@@ -72,16 +77,45 @@ export function createStockfishClient() {
         pending.delete(id)
         resolve(null)
       }, Math.max(1600, moveTime + 900))
-      pending.set(id, { id, resolve, timeout })
+      pending.set(id, { id, kind: 'bestmove', resolve, timeout })
+      send(`go depth ${depth} movetime ${moveTime}`)
+    })
+  }
+
+  async function evaluateFen(fen, { depth = 8, moveTime = 450 } = {}) {
+    ensureWorker()
+    if (!ready) send('isready')
+    send('setoption name UCI_LimitStrength value false')
+    send('position fen ' + fen)
+
+    const id = requestId + 1
+    requestId = id
+    emit(`Stockfish review depth ${depth}`)
+
+    return new Promise((resolve) => {
+      const timeout = window.setTimeout(() => {
+        pending.delete(id)
+        resolve(null)
+      }, Math.max(1500, moveTime + 900))
+      pending.set(id, { id, kind: 'eval', resolve, timeout, score: null })
       send(`go depth ${depth} movetime ${moveTime}`)
     })
   }
 
   return {
     bestMove,
+    evaluateFen,
     onStatus(listener) {
       listeners.add(listener)
       return () => listeners.delete(listener)
     },
   }
+}
+
+function parseScore(text) {
+  const scoreMatch = text.match(/\bscore\s+(cp|mate)\s+(-?\d+)/)
+  if (!scoreMatch) return null
+  const value = Number(scoreMatch[2])
+  if (scoreMatch[1] === 'mate') return Math.sign(value || 1) * 100000
+  return value
 }

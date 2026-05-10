@@ -1,7 +1,9 @@
 // Weighted repertoire data for the Mubassar bot.
 // This mirrors OpeningTree-style move frequency: key = SAN moves already played,
 // value = Mubassar's preferred legal replies from that position.
-export const OPENING_BOOK = {
+import { GENERATED_REPERTOIRE_BOOK } from './generatedRepertoireBook'
+
+const MANUAL_OPENING_BOOK = {
   '': [
     { san: 'd4', games: 2237, wins: 1202, losses: 914, force: true },
   ],
@@ -32,6 +34,7 @@ export const OPENING_BOOK = {
     { san: 'd5', games: 50 },
   ],
 
+  'd4 e5': [{ san: 'c4', games: 64, wins: 35, losses: 20, draws: 9, force: true }],
   'd4 Nf6': [{ san: 'c4', games: 980 }, { san: 'Nf3', games: 310 }, { san: 'Bf4', games: 120 }],
   'd4 d5': [{ san: 'c4', games: 760 }, { san: 'Nf3', games: 180 }, { san: 'Bf4', games: 90 }],
   'd4 e6': [{ san: 'c4', games: 660 }, { san: 'Nf3', games: 210 }],
@@ -79,6 +82,18 @@ export const OPENING_BOOK = {
 }
 
 export const BOOK_MAX_PLIES = 14
+
+const FORCE_MANUAL_KEYS = new Set(['', 'd4 e5'])
+
+export const OPENING_BOOK = mergeBooks(GENERATED_REPERTOIRE_BOOK, MANUAL_OPENING_BOOK)
+
+function mergeBooks(generatedBook, manualBook) {
+  const merged = { ...generatedBook }
+  for (const [key, moves] of Object.entries(manualBook)) {
+    if (FORCE_MANUAL_KEYS.has(key) || !merged[key]) merged[key] = moves
+  }
+  return merged
+}
 
 export function linesToBook(lines) {
   const book = {}

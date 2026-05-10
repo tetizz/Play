@@ -72,8 +72,8 @@
 .avatar {
   display: block;
   object-fit: cover;
-  object-position: center 28%;
-  background: transparent;
+  object-position: center;
+  background: #e4d6a7;
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
 }
 
@@ -300,7 +300,6 @@ button.selected {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
   border-radius: 4px;
   background: #08777a;
 }
@@ -318,7 +317,6 @@ button.selected {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
   border-radius: 3px;
   color: #fff !important;
   background: linear-gradient(#b22234 0 14%, #fff 14% 28%, #b22234 28% 42%, #fff 42% 56%, #b22234 56% 70%, #fff 70% 84%, #b22234 84%);
@@ -360,17 +358,63 @@ button.selected {
   color: rgba(255, 255, 255, 0.75);
 }
 
-.move-row {
-  min-height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 18px;
+.notation-panel {
+  min-height: 128px;
+  padding: 16px 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   color: #d7d3cc;
   font-size: 18px;
+}
+
+.notation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  font-weight: 800;
+}
+
+.notation-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.notation-nav button {
+  width: 42px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #f3f3f0;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.notation-nav button:disabled {
+  cursor: default;
+  opacity: 0.35;
+  transform: none;
+}
+
+.notation-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  max-height: 74px;
+  overflow-y: auto;
+  color: #f1eadc;
+  line-height: 1.5;
+}
+
+.notation-list strong {
+  color: #d9ba6f;
+}
+
+.notation-empty {
+  color: #a8a196;
 }
 
 .status-line {
@@ -445,6 +489,25 @@ button.selected {
   margin: 6px 0 0;
   color: #d2ccc1;
   line-height: 1.45;
+}
+
+.review-panel p span {
+  display: block;
+  margin-top: 4px;
+  color: #aaa297;
+  font-size: 14px;
+}
+
+.review-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+  color: #d2ccc1;
+}
+
+.review-summary strong {
+  color: #fff;
 }
 
 @media (max-width: 1100px) {

@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js'
-import { OPENING_BOOK } from '../data/openingBook'
+import { BOOK_MAX_PLIES, OPENING_BOOK } from '../data/openingBook'
 
 const pieceValue = {
   p: 100,
@@ -18,7 +18,7 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
   if (bookMove) {
     return {
       move: bookMove,
-      note: `Mubassar prep: ${bookMove.san}. I am staying in familiar opening territory before calculating.`,
+      note: `Mubassar prep: ${bookMove.san}. I am following the most-played repertoire move from this position.`,
     }
   }
 
@@ -78,14 +78,60 @@ export function explainHumanMove(game, move) {
 }
 
 function findBookMove(game) {
+  if (game.history().length > BOOK_MAX_PLIES) return null
   const key = game.history().join(' ')
   const options = OPENING_BOOK[key]
   if (!options) return null
   const legalMoves = game.moves({ verbose: true })
   const legalBySan = new Map(legalMoves.map((move) => [move.san, move]))
-  const playable = options.map((san) => legalBySan.get(san)).filter(Boolean)
+  const playable = options
+    .map((option) => {
+      const san = typeof option === 'string' ? option : option.san
+      const move = legalBySan.get(san)
+      return move
+        ? {
+            move,
+            games: option.games || 1,
+            wins: option.wins,
+            losses: option.losses,
+            force: option.force,
+          }
+        : null
+    })
+    .filter(Boolean)
   if (!playable.length) return null
-  return playable[Math.floor(Math.random() * playable.length)]
+  return bestRepertoireMove(game, playable)
+}
+
+function bestRepertoireMove(game, options) {
+  const sorted = [...options].filter(isStatisticallyPlayable).sort((a, b) => {
+    if (a.force && !b.force) return -1
+    if (!a.force && b.force) return 1
+    return b.games - a.games
+  })
+  const candidates = sorted.length ? sorted : [...options].sort((a, b) => b.games - a.games)
+
+  for (const option of candidates) {
+    if (option.force || !isClearlyBadBookMove(game, option.move)) return option.move
+  }
+
+  return candidates[0].move
+}
+
+function isStatisticallyPlayable(option) {
+  if (option.force) return true
+  if (typeof option.wins !== 'number' || typeof option.losses !== 'number') return true
+  if (option.games < 5) return option.wins > 0
+  return !(option.wins === 0 && option.losses >= Math.max(2, option.games - 1))
+}
+
+function isClearlyBadBookMove(game, move) {
+  const before = evaluate(game)
+  const branch = new Chess(game.fen())
+  branch.move(move)
+  const after = -evaluate(branch)
+  const capturedValue = move.captured ? pieceValue[move.captured] : 0
+  return before - after > 220 + capturedValue / 2
 }
 
 function moveFromUci(game, uci) {

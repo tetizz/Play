@@ -6,7 +6,6 @@ import {
   ChevronDown,
   Clock,
   Download,
-  ExternalLink,
   Flag,
   Lightbulb,
   Settings,
@@ -41,12 +40,6 @@ const strengths = [
   { label: 'NM 2300', value: 2300 },
   { label: '2400', value: 2400 },
   { label: '2600', value: 2600 },
-]
-
-const botLinks = [
-  ['Chess.com', 'keepitcoming', 'https://www.chess.com/member/keepitcoming'],
-  ['Lichess', 'real64squares', 'https://lichess.org/@/real64squares'],
-  ['Lichess', 'guardup', 'https://lichess.org/@/guardup'],
 ]
 
 function App() {
@@ -317,7 +310,6 @@ function App() {
           <Download size={22} />
           <Settings size={22} />
         </div>
-        <ProfileLinks />
         <ReviewPanel moments={reviewMoments} />
       </aside>
     </main>
@@ -404,20 +396,6 @@ function ActionButton({ label, icon: Icon, onClick }) {
       <span className="tooltip">{label}</span>
       <Icon size={34} />
     </button>
-  )
-}
-
-function ProfileLinks() {
-  return (
-    <section className="profile-links">
-      {botLinks.map(([site, username, href]) => (
-        <a href={href} target="_blank" rel="noreferrer" key={href}>
-          <span>{site}</span>
-          <strong>{username}</strong>
-          <ExternalLink size={16} />
-        </a>
-      ))}
-    </section>
   )
 }
 

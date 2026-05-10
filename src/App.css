@@ -1,0 +1,531 @@
+.app-shell {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(560px, 1fr) 390px;
+  gap: 24px;
+  padding: 28px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 72px 72px,
+    radial-gradient(circle at 78% 8%, rgba(182, 32, 44, 0.12), transparent 28%),
+    #101113;
+  color: #f4f0e8;
+}
+
+.game-area {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(360px, 1fr) auto;
+  gap: 12px;
+  align-content: center;
+}
+
+.board-frame {
+  width: min(100%, 760px);
+  min-width: 320px;
+  justify-self: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #221b15, #0b0c0e);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.player-strip {
+  width: min(100%, 760px);
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(10, 10, 10, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.player-copy {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.player-copy div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f5f2ec;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.player-copy small,
+.player-copy span {
+  color: #b8b0a3;
+}
+
+.mini-title,
+.nm-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 4px;
+  color: #fff;
+  background: #a61925;
+  font-weight: 800;
+}
+
+.coach-panel {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.coach-card,
+.feedback-panel,
+.review-panel,
+.links-panel {
+  border-radius: 8px;
+  background: rgba(31, 33, 35, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+}
+
+.coach-card {
+  padding: 18px;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  margin-bottom: 14px;
+}
+
+.status-light {
+  position: absolute;
+  right: 7px;
+  bottom: 8px;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: #55d277;
+  border: 3px solid #1f2123;
+}
+
+.coach-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.identity-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.identity-row h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.coach-title p {
+  margin: 8px 0 0;
+  color: #c8c0b2;
+  font-size: 14px;
+}
+
+.bangladesh-flag {
+  width: 62px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: #08777a;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.bangladesh-flag.small {
+  width: 34px;
+  height: 22px;
+  border-radius: 3px;
+}
+
+.bangladesh-flag span {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #ff4939;
+}
+
+.bangladesh-flag.small span {
+  width: 11px;
+  height: 11px;
+}
+
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.metric {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.055);
+  color: #d9d2c7;
+}
+
+.metric svg {
+  color: #e0bd72;
+}
+
+.metric span,
+.metric strong {
+  display: block;
+}
+
+.metric span {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #9d958a;
+}
+
+.metric strong {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.difficulty-row,
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+button,
+.links-panel a {
+  min-height: 38px;
+  border-radius: 6px;
+  font: 700 13px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f6efe5;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.difficulty-row button {
+  flex: 1;
+}
+
+.difficulty-row button.active {
+  background: #a61925;
+  border-color: #c93342;
+}
+
+.controls {
+  margin-top: 10px;
+}
+
+.controls button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.feedback-panel,
+.review-panel,
+.links-panel {
+  padding: 14px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panel-heading h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 17px;
+}
+
+.panel-heading span,
+.panel-heading svg {
+  color: #e0bd72;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.message-list {
+  display: grid;
+  gap: 9px;
+}
+
+.message,
+.review-row {
+  padding: 10px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.045);
+  text-align: left;
+}
+
+.message strong,
+.review-row strong {
+  color: #fff;
+  font-size: 13px;
+}
+
+.message p,
+.review-row p,
+.empty-review {
+  margin: 5px 0 0;
+  color: #c8c0b2;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.review-row span {
+  margin-left: 8px;
+  color: #e0bd72;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.links-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.links-panel a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  color: #f6efe5;
+  background: rgba(255, 255, 255, 0.055);
+  text-decoration: none;
+}
+
+.user-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at 50% 36%, #090909 0 18%, transparent 19%),
+    radial-gradient(ellipse at 50% 88%, #060606 0 36%, transparent 37%),
+    #202123;
+}
+
+.us-flag {
+  width: 28px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: #fff;
+  background: linear-gradient(#b22234 0 14%, #fff 14% 28%, #b22234 28% 42%, #fff 42% 56%, #b22234 56% 70%, #fff 70% 84%, #b22234 84%);
+  font-size: 8px;
+  font-weight: 900;
+  text-shadow: 0 1px 2px #002868;
+}
+
+.mubassar-avatar {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #d8c894, #efe4b9);
+}
+
+.mubassar-avatar.compact {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+}
+
+.face {
+  position: absolute;
+  left: 31%;
+  top: 24%;
+  width: 40%;
+  height: 42%;
+  border-radius: 44% 44% 48% 48%;
+  background: #b77943;
+  box-shadow: inset 7px 0 rgba(255, 255, 255, 0.08), inset -7px 0 rgba(72, 36, 20, 0.1);
+}
+
+.hair,
+.hair::before,
+.hair::after {
+  position: absolute;
+  border-radius: 999px;
+  background: #1d1d1f;
+  content: "";
+}
+
+.hair-a {
+  left: 25%;
+  top: 14%;
+  width: 52%;
+  height: 22%;
+}
+
+.hair-a::before {
+  left: 12%;
+  top: -25%;
+  width: 30%;
+  height: 100%;
+}
+
+.hair-a::after {
+  right: 4%;
+  top: -18%;
+  width: 34%;
+  height: 110%;
+}
+
+.hair-b {
+  left: 35%;
+  top: 8%;
+  width: 28%;
+  height: 17%;
+}
+
+.eye,
+.brow,
+.nose,
+.beard,
+.mouth {
+  position: absolute;
+  display: block;
+}
+
+.eye {
+  top: 38%;
+  width: 8%;
+  height: 7%;
+  border-radius: 999px;
+  background: #211b18;
+}
+
+.eye.left,
+.brow.left {
+  left: 27%;
+}
+
+.eye.right,
+.brow.right {
+  right: 27%;
+}
+
+.brow {
+  top: 28%;
+  width: 18%;
+  height: 5%;
+  border-radius: 999px;
+  background: #171719;
+}
+
+.nose {
+  left: 48%;
+  top: 43%;
+  width: 8%;
+  height: 18%;
+  border-radius: 999px;
+  background: rgba(106, 58, 34, 0.26);
+}
+
+.beard {
+  left: 12%;
+  bottom: -19%;
+  width: 76%;
+  height: 47%;
+  border-radius: 10% 10% 48% 48%;
+  background: #1c1c1e;
+}
+
+.mouth {
+  left: 38%;
+  bottom: 16%;
+  width: 24%;
+  height: 4%;
+  border-radius: 999px;
+  background: #694129;
+}
+
+.kurta {
+  position: absolute;
+  left: 17%;
+  right: 17%;
+  bottom: -12%;
+  height: 36%;
+  border-radius: 18px 18px 0 0;
+  background: #19191b;
+}
+
+.kurta span {
+  position: absolute;
+  left: 48%;
+  top: 12%;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(#d0a85d 0 10%, transparent 10% 20%) 0 0 / 4px 12px;
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .game-area {
+    grid-template-rows: auto auto auto;
+  }
+
+  .coach-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-shell {
+    padding: 10px;
+  }
+
+  .board-frame {
+    padding: 6px;
+    min-width: 0;
+  }
+
+  .state-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .difficulty-row,
+  .controls {
+    flex-wrap: wrap;
+  }
+}

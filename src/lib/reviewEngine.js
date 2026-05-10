@@ -20,7 +20,21 @@ export function reviewGame(history) {
         label: swing < -420 ? 'Blunder' : 'Mistake',
         note: `${san} changed the evaluation sharply. Look for forcing replies before committing.`,
       })
-    } else if (move.captured || move.san.includes('+')) {
+    } else if (move.san.includes('#')) {
+      moments.push({
+        move: index + 1,
+        san,
+        label: 'Checkmate',
+        note: `${san} ended the game by force.`,
+      })
+    } else if (move.san.includes('+')) {
+      moments.push({
+        move: index + 1,
+        san,
+        label: 'Check',
+        note: `${san} forced the king to respond. Always check the follow-up.`,
+      })
+    } else if (move.captured) {
       moments.push({
         move: index + 1,
         san,
@@ -110,7 +124,10 @@ function evaluateForSide(game, side) {
 
 function classifyLoss(loss, move) {
   if (move.san.includes('#')) {
-    return { label: 'Best', keep: true, note: 'The move ends the game by force.' }
+    return { label: 'Checkmate', keep: true, note: 'The move ends the game by force.' }
+  }
+  if (move.san.includes('+') && loss <= 45) {
+    return { label: 'Check', keep: true, note: 'A forcing check that keeps the pressure on.' }
   }
   if (loss <= 12 && (move.captured || move.san.includes('+'))) {
     return { label: 'Great', keep: true, note: 'Forcing and accurate: this is the kind of tactical move Bookup should remember.' }
@@ -136,7 +153,7 @@ function fallbackMoment(move, index) {
   return {
     move: index + 1,
     san: move.san,
-    label: move.captured || move.san.includes('+') ? 'Tactical moment' : 'Reviewed',
+    label: move.san.includes('#') ? 'Checkmate' : move.san.includes('+') ? 'Check' : move.captured ? 'Tactical moment' : 'Reviewed',
     note: 'Stockfish did not return an evaluation for this move.',
   }
 }

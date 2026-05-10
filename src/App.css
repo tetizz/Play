@@ -474,6 +474,18 @@ button.selected {
   background: rgba(255, 255, 255, 0.16);
 }
 
+.notation-row .check-move {
+  color: #f6d477;
+}
+
+.notation-row .mate-move {
+  width: fit-content;
+  padding: 1px 8px 3px;
+  border-radius: 4px;
+  color: #fff;
+  background: #af1d2a;
+}
+
 .notation-list strong {
   color: #d9ba6f;
 }

@@ -26,6 +26,8 @@ export const coachPhrases = {
     'King has to speak now',
     'Forcing moves first',
     'You do not get to ignore this one',
+    'Check. Now defend like you mean it',
+    'Your king is the problem now',
   ],
   development: [
     'Pieces out, king safe, then we hunt',
@@ -51,7 +53,12 @@ export const coachPhrases = {
     'Small move, annoying position',
     'I am not rushing because your position has to breathe first',
   ],
-  mate: ['That is the belt', 'Game over. Lesson included', 'That is why we calculate forcing moves'],
+  mate: [
+    'That is the belt',
+    'Game over. Lesson included',
+    'That is why we calculate forcing moves',
+    'Checkmate. Sit with that one',
+  ],
 }
 
 export function phraseForMove(move, context = {}) {

@@ -79,17 +79,20 @@ export function shouldActivateBeltMode(history, humanColor) {
 }
 
 export function explainHumanMove(game, move) {
+  if (game.isCheckmate()) {
+    return `${move.san}. Checkmate. Alright, you earned that one.`
+  }
   if (move.flags.includes('c')) {
     return `${move.san}. Nice, you grabbed something. Now prove it does not get trapped.`
+  }
+  if (move.san.includes('+')) {
+    return `${move.san}. Check. Now show me the follow-up.`
   }
   if (centerSquares.has(move.to)) {
     return `${move.san}. Good, you are fighting for the middle. Keep going.`
   }
   if (move.piece === 'n' || move.piece === 'b') {
     return `${move.san}. Development is fine. Now what is the threat?`
-  }
-  if (game.inCheck()) {
-    return `${move.san}. Check. I respect forcing moves, but you need the follow-up.`
   }
   return `${move.san}. Okay, now I get a turn.`
 }

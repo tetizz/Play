@@ -49,7 +49,9 @@ function App() {
   const [finalReview, setFinalReview] = useState(null)
   const [reviewingGame, setReviewingGame] = useState(false)
   const [beltMode, setBeltMode] = useState(false)
+  const [premove, setPremove] = useState(null)
   const stockfishRef = useRef(null)
+  const premoveRef = useRef(null)
   const [messages, setMessages] = useState([
     {
       speaker: 'Mubassar',
@@ -109,15 +111,36 @@ function App() {
 
   const squareStyles = useMemo(() => {
     const styles = {}
+    const checkSquare = findCheckedKingSquare(game)
+    if (checkSquare && isViewingLatest) {
+      styles[checkSquare] = {
+        ...styles[checkSquare],
+        background:
+          'radial-gradient(circle, rgba(211, 35, 45, 0.78) 0 44%, rgba(211, 35, 45, 0.28) 47%, transparent 72%)',
+      }
+    }
     if (lastBotMove && isViewingLatest) {
-      styles[lastBotMove.from] = highlightStyle('#e4c15c')
-      styles[lastBotMove.to] = highlightStyle('#e4c15c')
+      styles[lastBotMove.from] = { ...styles[lastBotMove.from], ...highlightStyle('#e4c15c') }
+      styles[lastBotMove.to] = { ...styles[lastBotMove.to], ...highlightStyle('#e4c15c') }
     }
     if (selectedMove && isViewingLatest) {
-      styles[selectedMove] = { boxShadow: 'inset 0 0 0 4px rgba(125, 190, 79, .95)' }
+      styles[selectedMove] = {
+        ...styles[selectedMove],
+        boxShadow: 'inset 0 0 0 4px rgba(125, 190, 79, .95)',
+      }
+    }
+    if (premove && isViewingLatest) {
+      styles[premove.from] = {
+        ...styles[premove.from],
+        boxShadow: 'inset 0 0 0 4px rgba(66, 153, 225, .95)',
+      }
+      styles[premove.to] = {
+        ...styles[premove.to],
+        boxShadow: 'inset 0 0 0 4px rgba(66, 153, 225, .95)',
+      }
     }
     return styles
-  }, [isViewingLatest, lastBotMove, selectedMove])
+  }, [game, isViewingLatest, lastBotMove, premove, selectedMove])
 
   const legalTargets = useMemo(() => {
     if (!selectedMove || !isViewingLatest) return new Set()
@@ -134,6 +157,7 @@ function App() {
     setFinalReview(null)
     setReviewingGame(false)
     setBeltMode(false)
+    clearPremove()
     setMessages([
       {
         speaker: 'Mubassar',
@@ -153,6 +177,7 @@ function App() {
     setFinalReview(null)
     setReviewingGame(false)
     setBeltMode(false)
+    clearPremove()
     setMessages([
       {
         speaker: 'Mubassar',
@@ -168,6 +193,16 @@ function App() {
 
   function addCoachLine(text) {
     setMessages((current) => [{ speaker: 'Mubassar', text }, ...current.slice(0, 4)])
+  }
+
+  function setQueuedPremove(nextPremove) {
+    premoveRef.current = nextPremove
+    setPremove(nextPremove)
+  }
+
+  function clearPremove() {
+    premoveRef.current = null
+    setPremove(null)
   }
 
   function playBotReply(nextGame, forceBeltMode = beltMode, preMoveLine = null) {
@@ -193,16 +228,41 @@ function App() {
     if (decision.move) {
       nextGame.move(decision.move)
       setLastBotMove({ from: decision.move.from, to: decision.move.to })
-      updateBoard(nextGame)
       addCoachLine(decision.note)
+      const queued = premoveRef.current
+      if (queued) {
+        const premoveMove = nextGame.move({
+          from: queued.from,
+          to: queued.to,
+          promotion: 'q',
+        })
+        clearPremove()
+        if (premoveMove) {
+          setLastBotMove(null)
+          updateBoard(nextGame)
+          addCoachLine(explainHumanMove(nextGame, premoveMove))
+          const nextBeltMode = forceBeltMode || shouldActivateBeltMode(nextGame.history(), color)
+          const beltLine = 'You are going to get belt for playing this trash opening. Activating belt mode.'
+          if (!forceBeltMode && nextBeltMode) setBeltMode(true)
+          if (!nextGame.isGameOver()) {
+            playBotReply(nextGame, nextBeltMode, !forceBeltMode && nextBeltMode ? beltLine : null)
+            return
+          }
+        } else {
+          addCoachLine('Premove did not work after my move.')
+        }
+      }
+      updateBoard(nextGame)
     }
     setThinking(false)
   }
 
   function makeHumanMove(sourceSquare, targetSquare) {
-    if (thinking || game.isGameOver() || !isViewingLatest) return false
+    if (game.isGameOver() || !isViewingLatest) return false
     const playerTurn = color === 'white' ? 'w' : 'b'
-    if (game.turn() !== playerTurn) return false
+    if (thinking || game.turn() !== playerTurn) {
+      return queuePremove(sourceSquare, targetSquare, playerTurn)
+    }
 
     const nextGame = cloneGame(game)
     const move = nextGame.move({ from: sourceSquare, to: targetSquare, promotion: 'q' })
@@ -210,6 +270,7 @@ function App() {
 
     setSelectedMove(null)
     setLastBotMove(null)
+    clearPremove()
     updateBoard(nextGame)
     addCoachLine(explainHumanMove(nextGame, move))
     const nextBeltMode = beltMode || shouldActivateBeltMode(nextGame.history(), color)
@@ -229,6 +290,14 @@ function App() {
     setSelectedMove((current) => (current === square ? null : square))
   }
 
+  function queuePremove(sourceSquare, targetSquare, playerTurn) {
+    const piece = game.get(sourceSquare)
+    if (!piece || piece.color !== playerTurn || sourceSquare === targetSquare) return false
+    setSelectedMove(null)
+    setQueuedPremove({ from: sourceSquare, to: targetSquare })
+    return true
+  }
+
   function undoPair() {
     const nextGame = cloneGame(game)
     nextGame.undo()
@@ -238,6 +307,7 @@ function App() {
     setFinalReview(null)
     setReviewingGame(false)
     setBeltMode(false)
+    clearPremove()
     addCoachLine('Undo is fine for training. Now improve the idea, not only the move.')
   }
 
@@ -312,7 +382,7 @@ function App() {
               onPieceDrop: ({ sourceSquare, targetSquare }) =>
                 makeHumanMove(sourceSquare, targetSquare),
               onSquareClick,
-              allowDragging: !thinking && isViewingLatest,
+              allowDragging: isViewingLatest,
               squareStyles,
               squareRenderer: ({ piece, square, children }) => (
                 <SquareWithHint
@@ -353,7 +423,7 @@ function App() {
         />
         <div className="status-line">
           <span>{gameState}</span>
-          <span>{engineStatus}</span>
+          <span>{premove ? `Premove ${premove.from}-${premove.to}` : engineStatus}</span>
           <strong>{clockText}</strong>
         </div>
         <div className="action-row">
@@ -467,8 +537,8 @@ function MoveHistory({ moves, viewPly, latestPly, openingName, onBack, onForward
           groupedMoves.map((move) => (
             <div className="notation-row" key={move.number}>
               <span className="move-number">{move.number}.</span>
-              <span className={viewPly === move.whitePly ? 'current-move' : ''}>{move.white}</span>
-              <span className={viewPly === move.blackPly ? 'current-move' : ''}>{move.black || ''}</span>
+              <MoveToken san={move.white} active={viewPly === move.whitePly} />
+              <MoveToken san={move.black} active={viewPly === move.blackPly} />
             </div>
           ))
         ) : (
@@ -476,6 +546,17 @@ function MoveHistory({ moves, viewPly, latestPly, openingName, onBack, onForward
         )}
       </div>
     </section>
+  )
+}
+
+function MoveToken({ san, active }) {
+  if (!san) return <span />
+  const isMate = san.includes('#')
+  const isCheck = san.includes('+') && !isMate
+  return (
+    <span className={`${active ? 'current-move' : ''} ${isMate ? 'mate-move' : ''} ${isCheck ? 'check-move' : ''}`}>
+      {san}
+    </span>
   )
 }
 
@@ -586,11 +667,11 @@ function detectOpeningName(moves) {
 function thinkingLine(game) {
   const moveNumber = Math.floor(game.history().length / 2) + 1
   const lines = [
-    `Move ${moveNumber}. Let me calculate like a serious NM for a second.`,
-    'Hold up. Checks, captures, threats, then the clean move.',
-    'I am comparing the practical move with the engine move. No cheap shots.',
-    'Two seconds. I am checking whether the tactic actually works.',
-    'This is where patience wins games. Let me calculate.',
+    `Move ${moveNumber}. Let me look for a second.`,
+    'Hold up. Checks, captures, threats.',
+    'Give me a moment, I want the clean move.',
+    'Two seconds. Do not rush me.',
+    'Patience. This is where games get decided.',
   ]
   return lines[game.history().length % lines.length]
 }
@@ -599,6 +680,21 @@ function cloneGame(source) {
   const cloned = new Chess()
   for (const san of source.history()) cloned.move(san)
   return cloned
+}
+
+function findCheckedKingSquare(game) {
+  if (!game.inCheck() && !game.isCheckmate()) return null
+  const turn = game.turn()
+  const board = game.board()
+  for (let rank = 0; rank < 8; rank += 1) {
+    for (let file = 0; file < 8; file += 1) {
+      const piece = board[rank][file]
+      if (piece?.type === 'k' && piece.color === turn) {
+        return `${'abcdefgh'[file]}${8 - rank}`
+      }
+    }
+  }
+  return null
 }
 
 function highlightStyle(color) {

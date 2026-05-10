@@ -227,22 +227,23 @@ function buildCoachNote(game, move, score) {
   if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A check with purpose: force the king, then improve the pieces.`, 'search')
   if (move.captured) return withPhrase(move, game, `${move.san}. I am taking material because the tactic is clean enough to justify it.`, 'search')
   if (centerSquares.has(move.to)) return withPhrase(move, game, `${move.san}. Central control first; attacks are easier when the middle belongs to you.`, 'search')
-  if (score > 80) return withPhrase(move, game, `${move.san}. The position is starting to lean my way, so I am increasing the pressure.`, 'search')
+  if (score > 80) return withPhrase(move, game, `${move.san}. The position is starting to lean my way, so I am increasing the pressure.`, 'great')
   return withPhrase(move, game, `${move.san}. Quiet, useful, and hard to meet. That is often the NM way.`, 'search')
 }
 
 function buildEngineNote(game, move, rating) {
   const depthText = rating >= 2500 ? 'about ten moves of calculation' : rating >= 2200 ? 'seven to eight moves of calculation' : 'a lighter training search'
   if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. The calculation ends in mate.`, 'engine')
-  if (move.captured) return withPhrase(move, game, `${move.san}. After ${depthText}, the tactic holds up.`, 'engine')
-  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A forcing check from the engine line, still played in a human NM style.`, 'engine')
-  return withPhrase(move, game, `${move.san}. Out of book now, so I am using ${depthText} and choosing the most practical continuation.`, 'engine')
+  if (move.captured) return withPhrase(move, game, `${move.san}. After ${depthText}, the tactic holds up.`, 'great')
+  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. A forcing check from the calculation, still played in a human NM style.`, 'great')
+  return withPhrase(move, game, `${move.san}. I am using ${depthText} and choosing the most practical continuation.`, 'engine')
 }
 
 function withPhrase(move, game, note, source) {
   const phrase = phraseForMove(move, {
     isOpeningMove: game.history().length === 0,
     isFreePieceCapture: isFreePieceCapture(game, move),
+    isGreatMove: source === 'great',
     isCenterMove: centerSquares.has(move.to),
     source,
   })

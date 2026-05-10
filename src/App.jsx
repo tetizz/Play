@@ -35,19 +35,10 @@ const timeControls = [
   { label: '30 min', minutes: 30, increment: 0, group: 'Rapid' },
 ]
 
-const strengths = [
-  { label: '1800', value: 1800 },
-  { label: '2000', value: 2000 },
-  { label: '2200', value: 2200 },
-  { label: 'NM 2300', value: 2300 },
-  { label: '2400', value: 2400 },
-  { label: '2600', value: 2600 },
-]
-
 function App() {
   const [phase, setPhase] = useState('setup')
   const [game, setGame] = useState(() => new Chess())
-  const [coachLevel, setCoachLevel] = useState(2300)
+  const coachLevel = 2300
   const [timeControl, setTimeControl] = useState(timeControls[0])
   const [color, setColor] = useState('white')
   const [engineStatus, setEngineStatus] = useState('JS fallback ready')
@@ -123,15 +114,14 @@ function App() {
     }
     if (selectedMove && isViewingLatest) {
       styles[selectedMove] = { boxShadow: 'inset 0 0 0 4px rgba(125, 190, 79, .95)' }
-      for (const move of game.moves({ square: selectedMove, verbose: true })) {
-        styles[move.to] = {
-          background:
-            'radial-gradient(circle, rgba(255,255,255,.88) 0 22%, transparent 24%)',
-        }
-      }
     }
     return styles
-  }, [game, isViewingLatest, lastBotMove, selectedMove])
+  }, [isViewingLatest, lastBotMove, selectedMove])
+
+  const legalTargets = useMemo(() => {
+    if (!selectedMove || !isViewingLatest) return new Set()
+    return new Set(game.moves({ square: selectedMove, verbose: true }).map((move) => move.to))
+  }, [game, isViewingLatest, selectedMove])
 
   function startGame() {
     const fresh = new Chess()
@@ -276,22 +266,6 @@ function App() {
 
           <TimeGrid selected={timeControl} onSelect={setTimeControl} />
 
-          <div className="strength-settings">
-            <h2>Coach Strength</h2>
-            <div className="strength-grid">
-              {strengths.map((item) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  className={coachLevel === item.value ? 'selected' : ''}
-                  onClick={() => setCoachLevel(item.value)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="color-picker" aria-label="Choose color">
             {['white', 'random', 'black'].map((item) => (
               <button
@@ -328,6 +302,14 @@ function App() {
               onSquareClick,
               allowDragging: !thinking && isViewingLatest,
               squareStyles,
+              squareRenderer: ({ piece, square, children }) => (
+                <SquareWithHint
+                  isLegalTarget={legalTargets.has(square)}
+                  hasPiece={Boolean(piece)}
+                >
+                  {children}
+                </SquareWithHint>
+              ),
               boardStyle: { borderRadius: 0 },
               darkSquareStyle: { backgroundColor: '#9c693b' },
               lightSquareStyle: { backgroundColor: '#d9b66b' },
@@ -482,7 +464,22 @@ function MoveHistory({ moves, viewPly, latestPly, onBack, onForward }) {
 }
 
 function Avatar({ className = '' }) {
-  return <img className={`avatar ${className}`} src={AVATAR} alt="Mubassar avatar" />
+  return (
+    <span className={`avatar-frame ${className}`}>
+      <img className="avatar" src={AVATAR} alt="Mubassar avatar" />
+    </span>
+  )
+}
+
+function SquareWithHint({ isLegalTarget, hasPiece, children }) {
+  return (
+    <div className="square-content">
+      {children}
+      {isLegalTarget ? (
+        <span className={`legal-marker ${hasPiece ? 'capture' : ''}`} />
+      ) : null}
+    </div>
+  )
 }
 
 function BangladeshFlag() {

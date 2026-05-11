@@ -802,15 +802,15 @@ function squareName(file, rank) {
 
 function mergeLegalTargetStyle(baseStyle = {}, hasPiece = false) {
   const dotBackground = hasPiece
-    ? 'radial-gradient(circle, transparent 0 52%, rgba(255, 255, 255, 0.98) 54% 70%, rgba(30, 30, 30, 0.34) 72%, transparent 75%)'
-    : 'radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 28%, rgba(30, 30, 30, 0.22) 29% 32%, transparent 33%)'
+    ? 'radial-gradient(circle, transparent 0 50%, rgba(255, 255, 255, 0.98) 52% 75%, transparent 77%)'
+    : 'radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 36%, transparent 38%)'
   const existingBackground = baseStyle.background || ''
   const existingShadow = baseStyle.boxShadow || ''
   return {
     ...baseStyle,
     background: existingBackground ? `${dotBackground}, ${existingBackground}` : dotBackground,
     boxShadow: hasPiece
-      ? `${existingShadow ? `${existingShadow}, ` : ''}inset 0 0 0 7px rgba(255, 255, 255, 0.9)`
+      ? `${existingShadow ? `${existingShadow}, ` : ''}inset 0 0 0 9px rgba(255, 255, 255, 0.96)`
       : existingShadow,
   }
 }

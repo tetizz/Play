@@ -431,7 +431,7 @@ function App() {
               onSquareMouseUp,
               allowDragging: isViewingLatest,
               squareStyles,
-              dropSquareStyle: { background: 'transparent', boxShadow: 'none' },
+              dropSquareStyle: { boxShadow: 'none' },
               draggingPieceGhostStyle: { opacity: 0 },
               allowDrawingArrows: false,
               arrows,

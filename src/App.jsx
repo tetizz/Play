@@ -61,11 +61,12 @@ function App() {
   const latestPly = moveHistory.length
   const activePly = Math.min(viewPly, latestPly)
   const isViewingLatest = activePly === latestPly
-  const displayedFen = useMemo(() => {
+  const displayedGame = useMemo(() => {
     const replay = new Chess()
     for (const san of moveHistory.slice(0, activePly)) replay.move(san)
-    return replay.fen()
+    return replay
   }, [moveHistory, activePly])
+  const displayedFen = displayedGame.fen()
   const clockText = timeControl.minutes ? `${timeControl.minutes}:00` : 'No Timer'
   const gameState = getGameState(game, thinking)
 
@@ -106,14 +107,6 @@ function App() {
 
   const squareStyles = useMemo(() => {
     const styles = {}
-    const checkSquare = findCheckedKingSquare(game)
-    if (checkSquare && isViewingLatest) {
-      styles[checkSquare] = {
-        ...styles[checkSquare],
-        background:
-          'radial-gradient(circle, rgba(211, 35, 45, 0.78) 0 44%, rgba(211, 35, 45, 0.28) 47%, transparent 72%)',
-      }
-    }
     if (lastBotMove && isViewingLatest) {
       styles[lastBotMove.from] = { ...styles[lastBotMove.from], ...highlightStyle('#e4c15c') }
       styles[lastBotMove.to] = { ...styles[lastBotMove.to], ...highlightStyle('#e4c15c') }
@@ -134,8 +127,17 @@ function App() {
         boxShadow: 'inset 0 0 0 4px rgba(66, 153, 225, .95)',
       }
     }
+    const checkSquare = findCheckedKingSquare(displayedGame)
+    if (checkSquare) {
+      styles[checkSquare] = {
+        ...styles[checkSquare],
+        background:
+          'radial-gradient(circle, rgba(221, 31, 44, 0.98) 0 48%, rgba(221, 31, 44, 0.64) 49% 67%, rgba(221, 31, 44, 0.24) 68%, transparent 82%)',
+        boxShadow: `${styles[checkSquare]?.boxShadow ? `${styles[checkSquare].boxShadow}, ` : ''}inset 0 0 0 5px rgba(255, 64, 76, 0.95)`,
+      }
+    }
     return styles
-  }, [game, isViewingLatest, lastBotMove, premove, selectedMove])
+  }, [displayedGame, isViewingLatest, lastBotMove, premove, selectedMove])
 
   const legalTargets = useMemo(() => {
     if (!selectedMove || !isViewingLatest) return new Set()

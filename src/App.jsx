@@ -435,6 +435,8 @@ function App() {
               onSquareMouseUp,
               allowDragging: isViewingLatest,
               squareStyles,
+              dropSquareStyle: { background: 'transparent', boxShadow: 'none' },
+              draggingPieceGhostStyle: { opacity: 0 },
               allowDrawingArrows: false,
               arrows,
               arrowOptions: {
@@ -800,8 +802,8 @@ function squareName(file, rank) {
 
 function mergeLegalTargetStyle(baseStyle = {}, hasPiece = false) {
   const dotBackground = hasPiece
-    ? 'radial-gradient(circle, transparent 0 59%, rgba(255, 255, 255, 0.96) 61% 73%, rgba(45, 45, 45, 0.22) 75%, transparent 77%)'
-    : 'radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 15%, rgba(45, 45, 45, 0.16) 16% 18%, transparent 19%)'
+    ? 'radial-gradient(circle, transparent 0 52%, rgba(255, 255, 255, 0.98) 54% 70%, rgba(30, 30, 30, 0.34) 72%, transparent 75%)'
+    : 'radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 28%, rgba(30, 30, 30, 0.22) 29% 32%, transparent 33%)'
   const existingBackground = baseStyle.background || ''
   const existingShadow = baseStyle.boxShadow || ''
   return {

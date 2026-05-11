@@ -7,15 +7,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  Download,
   Flag,
   Lightbulb,
-  Settings,
   Undo2,
   Zap,
 } from 'lucide-react'
 import { calculationProfile, chooseCoachMove, explainHumanMove, shouldActivateBeltMode } from './lib/coachEngine'
-import { reviewGame, reviewGameWithStockfish } from './lib/reviewEngine'
+import { reviewGameWithStockfish } from './lib/reviewEngine'
 import { createStockfishClient } from './lib/stockfishClient'
 import './App.css'
 
@@ -59,7 +57,6 @@ function App() {
     },
   ])
 
-  const reviewMoments = useMemo(() => reviewGame(game.history()), [game])
   const moveHistory = game.history()
   const latestPly = moveHistory.length
   const activePly = Math.min(viewPly, latestPly)
@@ -144,8 +141,14 @@ function App() {
 
   const legalTargets = useMemo(() => {
     if (!selectedMove || !isViewingLatest) return new Set()
-    return new Set(game.moves({ square: selectedMove, verbose: true }).map((move) => move.to))
-  }, [game, isViewingLatest, selectedMove])
+    const playerTurn = color === 'white' ? 'w' : 'b'
+    const piece = game.get(selectedMove)
+    if (!piece || piece.color !== playerTurn) return new Set()
+    if (game.turn() === playerTurn) {
+      return new Set(game.moves({ square: selectedMove, verbose: true }).map((move) => move.to))
+    }
+    return new Set(premoveTargets(game, selectedMove, playerTurn))
+  }, [color, game, isViewingLatest, selectedMove])
 
   function startGame() {
     const fresh = new Chess()
@@ -287,7 +290,12 @@ function App() {
   function onSquareClick(args) {
     const square = typeof args === 'string' ? args : args.square
     if (selectedMove && selectedMove !== square && makeHumanMove(selectedMove, square)) return
-    setSelectedMove((current) => (current === square ? null : square))
+    setSelectedMove((current) => {
+      if (current === square) return null
+      const playerTurn = color === 'white' ? 'w' : 'b'
+      const piece = game.get(square)
+      return piece?.color === playerTurn ? square : null
+    })
   }
 
   function queuePremove(sourceSquare, targetSquare, playerTurn) {
@@ -384,6 +392,20 @@ function App() {
               onSquareClick,
               allowDragging: isViewingLatest,
               squareStyles,
+              allowDrawingArrows: true,
+              clearArrowsOnPositionChange: true,
+              arrowOptions: {
+                color: '#1f8cff',
+                secondaryColor: '#1f8cff',
+                tertiaryColor: '#1f8cff',
+                arrowLengthReducerDenominator: 6,
+                sameTargetArrowLengthReducerDenominator: 4,
+                arrowWidthDenominator: 5,
+                activeArrowWidthMultiplier: 0.9,
+                opacity: 0.78,
+                activeOpacity: 0.62,
+                arrowStartOffset: 0.32,
+              },
               squareRenderer: ({ piece, square, children }) => (
                 <SquareWithHint
                   isLegalTarget={legalTargets.has(square)}
@@ -402,9 +424,6 @@ function App() {
       </section>
 
       <aside className="game-right">
-        <div className="settings-gear">
-          <Settings />
-        </div>
         <div className="play-bots-title compact">
           <Bot size={24} />
           <h1>Play Bots</h1>
@@ -431,11 +450,9 @@ function App() {
           <ActionButton label="Undo" icon={Undo2} onClick={undoPair} />
           <ActionButton label="Show Hint" icon={Lightbulb} onClick={() => addCoachLine('Look for checks, captures, and threats. Then compare the quiet improving move.')} />
         </div>
-        <div className="mini-tools">
-          <Download size={22} />
-          <Settings size={22} />
-        </div>
-        <ReviewPanel moments={reviewMoments} finalReview={finalReview} reviewing={reviewingGame} />
+        {reviewingGame || finalReview ? (
+          <ReviewPanel finalReview={finalReview} reviewing={reviewingGame} />
+        ) : null}
       </aside>
     </main>
   )
@@ -596,7 +613,7 @@ function ActionButton({ label, icon: Icon, onClick }) {
   )
 }
 
-function ReviewPanel({ moments, finalReview, reviewing }) {
+function ReviewPanel({ finalReview, reviewing }) {
   if (finalReview) {
     return (
       <section className="review-panel">
@@ -625,14 +642,8 @@ function ReviewPanel({ moments, finalReview, reviewing }) {
       <h2>Game Review</h2>
       {reviewing ? (
         <p>Stockfish 18 is reviewing the finished game.</p>
-      ) : moments.length ? (
-        moments.map((moment) => (
-          <p key={`${moment.move}-${moment.san}`}>
-            <strong>{moment.label}</strong> {moment.move}. {moment.san}
-          </p>
-        ))
       ) : (
-        <p>Play a few moves and the bot will flag tactical moments.</p>
+        <p>The game review appears after checkmate, resignation, or draw.</p>
       )}
     </section>
   )
@@ -695,6 +706,65 @@ function findCheckedKingSquare(game) {
     }
   }
   return null
+}
+
+function premoveTargets(game, square, playerTurn) {
+  const piece = game.get(square)
+  if (!piece || piece.color !== playerTurn) return []
+  const files = 'abcdefgh'
+  const fileIndex = files.indexOf(square[0])
+  const rank = Number(square[1])
+  const targets = []
+  const add = (file, nextRank) => {
+    if (file < 0 || file > 7 || nextRank < 1 || nextRank > 8) return false
+    const target = `${files[file]}${nextRank}`
+    const occupant = game.get(target)
+    if (occupant?.color === playerTurn) return false
+    targets.push(target)
+    return !occupant
+  }
+  const ray = (df, dr) => {
+    for (let step = 1; step < 8; step += 1) {
+      if (!add(fileIndex + df * step, rank + dr * step)) break
+    }
+  }
+
+  if (piece.type === 'p') {
+    const direction = playerTurn === 'w' ? 1 : -1
+    const startRank = playerTurn === 'w' ? 2 : 7
+    const forwardRank = rank + direction
+    const twoStepRank = rank + direction * 2
+    const one = squareName(fileIndex, forwardRank)
+    if (one && !game.get(one)) {
+      targets.push(one)
+      const two = squareName(fileIndex, twoStepRank)
+      if (two && rank === startRank && !game.get(two)) targets.push(two)
+    }
+    for (const df of [-1, 1]) {
+      const target = squareName(fileIndex + df, forwardRank)
+      if (target) targets.push(target)
+    }
+  } else if (piece.type === 'n') {
+    for (const [df, dr] of [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]]) {
+      add(fileIndex + df, rank + dr)
+    }
+  } else if (piece.type === 'b' || piece.type === 'q') {
+    for (const [df, dr] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) ray(df, dr)
+  }
+  if (piece.type === 'r' || piece.type === 'q') {
+    for (const [df, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ray(df, dr)
+  }
+  if (piece.type === 'k') {
+    for (const [df, dr] of [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]]) {
+      add(fileIndex + df, rank + dr)
+    }
+  }
+  return [...new Set(targets)]
+}
+
+function squareName(file, rank) {
+  if (file < 0 || file > 7 || rank < 1 || rank > 8) return null
+  return `${'abcdefgh'[file]}${rank}`
 }
 
 function highlightStyle(color) {

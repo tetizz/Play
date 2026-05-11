@@ -78,16 +78,14 @@ export async function reviewGameWithStockfish(history, evaluateFen) {
     accuracyTotal += accuracy
     reviewedMoves += 1
 
-    if (classification.keep || move.captured || move.san.includes('+') || index === history.length - 1) {
-      moments.push({
-        move: index + 1,
-        san,
-        side,
-        label: classification.label,
-        scoreLoss: loss,
-        note: classification.note,
-      })
-    }
+    moments.push({
+      move: index + 1,
+      san,
+      side,
+      label: classification.label,
+      scoreLoss: loss,
+      note: classification.note,
+    })
   }
 
   return {
@@ -95,7 +93,7 @@ export async function reviewGameWithStockfish(history, evaluateFen) {
     engine: 'Stockfish 18',
     accuracy: reviewedMoves ? Math.round(accuracyTotal / reviewedMoves) : null,
     result: finalResult(game),
-    moments: moments.slice(-8).reverse(),
+    moments,
   }
 }
 

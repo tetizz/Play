@@ -48,8 +48,10 @@ function App() {
   const [reviewingGame, setReviewingGame] = useState(false)
   const [beltMode, setBeltMode] = useState(false)
   const [premove, setPremove] = useState(null)
+  const [arrows, setArrows] = useState([])
   const stockfishRef = useRef(null)
   const premoveRef = useRef(null)
+  const arrowStartRef = useRef(null)
   const [messages, setMessages] = useState([
     {
       speaker: 'Mubassar',
@@ -105,17 +107,22 @@ function App() {
     }
   }, [finalReview, game, phase, reviewingGame, thinking])
 
+  const legalTargets = useMemo(() => {
+    if (!selectedMove || !isViewingLatest) return new Set()
+    const playerTurn = color === 'white' ? 'w' : 'b'
+    const piece = game.get(selectedMove)
+    if (!piece || piece.color !== playerTurn) return new Set()
+    if (game.turn() === playerTurn) {
+      return new Set(game.moves({ square: selectedMove, verbose: true }).map((move) => move.to))
+    }
+    return new Set(premoveTargets(game, selectedMove, playerTurn))
+  }, [color, game, isViewingLatest, selectedMove])
+
   const squareStyles = useMemo(() => {
     const styles = {}
     if (lastBotMove && isViewingLatest) {
       styles[lastBotMove.from] = { ...styles[lastBotMove.from], ...highlightStyle('#e4c15c') }
       styles[lastBotMove.to] = { ...styles[lastBotMove.to], ...highlightStyle('#e4c15c') }
-    }
-    if (selectedMove && isViewingLatest) {
-      styles[selectedMove] = {
-        ...styles[selectedMove],
-        boxShadow: 'inset 0 0 0 4px rgba(125, 190, 79, .95)',
-      }
     }
     if (premove && isViewingLatest) {
       styles[premove.from] = {
@@ -127,6 +134,10 @@ function App() {
         boxShadow: 'inset 0 0 0 4px rgba(66, 153, 225, .95)',
       }
     }
+    for (const square of legalTargets) {
+      const hasPiece = Boolean(game.get(square))
+      styles[square] = mergeLegalTargetStyle(styles[square], hasPiece)
+    }
     const checkSquare = findCheckedKingSquare(displayedGame)
     if (checkSquare) {
       styles[checkSquare] = {
@@ -137,18 +148,7 @@ function App() {
       }
     }
     return styles
-  }, [displayedGame, isViewingLatest, lastBotMove, premove, selectedMove])
-
-  const legalTargets = useMemo(() => {
-    if (!selectedMove || !isViewingLatest) return new Set()
-    const playerTurn = color === 'white' ? 'w' : 'b'
-    const piece = game.get(selectedMove)
-    if (!piece || piece.color !== playerTurn) return new Set()
-    if (game.turn() === playerTurn) {
-      return new Set(game.moves({ square: selectedMove, verbose: true }).map((move) => move.to))
-    }
-    return new Set(premoveTargets(game, selectedMove, playerTurn))
-  }, [color, game, isViewingLatest, selectedMove])
+  }, [displayedGame, game, isViewingLatest, lastBotMove, legalTargets, premove])
 
   function startGame() {
     const fresh = new Chess()
@@ -161,6 +161,7 @@ function App() {
     setReviewingGame(false)
     setBeltMode(false)
     clearPremove()
+    setArrows([])
     setMessages([
       {
         speaker: 'Mubassar',
@@ -181,6 +182,7 @@ function App() {
     setReviewingGame(false)
     setBeltMode(false)
     clearPremove()
+    setArrows([])
     setMessages([
       {
         speaker: 'Mubassar',
@@ -192,6 +194,7 @@ function App() {
   function updateBoard(nextGame) {
     setGame(cloneGame(nextGame))
     setViewPly(nextGame.history().length)
+    setArrows([])
   }
 
   function addCoachLine(text) {
@@ -287,12 +290,51 @@ function App() {
   function onSquareClick(args) {
     const square = typeof args === 'string' ? args : args.square
     if (selectedMove && selectedMove !== square && makeHumanMove(selectedMove, square)) return
+    selectPiece(square)
+  }
+
+  function onPieceClick({ square }) {
+    selectPiece(square)
+  }
+
+  function onPieceDrag({ square }) {
+    selectPiece(square)
+  }
+
+  function selectPiece(square) {
+    if (!square) return
     setSelectedMove((current) => {
-      if (current === square) return null
+      if (current === square) return current
       const playerTurn = color === 'white' ? 'w' : 'b'
       const piece = game.get(square)
       return piece?.color === playerTurn ? square : null
     })
+  }
+
+  function onSquareMouseDown({ square }, event) {
+    if (event.button === 0) {
+      const playerTurn = color === 'white' ? 'w' : 'b'
+      const piece = game.get(square)
+      if (piece?.color === playerTurn) selectPiece(square)
+      return
+    }
+    if (event.button !== 2) return
+    arrowStartRef.current = { square, color: arrowColor(event) }
+  }
+
+  function onSquareMouseUp({ square }, event) {
+    if (event.button !== 2 || !arrowStartRef.current) return
+    const { square: startSquare, color: arrowColorValue } = arrowStartRef.current
+    arrowStartRef.current = null
+    if (startSquare === square) {
+      setArrows([])
+      return
+    }
+    setArrows((current) => toggleArrow(current, {
+      startSquare,
+      endSquare: square,
+      color: arrowColorValue,
+    }))
   }
 
   function queuePremove(sourceSquare, targetSquare, playerTurn) {
@@ -387,14 +429,18 @@ function App() {
               onPieceDrop: ({ sourceSquare, targetSquare }) =>
                 makeHumanMove(sourceSquare, targetSquare),
               onSquareClick,
+              onPieceClick,
+              onPieceDrag,
+              onSquareMouseDown,
+              onSquareMouseUp,
               allowDragging: isViewingLatest,
               squareStyles,
-              allowDrawingArrows: true,
-              clearArrowsOnPositionChange: true,
+              allowDrawingArrows: false,
+              arrows,
               arrowOptions: {
-                color: '#1f8cff',
-                secondaryColor: '#1f8cff',
-                tertiaryColor: '#1f8cff',
+                color: '#79b64c',
+                secondaryColor: '#f2c94c',
+                tertiaryColor: '#d85050',
                 arrowLengthReducerDenominator: 6,
                 sameTargetArrowLengthReducerDenominator: 4,
                 arrowWidthDenominator: 5,
@@ -750,6 +796,38 @@ function premoveTargets(game, square, playerTurn) {
 function squareName(file, rank) {
   if (file < 0 || file > 7 || rank < 1 || rank > 8) return null
   return `${'abcdefgh'[file]}${rank}`
+}
+
+function mergeLegalTargetStyle(baseStyle = {}, hasPiece = false) {
+  const dotBackground = hasPiece
+    ? 'radial-gradient(circle, transparent 0 59%, rgba(255, 255, 255, 0.96) 61% 73%, rgba(45, 45, 45, 0.22) 75%, transparent 77%)'
+    : 'radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 15%, rgba(45, 45, 45, 0.16) 16% 18%, transparent 19%)'
+  const existingBackground = baseStyle.background || ''
+  const existingShadow = baseStyle.boxShadow || ''
+  return {
+    ...baseStyle,
+    background: existingBackground ? `${dotBackground}, ${existingBackground}` : dotBackground,
+    boxShadow: hasPiece
+      ? `${existingShadow ? `${existingShadow}, ` : ''}inset 0 0 0 7px rgba(255, 255, 255, 0.9)`
+      : existingShadow,
+  }
+}
+
+function arrowColor(event) {
+  if (event.altKey) return '#1f8cff'
+  if (event.shiftKey) return '#f2c94c'
+  if (event.ctrlKey) return '#d85050'
+  return '#79b64c'
+}
+
+function toggleArrow(current, nextArrow) {
+  const existingIndex = current.findIndex((arrow) =>
+    arrow.startSquare === nextArrow.startSquare &&
+    arrow.endSquare === nextArrow.endSquare &&
+    arrow.color === nextArrow.color,
+  )
+  if (existingIndex >= 0) return current.filter((_, index) => index !== existingIndex)
+  return [...current, nextArrow]
 }
 
 function highlightStyle(color) {

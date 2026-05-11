@@ -134,10 +134,6 @@ function App() {
         boxShadow: 'inset 0 0 0 4px rgba(66, 153, 225, .95)',
       }
     }
-    for (const square of legalTargets) {
-      const hasPiece = Boolean(game.get(square))
-      styles[square] = mergeLegalTargetStyle(styles[square], hasPiece)
-    }
     const checkSquare = findCheckedKingSquare(displayedGame)
     if (checkSquare) {
       styles[checkSquare] = {
@@ -148,7 +144,7 @@ function App() {
       }
     }
     return styles
-  }, [displayedGame, game, isViewingLatest, lastBotMove, legalTargets, premove])
+  }, [displayedGame, isViewingLatest, lastBotMove, premove])
 
   function startGame() {
     const fresh = new Chess()
@@ -798,21 +794,6 @@ function premoveTargets(game, square, playerTurn) {
 function squareName(file, rank) {
   if (file < 0 || file > 7 || rank < 1 || rank > 8) return null
   return `${'abcdefgh'[file]}${rank}`
-}
-
-function mergeLegalTargetStyle(baseStyle = {}, hasPiece = false) {
-  const dotBackground = hasPiece
-    ? 'radial-gradient(circle, transparent 0 50%, rgba(255, 255, 255, 0.98) 52% 75%, transparent 77%)'
-    : 'radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 36%, transparent 38%)'
-  const existingBackground = baseStyle.background || ''
-  const existingShadow = baseStyle.boxShadow || ''
-  return {
-    ...baseStyle,
-    background: existingBackground ? `${dotBackground}, ${existingBackground}` : dotBackground,
-    boxShadow: hasPiece
-      ? `${existingShadow ? `${existingShadow}, ` : ''}inset 0 0 0 9px rgba(255, 255, 255, 0.96)`
-      : existingShadow,
-  }
 }
 
 function arrowColor(event) {

@@ -22,12 +22,7 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
     const { move } = bookChoice
     return {
       move,
-      note: withPhrase(
-        move,
-        game,
-        `${move.san}. Your move.`,
-        'book',
-      ),
+      note: withPhrase(move, game, 'book', rating),
     }
   }
 
@@ -57,7 +52,7 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
 
   return {
     move: best,
-    note: buildCoachNote(game, best, bestScore),
+    note: buildCoachNote(game, best, bestScore, rating),
   }
 }
 
@@ -232,33 +227,27 @@ function orderMoves(moves) {
   })
 }
 
-function buildCoachNote(game, move, score) {
+function buildCoachNote(game, move, score, rating) {
   if (!move) return 'No legal moves.'
-  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. That is mate.`, 'search')
-  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. Your king has to answer me first.`, 'search')
-  if (move.captured) return withPhrase(move, game, `${move.san}. I like my material clean.`, 'search')
-  if (centerSquares.has(move.to)) return withPhrase(move, game, `${move.san}. I want the center.`, 'search')
-  if (score > 80) return withPhrase(move, game, `${move.san}. This is already getting uncomfortable for you.`, 'great')
-  return withPhrase(move, game, `${move.san}. Simple move, annoying position.`, 'search')
+  const source = score > 80 ? 'great' : 'search'
+  return withPhrase(move, game, source, rating)
 }
 
 function buildEngineNote(game, move, rating) {
-  if (move.san.includes('#')) return withPhrase(move, game, `${move.san}. That is mate.`, 'engine')
-  if (move.captured) return withPhrase(move, game, `${move.san}. That tactic works.`, 'great')
-  if (move.san.includes('+')) return withPhrase(move, game, `${move.san}. You have to deal with the king first.`, 'great')
-  if (rating >= 2700) return withPhrase(move, game, `${move.san}. Belt mode does not give free moves.`, 'great')
-  return withPhrase(move, game, `${move.san}. This is the practical move.`, 'engine')
+  const source = move.captured || move.san.includes('+') || rating >= 2700 ? 'great' : 'engine'
+  return withPhrase(move, game, source, rating)
 }
 
-function withPhrase(move, game, note, source) {
-  const phrase = phraseForMove(move, {
+function withPhrase(move, game, source, rating = 2300) {
+  return phraseForMove(move, {
     isOpeningMove: game.history().length === 0,
     isFreePieceCapture: isFreePieceCapture(game, move),
     isGreatMove: source === 'great',
+    isWinning: isWinningAfterMove(game, move),
+    isBeltMode: rating >= 2700,
     isCenterMove: centerSquares.has(move.to),
     source,
   })
-  return `${phrase.replace(/[.!?]+$/, '')}. ${note}`
 }
 
 function isFreePieceCapture(game, move) {
@@ -266,6 +255,12 @@ function isFreePieceCapture(game, move) {
   const branch = new Chess(game.fen())
   branch.move(move)
   return !branch.moves({ verbose: true }).some((reply) => reply.to === move.to && reply.captured)
+}
+
+function isWinningAfterMove(game, move) {
+  const branch = new Chess(game.fen())
+  branch.move(move)
+  return -evaluate(branch) > 520
 }
 
 function isKingsIndianAttack(moves) {

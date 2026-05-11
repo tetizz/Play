@@ -12,7 +12,7 @@ import {
   Undo2,
   Zap,
 } from 'lucide-react'
-import { calculationProfile, chooseCoachMove, explainHumanMove, shouldActivateBeltMode } from './lib/coachEngine'
+import { calculationProfile, chooseCoachMove, shouldActivateBeltMode } from './lib/coachEngine'
 import { reviewGameWithStockfish } from './lib/reviewEngine'
 import { createStockfishClient } from './lib/stockfishClient'
 import './App.css'
@@ -89,14 +89,12 @@ function App() {
     let cancelled = false
     async function runFinalReview() {
       setReviewingGame(true)
-      addCoachLine('Game over. Give me a second, I am checking the critical moments with Stockfish 18.')
       const review = await reviewGameWithStockfish(
         game.history(),
         stockfishRef.current?.evaluateFen,
       )
       if (!cancelled) {
         setFinalReview(review)
-        addCoachLine(`${review.result}. Review complete${review.accuracy ? `: ${review.accuracy}% accuracy estimate` : ''}.`)
         setReviewingGame(false)
       }
     }
@@ -208,14 +206,13 @@ function App() {
     setPremove(null)
   }
 
-  function playBotReply(nextGame, forceBeltMode = beltMode, preMoveLine = null) {
+  function playBotReply(nextGame, forceBeltMode = beltMode, beltLine = null) {
     if (nextGame.isGameOver()) return
     setThinking(true)
-    addCoachLine(preMoveLine || thinkingLine(nextGame))
-    window.setTimeout(() => playBotReplyAsync(nextGame, forceBeltMode), 2000)
+    window.setTimeout(() => playBotReplyAsync(nextGame, forceBeltMode, beltLine), 2000)
   }
 
-  async function playBotReplyAsync(nextGame, forceBeltMode = beltMode) {
+  async function playBotReplyAsync(nextGame, forceBeltMode = beltMode, beltLine = null) {
     const activeLevel = forceBeltMode ? 2700 : coachLevel
     let engineMove = null
     try {
@@ -231,7 +228,7 @@ function App() {
     if (decision.move) {
       nextGame.move(decision.move)
       setLastBotMove({ from: decision.move.from, to: decision.move.to })
-      addCoachLine(decision.note)
+      addCoachLine(beltLine || decision.note)
       const queued = premoveRef.current
       if (queued) {
         const premoveMove = nextGame.move({
@@ -243,7 +240,6 @@ function App() {
         if (premoveMove) {
           setLastBotMove(null)
           updateBoard(nextGame)
-          addCoachLine(explainHumanMove(nextGame, premoveMove))
           const nextBeltMode = forceBeltMode || shouldActivateBeltMode(nextGame.history(), color)
           const beltLine = 'You are going to get belt for playing this trash opening. Activating belt mode.'
           if (!forceBeltMode && nextBeltMode) setBeltMode(true)
@@ -275,7 +271,6 @@ function App() {
     setLastBotMove(null)
     clearPremove()
     updateBoard(nextGame)
-    addCoachLine(explainHumanMove(nextGame, move))
     const nextBeltMode = beltMode || shouldActivateBeltMode(nextGame.history(), color)
     const beltLine = 'You are going to get belt for playing this trash opening. Activating belt mode.'
     if (!beltMode && nextBeltMode) {
@@ -673,18 +668,6 @@ function detectOpeningName(moves) {
   if (clean[0] === 'e4' && clean[1] === 'c6') return 'Caro-Kann Defense'
   if (clean[0] === 'd4' && clean[1] === 'd5') return "Queen's Pawn Game"
   return moves.length ? 'Moves' : ''
-}
-
-function thinkingLine(game) {
-  const moveNumber = Math.floor(game.history().length / 2) + 1
-  const lines = [
-    `Move ${moveNumber}. Let me look for a second.`,
-    'Hold up. Checks, captures, threats.',
-    'Give me a moment, I want the clean move.',
-    'Two seconds. Do not rush me.',
-    'Patience. This is where games get decided.',
-  ]
-  return lines[game.history().length % lines.length]
 }
 
 function cloneGame(source) {

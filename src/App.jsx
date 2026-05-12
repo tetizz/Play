@@ -18,32 +18,39 @@ const AVATAR = './assets/mubassar-avatar.png'
 const WHITE_KING = './assets/white-king.png'
 const BLACK_KING = './assets/black-king.png'
 const START_FEN = new Chess().fen()
+const STORAGE_KEY = 'mubassar-bot-session-v1'
+const DEFAULT_MESSAGES = [
+  {
+    speaker: 'Mubassar',
+    text: 'Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE title. Pick your settings and let’s play.',
+  },
+]
+const INITIAL_SESSION = loadSavedSession()
 
 function App() {
-  const [phase, setPhase] = useState('setup')
-  const [game, setGame] = useState(() => new Chess())
+  const restoredNeedsBotMove = useRef(Boolean(INITIAL_SESSION?.needsBotMove))
+  const [phase, setPhase] = useState(INITIAL_SESSION?.phase || 'setup')
+  const [game, setGame] = useState(() => gameFromHistory(INITIAL_SESSION?.history || []))
   const coachLevel = 2300
-  const [colorChoice, setColorChoice] = useState('white')
-  const [color, setColor] = useState('white')
+  const [colorChoice, setColorChoice] = useState(INITIAL_SESSION?.colorChoice || 'white')
+  const [color, setColor] = useState(INITIAL_SESSION?.color || 'white')
   const [engineStatus, setEngineStatus] = useState('JS fallback ready')
   const [thinking, setThinking] = useState(false)
   const [selectedMove, setSelectedMove] = useState(null)
-  const [lastBotMove, setLastBotMove] = useState(null)
-  const [viewPly, setViewPly] = useState(0)
-  const [finalReview, setFinalReview] = useState(null)
+  const [lastBotMove, setLastBotMove] = useState(INITIAL_SESSION?.lastBotMove || null)
+  const [viewPly, setViewPly] = useState(INITIAL_SESSION?.viewPly || INITIAL_SESSION?.history?.length || 0)
+  const [finalReview, setFinalReview] = useState(INITIAL_SESSION?.finalReview || null)
   const [reviewingGame, setReviewingGame] = useState(false)
-  const [beltMode, setBeltMode] = useState(false)
-  const [premove, setPremove] = useState(null)
-  const [arrows, setArrows] = useState([])
+  const [beltMode, setBeltMode] = useState(Boolean(INITIAL_SESSION?.beltMode))
+  const [premove, setPremove] = useState(INITIAL_SESSION?.premove || null)
+  const [arrows, setArrows] = useState(INITIAL_SESSION?.arrows || [])
   const stockfishRef = useRef(null)
-  const premoveRef = useRef(null)
+  const premoveRef = useRef(INITIAL_SESSION?.premove || null)
   const arrowStartRef = useRef(null)
-  const [messages, setMessages] = useState([
-    {
-      speaker: 'Mubassar',
-      text: 'Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE title. Pick your settings and let’s play.',
-    },
-  ])
+  const restoredGameRef = useRef(game)
+  const restoredBeltModeRef = useRef(Boolean(INITIAL_SESSION?.beltMode))
+  const playBotReplyRef = useRef(null)
+  const [messages, setMessages] = useState(INITIAL_SESSION?.messages || DEFAULT_MESSAGES)
 
   const moveHistory = game.history()
   const latestPly = moveHistory.length
@@ -61,6 +68,35 @@ function App() {
     stockfishRef.current = createStockfishClient()
     return stockfishRef.current.onStatus(setEngineStatus)
   }, [])
+
+  useEffect(() => {
+    playBotReplyRef.current = playBotReply
+  })
+
+  useEffect(() => {
+    if (!restoredNeedsBotMove.current) return
+    restoredNeedsBotMove.current = false
+    window.setTimeout(() => {
+      playBotReplyRef.current?.(cloneGame(restoredGameRef.current), restoredBeltModeRef.current)
+    }, 250)
+  }, [])
+
+  useEffect(() => {
+    saveSession({
+      phase,
+      history: game.history(),
+      color,
+      colorChoice,
+      messages,
+      beltMode,
+      premove,
+      arrows,
+      lastBotMove,
+      viewPly,
+      finalReview,
+      thinking,
+    })
+  }, [arrows, beltMode, color, colorChoice, finalReview, game, lastBotMove, messages, phase, premove, thinking, viewPly])
 
   useEffect(() => {
     if (phase !== 'game') return undefined
@@ -133,9 +169,7 @@ function App() {
 
   function startGame() {
     const fresh = new Chess()
-    const chosenColor = colorChoice === 'random'
-      ? (Math.random() > 0.5 ? 'white' : 'black')
-      : colorChoice
+    const chosenColor = colorChoice === 'random' ? randomSide() : colorChoice
     setColor(chosenColor)
     setGame(fresh)
     setPhase('game')
@@ -157,6 +191,7 @@ function App() {
   }
 
   function resetGame() {
+    clearSavedSession()
     setGame(new Chess())
     setPhase('setup')
     setThinking(false)
@@ -170,12 +205,7 @@ function App() {
     setArrows([])
     setColor('white')
     setColorChoice('white')
-    setMessages([
-      {
-        speaker: 'Mubassar',
-        text: 'Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE title. Pick your settings and let’s play.',
-      },
-    ])
+    setMessages(DEFAULT_MESSAGES)
   }
 
   function updateBoard(nextGame) {
@@ -688,6 +718,55 @@ function cloneGame(source) {
   return cloned
 }
 
+function gameFromHistory(history = []) {
+  const restored = new Chess()
+  for (const san of history) {
+    const move = restored.move(san)
+    if (!move) return new Chess()
+  }
+  return restored
+}
+
+function loadSavedSession() {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    const restoredGame = gameFromHistory(parsed.history || [])
+    const playerTurn = parsed.color === 'black' ? 'b' : 'w'
+    return {
+      ...parsed,
+      history: restoredGame.history(),
+      needsBotMove:
+        parsed.phase === 'game' &&
+        !restoredGame.isGameOver() &&
+        restoredGame.turn() !== playerTurn,
+    }
+  } catch {
+    clearSavedSession()
+    return null
+  }
+}
+
+function saveSession(session) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
+  } catch {
+    // Storage can fail in private mode; the game should still be playable.
+  }
+}
+
+function clearSavedSession() {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Ignore storage cleanup failures.
+  }
+}
+
 function findCheckedKingSquare(game) {
   if (!game.inCheck() && !game.isCheckmate()) return null
   const turn = game.turn()
@@ -760,6 +839,10 @@ function premoveTargets(game, square, playerTurn) {
 function squareName(file, rank) {
   if (file < 0 || file > 7 || rank < 1 || rank > 8) return null
   return `${'abcdefgh'[file]}${rank}`
+}
+
+function randomSide() {
+  return Math.random() > 0.5 ? 'white' : 'black'
 }
 
 function arrowColor(event) {

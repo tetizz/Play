@@ -14,6 +14,9 @@ const pieceValue = {
 const centerSquares = new Set(['d4', 'e4', 'd5', 'e5'])
 const nearCenterSquares = new Set(['c3', 'd3', 'e3', 'f3', 'c4', 'f4', 'c5', 'f5', 'c6', 'd6', 'e6', 'f6'])
 const MIN_CONFIDENT_BOOK_GAMES = 8
+const MIN_RANDOM_BOOK_GAMES = 12
+const RANDOM_BOOK_FLOOR_RATIO = 0.16
+const RANDOM_BOOK_TOP_COUNT = 4
 
 export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
   const engineMove = moveFromUci(game, engineUciMove)
@@ -126,11 +129,43 @@ function bestRepertoireMove(game, options) {
   })
   const candidates = sorted.length ? sorted : [...options].sort((a, b) => b.games - a.games)
 
+  const forced = candidates.find((option) => option.force)
+  if (forced) return forced
+
+  const randomChoice = randomKnownRepertoireMove(game, candidates)
+  if (randomChoice) return randomChoice
+
   for (const option of candidates) {
     if (option.force || !isClearlyBadBookMove(game, option.move)) return option
   }
 
   return candidates[0]
+}
+
+function randomKnownRepertoireMove(game, candidates) {
+  if (!candidates.length) return null
+  const topGames = Math.max(...candidates.map((option) => option.games || 1))
+  const knownFloor = Math.max(MIN_RANDOM_BOOK_GAMES, Math.ceil(topGames * RANDOM_BOOK_FLOOR_RATIO))
+  const knownMoves = candidates
+    .filter((option) => option.games >= knownFloor)
+    .filter((option) => !isClearlyBadBookMove(game, option.move))
+    .slice(0, RANDOM_BOOK_TOP_COUNT)
+
+  if (knownMoves.length < 2) return null
+  return weightedRandomBookMove(knownMoves)
+}
+
+function weightedRandomBookMove(options) {
+  const weights = options.map((option) => Math.max(1, option.games || 1))
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0)
+  let roll = Math.random() * totalWeight
+
+  for (let index = 0; index < options.length; index += 1) {
+    roll -= weights[index]
+    if (roll <= 0) return options[index]
+  }
+
+  return options[0]
 }
 
 function isConfidentBookChoice(choice, engineMove) {

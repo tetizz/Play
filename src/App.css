@@ -206,30 +206,64 @@ button.selected {
 .color-picker {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 0 0 28px;
+  gap: clamp(10px, 1.4vw, 16px);
+  margin: 0 0 22px;
 }
 
 .color-picker button {
   min-width: 0;
-  min-height: clamp(108px, 13vw, 148px);
+  min-height: clamp(104px, 11vw, 136px);
   border-radius: 8px;
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 8px;
+  gap: 4px;
+  overflow: hidden;
   font-weight: 900;
 }
 
-.color-picker button span {
-  color: #fff;
-  font-size: clamp(46px, 5vw, 72px);
-  line-height: 0.9;
+.king-choice-piece {
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 7.4vw, 94px);
+  height: clamp(64px, 7.4vw, 94px);
+  max-width: 72%;
+  max-height: 86px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.king-choice-piece img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.random-kings {
+  grid-template-columns: 1fr 1fr;
+  width: clamp(96px, 10vw, 126px);
+  max-width: 86%;
+  column-gap: 0;
+}
+
+.random-kings img {
+  width: 78%;
+}
+
+.random-kings img:first-child {
+  justify-self: end;
+  margin-right: -8%;
+}
+
+.random-kings img:last-child {
+  justify-self: start;
+  margin-left: -8%;
 }
 
 .color-picker button strong {
   color: #f3f3f0;
-  font-size: clamp(15px, 1.8vw, 22px);
+  font-size: clamp(13px, 1.4vw, 18px);
   line-height: 1;
 }
 

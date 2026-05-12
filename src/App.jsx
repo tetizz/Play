@@ -15,6 +15,8 @@ import { createStockfishClient } from './lib/stockfishClient'
 import './App.css'
 
 const AVATAR = './assets/mubassar-avatar.png'
+const WHITE_KING = './assets/white-king.png'
+const BLACK_KING = './assets/black-king.png'
 const START_FEN = new Chess().fen()
 
 function App() {
@@ -357,19 +359,11 @@ function App() {
             <Bot size={28} />
             <h1>Play Bots</h1>
           </div>
-          <div className="intro-row">
-            <Avatar className="intro-avatar" />
-            <div className="speech-bubble">
-              Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE
-              title.
-            </div>
-          </div>
-
           <div className="color-picker" aria-label="Choose color">
             {[
-              { key: 'white', piece: '♔', label: 'White' },
-              { key: 'black', piece: '♚', label: 'Black' },
-              { key: 'random', piece: '?', label: 'Random' },
+              { key: 'white', piece: 'wK', label: 'White' },
+              { key: 'black', piece: 'bK', label: 'Black' },
+              { key: 'random', piece: 'random', label: 'Random' },
             ].map((item) => (
               <button
                 key={item.key}
@@ -377,10 +371,17 @@ function App() {
                 className={colorChoice === item.key ? 'selected' : ''}
                 onClick={() => setColorChoice(item.key)}
               >
-                <span>{item.piece}</span>
+                <KingChoiceIcon piece={item.piece} />
                 <strong>{item.label}</strong>
               </button>
             ))}
+          </div>
+          <div className="intro-row">
+            <Avatar className="intro-avatar" />
+            <div className="speech-bubble">
+              Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE
+              title.
+            </div>
           </div>
 
           <button type="button" className="play-button" onClick={startGame}>
@@ -474,6 +475,23 @@ function App() {
         ) : null}
       </aside>
     </main>
+  )
+}
+
+function KingChoiceIcon({ piece }) {
+  if (piece === 'random') {
+    return (
+      <span className="king-choice-piece random-kings" aria-hidden="true">
+        <img src={WHITE_KING} alt="" />
+        <img src={BLACK_KING} alt="" />
+      </span>
+    )
+  }
+
+  return (
+    <span className="king-choice-piece" aria-hidden="true">
+      <img src={piece === 'wK' ? WHITE_KING : BLACK_KING} alt="" />
+    </span>
   )
 }
 

@@ -3,14 +3,11 @@ import { Chess } from 'chess.js'
 import { Chessboard } from 'react-chessboard'
 import {
   Bot,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Flag,
   Lightbulb,
   Undo2,
-  Zap,
 } from 'lucide-react'
 import { calculationProfile, chooseCoachMove, shouldActivateBeltMode } from './lib/coachEngine'
 import { reviewGameWithStockfish } from './lib/reviewEngine'
@@ -20,24 +17,11 @@ import './App.css'
 const AVATAR = './assets/mubassar-avatar.png'
 const START_FEN = new Chess().fen()
 
-const timeControls = [
-  { label: 'No Timer', minutes: 0, increment: 0, group: 'Casual' },
-  { label: '1 min', minutes: 1, increment: 0, group: 'Bullet' },
-  { label: '1 | 1', minutes: 1, increment: 1, group: 'Bullet' },
-  { label: '2 | 1', minutes: 2, increment: 1, group: 'Bullet' },
-  { label: '3 | 2', minutes: 3, increment: 2, group: 'Blitz' },
-  { label: '5 min', minutes: 5, increment: 0, group: 'Blitz' },
-  { label: '5 | 5', minutes: 5, increment: 5, group: 'Blitz' },
-  { label: '10 min', minutes: 10, increment: 0, group: 'Rapid' },
-  { label: '15 | 10', minutes: 15, increment: 10, group: 'Rapid' },
-  { label: '30 min', minutes: 30, increment: 0, group: 'Rapid' },
-]
-
 function App() {
   const [phase, setPhase] = useState('setup')
   const [game, setGame] = useState(() => new Chess())
   const coachLevel = 2300
-  const [timeControl, setTimeControl] = useState(timeControls[0])
+  const [colorChoice, setColorChoice] = useState('white')
   const [color, setColor] = useState('white')
   const [engineStatus, setEngineStatus] = useState('JS fallback ready')
   const [thinking, setThinking] = useState(false)
@@ -69,7 +53,6 @@ function App() {
     return replay
   }, [moveHistory, activePly])
   const displayedFen = displayedGame.fen()
-  const clockText = timeControl.minutes ? `${timeControl.minutes}:00` : 'No Timer'
   const gameState = getGameState(game, thinking)
 
   useEffect(() => {
@@ -148,6 +131,10 @@ function App() {
 
   function startGame() {
     const fresh = new Chess()
+    const chosenColor = colorChoice === 'random'
+      ? (Math.random() > 0.5 ? 'white' : 'black')
+      : colorChoice
+    setColor(chosenColor)
     setGame(fresh)
     setPhase('game')
     setSelectedMove(null)
@@ -164,7 +151,7 @@ function App() {
         text: 'Good luck! Try to keep up!',
       },
     ])
-    if (color === 'black') playBotReply(fresh)
+    if (chosenColor === 'black') playBotReply(fresh)
   }
 
   function resetGame() {
@@ -179,6 +166,8 @@ function App() {
     setBeltMode(false)
     clearPremove()
     setArrows([])
+    setColor('white')
+    setColorChoice('white')
     setMessages([
       {
         speaker: 'Mubassar',
@@ -376,30 +365,20 @@ function App() {
             </div>
           </div>
 
-          <div className="setting-row top-choice">
-            <Clock />
-            <span>{timeControl.label}</span>
-            <ChevronDown />
-          </div>
-          <button
-            type="button"
-            className={`wide-choice ${timeControl.minutes === 0 ? 'selected' : ''}`}
-            onClick={() => setTimeControl(timeControls[0])}
-          >
-            No Timer
-          </button>
-
-          <TimeGrid selected={timeControl} onSelect={setTimeControl} />
-
           <div className="color-picker" aria-label="Choose color">
-            {['white', 'random', 'black'].map((item) => (
+            {[
+              { key: 'white', piece: '♔', label: 'White' },
+              { key: 'black', piece: '♚', label: 'Black' },
+              { key: 'random', piece: '?', label: 'Random' },
+            ].map((item) => (
               <button
-                key={item}
+                key={item.key}
                 type="button"
-                className={color === item ? 'selected' : ''}
-                onClick={() => setColor(item === 'random' ? (Math.random() > 0.5 ? 'white' : 'black') : item)}
+                className={colorChoice === item.key ? 'selected' : ''}
+                onClick={() => setColorChoice(item.key)}
               >
-                {item === 'white' ? '♔' : item === 'black' ? '♚' : '?'}
+                <span>{item.piece}</span>
+                <strong>{item.label}</strong>
               </button>
             ))}
           </div>
@@ -432,7 +411,7 @@ function App() {
               allowDragging: isViewingLatest,
               squareStyles,
               dropSquareStyle: { boxShadow: 'none' },
-              draggingPieceGhostStyle: { opacity: 0 },
+              draggingPieceGhostStyle: { opacity: 1 },
               allowDrawingArrows: false,
               arrows,
               arrowOptions: {
@@ -484,7 +463,6 @@ function App() {
         <div className="status-line">
           <span>{gameState}</span>
           <span>{premove ? `Premove ${premove.from}-${premove.to}` : engineStatus}</span>
-          <strong>{clockText}</strong>
         </div>
         <div className="action-row">
           <ActionButton label="Resign" icon={Flag} onClick={resetGame} />
@@ -496,36 +474,6 @@ function App() {
         ) : null}
       </aside>
     </main>
-  )
-}
-
-function TimeGrid({ selected, onSelect }) {
-  const groups = ['Bullet', 'Blitz', 'Rapid']
-  return (
-    <div className="time-grid">
-      {groups.map((group) => (
-        <div className="time-group" key={group}>
-          <h2>
-            {group === 'Bullet' ? <Zap /> : group === 'Blitz' ? <Zap /> : <Clock />}
-            {group}
-          </h2>
-          <div className="time-buttons">
-            {timeControls
-              .filter((control) => control.group === group)
-              .map((control) => (
-                <button
-                  type="button"
-                  key={control.label}
-                  className={selected.label === control.label ? 'selected' : ''}
-                  onClick={() => onSelect(control)}
-                >
-                  {control.label}
-                </button>
-              ))}
-          </div>
-        </div>
-      ))}
-    </div>
   )
 }
 

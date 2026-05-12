@@ -11,9 +11,9 @@
 
 .setup-shell {
   display: grid;
-  grid-template-columns: minmax(520px, 1.05fr) minmax(430px, 0.95fr);
+  grid-template-columns: minmax(500px, 1.05fr) minmax(420px, 0.95fr);
   gap: 42px;
-  padding: 32px 56px;
+  padding: clamp(18px, 2.5vw, 32px) clamp(18px, 4vw, 56px);
 }
 
 .game-shell {
@@ -42,7 +42,7 @@
   align-items: center;
   justify-content: center;
   gap: 14px;
-  margin: 18px 0 54px;
+  margin: 12px 0 28px;
 }
 
 .play-bots-title.compact {
@@ -61,7 +61,7 @@
   grid-template-columns: 128px 1fr;
   align-items: center;
   gap: 18px;
-  margin-bottom: 42px;
+  margin-bottom: 24px;
 }
 
 .intro-row.in-game {
@@ -168,39 +168,12 @@
   border-right-color: #fff;
 }
 
-.setting-row,
-.wide-choice,
-.time-buttons button,
+.color-picker button,
 .action-button {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: linear-gradient(rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.07));
   color: #f3f3f0;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.24);
-}
-
-.setting-row {
-  height: 90px;
-  display: grid;
-  grid-template-columns: 56px 1fr 32px;
-  align-items: center;
-  padding: 0 28px;
-  border-radius: 9px;
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.setting-row svg:first-child,
-.time-group svg {
-  color: #ffc20e;
-}
-
-.wide-choice {
-  width: 100%;
-  min-height: 74px;
-  margin: 26px 0 34px;
-  border-radius: 9px;
-  font-size: 28px;
-  font-weight: 800;
 }
 
 button {
@@ -222,12 +195,6 @@ button.selected {
     0 14px 30px rgba(0, 0, 0, 0.24);
 }
 
-.time-grid {
-  display: grid;
-  gap: 24px;
-}
-
-.time-group h2,
 .review-panel h2 {
   display: flex;
   align-items: center;
@@ -236,35 +203,34 @@ button.selected {
   font-size: 27px;
 }
 
-.time-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px 18px;
-}
-
-.time-buttons button {
-  min-height: 70px;
-  border-radius: 8px;
-  font-size: 27px;
-  font-weight: 800;
-}
-
 .color-picker {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin: 24px 0 26px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 28px;
 }
 
 .color-picker button {
-  width: 60px;
-  height: 60px;
-  border: 0;
+  min-width: 0;
+  min-height: clamp(108px, 13vw, 148px);
   border-radius: 8px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  font-size: 34px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
   font-weight: 900;
+}
+
+.color-picker button span {
+  color: #fff;
+  font-size: clamp(46px, 5vw, 72px);
+  line-height: 0.9;
+}
+
+.color-picker button strong {
+  color: #f3f3f0;
+  font-size: clamp(15px, 1.8vw, 22px);
+  line-height: 1;
 }
 
 .play-button {
@@ -497,15 +463,6 @@ button.selected {
   color: #cfc8bc;
 }
 
-.status-line strong {
-  margin-left: auto;
-  padding: 8px 14px;
-  border-radius: 5px;
-  color: #151515;
-  background: #fff;
-  font-size: 25px;
-}
-
 .action-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -612,7 +569,7 @@ button.selected {
     font-size: 15px;
   }
 
-  .time-buttons,
+  .color-picker,
   .action-row {
     grid-template-columns: 1fr;
   }

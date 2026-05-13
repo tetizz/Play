@@ -2,12 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Chess } from 'chess.js'
 import { Chessboard } from 'react-chessboard'
 import {
+  BarChart3,
   Bot,
   ChevronLeft,
   ChevronRight,
   Flag,
   Lightbulb,
   Undo2,
+  X,
 } from 'lucide-react'
 import { calculationProfile, chooseCoachMove, shouldActivateBeltMode } from './lib/coachEngine'
 import { reviewGameWithStockfish } from './lib/reviewEngine'
@@ -61,6 +63,7 @@ function App() {
   const [lastBotMove, setLastBotMove] = useState(INITIAL_SESSION?.lastBotMove || null)
   const [viewPly, setViewPly] = useState(INITIAL_SESSION?.viewPly || INITIAL_SESSION?.history?.length || 0)
   const [finalReview, setFinalReview] = useState(INITIAL_SESSION?.finalReview || null)
+  const [reviewOpen, setReviewOpen] = useState(Boolean(INITIAL_SESSION?.finalReview))
   const [reviewingGame, setReviewingGame] = useState(false)
   const [beltMode, setBeltMode] = useState(Boolean(INITIAL_SESSION?.beltMode))
   const [premove, setPremove] = useState(INITIAL_SESSION?.premove || null)
@@ -140,6 +143,7 @@ function App() {
       )
       if (!cancelled) {
         setFinalReview(review)
+        setReviewOpen(true)
         setReviewingGame(false)
       }
     }
@@ -198,6 +202,7 @@ function App() {
     setLastBotMove(null)
     setViewPly(0)
     setFinalReview(null)
+    setReviewOpen(false)
     setReviewingGame(false)
     setBeltMode(false)
     clearPremove()
@@ -220,6 +225,7 @@ function App() {
     setLastBotMove(null)
     setViewPly(0)
     setFinalReview(null)
+    setReviewOpen(false)
     setReviewingGame(false)
     setBeltMode(false)
     clearPremove()
@@ -390,6 +396,7 @@ function App() {
     updateBoard(nextGame)
     setLastBotMove(null)
     setFinalReview(null)
+    setReviewOpen(false)
     setReviewingGame(false)
     setBeltMode(false)
     clearPremove()
@@ -522,9 +529,20 @@ function App() {
           <ActionButton label="Show Hint" icon={Lightbulb} onClick={() => addCoachLine(randomLine(HINT_LINES))} />
         </div>
         {reviewingGame || finalReview ? (
-          <ReviewPanel finalReview={finalReview} reviewing={reviewingGame} />
+          <button type="button" className="review-open-button" onClick={() => setReviewOpen(true)}>
+            <BarChart3 size={24} />
+            Game Review
+          </button>
         ) : null}
       </aside>
+      {reviewOpen ? (
+        <ReviewPanel
+          finalReview={finalReview}
+          reviewing={reviewingGame}
+          moves={moveHistory}
+          onClose={() => setReviewOpen(false)}
+        />
+      ) : null}
     </main>
   )
 }
@@ -671,39 +689,89 @@ function ActionButton({ label, icon: Icon, onClick }) {
   )
 }
 
-function ReviewPanel({ finalReview, reviewing }) {
+function ReviewPanel({ finalReview, reviewing, moves, onClose }) {
+  const groupedMoves = []
+  for (let index = 0; index < moves.length; index += 2) {
+    groupedMoves.push({
+      number: index / 2 + 1,
+      white: moves[index],
+      black: moves[index + 1],
+    })
+  }
+
   if (finalReview) {
     return (
-      <section className="review-panel">
-        <h2>Game Review</h2>
-        <div className="review-summary">
-          <strong>{finalReview.result}</strong>
-          <span>{finalReview.engine}</span>
-          {finalReview.accuracy ? <span>{finalReview.accuracy}% accuracy estimate</span> : null}
-        </div>
-        {finalReview.moments.length ? (
-          finalReview.moments.map((moment) => (
-            <p key={`${moment.move}-${moment.san}-${moment.label}`}>
-              <strong>{moment.label}</strong> {moment.move}. {moment.san}
-              <span>{moment.note}</span>
-            </p>
-          ))
-        ) : (
-          <p>No major swings. That was a clean game.</p>
-        )}
-      </section>
+      <div className="review-overlay" role="dialog" aria-modal="true" aria-label="Game review">
+        <section className="review-modal">
+          <button type="button" className="review-close" onClick={onClose} aria-label="Close game review">
+            <X size={30} />
+          </button>
+          <div className="review-hero">
+            <span>Game Review</span>
+            <strong>{finalReview.accuracy ? `${finalReview.accuracy}%` : '--'}</strong>
+            <p>{finalReview.result}</p>
+          </div>
+          <div className="review-summary">
+            <span>{finalReview.engine}</span>
+            <span>{moves.length} moves reviewed</span>
+            <span>Bookup-style classifications</span>
+          </div>
+          <div className="review-counts">
+            {(finalReview.counts || []).map((item) => (
+              <div className="review-count-card" key={item.key} style={{ '--accent': item.color }}>
+                <img src={item.icon} alt="" />
+                <span>{item.label}</span>
+                <strong>{item.count}</strong>
+              </div>
+            ))}
+          </div>
+          <div className="review-body">
+            <section className="review-moves">
+              <h2>Moves</h2>
+              {groupedMoves.map((move) => (
+                <div className="review-move-row" key={move.number}>
+                  <span>{move.number}.</span>
+                  <strong>{move.white}</strong>
+                  <strong>{move.black || ''}</strong>
+                </div>
+              ))}
+            </section>
+            <section className="review-moments">
+              <h2>Classifications</h2>
+              {finalReview.moments.length ? (
+                finalReview.moments.map((moment) => (
+                  <article className="review-moment-card" key={`${moment.move}-${moment.san}-${moment.label}`}>
+                    <img src={moment.icon} alt="" />
+                    <div>
+                      <strong style={{ color: moment.color }}>{moment.label}</strong>
+                      <span>{moment.moveNumber || moment.move}. {moment.san}</span>
+                      <p>{moment.note}</p>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <p>No major swings. That was a clean game.</p>
+              )}
+            </section>
+          </div>
+        </section>
+      </div>
     )
   }
 
   return (
-    <section className="review-panel">
-      <h2>Game Review</h2>
-      {reviewing ? (
-        <p>Stockfish 18 is reviewing the finished game.</p>
-      ) : (
-        <p>The game review appears after checkmate, resignation, or draw.</p>
-      )}
-    </section>
+    <div className="review-overlay" role="dialog" aria-modal="true" aria-label="Game review">
+      <section className="review-modal review-loading">
+        <button type="button" className="review-close" onClick={onClose} aria-label="Close game review">
+          <X size={30} />
+        </button>
+        <div className="review-hero">
+          <span>Game Review</span>
+          <strong>...</strong>
+          <p>{reviewing ? 'Stockfish 18 is reviewing the finished game.' : 'The review appears after the game.'}</p>
+        </div>
+      </section>
+    </div>
   )
 }
 

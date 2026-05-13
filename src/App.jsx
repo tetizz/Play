@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { calculationProfile, chooseCoachMove, shouldActivateBeltMode } from './lib/coachEngine'
-import { reviewGameWithStockfish } from './lib/reviewEngine'
+import { buildFallbackFinalReview, reviewGameWithStockfish } from './lib/reviewEngine'
 import { createStockfishClient } from './lib/stockfishClient'
 import './App.css'
 
@@ -21,6 +21,7 @@ const WHITE_KING = './assets/white-king.png'
 const BLACK_KING = './assets/black-king.png'
 const START_FEN = new Chess().fen()
 const STORAGE_KEY = 'mubassar-bot-session-v1'
+const REVIEW_TIMEOUT_MS = 6500
 const DEFAULT_MESSAGES = [
   {
     speaker: 'Mubassar',
@@ -69,6 +70,8 @@ function App() {
   const [premove, setPremove] = useState(INITIAL_SESSION?.premove || null)
   const [arrows, setArrows] = useState(INITIAL_SESSION?.arrows || [])
   const stockfishRef = useRef(null)
+  const reviewingGameRef = useRef(false)
+  const reviewKeyRef = useRef(null)
   const premoveRef = useRef(INITIAL_SESSION?.premove || null)
   const arrowStartRef = useRef(null)
   const restoredGameRef = useRef(game)
@@ -133,25 +136,37 @@ function App() {
   }, [latestPly, phase])
 
   useEffect(() => {
-    if (phase !== 'game' || thinking || !game.isGameOver() || finalReview || reviewingGame) return
-    let cancelled = false
+    if (phase !== 'game' || thinking || !game.isGameOver() || finalReview || reviewingGameRef.current) return
+    const reviewKey = game.history().join('|')
+    if (reviewKeyRef.current === reviewKey) return
+    reviewKeyRef.current = reviewKey
     async function runFinalReview() {
+      reviewingGameRef.current = true
       setReviewingGame(true)
-      const review = await reviewGameWithStockfish(
-        game.history(),
-        stockfishRef.current?.evaluateFen,
-      )
-      if (!cancelled) {
+      let review
+      try {
+        const history = game.history()
+        review = await Promise.race([
+          reviewGameWithStockfish(
+            history,
+            stockfishRef.current?.evaluateFen,
+          ),
+          new Promise((resolve) => {
+            window.setTimeout(() => resolve(buildFallbackFinalReview(history)), REVIEW_TIMEOUT_MS)
+          }),
+        ])
+      } catch {
+        review = buildFallbackFinalReview(game.history())
+      }
+      if (reviewKeyRef.current === reviewKey) {
         setFinalReview(review)
         setReviewOpen(true)
         setReviewingGame(false)
       }
+      reviewingGameRef.current = false
     }
     runFinalReview()
-    return () => {
-      cancelled = true
-    }
-  }, [finalReview, game, phase, reviewingGame, thinking])
+  }, [finalReview, game, phase, thinking])
 
   const legalTargets = useMemo(() => {
     if (!selectedMove || !isViewingLatest) return new Set()
@@ -202,6 +217,7 @@ function App() {
     setLastBotMove(null)
     setViewPly(0)
     setFinalReview(null)
+    reviewKeyRef.current = null
     setReviewOpen(false)
     setReviewingGame(false)
     setBeltMode(false)
@@ -225,6 +241,7 @@ function App() {
     setLastBotMove(null)
     setViewPly(0)
     setFinalReview(null)
+    reviewKeyRef.current = null
     setReviewOpen(false)
     setReviewingGame(false)
     setBeltMode(false)
@@ -396,6 +413,7 @@ function App() {
     updateBoard(nextGame)
     setLastBotMove(null)
     setFinalReview(null)
+    reviewKeyRef.current = null
     setReviewOpen(false)
     setReviewingGame(false)
     setBeltMode(false)
@@ -528,12 +546,10 @@ function App() {
           <ActionButton label="Undo" icon={Undo2} onClick={undoPair} />
           <ActionButton label="Show Hint" icon={Lightbulb} onClick={() => addCoachLine(randomLine(HINT_LINES))} />
         </div>
-        {reviewingGame || finalReview ? (
-          <button type="button" className="review-open-button" onClick={() => setReviewOpen(true)}>
-            <BarChart3 size={24} />
-            Game Review
-          </button>
-        ) : null}
+        <button type="button" className="review-open-button" onClick={() => setReviewOpen(true)}>
+          <BarChart3 size={24} />
+          Game Review
+        </button>
       </aside>
       {reviewOpen ? (
         <ReviewPanel

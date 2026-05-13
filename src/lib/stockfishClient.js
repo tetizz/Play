@@ -96,7 +96,7 @@ export function createStockfishClient() {
       const timeout = window.setTimeout(() => {
         pending.delete(id)
         resolve(null)
-      }, Math.max(1500, moveTime + 900))
+      }, Math.max(800, moveTime + 520))
       pending.set(id, { id, kind: 'eval', resolve, timeout, score: null })
       send(`go depth ${depth} movetime ${moveTime}`)
     })

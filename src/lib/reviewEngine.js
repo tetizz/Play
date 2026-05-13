@@ -3,6 +3,7 @@ import { OPENING_BOOK } from '../data/openingBook'
 
 const values = { p: 100, n: 315, b: 330, r: 500, q: 900, k: 0 }
 const EXPECTED_POINTS_GRADIENT = 0.0035
+const MAX_STOCKFISH_REVIEW_PLIES = 48
 const classificationData = {
   book: {
     label: 'Book',
@@ -134,12 +135,16 @@ export async function reviewGameWithStockfish(history, evaluateFen) {
     const isBookMove = Boolean(OPENING_BOOK[bookKey]?.some((option) =>
       (typeof option === 'string' ? option : option.san) === san,
     ))
-    const beforeScore = await evaluateFen(beforeFen, { depth: 8, moveTime: 360 })
+    const beforeScore = index < MAX_STOCKFISH_REVIEW_PLIES
+      ? await safeEvaluate(evaluateFen, beforeFen, { depth: 6, moveTime: 180 })
+      : null
     const side = game.turn()
     const move = game.move(san)
     if (!move) continue
 
-    const afterScore = await evaluateFen(game.fen(), { depth: 8, moveTime: 360 })
+    const afterScore = index < MAX_STOCKFISH_REVIEW_PLIES
+      ? await safeEvaluate(evaluateFen, game.fen(), { depth: 6, moveTime: 180 })
+      : null
     if (typeof beforeScore !== 'number' || typeof afterScore !== 'number') {
       moments.push(fallbackMoment(move, index))
       continue
@@ -165,10 +170,11 @@ export async function reviewGameWithStockfish(history, evaluateFen) {
     })
   }
 
+  const completedWithStockfish = reviewedMoves > 0
   const counts = buildClassificationCounts(moments)
   return {
     complete: true,
-    engine: 'Stockfish 18',
+    engine: completedWithStockfish ? 'Stockfish 18' : 'JS fallback',
     accuracy: reviewedMoves ? Math.round(accuracyTotal / reviewedMoves) : null,
     result: finalResult(game),
     counts,
@@ -176,7 +182,7 @@ export async function reviewGameWithStockfish(history, evaluateFen) {
   }
 }
 
-function buildFallbackFinalReview(history) {
+export function buildFallbackFinalReview(history) {
   const moments = reviewGame(history)
   return {
     complete: true,
@@ -185,6 +191,14 @@ function buildFallbackFinalReview(history) {
     result: 'Game over',
     counts: buildClassificationCounts(moments),
     moments,
+  }
+}
+
+async function safeEvaluate(evaluateFen, fen, options) {
+  try {
+    return await evaluateFen(fen, options)
+  } catch {
+    return null
   }
 }
 
@@ -234,11 +248,14 @@ function accuracyFromLoss(loss) {
 }
 
 function fallbackMoment(move, index) {
+  const key = move.san.includes('#') ? 'best' : move.san.includes('+') || move.captured ? 'great' : 'good'
   return {
     move: index + 1,
+    moveNumber: Math.floor(index / 2) + 1,
     san: move.san,
-    ...classificationForKey(move.san.includes('#') ? 'best' : move.san.includes('+') || move.captured ? 'great' : 'good'),
-    note: 'Stockfish did not return an evaluation for this move.',
+    side: move.color,
+    ...classificationForKey(key),
+    expectedPointsLoss: null,
   }
 }
 

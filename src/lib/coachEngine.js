@@ -291,6 +291,15 @@ function withPhrase(move, game, source, rating = 2300) {
     isWinning: isWinningAfterMove(game, move),
     isBeltMode: rating >= 2700,
     isCenterMove: centerSquares.has(move.to),
+    isCastle: move.flags.includes('k') || move.flags.includes('q'),
+    isPromotion: Boolean(move.promotion),
+    isQueenMove: move.piece === 'q',
+    isRookMove: move.piece === 'r',
+    isPawnBreak: isPawnBreak(game, move),
+    isRecapture: isRecapture(game, move),
+    isEscapingCheck: game.inCheck(),
+    isOnlyMove: game.moves().length === 1,
+    isEndgame: countPieces(game) <= 10,
     source,
   })
 }
@@ -306,6 +315,25 @@ function isWinningAfterMove(game, move) {
   const branch = new Chess(game.fen())
   branch.move(move)
   return -evaluate(branch) > 520
+}
+
+function isPawnBreak(game, move) {
+  if (move.piece !== 'p') return false
+  const fromRank = Number(move.from[1])
+  const toRank = Number(move.to[1])
+  const movedTwoSquares = Math.abs(toRank - fromRank) === 2
+  return movedTwoSquares || centerSquares.has(move.to) || move.captured
+}
+
+function isRecapture(game, move) {
+  if (!move.captured) return false
+  const verboseHistory = game.history({ verbose: true })
+  const previousMove = verboseHistory.at(-1)
+  return previousMove?.to === move.to
+}
+
+function countPieces(game) {
+  return game.board().flat().filter(Boolean).length
 }
 
 function isKingsIndianAttack(moves) {

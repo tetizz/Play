@@ -25,6 +25,27 @@ const DEFAULT_MESSAGES = [
     text: 'Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE title. Pick your settings and let’s play.',
   },
 ]
+const BELT_ACTIVATION_LINES = [
+  'You are going to get belt for playing this trash opening. Activating belt mode.',
+  'This setup is asking for punishment. Belt mode is on.',
+  'You really brought this opening here. Fine, activating belt mode.',
+  'That structure is not surviving today. Belt mode.',
+  'You chose the trash-opening path. Now the belt comes out.',
+  'I warned you about this. Belt mode activated.',
+]
+const UNDO_LINES = [
+  'Undo is fine for training. Now improve the idea, not only the move.',
+  'Take it back, but learn why it went wrong.',
+  'Training mode mercy. Do better with the second chance.',
+  'Fine, we rewind. Now show me the better plan.',
+]
+const HINT_LINES = [
+  'Look for checks, captures, and threats. Then compare the quiet improving move.',
+  'Start with forcing moves, then ask what piece is worst placed.',
+  'Find the loose piece first. The board usually tells on itself.',
+  'Check king safety, hanging pieces, and who controls the center.',
+  'Do not guess. Count the threats and make the annoying move.',
+]
 const INITIAL_SESSION = loadSavedSession()
 
 function App() {
@@ -263,7 +284,7 @@ function App() {
           setLastBotMove(null)
           updateBoard(nextGame)
           const nextBeltMode = forceBeltMode || shouldActivateBeltMode(nextGame.history(), color)
-          const beltLine = 'You are going to get belt for playing this trash opening. Activating belt mode.'
+          const beltLine = randomLine(BELT_ACTIVATION_LINES)
           if (!forceBeltMode && nextBeltMode) setBeltMode(true)
           if (!nextGame.isGameOver()) {
             playBotReply(nextGame, nextBeltMode, !forceBeltMode && nextBeltMode ? beltLine : null)
@@ -294,7 +315,7 @@ function App() {
     clearPremove()
     updateBoard(nextGame)
     const nextBeltMode = beltMode || shouldActivateBeltMode(nextGame.history(), color)
-    const beltLine = 'You are going to get belt for playing this trash opening. Activating belt mode.'
+    const beltLine = randomLine(BELT_ACTIVATION_LINES)
     if (!beltMode && nextBeltMode) {
       setBeltMode(true)
     }
@@ -372,7 +393,7 @@ function App() {
     setReviewingGame(false)
     setBeltMode(false)
     clearPremove()
-    addCoachLine('Undo is fine for training. Now improve the idea, not only the move.')
+    addCoachLine(randomLine(UNDO_LINES))
   }
 
   if (phase === 'setup') {
@@ -498,7 +519,7 @@ function App() {
         <div className="action-row">
           <ActionButton label="Resign" icon={Flag} onClick={resetGame} />
           <ActionButton label="Undo" icon={Undo2} onClick={undoPair} />
-          <ActionButton label="Show Hint" icon={Lightbulb} onClick={() => addCoachLine('Look for checks, captures, and threats. Then compare the quiet improving move.')} />
+          <ActionButton label="Show Hint" icon={Lightbulb} onClick={() => addCoachLine(randomLine(HINT_LINES))} />
         </div>
         {reviewingGame || finalReview ? (
           <ReviewPanel finalReview={finalReview} reviewing={reviewingGame} />
@@ -843,6 +864,10 @@ function squareName(file, rank) {
 
 function randomSide() {
   return Math.random() > 0.5 ? 'white' : 'black'
+}
+
+function randomLine(lines) {
+  return lines[Math.floor(Math.random() * lines.length)]
 }
 
 function arrowColor(event) {

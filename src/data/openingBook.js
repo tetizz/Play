@@ -2,6 +2,7 @@
 // This mirrors OpeningTree-style move frequency: key = SAN moves already played,
 // value = Mubassar's preferred legal replies from that position.
 import { GENERATED_REPERTOIRE_BOOK } from './generatedRepertoireBook'
+import { GENERATED_RECENT_REPERTOIRE_BOOK } from './generatedRecentRepertoireBook'
 
 const MANUAL_OPENING_BOOK = {
   '': [
@@ -85,12 +86,15 @@ export const BOOK_MAX_PLIES = 14
 
 const FORCE_MANUAL_KEYS = new Set(['', 'd4 e5'])
 
-export const OPENING_BOOK = mergeBooks(GENERATED_REPERTOIRE_BOOK, MANUAL_OPENING_BOOK)
+export const OPENING_BOOK = mergeBooks(
+  mergeBooks(GENERATED_REPERTOIRE_BOOK, GENERATED_RECENT_REPERTOIRE_BOOK, true),
+  MANUAL_OPENING_BOOK,
+)
 
-function mergeBooks(generatedBook, manualBook) {
-  const merged = { ...generatedBook }
-  for (const [key, moves] of Object.entries(manualBook)) {
-    if (FORCE_MANUAL_KEYS.has(key) || !merged[key]) merged[key] = moves
+function mergeBooks(baseBook, overlayBook, preferOverlay = false) {
+  const merged = { ...baseBook }
+  for (const [key, moves] of Object.entries(overlayBook)) {
+    if (preferOverlay || FORCE_MANUAL_KEYS.has(key) || !merged[key]) merged[key] = moves
   }
   return merged
 }

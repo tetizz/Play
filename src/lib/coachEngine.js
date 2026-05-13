@@ -15,6 +15,7 @@ const centerSquares = new Set(['d4', 'e4', 'd5', 'e5'])
 const nearCenterSquares = new Set(['c3', 'd3', 'e3', 'f3', 'c4', 'f4', 'c5', 'f5', 'c6', 'd6', 'e6', 'f6'])
 const MIN_CONFIDENT_BOOK_GAMES = 8
 const MIN_RANDOM_BOOK_GAMES = 12
+const MIN_RANDOM_BOOK_RECENT_WEIGHT = 1.2
 const RANDOM_BOOK_FLOOR_RATIO = 0.16
 const RANDOM_BOOK_TOP_COUNT = 4
 
@@ -112,6 +113,8 @@ function findBookMove(game) {
             games: option.games || 1,
             wins: option.wins,
             losses: option.losses,
+            recentWeight: option.recentWeight,
+            latestPlayedAt: option.latestPlayedAt,
             force: option.force,
           }
         : null
@@ -125,9 +128,9 @@ function bestRepertoireMove(game, options) {
   const sorted = [...options].filter(isStatisticallyPlayable).sort((a, b) => {
     if (a.force && !b.force) return -1
     if (!a.force && b.force) return 1
-    return b.games - a.games
+    return repertoireScore(b) - repertoireScore(a)
   })
-  const candidates = sorted.length ? sorted : [...options].sort((a, b) => b.games - a.games)
+  const candidates = sorted.length ? sorted : [...options].sort((a, b) => repertoireScore(b) - repertoireScore(a))
 
   const forced = candidates.find((option) => option.force)
   if (forced) return forced
@@ -144,10 +147,12 @@ function bestRepertoireMove(game, options) {
 
 function randomKnownRepertoireMove(game, candidates) {
   if (!candidates.length) return null
-  const topGames = Math.max(...candidates.map((option) => option.games || 1))
-  const knownFloor = Math.max(MIN_RANDOM_BOOK_GAMES, Math.ceil(topGames * RANDOM_BOOK_FLOOR_RATIO))
+  const usesRecentWeights = candidates.some((option) => typeof option.recentWeight === 'number')
+  const topScore = Math.max(...candidates.map(repertoireScore))
+  const absoluteFloor = usesRecentWeights ? MIN_RANDOM_BOOK_RECENT_WEIGHT : MIN_RANDOM_BOOK_GAMES
+  const knownFloor = Math.max(absoluteFloor, topScore * RANDOM_BOOK_FLOOR_RATIO)
   const knownMoves = candidates
-    .filter((option) => option.games >= knownFloor)
+    .filter((option) => repertoireScore(option) >= knownFloor)
     .filter((option) => !isClearlyBadBookMove(game, option.move))
     .slice(0, RANDOM_BOOK_TOP_COUNT)
 
@@ -156,7 +161,7 @@ function randomKnownRepertoireMove(game, candidates) {
 }
 
 function weightedRandomBookMove(options) {
-  const weights = options.map((option) => Math.max(1, option.games || 1))
+  const weights = options.map((option) => Math.max(0.01, repertoireScore(option)))
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0)
   let roll = Math.random() * totalWeight
 
@@ -171,7 +176,12 @@ function weightedRandomBookMove(options) {
 function isConfidentBookChoice(choice, engineMove) {
   if (choice.force) return true
   if (!engineMove) return true
+  if (typeof choice.recentWeight === 'number') return choice.recentWeight >= MIN_RANDOM_BOOK_RECENT_WEIGHT
   return choice.games >= MIN_CONFIDENT_BOOK_GAMES
+}
+
+function repertoireScore(option) {
+  return typeof option.recentWeight === 'number' ? option.recentWeight : option.games || 1
 }
 
 function isStatisticallyPlayable(option) {

@@ -1,14 +1,14 @@
-# Mubassar Bot
+# Play Bots
 
-A static browser chess coach bot inspired by NM Mubassar Uddin.
+A static browser chess coach app with selectable coach profiles.
 
 Licensed under GPL-3.0.
 
 ## Features
 
 - Playable chessboard with legal move validation from `chess.js`
-- Mubassar profile styling with NM title, 2300 rating, Bangladesh flag, and account links
-- OpeningTree-style weighted repertoire selection for Mubassar-style lines
+- Selectable Mubassar and Ayden profiles
+- Profile-based weighted repertoire selection from public games
 - Browser Stockfish 18 lite single-threaded WASM for deeper post-book calculation
 - JavaScript fallback evaluator when Stockfish cannot load
 - Lightweight game-review notes for tactical moments and mistakes
@@ -30,4 +30,4 @@ npm run build
 
 ## Opening Prep
 
-Add Bookup or PGN-exported prep lines in `src/data/openingBook.js`. The bot checks those lines before using Stockfish, so Mubassar's common opening choices stay prioritized.
+Add PGN-exported prep lines in `src/data/openingBook.js` and `src/data/aydenOpeningBook.js`. The bot checks those lines before using Stockfish so each profile keeps its own opening tendencies.

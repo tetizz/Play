@@ -70,10 +70,13 @@
 }
 
 .avatar-frame {
-  display: block;
+  display: grid;
+  place-items: center;
   overflow: hidden;
   background: rgba(228, 214, 167, 0.34);
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+  font-weight: 900;
+  letter-spacing: 0;
 }
 
 .avatar {
@@ -84,6 +87,20 @@
   object-position: center;
   transform: scale(1.28) translateY(7%);
   transform-origin: center 30%;
+}
+
+.avatar-placeholder {
+  color: #151515;
+  background: linear-gradient(160deg, #efe3be 0%, #d9c28f 100%);
+}
+
+.intro-avatar.avatar-placeholder,
+.side-avatar.avatar-placeholder {
+  font-size: 40px;
+}
+
+.strip-avatar.avatar-placeholder {
+  font-size: 20px;
 }
 
 .intro-avatar,
@@ -174,6 +191,68 @@
   background: linear-gradient(rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.07));
   color: #f3f3f0;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.24);
+}
+
+.bot-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.bot-selector button {
+  min-height: 62px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  background: linear-gradient(rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.07));
+  color: #f3f3f0;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.24);
+}
+
+.bot-selector button strong {
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+.bot-selector button span {
+  font-size: 14px;
+  color: #d7d0c6;
+}
+
+.profile-card {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(12, 14, 18, 0.54);
+}
+
+.profile-card-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: start;
+  gap: 10px;
+}
+
+.profile-card-row span {
+  color: #c8c2b7;
+  font-size: 14px;
+}
+
+.profile-card-row strong {
+  color: #f3efe8;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.profile-goal strong {
+  font-size: 14px;
 }
 
 button {
@@ -791,8 +870,14 @@ button.selected {
   }
 
   .color-picker,
+  .bot-selector,
   .action-row {
     grid-template-columns: 1fr;
+  }
+
+  .profile-card-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   .review-overlay {

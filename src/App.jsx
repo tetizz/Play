@@ -12,22 +12,16 @@ import {
   X,
 } from 'lucide-react'
 import { calculationProfile, chooseCoachMove, shouldActivateBeltMode } from './lib/coachEngine'
+import { BOT_PROFILES, DEFAULT_BOT_ID, getBotProfile } from './data/botProfiles'
 import { buildFallbackFinalReview, reviewGameWithStockfish } from './lib/reviewEngine'
 import { createStockfishClient } from './lib/stockfishClient'
 import './App.css'
 
-const AVATAR = './assets/mubassar-avatar.png'
 const WHITE_KING = './assets/white-king.png'
 const BLACK_KING = './assets/black-king.png'
 const START_FEN = new Chess().fen()
-const STORAGE_KEY = 'mubassar-bot-session-v1'
+const STORAGE_KEY = 'play-bot-session-v2'
 const REVIEW_TIMEOUT_MS = 6500
-const DEFAULT_MESSAGES = [
-  {
-    speaker: 'Mubassar',
-    text: 'Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE title. Pick your settings and let’s play.',
-  },
-]
 const BELT_ACTIVATION_LINES = [
   'You are going to get belt for playing this trash opening. Activating belt mode.',
   'This setup is asking for punishment. Belt mode is on.',
@@ -55,7 +49,11 @@ function App() {
   const restoredNeedsBotMove = useRef(Boolean(INITIAL_SESSION?.needsBotMove))
   const [phase, setPhase] = useState(INITIAL_SESSION?.phase || 'setup')
   const [game, setGame] = useState(() => gameFromHistory(INITIAL_SESSION?.history || []))
-  const coachLevel = 2300
+  const [selectedBotId, setSelectedBotId] = useState(INITIAL_SESSION?.selectedBotId || DEFAULT_BOT_ID)
+  const activeBot = useMemo(() => getBotProfile(selectedBotId), [selectedBotId])
+  const coachLevel = activeBot.botStrength
+  const displayRating = activeBot.displayRating
+  const defaultCoachMessage = `Hey! I’m ${activeBot.name}. ${activeBot.goal}`
   const [colorChoice, setColorChoice] = useState(INITIAL_SESSION?.colorChoice || 'white')
   const [color, setColor] = useState(INITIAL_SESSION?.color || 'white')
   const [engineStatus, setEngineStatus] = useState('JS fallback ready')
@@ -77,7 +75,12 @@ function App() {
   const restoredGameRef = useRef(game)
   const restoredBeltModeRef = useRef(Boolean(INITIAL_SESSION?.beltMode))
   const playBotReplyRef = useRef(null)
-  const [messages, setMessages] = useState(INITIAL_SESSION?.messages || DEFAULT_MESSAGES)
+  const [messages, setMessages] = useState(INITIAL_SESSION?.messages || [
+    {
+      speaker: activeBot.name,
+      text: defaultCoachMessage,
+    },
+  ])
 
   const moveHistory = game.history()
   const latestPly = moveHistory.length
@@ -89,7 +92,7 @@ function App() {
     return replay
   }, [moveHistory, activePly])
   const displayedFen = displayedGame.fen()
-  const gameState = getGameState(game, thinking)
+  const gameState = getGameState(game, thinking, activeBot.name)
 
   useEffect(() => {
     stockfishRef.current = createStockfishClient()
@@ -111,6 +114,7 @@ function App() {
   useEffect(() => {
     saveSession({
       phase,
+      selectedBotId,
       history: game.history(),
       color,
       colorChoice,
@@ -123,7 +127,7 @@ function App() {
       finalReview,
       thinking,
     })
-  }, [arrows, beltMode, color, colorChoice, finalReview, game, lastBotMove, messages, phase, premove, thinking, viewPly])
+  }, [arrows, beltMode, color, colorChoice, finalReview, game, lastBotMove, messages, phase, premove, selectedBotId, thinking, viewPly])
 
   useEffect(() => {
     if (phase !== 'game') return undefined
@@ -225,7 +229,7 @@ function App() {
     setArrows([])
     setMessages([
       {
-        speaker: 'Mubassar',
+        speaker: activeBot.name,
         text: 'Good luck! Try to keep up!',
       },
     ])
@@ -249,7 +253,12 @@ function App() {
     setArrows([])
     setColor('white')
     setColorChoice('white')
-    setMessages(DEFAULT_MESSAGES)
+    setMessages([
+      {
+        speaker: activeBot.name,
+        text: defaultCoachMessage,
+      },
+    ])
   }
 
   function updateBoard(nextGame) {
@@ -259,7 +268,20 @@ function App() {
   }
 
   function addCoachLine(text) {
-    setMessages((current) => [{ speaker: 'Mubassar', text }, ...current.slice(0, 4)])
+    setMessages((current) => [{ speaker: activeBot.name, text }, ...current.slice(0, 4)])
+  }
+
+  function handleBotSelect(botId) {
+    setSelectedBotId(botId)
+    if (phase === 'setup') {
+      const botProfile = getBotProfile(botId)
+      setMessages([
+        {
+          speaker: botProfile.name,
+          text: `Hey! I’m ${botProfile.name}. ${botProfile.goal}`,
+        },
+      ])
+    }
   }
 
   function setQueuedPremove(nextPremove) {
@@ -290,7 +312,7 @@ function App() {
       setEngineStatus('JS fallback ready')
     }
 
-    const decision = chooseCoachMove(nextGame, activeLevel, engineMove)
+    const decision = chooseCoachMove(nextGame, activeLevel, engineMove, activeBot.styleProfile)
     if (decision.move) {
       nextGame.move(decision.move)
       setLastBotMove({ from: decision.move.from, to: decision.move.to })
@@ -425,9 +447,15 @@ function App() {
     return (
       <main className="setup-shell">
         <section className="setup-board-preview">
-          <PlayerStrip name="Mubassar" rating={coachLevel} title="NM" country="Bangladesh" />
+          <PlayerStrip
+            name={activeBot.fullName || activeBot.name}
+            rating={displayRating}
+            title={activeBot.title}
+            country={activeBot.country}
+            bot={activeBot}
+          />
           <PreviewBoard />
-          <PlayerStrip name="trixize1234" rating="800" country="United States" bottom />
+          <PlayerStrip name="player" rating="100" country="United States" bottom />
         </section>
 
         <section className="setup-panel">
@@ -435,6 +463,20 @@ function App() {
             <Bot size={28} />
             <h1>Play Bots</h1>
           </div>
+          <div className="bot-selector" aria-label="Choose bot profile">
+            {BOT_PROFILES.map((botProfile) => (
+              <button
+                key={botProfile.id}
+                type="button"
+                className={selectedBotId === botProfile.id ? 'selected' : ''}
+                onClick={() => handleBotSelect(botProfile.id)}
+              >
+                <strong>{botProfile.fullName || botProfile.name}</strong>
+                <span>({botProfile.displayRating})</span>
+              </button>
+            ))}
+          </div>
+          <ProfileCard bot={activeBot} />
           <div className="color-picker" aria-label="Choose color">
             {[
               { key: 'white', piece: 'wK', label: 'White' },
@@ -453,11 +495,8 @@ function App() {
             ))}
           </div>
           <div className="intro-row">
-            <Avatar className="intro-avatar" />
-            <div className="speech-bubble">
-              Hey! I’m Mubassar. I’m a National Chess Master from NYC who is pursuing a FIDE
-              title.
-            </div>
+            <Avatar className="intro-avatar" bot={activeBot} />
+            <div className="speech-bubble">{defaultCoachMessage}</div>
           </div>
 
           <button type="button" className="play-button" onClick={startGame}>
@@ -471,11 +510,17 @@ function App() {
   return (
     <main className="game-shell">
       <section className="game-left">
-        <PlayerStrip name="Mubassar" rating={coachLevel} title="NM" country="Bangladesh" />
+        <PlayerStrip
+          name={activeBot.fullName || activeBot.name}
+          rating={displayRating}
+          title={activeBot.title}
+          country={activeBot.country}
+          bot={activeBot}
+        />
         <div className="board-frame">
           <Chessboard
             options={{
-              id: 'mubassar-board',
+              id: `play-board-${activeBot.id}`,
               position: displayedFen,
               boardOrientation: color,
               onPieceDrop: ({ sourceSquare, targetSquare }) =>
@@ -517,7 +562,7 @@ function App() {
             }}
           />
         </div>
-        <PlayerStrip name="trixize1234" rating="800" country="United States" bottom />
+        <PlayerStrip name="player" rating="100" country="United States" bottom />
       </section>
 
       <aside className="game-right">
@@ -526,7 +571,7 @@ function App() {
           <h1>Play Bots</h1>
         </div>
         <div className="intro-row in-game">
-          <Avatar className="side-avatar" />
+          <Avatar className="side-avatar" bot={activeBot} />
           <div className="speech-bubble">{messages[0]?.text}</div>
         </div>
         <MoveHistory
@@ -585,7 +630,7 @@ function PreviewBoard() {
     <div className="board-frame preview-board" aria-hidden="true">
       <Chessboard
         options={{
-          id: 'mubassar-preview-board',
+          id: 'play-preview-board',
           position: START_FEN,
           allowDragging: false,
           boardStyle: { borderRadius: 0 },
@@ -597,10 +642,10 @@ function PreviewBoard() {
   )
 }
 
-function PlayerStrip({ name, rating, title, country, bottom = false }) {
+function PlayerStrip({ name, rating, title, country, bot, bottom = false }) {
   return (
     <div className={`player-strip ${bottom ? 'bottom' : ''}`}>
-      {bottom ? <div className="user-avatar" /> : <Avatar className="strip-avatar" />}
+      {bottom ? <div className="user-avatar" /> : <Avatar className="strip-avatar" bot={bot} />}
       <div>
         {title ? <span className="nm-badge">NM</span> : null}
         <strong>{name}</strong>
@@ -608,6 +653,37 @@ function PlayerStrip({ name, rating, title, country, bottom = false }) {
         {country === 'Bangladesh' ? <BangladeshFlag /> : <span className="us-flag">US</span>}
       </div>
     </div>
+  )
+}
+
+function ProfileCard({ bot }) {
+  return (
+    <section className="profile-card" aria-label={`${bot.fullName || bot.name} profile card`}>
+      <div className="profile-card-row">
+        <span>Name</span>
+        <strong>{bot.fullName || bot.name}</strong>
+      </div>
+      <div className="profile-card-row">
+        <span>Rating level</span>
+        <strong>{bot.displayRating}</strong>
+      </div>
+      <div className="profile-card-row">
+        <span>Country</span>
+        <strong>{bot.country === 'United States' ? 'USA' : bot.country}</strong>
+      </div>
+      <div className="profile-card-row">
+        <span>Lichess</span>
+        <strong>{bot.accounts?.lichess || '-'}</strong>
+      </div>
+      <div className="profile-card-row">
+        <span>Chess.com</span>
+        <strong>{bot.accounts?.chesscom || '-'}</strong>
+      </div>
+      <div className="profile-card-row profile-goal">
+        <span>Bot goal</span>
+        <strong>{bot.goal}</strong>
+      </div>
+    </section>
   )
 }
 
@@ -669,10 +745,19 @@ function MoveToken({ san, active }) {
   )
 }
 
-function Avatar({ className = '' }) {
+function Avatar({ className = '', bot }) {
+  const avatar = bot?.avatar
+  if (avatar?.type === 'image' && avatar.src) {
+    return (
+      <span className={`avatar-frame ${className}`}>
+        <img className="avatar" src={avatar.src} alt={avatar.alt || `${bot.name} avatar`} />
+      </span>
+    )
+  }
+
   return (
-    <span className={`avatar-frame ${className}`}>
-      <img className="avatar" src={AVATAR} alt="Mubassar avatar" />
+    <span className={`avatar-frame avatar-placeholder ${className}`} aria-label={avatar?.alt || 'Coach placeholder avatar'}>
+      {avatar?.text || '??'}
     </span>
   )
 }
@@ -791,11 +876,11 @@ function ReviewPanel({ finalReview, reviewing, moves, onClose }) {
   )
 }
 
-function getGameState(game, thinking) {
+function getGameState(game, thinking, coachName = 'Coach') {
   if (game.isCheckmate()) return 'Checkmate'
   if (game.isDraw()) return 'Draw'
   if (game.inCheck()) return 'Check'
-  return thinking ? 'Mubassar calculating' : 'Your move'
+  return thinking ? `${coachName} calculating` : 'Your move'
 }
 
 function detectOpeningName(moves) {
@@ -842,6 +927,7 @@ function loadSavedSession() {
     const playerTurn = parsed.color === 'black' ? 'b' : 'w'
     return {
       ...parsed,
+      selectedBotId: getBotProfile(parsed.selectedBotId).id,
       history: restoredGame.history(),
       needsBotMove:
         parsed.phase === 'game' &&

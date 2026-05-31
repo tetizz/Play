@@ -19,9 +19,11 @@ const MIN_RANDOM_BOOK_RECENT_WEIGHT = 1.2
 const RANDOM_BOOK_FLOOR_RATIO = 0.16
 const RANDOM_BOOK_TOP_COUNT = 4
 
-export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
+export function chooseCoachMove(game, rating = 1900, engineUciMove = null, styleProfile = {}) {
   const engineMove = moveFromUci(game, engineUciMove)
-  const bookChoice = findBookMove(game)
+  const openingBook = styleProfile.openingBook || OPENING_BOOK
+  const maxBookPlies = styleProfile.bookMaxPlies ?? BOOK_MAX_PLIES
+  const bookChoice = findBookMove(game, openingBook, maxBookPlies)
   if (bookChoice && isConfidentBookChoice(bookChoice, engineMove)) {
     const { move } = bookChoice
     return {
@@ -60,11 +62,11 @@ export function chooseCoachMove(game, rating = 2300, engineUciMove = null) {
   }
 }
 
-export function calculationProfile(rating = 2300) {
+export function calculationProfile(rating = 1900) {
   if (rating >= 2700) return { depth: 12, moveTime: 1100, elo: 2700 }
   if (rating >= 2500) return { depth: 10, moveTime: 900, elo: 2500 }
   if (rating >= 2200) return { depth: 8, moveTime: 650, elo: 2300 }
-  return { depth: 6, moveTime: 420, elo: 1600 }
+  return { depth: 6, moveTime: 420, elo: 1900 }
 }
 
 export function shouldActivateBeltMode(history, humanColor) {
@@ -96,10 +98,10 @@ export function explainHumanMove(game, move) {
   return `${move.san}. Okay, now I get a turn.`
 }
 
-function findBookMove(game) {
-  if (game.history().length > BOOK_MAX_PLIES) return null
+function findBookMove(game, openingBook, bookMaxPlies) {
+  if (game.history().length > bookMaxPlies) return null
   const key = game.history().join(' ')
-  const options = OPENING_BOOK[key]
+  const options = openingBook[key]
   if (!options) return null
   const legalMoves = game.moves({ verbose: true })
   const legalBySan = new Map(legalMoves.map((move) => [move.san, move]))

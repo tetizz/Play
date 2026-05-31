@@ -1,7 +1,7 @@
 import { writeFile } from 'node:fs/promises'
 import { Chess } from 'chess.js'
 
-const OUTPUT_PATH = new URL('../src/data/generatedRecentRepertoireBook.js', import.meta.url)
+const OUTPUT_PATH = new URL('../src/data/generatedRecentAydenRepertoireBook.js', import.meta.url)
 const HALF_LIFE_DAYS = 180
 const CHESSCOM_RECENT_MONTHS = 30
 const MAX_LICHESS_GAMES_PER_ACCOUNT = 900
@@ -9,9 +9,8 @@ const MAX_BOOK_PLIES = 14
 const MAX_MOVES_PER_POSITION = 8
 const MIN_RECENT_WEIGHT = 0.05
 const ACCOUNTS = [
-  { site: 'chess.com', username: 'keepitcoming' },
-  { site: 'lichess', username: 'real64squares' },
-  { site: 'lichess', username: 'guardup' },
+  { site: 'chess.com', username: 'AA01001' },
+  { site: 'lichess', username: 'AydenICN' },
 ]
 
 const now = new Date()
@@ -19,11 +18,16 @@ const book = {}
 const sourceStats = []
 
 for (const account of ACCOUNTS) {
-  const games = account.site === 'chess.com'
-    ? await fetchChessComGames(account.username)
-    : await fetchLichessGames(account.username)
-  sourceStats.push(`${account.site}:${account.username}=${games.length}`)
-  for (const gameRecord of games) addGameToBook(account.username, gameRecord)
+  try {
+    const games = account.site === 'chess.com'
+      ? await fetchChessComGames(account.username)
+      : await fetchLichessGames(account.username)
+    sourceStats.push(`${account.site}:${account.username}=${games.length}`)
+    for (const gameRecord of games) addGameToBook(account.username, gameRecord)
+  } catch (error) {
+    sourceStats.push(`${account.site}:${account.username}=0(error)`)
+    console.warn(`Skipping ${account.site}:${account.username}: ${error.message}`)
+  }
 }
 
 const sortedBook = Object.fromEntries(
@@ -49,7 +53,7 @@ const sortedBook = Object.fromEntries(
 
 await writeFile(
   OUTPUT_PATH,
-  `// Generated from recent public Chess.com/Lichess PGNs for keepitcoming, real64squares, and guardup.
+  `// Generated from recent public Chess.com/Lichess PGNs for AA01001 and AydenICN.
 // Recency uses a ${HALF_LIFE_DAYS}-day half-life, so newer games influence move choice more.
 // Chess.com window: last ${CHESSCOM_RECENT_MONTHS} monthly archives. Lichess cap: latest ${MAX_LICHESS_GAMES_PER_ACCOUNT} games per account.
 // Opening depth: first ${MAX_BOOK_PLIES} plies, max ${MAX_MOVES_PER_POSITION} moves per position.
@@ -138,7 +142,7 @@ async function fetchLichessGames(username) {
   const response = await fetch(url, {
     headers: {
       Accept: 'application/x-chess-pgn',
-      'User-Agent': 'mubassar-bot/1.0',
+      'User-Agent': 'ayden-bot/1.0',
     },
   })
   if (!response.ok) throw new Error(`Lichess ${username}: ${response.status}`)
@@ -151,7 +155,7 @@ async function fetchLichessGames(username) {
 
 async function fetchJson(url) {
   const response = await fetch(url, {
-    headers: { 'User-Agent': 'mubassar-bot/1.0' },
+    headers: { 'User-Agent': 'ayden-bot/1.0' },
   })
   if (!response.ok) throw new Error(`${url}: ${response.status}`)
   return response.json()

@@ -21,6 +21,11 @@ const WHITE_KING = './assets/white-king.png'
 const BLACK_KING = './assets/black-king.png'
 const START_FEN = new Chess().fen()
 const STORAGE_KEY = 'play-bot-session-v2'
+const HUMAN_PLAYER = {
+  name: 'player',
+  rating: '100',
+  country: 'United States',
+}
 const REVIEW_TIMEOUT_MS = 6500
 const BELT_ACTIVATION_LINES = [
   'You are going to get belt for playing this trash opening. Activating belt mode.',
@@ -455,7 +460,12 @@ function App() {
             bot={activeBot}
           />
           <PreviewBoard />
-          <PlayerStrip name="player" rating="100" country="United States" bottom />
+          <PlayerStrip
+            name={HUMAN_PLAYER.name}
+            rating={HUMAN_PLAYER.rating}
+            country={HUMAN_PLAYER.country}
+            bottom
+          />
         </section>
 
         <section className="setup-panel">
@@ -562,7 +572,12 @@ function App() {
             }}
           />
         </div>
-        <PlayerStrip name="player" rating="100" country="United States" bottom />
+        <PlayerStrip
+          name={HUMAN_PLAYER.name}
+          rating={HUMAN_PLAYER.rating}
+          country={HUMAN_PLAYER.country}
+          bottom
+        />
       </section>
 
       <aside className="game-right">

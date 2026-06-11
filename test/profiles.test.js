@@ -72,7 +72,7 @@ test('belt mode is isolated to Mubassar', () => {
   assert.equal(shouldActivateBeltMode(getBotProfile('akshit'), history, 'white'), false)
 })
 
-test('Akshit must take a clearly superior knight move and only speaks for knight moves', () => {
+test('Akshit must take a clearly superior knight move and uses his own dialogue set', () => {
   const game = new Chess()
   const profile = getBotProfile('akshit')
   const decision = chooseCoachMove(
@@ -86,7 +86,15 @@ test('Akshit must take a clearly superior knight move and only speaks for knight
   )
   assert.equal(decision.move.piece, 'n')
   assert.equal(dialogueAfterBotMove(profile, { move: decision.move }), 'I am the knight manuveur.')
-  assert.equal(dialogueAfterBotMove(profile, { move: { piece: 'p' } }), '')
+  assert.match(dialogueAfterBotMove(profile, { move: { piece: 'p' } }), /^(Okay|Lil kids play this)$/)
+  assert.match(
+    dialogueAfterBotMove(profile, { move: { piece: 'p' }, isWinning: true }),
+    /^(Easy belt|Don't cry after losing|Go home|Quit the game|Chess is not for you)$/,
+  )
+  assert.match(
+    dialogueAfterBotMove(profile, { move: { piece: 'p' }, isFreePiece: true }),
+    /^(rahhhhhh|Easy belt)$/,
+  )
 })
 
 test('Trixize starts with Nf3 and uses only the requested short dialogue', () => {

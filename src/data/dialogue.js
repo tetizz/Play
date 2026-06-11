@@ -82,6 +82,30 @@ const AYDEN_LINES = {
   ],
 }
 
+const AKSHIT_LINES = {
+  quiet: [
+    'Okay',
+    'Lil kids play this',
+  ],
+  tactical: [
+    'rahhhhhh',
+    'Easy belt',
+  ],
+  winning: [
+    'Easy belt',
+    "Don't cry after losing",
+    'Go home',
+    'Quit the game',
+    'Chess is not for you',
+  ],
+  mate: [
+    'Easy belt',
+    'Go home',
+    'Quit the game',
+    'Chess is not for you',
+  ],
+}
+
 export function dialogueAfterBotMove(profile, context) {
   if (profile.dialoguePolicy === 'trixize') {
     if (context.isBrilliant) return 'Rahh!'
@@ -92,7 +116,14 @@ export function dialogueAfterBotMove(profile, context) {
   }
 
   if (profile.dialoguePolicy === 'akshit') {
-    return context.move?.piece === 'n' ? 'I am the knight manuveur.' : ''
+    if (context.isCheckmate) return pick(AKSHIT_LINES.mate)
+    if (context.isFreePiece || context.opponentBlunder || context.isBrilliant) {
+      return pick(AKSHIT_LINES.tactical)
+    }
+    if (context.isWinning) return pick(AKSHIT_LINES.winning)
+    if (context.isCheck || context.isGreatMove) return pick(AKSHIT_LINES.tactical)
+    if (context.move?.piece === 'n') return 'I am the knight manuveur.'
+    return pick(AKSHIT_LINES.quiet)
   }
 
   if (profile.dialoguePolicy === 'ayden') {
@@ -122,7 +153,9 @@ export function initialDialogue(profile) {
 
 export function dialogueForGameEnd(profile, result) {
   if (profile.dialoguePolicy === 'trixize') return result.includes('checkmate') ? 'Good game.' : ''
-  if (profile.dialoguePolicy === 'akshit') return ''
+  if (profile.dialoguePolicy === 'akshit') {
+    return result.toLowerCase().includes('player wins') ? 'Okay' : pick(AKSHIT_LINES.mate)
+  }
   if (profile.dialoguePolicy === 'ayden') return result.includes('checkmate') ? 'Checkmate.' : 'Good game.'
   if (result.toLowerCase().includes('player wins')) return 'Alright, you earned that one.'
   if (result.toLowerCase().includes('draw')) return 'A draw is fine. The review will show the chances.'

@@ -169,3 +169,30 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   await expect(page.locator('.move-explanation')).toContainText('Best move')
   expect(Date.now() - startedAt).toBeLessThan(8500)
 })
+
+test('a played Fool’s Mate reaches a complete synchronized review', async ({ page }) => {
+  test.setTimeout(30000)
+  await page.getByRole('button', { name: /Trixize/ }).click()
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  await page.locator('[data-square="f2"]').click()
+  await page.locator('[data-square="f3"]').click()
+  await expect(page.getByRole('button', { name: 'e5', exact: true })).toBeVisible({ timeout: 10000 })
+
+  await page.locator('[data-square="g2"]').click()
+  await page.locator('[data-square="g4"]').click()
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible({ timeout: 10000 })
+  await expect(page.getByText('Black wins by checkmate')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible({ timeout: 8000 })
+
+  const evaluationData = await page.evaluate(() => ({
+    graph: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),
+    bar: Number(document.querySelector('.evaluation-bar')?.dataset.evalPercent),
+  }))
+  expect(evaluationData.graph).toBe(evaluationData.bar)
+
+  await page.getByRole('tab', { name: 'Review moves' }).click()
+  await expect(page.getByText('Qh4# was Stockfish’s first choice.')).toBeVisible()
+  await expect(page.getByText('Best move', { exact: true })).toBeVisible()
+})

@@ -1,26 +1,26 @@
 // Generated from the same public games as generatedRecentAydenRepertoireBook.js.
 // This compact profile lets the runtime preserve Ayden's recurring plans outside exact book positions.
 // Sources: chess.com:AA01001=581, lichess:AydenICN=881.
-// Generated at 2026-06-11T02:12:10.797Z.
-// Do not edit by hand; run npm run build:recent-book.
+// Generated at 2026-06-11T11:12:51.740Z.
+// Do not edit by hand; run npm run build:repertoires.
 export const GENERATED_AYDEN_STYLE_PROFILE = {
-  "generatedAt": "2026-06-11T02:12:10.797Z",
+  "generatedAt": "2026-06-11T11:12:51.740Z",
   "sampleSize": 1462,
-  "recentWeight": 794.092,
+  "recentWeight": 792.945,
   "sources": {
     "chess.com": {
       "games": 581,
-      "recentWeight": 296.763
+      "recentWeight": 296.335
     },
     "lichess": {
       "games": 881,
-      "recentWeight": 497.329
+      "recentWeight": 496.61
     }
   },
   "byColor": {
     "white": {
       "games": 736,
-      "recentWeight": 398.635,
+      "recentWeight": 398.059,
       "results": {
         "wins": 396,
         "losses": 312,
@@ -80,157 +80,157 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "favoritePieceSetups": [
         {
           "key": "p:e4",
-          "weight": 355.025
+          "weight": 354.512
         },
         {
           "key": "p:d4",
-          "weight": 346.391
+          "weight": 345.89
         },
         {
           "key": "n:f3",
-          "weight": 332.166
+          "weight": 331.686
         },
         {
           "key": "k:g1",
-          "weight": 221.929
+          "weight": 221.608
         },
         {
           "key": "n:c3",
-          "weight": 204.196
+          "weight": 203.901
         },
         {
           "key": "p:c3",
-          "weight": 126.81
+          "weight": 126.627
         },
         {
           "key": "p:e5",
-          "weight": 121.975
+          "weight": 121.799
         },
         {
           "key": "b:d3",
-          "weight": 112.204
+          "weight": 112.042
         },
         {
           "key": "p:d5",
-          "weight": 109.834
+          "weight": 109.675
         },
         {
           "key": "b:f4",
-          "weight": 86.284
+          "weight": 86.16
         },
         {
           "key": "p:g3",
-          "weight": 83.032
+          "weight": 82.912
         },
         {
           "key": "b:g2",
-          "weight": 77.355
+          "weight": 77.243
         }
       ],
       "openingLines": [
         {
           "key": "e4 e5 d4 exd4 Qxd4 Nc6 Qd3 Nf6",
-          "weight": 12.238
+          "weight": 12.221
         },
         {
           "key": "e4 c6 d4 d5 e5 Bf5 Bd3 Bxd3",
-          "weight": 12.116
+          "weight": 12.099
         },
         {
           "key": "e4 d5 exd5 Qxd5 Nf3 Qd8 Be2 Nf6",
-          "weight": 6.206
+          "weight": 6.197
         },
         {
           "key": "e4 e6 d4 d5 Nc3 dxe4 Nxe4 Nf6",
-          "weight": 5.66
+          "weight": 5.652
         },
         {
           "key": "e4 e6 d4 d5 Nc3 Nf6 e5 Nfd7",
-          "weight": 5.191
+          "weight": 5.184
         },
         {
           "key": "e4 e5 Nf3 Nc6 Bb5 Nf6 d4 exd4",
-          "weight": 3.991
+          "weight": 3.986
         },
         {
           "key": "e4 e5 d4 exd4 Qxd4 Nc6 Qd3 d6",
-          "weight": 3.758
+          "weight": 3.753
         },
         {
           "key": "e4 d5 exd5 Qxd5 Nf3 Qd8 Be2 Nc6",
-          "weight": 3.705
+          "weight": 3.699
         },
         {
           "key": "e4 d5 exd5 Qxd5 Nf3 Bg4 Be2 Nc6",
-          "weight": 3.183
+          "weight": 3.178
         },
         {
           "key": "e4 e5 d4 Nc6 d5 Nce7 c4 Ng6",
-          "weight": 3.073
+          "weight": 3.069
         }
       ],
       "commonPawnStructures": [
         {
           "key": "a2-b2-c2-e4-f2-g2-h2",
-          "weight": 47.406
+          "weight": 47.338
         },
         {
           "key": "a2-b2-c2-d3-e2-f2-g3-h2",
-          "weight": 34.596
+          "weight": 34.546
         },
         {
           "key": "a2-b2-c2-d4-f2-g2-h2",
-          "weight": 29.531
+          "weight": 29.488
         },
         {
           "key": "a2-b2-c2-d4-e5-f2-g2-h2",
-          "weight": 22.028
+          "weight": 21.996
         },
         {
           "key": "a2-b2-c2-d4-e4-f2-g2-h2",
-          "weight": 19.084
+          "weight": 19.056
         },
         {
           "key": "a2-b2-c2-d2-f2-g2-h2",
-          "weight": 18.849
+          "weight": 18.822
         },
         {
           "key": "a2-b2-c2-e5-f2-g2-h2",
-          "weight": 9.251
+          "weight": 9.238
         },
         {
           "key": "a2-b2-c2-f2-g2-h2",
-          "weight": 8.297
+          "weight": 8.285
         },
         {
           "key": "a2-b2-c2-d2-f2-g2-h3",
-          "weight": 8.289
+          "weight": 8.277
         },
         {
           "key": "a2-b2-c3-d4-e4-f2-g2-h2",
-          "weight": 8.264
+          "weight": 8.252
         }
       ],
       "timeControls": [
         {
           "key": "bullet",
-          "weight": 328.57
+          "weight": 328.095
         },
         {
           "key": "blitz",
-          "weight": 61.356
+          "weight": 61.267
         },
         {
           "key": "rapid",
-          "weight": 5.846
+          "weight": 5.837
         },
         {
           "key": "unknown",
-          "weight": 2.863
+          "weight": 2.859
         }
       ],
       "endgameHabits": {
-        "positions": 1327.325,
+        "positions": 1325.408,
         "kingMoveRate": 0.403,
         "pawnMoveRate": 0.218,
         "captureRate": 0.143,
@@ -239,7 +239,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
     },
     "black": {
       "games": 726,
-      "recentWeight": 395.458,
+      "recentWeight": 394.886,
       "results": {
         "wins": 392,
         "losses": 311,
@@ -299,157 +299,157 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "favoritePieceSetups": [
         {
           "key": "p:d5",
-          "weight": 392.343
+          "weight": 391.776
         },
         {
           "key": "n:f6",
-          "weight": 312.019
+          "weight": 311.568
         },
         {
           "key": "p:e6",
-          "weight": 310.214
+          "weight": 309.766
         },
         {
           "key": "p:c5",
-          "weight": 210.91
+          "weight": 210.605
         },
         {
           "key": "k:g8",
-          "weight": 205.979
+          "weight": 205.682
         },
         {
           "key": "n:c6",
-          "weight": 203.026
+          "weight": 202.733
         },
         {
           "key": "p:d4",
-          "weight": 94.705
+          "weight": 94.568
         },
         {
           "key": "p:d6",
-          "weight": 91.546
+          "weight": 91.414
         },
         {
           "key": "p:e5",
-          "weight": 91.343
+          "weight": 91.211
         },
         {
           "key": "p:g6",
-          "weight": 84.026
+          "weight": 83.904
         },
         {
           "key": "n:d7",
-          "weight": 80.928
+          "weight": 80.811
         },
         {
           "key": "p:c6",
-          "weight": 79.416
+          "weight": 79.302
         }
       ],
       "openingLines": [
         {
           "key": "e4 e6 Nf3 d5 exd5 exd5 d4 Nf6",
-          "weight": 20.615
+          "weight": 20.585
         },
         {
           "key": "e4 e6 d4 d5 e5 c5 c3 Nc6",
-          "weight": 9.739
+          "weight": 9.724
         },
         {
           "key": "e4 e6 d4 d5 exd5 exd5 Nf3 Nf6",
-          "weight": 8.359
+          "weight": 8.347
         },
         {
           "key": "e4 e6 d4 d5 Nc3 Nf6 e5 Nfd7",
-          "weight": 6.259
+          "weight": 6.25
         },
         {
           "key": "e4 e6 d4 d5 e5 c5 Nf3 Nc6",
-          "weight": 4.92
+          "weight": 4.913
         },
         {
           "key": "e4 e6 d4 d5 exd5 exd5 Nc3 Nf6",
-          "weight": 4.577
+          "weight": 4.57
         },
         {
           "key": "d4 e6 c4 Nf6 Nc3 Bb4 Nf3 O-O",
-          "weight": 3.169
+          "weight": 3.164
         },
         {
           "key": "e4 e6 Nc3 d5 exd5 exd5 d4 Nf6",
-          "weight": 2.913
+          "weight": 2.908
         },
         {
           "key": "e4 e6 Bc4 d5 exd5 exd5 Bb3 c5",
-          "weight": 2.598
+          "weight": 2.595
         },
         {
           "key": "d4 Nf6 c4 g6 Nc3 Bg7 e4 O-O",
-          "weight": 2.429
+          "weight": 2.426
         }
       ],
       "commonPawnStructures": [
         {
           "key": "a7-b7-c5-d5-e6-f7-g7-h7",
-          "weight": 35.595
+          "weight": 35.544
         },
         {
           "key": "a7-b7-c7-d6-e7-f7-g6-h7",
-          "weight": 28.964
+          "weight": 28.922
         },
         {
           "key": "a7-b7-c7-d5-f7-g7-h7",
-          "weight": 25.45
+          "weight": 25.414
         },
         {
           "key": "a7-b7-d5-e6-f7-g7-h7",
-          "weight": 16.971
+          "weight": 16.946
         },
         {
           "key": "a7-b7-c5-d5-f7-g7-h7",
-          "weight": 16.614
+          "weight": 16.59
         },
         {
           "key": "a7-b7-c7-e6-f7-g7-h7",
-          "weight": 13.902
+          "weight": 13.881
         },
         {
           "key": "a7-b7-c6-d5-f7-g7-h7",
-          "weight": 13.562
+          "weight": 13.542
         },
         {
           "key": "a7-b7-c7-d5-e6-f7-g7-h7",
-          "weight": 10.366
+          "weight": 10.351
         },
         {
           "key": "a7-b7-d5-f7-g7-h7",
-          "weight": 9.89
+          "weight": 9.876
         },
         {
           "key": "a7-b7-c7-d6-e6-f7-g7-h7",
-          "weight": 9.419
+          "weight": 9.406
         }
       ],
       "timeControls": [
         {
           "key": "bullet",
-          "weight": 327.368
+          "weight": 326.895
         },
         {
           "key": "blitz",
-          "weight": 59.056
+          "weight": 58.97
         },
         {
           "key": "rapid",
-          "weight": 6.567
+          "weight": 6.557
         },
         {
           "key": "unknown",
-          "weight": 2.468
+          "weight": 2.464
         }
       ],
       "endgameHabits": {
-        "positions": 1450.358,
+        "positions": 1448.262,
         "kingMoveRate": 0.425,
         "pawnMoveRate": 0.184,
         "captureRate": 0.141,
@@ -464,7 +464,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 12,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 8.404
+      "recentWeight": 8.392
     },
     {
       "history": "rnbqkb1r/pp1n1ppp/4p3/2ppP3/3P1P2/2N5/PPP3PP/R1BQKBNR w KQkq -",
@@ -472,7 +472,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 6,
       "winRate": 0.167,
       "lossRate": 0.833,
-      "recentWeight": 3.701
+      "recentWeight": 3.696
     },
     {
       "history": "rnbqkb1r/pppn1ppp/4p3/3pP3/3P4/2N5/PPP2PPP/R1BQKBNR w KQkq -",
@@ -480,7 +480,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 6,
       "winRate": 0.167,
       "lossRate": 0.833,
-      "recentWeight": 3.701
+      "recentWeight": 3.696
     },
     {
       "history": "r1bqkbnr/pp2pppp/2n5/2ppP3/3P4/3B4/PPP2PPP/RNBQK1NR w KQkq -",
@@ -488,7 +488,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.973
+      "recentWeight": 2.969
     },
     {
       "history": "rnbqkbnr/pp2pppp/8/2ppP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq -",
@@ -496,7 +496,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.973
+      "recentWeight": 2.969
     },
     {
       "history": "rnbqkbnr/ppp2ppp/3p4/4p3/3PP3/8/PPP2PPP/RNBQKBNR w KQkq -",
@@ -504,7 +504,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 5,
       "winRate": 0,
       "lossRate": 1,
-      "recentWeight": 2.937
+      "recentWeight": 2.933
     },
     {
       "history": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq -",
@@ -512,7 +512,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 5,
       "winRate": 0.2,
       "lossRate": 0.8,
-      "recentWeight": 2.865
+      "recentWeight": 2.86
     },
     {
       "history": "rnbqkbnr/pppppppp/8/8/1P6/8/P1PPPPPP/RNBQKBNR b KQkq -",
@@ -520,7 +520,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 5,
       "winRate": 0.2,
       "lossRate": 0.8,
-      "recentWeight": 2.858
+      "recentWeight": 2.854
     },
     {
       "history": "rnbqkb1r/pppppppp/5n2/8/8/6P1/PPPPPP1P/RNBQKBNR w KQkq -",
@@ -528,7 +528,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.838
+      "recentWeight": 2.834
     },
     {
       "history": "rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq -",
@@ -536,7 +536,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.671
+      "recentWeight": 2.667
     },
     {
       "history": "rnbqkbnr/pppp1ppp/4p3/8/3P4/2P5/PP2PPPP/RNBQKBNR b KQkq -",
@@ -544,7 +544,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0,
       "lossRate": 1,
-      "recentWeight": 2.508
+      "recentWeight": 2.504
     },
     {
       "history": "rnbqkb1r/ppp2ppp/5n2/3p4/3P4/5N2/PPP1BPPP/RNBQK2R b KQkq -",
@@ -552,7 +552,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.378
+      "recentWeight": 2.375
     },
     {
       "history": "r2qkbnr/pp1b1ppp/2n1p3/2ppP3/3P4/2P1BN2/PP3PPP/RN1QKB1R b KQkq -",
@@ -560,7 +560,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.158
+      "recentWeight": 2.155
     },
     {
       "history": "rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP1BPPPP/R2QKBNR b KQkq -",
@@ -568,7 +568,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 1.745
+      "recentWeight": 1.742
     },
     {
       "history": "rnbqkb1r/pppppppp/5n2/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq -",
@@ -576,7 +576,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 8,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 1.575
+      "recentWeight": 1.573
     },
     {
       "history": "rnbqkbnr/pppp1ppp/4p3/8/2B5/4P3/PPPP1PPP/RNBQK1NR b KQkq -",
@@ -584,7 +584,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 5,
       "winRate": 0.2,
       "lossRate": 0.8,
-      "recentWeight": 1.19
+      "recentWeight": 1.188
     },
     {
       "history": "rnbqkbnr/ppp2ppp/4p3/3P4/3P4/8/PPP2PPP/RNBQKBNR b KQkq -",
@@ -592,7 +592,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 1.071
+      "recentWeight": 1.069
     },
     {
       "history": "rnbqkbnr/pppp1ppp/8/4p3/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -",
@@ -600,7 +600,7 @@ export const GENERATED_AYDEN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 0.904
+      "recentWeight": 0.902
     }
   ]
 }

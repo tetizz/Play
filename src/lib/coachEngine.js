@@ -1,108 +1,52 @@
 import { Chess } from 'chess.js'
-import { BOOK_MAX_PLIES, OPENING_BOOK } from '../data/openingBook.js'
-import { phraseForMove } from '../data/coachPhrases.js'
 
-const pieceValue = {
-  p: 100,
-  n: 315,
-  b: 330,
-  r: 500,
-  q: 900,
-  k: 0,
+const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
+const CENTER = new Set(['d4', 'e4', 'd5', 'e5'])
+
+export function calculationProfile(profile, beltMode = false) {
+  const base = profile.strengthPolicy
+  const active = beltMode && base.belt ? { ...base, ...base.belt } : base
+  return {
+    depth: active.depth,
+    moveTime: active.moveTime,
+    elo: active.engineElo,
+    count: active.candidates,
+    styleWindowCp: active.styleWindowCp,
+    bookWindowCp: active.bookWindowCp,
+  }
 }
 
-const centerSquares = new Set(['d4', 'e4', 'd5', 'e5'])
-const nearCenterSquares = new Set(['c3', 'd3', 'e3', 'f3', 'c4', 'f4', 'c5', 'f5', 'c6', 'd6', 'e6', 'f6'])
-const MIN_CONFIDENT_BOOK_GAMES = 8
-const MIN_RANDOM_BOOK_GAMES = 12
-const MIN_RANDOM_BOOK_RECENT_WEIGHT = 1.2
-const RANDOM_BOOK_FLOOR_RATIO = 0.16
-const RANDOM_BOOK_TOP_COUNT = 4
-const STYLE_ENGINE_WINDOW_CP = 55
-const BOOK_ENGINE_WINDOW_CP = 85
-const CORRECTION_LINES = [
-  'I have played this position before, but that old habit scored badly. Cleaner plan this time.',
-  'Same Ayden ideas, but I am fixing the loose version of this position.',
-  'I know this setup. The old choice was shaky, so I am upgrading the plan.',
-  'This is familiar, but I am cutting out the mistake and keeping the good parts.',
-]
+export function chooseCoachMove(game, engineInput, profile, styleProfile = {}, beltMode = false) {
+  const policy = calculationProfile(profile, beltMode)
+  const candidates = normalizeEngineCandidates(game, engineInput)
+  const bookChoice = findBookMove(game, styleProfile, profile, candidates, policy)
 
-export function chooseCoachMove(game, rating = 1900, engineInput = null, styleProfile = {}) {
-  const engineCandidates = normalizeEngineCandidates(game, engineInput)
-  const engineMove = engineCandidates[0]?.move || null
-  const openingBook = styleProfile.openingBook || OPENING_BOOK
-  const maxBookPlies = styleProfile.bookMaxPlies ?? BOOK_MAX_PLIES
-  const bookChoice = findBookMove(
-    game,
-    openingBook,
-    maxBookPlies,
-    styleProfile.bookKeyType || 'history',
-  )
-  const correctionReason = bookChoice
-    ? bookCorrectionReason(game, bookChoice, engineCandidates)
-    : null
-  if (bookChoice && !correctionReason && isConfidentBookChoice(bookChoice, engineMove)) {
-    const { move } = bookChoice
+  if (bookChoice) {
     return {
-      move,
-      note: withPhrase(move, game, 'book', rating),
+      move: bookChoice.move,
       source: 'repertoire',
+      score: bookChoice.score,
+      rank: bookChoice.rank,
     }
   }
 
-  if (engineCandidates.length) {
-    const selected = selectStyleAwareEngineMove(game, engineCandidates, styleProfile)
+  if (candidates.length) {
+    const selected = selectEngineMove(game, candidates, profile, styleProfile, policy)
     return {
       move: selected.move,
-      note: correctionReason
-        ? randomLine(CORRECTION_LINES)
-        : buildEngineNote(game, selected.move, rating),
-      source: correctionReason ? 'corrected-repertoire' : 'engine-style',
-      correction: correctionReason
-        ? {
-            reason: correctionReason,
-            historicalMove: bookChoice.move.san,
-            replacementMove: selected.move.san,
-          }
-        : null,
+      source: selected.rank === 1 ? 'engine-best' : 'engine-style',
+      score: selected.score,
+      rank: selected.rank,
     }
   }
 
-  const depth = rating >= 2700 ? 4 : rating >= 2500 ? 3 : rating >= 2200 ? 2 : 1
-  const candidates = game.moves({ verbose: true })
-  if (!candidates.length) return { move: null, note: 'The game is over.' }
-
-  let best = null
-  let bestScore = -Infinity
-
-  for (const move of candidates) {
-    const branch = new Chess(game.fen())
-    branch.move(move)
-    const score = -search(branch, depth - 1, -Infinity, Infinity)
-      + styleBonus(move, branch, styleProfile, game.turn())
-    if (score > bestScore) {
-      best = move
-      bestScore = score
-    }
-  }
-
-  return {
-    move: best,
-    note: buildCoachNote(game, best, bestScore, rating),
-    source: 'js-style-fallback',
-  }
+  const fallbackDepth = profile.id === 'mubassar' ? 3 : 2
+  const move = fallbackSearch(game, fallbackDepth, styleProfile)
+  return { move, source: 'js-fallback', score: null, rank: null }
 }
 
-export function calculationProfile(rating = 1900) {
-  if (rating >= 2700) return { depth: 12, moveTime: 1100, elo: 2700 }
-  if (rating >= 2500) return { depth: 10, moveTime: 900, elo: 2500 }
-  if (rating >= 2200) return { depth: 8, moveTime: 650, elo: Math.round(rating) }
-  if (rating >= 2000) return { depth: 7, moveTime: 540, elo: Math.round(rating) }
-  return { depth: 6, moveTime: 420, elo: Math.max(1320, Math.round(rating)) }
-}
-
-export function shouldActivateBeltMode(history, humanColor) {
-  if (!history.length) return false
+export function shouldActivateBeltMode(profile, history, humanColor) {
+  if (!profile.capabilities.beltMode || !history.length) return false
   const humanMoves = history.filter((_, index) =>
     humanColor === 'white' ? index % 2 === 0 : index % 2 === 1,
   )
@@ -111,362 +55,257 @@ export function shouldActivateBeltMode(history, humanColor) {
     : isKingsIndianDefense(humanMoves) || isPircDefense(humanMoves)
 }
 
-export function explainHumanMove(game, move) {
-  if (game.isCheckmate()) {
-    return `${move.san}. Checkmate. Alright, you earned that one.`
+export function moveContext(beforeGame, move, decision, beltMode, beltActivated = false) {
+  const afterGame = cloneGame(beforeGame)
+  afterGame.move(move)
+  const capturedValue = move.captured ? PIECE_VALUES[move.captured] : 0
+  const replyCapturesMovedPiece = afterGame.moves({ verbose: true })
+    .some((reply) => reply.to === move.to && reply.captured)
+
+  return {
+    move,
+    beltMode,
+    beltActivated,
+    capturedValue,
+    isOpeningMove: beforeGame.history().length <= 1,
+    isFreePiece: Boolean(move.captured) && !replyCapturesMovedPiece,
+    isCheck: afterGame.inCheck(),
+    isCheckmate: afterGame.isCheckmate(),
+    isWinning: typeof decision.score === 'number' && decision.score >= 500,
+    isGreatMove: decision.rank === 1 && (
+      move.san.includes('+') ||
+      Boolean(move.captured) ||
+      typeof decision.score === 'number' && decision.score >= 250
+    ),
+    opponentBlunder: Boolean(move.captured) && capturedValue >= 300 && !replyCapturesMovedPiece,
   }
-  if (move.flags.includes('c')) {
-    return `${move.san}. Nice, you grabbed something. Now prove it does not get trapped.`
-  }
-  if (move.san.includes('+')) {
-    return `${move.san}. Check. Now show me the follow-up.`
-  }
-  if (centerSquares.has(move.to)) {
-    return `${move.san}. Good, you are fighting for the middle. Keep going.`
-  }
-  if (move.piece === 'n' || move.piece === 'b') {
-    return `${move.san}. Development is fine. Now what is the threat?`
-  }
-  return `${move.san}. Okay, now I get a turn.`
 }
 
-function findBookMove(game, openingBook, bookMaxPlies, bookKeyType) {
-  if (game.history().length > bookMaxPlies) return null
-  const key = bookKeyType === 'position'
-    ? game.fen().split(' ').slice(0, 4).join(' ')
+function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
+  const openingBook = styleProfile.openingBook || {}
+  const maxPlies = styleProfile.bookMaxPlies || 0
+  if (game.history().length > maxPlies) return null
+
+  const forcedFirstMove = profile.repertoireSource.forceWhiteFirstMove
+  if (game.history().length === 0 && forcedFirstMove) {
+    const forced = game.moves({ verbose: true }).find((move) => cleanSan(move.san) === forcedFirstMove)
+    if (forced) return candidateMetadata(forced, engineCandidates)
+  }
+
+  const key = styleProfile.bookKeyType === 'position'
+    ? positionKey(game)
     : game.history().join(' ')
   const options = openingBook[key]
-  if (!options) return null
-  const legalMoves = game.moves({ verbose: true })
-  const legalBySan = new Map(legalMoves.map((move) => [move.san, move]))
-  const playable = options
-    .map((option) => {
-      const san = typeof option === 'string' ? option : option.san
-      const move = legalBySan.get(san)
-      return move
-        ? {
-            move,
-            games: option.games || 1,
-            wins: option.wins,
-            losses: option.losses,
-            recentWeight: option.recentWeight,
-            latestPlayedAt: option.latestPlayedAt,
-            force: option.force,
-          }
-        : null
+  if (!Array.isArray(options) || !options.length) return null
+
+  const legal = new Map(game.moves({ verbose: true }).map((move) => [cleanSan(move.san), move]))
+  const playable = []
+  for (const option of options) {
+    const san = typeof option === 'string' ? option : option.san
+    const move = legal.get(cleanSan(san))
+    if (!move) continue
+    const stats = typeof option === 'string' ? {} : option
+    const games = Number(stats.games || 1)
+    const recentWeight = Number(stats.recentWeight || 0)
+    const losses = Number(stats.losses || 0)
+    const wins = Number(stats.wins || 0)
+    const decisive = wins + losses
+    if (games >= 4 && decisive >= 3 && losses / decisive >= 0.72 && wins / decisive <= 0.18) continue
+
+    const engineMatch = engineCandidates.find((candidate) => sameMove(candidate.move, move))
+    if (engineCandidates.length && !engineMatch) continue
+    if (
+      engineMatch &&
+      Number.isFinite(engineCandidates[0].score) &&
+      Number.isFinite(engineMatch.score) &&
+      engineCandidates[0].score - engineMatch.score > policy.bookWindowCp
+    ) {
+      continue
+    }
+    if (
+      !stats.force &&
+      recentWeight < profile.strengthPolicy.bookMinRecentWeight &&
+      games < profile.strengthPolicy.bookMinGames
+    ) {
+      continue
+    }
+    playable.push({
+      move,
+      force: Boolean(stats.force),
+      weight: stats.force ? Number.MAX_SAFE_INTEGER : Math.max(recentWeight, games),
+      score: engineMatch?.score ?? null,
+      rank: engineMatch?.rank ?? null,
     })
-    .filter(Boolean)
+  }
+
   if (!playable.length) return null
-  return bestRepertoireMove(game, playable)
-}
-
-function bestRepertoireMove(game, options) {
-  const sorted = [...options].filter(isStatisticallyPlayable).sort((a, b) => {
-    if (a.force && !b.force) return -1
-    if (!a.force && b.force) return 1
-    return repertoireScore(b) - repertoireScore(a)
-  })
-  const candidates = sorted.length ? sorted : [...options].sort((a, b) => repertoireScore(b) - repertoireScore(a))
-
-  const forced = candidates.find((option) => option.force)
+  const forced = playable.find((entry) => entry.force)
   if (forced) return forced
+  return weightedChoice(playable)
+}
 
-  const randomChoice = randomKnownRepertoireMove(game, candidates)
-  if (randomChoice) return randomChoice
-
-  for (const option of candidates) {
-    if (option.force || !isClearlyBadBookMove(game, option.move)) return option
+function selectEngineMove(game, candidates, profile, styleProfile, policy) {
+  const top = candidates[0]
+  if (profile.capabilities.knightSpecialist && top.move.piece === 'n') {
+    const strongestNonKnight = candidates.find((candidate) => candidate.move.piece !== 'n')
+    if (
+      !strongestNonKnight ||
+      !Number.isFinite(top.score) ||
+      !Number.isFinite(strongestNonKnight.score) ||
+      top.score - strongestNonKnight.score >= profile.strengthPolicy.knightRequiredGapCp
+    ) {
+      return top
+    }
   }
 
-  return candidates[0]
-}
-
-function randomKnownRepertoireMove(game, candidates) {
-  if (!candidates.length) return null
-  const usesRecentWeights = candidates.some((option) => typeof option.recentWeight === 'number')
-  const topScore = Math.max(...candidates.map(repertoireScore))
-  const absoluteFloor = usesRecentWeights ? MIN_RANDOM_BOOK_RECENT_WEIGHT : MIN_RANDOM_BOOK_GAMES
-  const knownFloor = Math.max(absoluteFloor, topScore * RANDOM_BOOK_FLOOR_RATIO)
-  const knownMoves = candidates
-    .filter((option) => repertoireScore(option) >= knownFloor)
-    .filter((option) => !isClearlyBadBookMove(game, option.move))
-    .slice(0, RANDOM_BOOK_TOP_COUNT)
-
-  if (knownMoves.length < 2) return null
-  return weightedRandomBookMove(knownMoves)
-}
-
-function weightedRandomBookMove(options) {
-  const weights = options.map((option) => Math.max(0.01, repertoireScore(option)))
-  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0)
-  let roll = Math.random() * totalWeight
-
-  for (let index = 0; index < options.length; index += 1) {
-    roll -= weights[index]
-    if (roll <= 0) return options[index]
-  }
-
-  return options[0]
-}
-
-function isConfidentBookChoice(choice, engineMove) {
-  if (choice.force) return true
-  if (!engineMove) return true
-  if (typeof choice.recentWeight === 'number') return choice.recentWeight >= MIN_RANDOM_BOOK_RECENT_WEIGHT
-  return choice.games >= MIN_CONFIDENT_BOOK_GAMES
-}
-
-function bookCorrectionReason(game, choice, engineCandidates) {
-  if (choice.force) return null
-  if (isKnownWeakBookChoice(choice)) return 'poor historical results'
-  if (isClearlyBadBookMove(game, choice.move)) return 'material or positional loss'
-  if (!engineCandidates.length) return null
-
-  const matchingCandidate = engineCandidates.find(({ move }) => sameMove(move, choice.move))
-  if (!matchingCandidate) return null
-  const topScore = engineCandidates[0].score
-  if (
-    typeof topScore === 'number' &&
-    typeof matchingCandidate.score === 'number' &&
-    topScore - matchingCandidate.score > BOOK_ENGINE_WINDOW_CP
-  ) {
-    return 'engine-verified inaccuracy'
-  }
-  return null
-}
-
-function isKnownWeakBookChoice(choice) {
-  if (typeof choice.wins !== 'number' || typeof choice.losses !== 'number') return false
-  const decisiveGames = choice.wins + choice.losses
-  if (choice.games < 4 || decisiveGames < 3) return false
-  return choice.losses / decisiveGames >= 0.65 && choice.wins / decisiveGames <= 0.25
-}
-
-function repertoireScore(option) {
-  return typeof option.recentWeight === 'number' ? option.recentWeight : option.games || 1
-}
-
-function isStatisticallyPlayable(option) {
-  if (option.force) return true
-  if (typeof option.wins !== 'number' || typeof option.losses !== 'number') return true
-  if (option.games < 5) return option.wins > 0
-  return !(option.wins === 0 && option.losses >= Math.max(2, option.games - 1))
-}
-
-function isClearlyBadBookMove(game, move) {
-  const before = evaluate(game)
-  const branch = new Chess(game.fen())
-  branch.move(move)
-  const after = -evaluate(branch)
-  const capturedValue = move.captured ? pieceValue[move.captured] : 0
-  return before - after > 220 + capturedValue / 2
-}
-
-function moveFromUci(game, uci) {
-  if (!uci || uci === '(none)') return null
-  const from = uci.slice(0, 2)
-  const to = uci.slice(2, 4)
-  const promotion = uci.slice(4, 5) || undefined
-  const legalMoves = game.moves({ verbose: true })
-  return legalMoves.find(
-    (move) =>
-      move.from === from &&
-      move.to === to &&
-      (!promotion || move.promotion === promotion),
-  )
-}
-
-function normalizeEngineCandidates(game, engineInput) {
-  if (!engineInput) return []
-  const inputs = Array.isArray(engineInput) ? engineInput : [engineInput]
-  return inputs
-    .map((candidate, index) => {
-      const uci = typeof candidate === 'string' ? candidate : candidate?.uci
-      const move = moveFromUci(game, uci)
-      if (!move) return null
-      return {
-        move,
-        score: typeof candidate?.score === 'number' ? candidate.score : null,
-        rank: candidate?.rank || index + 1,
-      }
-    })
-    .filter(Boolean)
-    .sort((a, b) => a.rank - b.rank)
-}
-
-function selectStyleAwareEngineMove(game, candidates, styleProfile) {
-  const topScore = candidates[0].score
-  const nearBest = candidates.filter((candidate, index) => {
-    if (index === 0) return true
-    if (typeof topScore !== 'number' || typeof candidate.score !== 'number') return false
-    return topScore - candidate.score <= STYLE_ENGINE_WINDOW_CP
+  const nearBest = candidates.filter((candidate) => {
+    if (candidate.rank === 1) return true
+    if (!Number.isFinite(top.score) || !Number.isFinite(candidate.score)) return false
+    return top.score - candidate.score <= policy.styleWindowCp
   })
+
+  if (profile.id === 'akshit' && nearBest.length > 1) {
+    const weights = nearBest.map((candidate) => {
+      const rankWeight = Math.max(1, 8 - candidate.rank * 2)
+      const knightBoost = candidate.move.piece === 'n' ? 2.4 : 1
+      return rankWeight * knightBoost
+    })
+    return weightedChoice(nearBest, weights)
+  }
 
   return [...nearBest].sort((a, b) => {
-    const styleDifference = learnedStyleScore(game, b.move, styleProfile)
+    const styleDiff = learnedStyleScore(game, b.move, styleProfile)
       - learnedStyleScore(game, a.move, styleProfile)
-    if (Math.abs(styleDifference) > 0.01) return styleDifference
+    if (Math.abs(styleDiff) > 0.01) return styleDiff
     return a.rank - b.rank
   })[0]
 }
 
-function search(game, depth, alpha, beta) {
-  if (depth === 0 || game.isGameOver()) return evaluate(game)
+function normalizeEngineCandidates(game, engineInput) {
+  if (!engineInput) return []
+  const raw = Array.isArray(engineInput) ? engineInput : [engineInput]
+  return raw.flatMap((candidate, index) => {
+    const uci = typeof candidate === 'string' ? candidate : candidate?.uci
+    const move = moveFromUci(game, uci)
+    if (!move) return []
+    return [{
+      ...candidate,
+      move,
+      score: Number.isFinite(candidate?.score) ? candidate.score : null,
+      rank: Number(candidate?.rank || index + 1),
+    }]
+  }).sort((a, b) => a.rank - b.rank)
+}
 
-  let score = -Infinity
-  const moves = orderMoves(game.moves({ verbose: true }))
-  for (const move of moves) {
-    const branch = new Chess(game.fen())
+function candidateMetadata(move, candidates) {
+  const match = candidates.find((candidate) => sameMove(candidate.move, move))
+  return {
+    move,
+    force: true,
+    score: match?.score ?? null,
+    rank: match?.rank ?? null,
+  }
+}
+
+function weightedChoice(options, explicitWeights = null) {
+  const weights = explicitWeights || options.map((option) => Math.max(0.01, option.weight || 1))
+  const total = weights.reduce((sum, weight) => sum + weight, 0)
+  let roll = Math.random() * total
+  for (let index = 0; index < options.length; index += 1) {
+    roll -= weights[index]
+    if (roll <= 0) return options[index]
+  }
+  return options[0]
+}
+
+function learnedStyleScore(game, move, styleProfile) {
+  const colorKey = game.turn() === 'w' ? 'white' : 'black'
+  const learned = styleProfile.learnedStyle?.byColor?.[colorKey]
+  if (!learned) return 0
+  const motifs = learned.motifWeights || {}
+  let score = (learned.pieceSquareWeights?.[`${move.piece}:${move.to}`] || 0) * 42
+  if (move.captured) score += (motifs.capture || 0) * 40
+  if (move.san.includes('+') || move.san.includes('#')) score += (motifs.check || 0) * 70
+  if (move.flags.includes('k') || move.flags.includes('q')) score += (motifs.castle || 0) * 80
+  if (CENTER.has(move.to)) score += (motifs.center || 0) * 45
+  return score
+}
+
+function fallbackSearch(game, depth, styleProfile) {
+  let bestMove = null
+  let bestScore = -Infinity
+  for (const move of orderMoves(game.moves({ verbose: true }))) {
+    const branch = cloneGame(game)
     branch.move(move)
-    score = Math.max(score, -search(branch, depth - 1, -beta, -alpha))
-    alpha = Math.max(alpha, score)
+    const score = -search(branch, depth - 1, -Infinity, Infinity)
+      + learnedStyleScore(game, move, styleProfile)
+    if (score > bestScore) {
+      bestScore = score
+      bestMove = move
+    }
+  }
+  return bestMove
+}
+
+function search(game, depth, alpha, beta) {
+  if (depth <= 0 || game.isGameOver()) return evaluate(game)
+  let best = -Infinity
+  for (const move of orderMoves(game.moves({ verbose: true }))) {
+    const branch = cloneGame(game)
+    branch.move(move)
+    best = Math.max(best, -search(branch, depth - 1, -beta, -alpha))
+    alpha = Math.max(alpha, best)
     if (alpha >= beta) break
   }
-  return score
+  return best
 }
 
 function evaluate(game) {
   if (game.isCheckmate()) return -999999
   if (game.isDraw()) return 0
-
-  const board = game.board()
   let score = 0
-  for (let rank = 0; rank < 8; rank += 1) {
-    for (let file = 0; file < 8; file += 1) {
-      const piece = board[rank][file]
+  for (const row of game.board()) {
+    for (const piece of row) {
       if (!piece) continue
-      const square = `${'abcdefgh'[file]}${8 - rank}`
-      const sign = piece.color === game.turn() ? 1 : -1
-      score += sign * (pieceValue[piece.type] + squareBonus(piece.type, square))
+      score += (piece.color === game.turn() ? 1 : -1) * PIECE_VALUES[piece.type]
     }
-  }
-  if (game.inCheck()) score -= 35
-  return score
-}
-
-function squareBonus(piece, square) {
-  if (centerSquares.has(square)) return piece === 'p' ? 28 : 18
-  if (nearCenterSquares.has(square)) return 9
-  return 0
-}
-
-function styleBonus(move, game, styleProfile = {}, playerColor = game.turn()) {
-  let bonus = 0
-  if (move.flags.includes('c')) bonus += pieceValue[move.captured] / 8
-  if (move.san.includes('+')) bonus += 22
-  if (centerSquares.has(move.to)) bonus += 16
-  if ((move.piece === 'n' || move.piece === 'b') && ['c6', 'f6', 'c3', 'f3'].includes(move.to)) bonus += 10
-  if (game.inCheck()) bonus += 12
-  bonus += learnedStyleScoreForColor(move, styleProfile, playerColor, countPieces(game))
-  return bonus
-}
-
-function learnedStyleScore(game, move, styleProfile) {
-  return learnedStyleScoreForColor(move, styleProfile, game.turn(), countPieces(game))
-}
-
-function learnedStyleScoreForColor(move, styleProfile, playerColor, pieceCount) {
-  const colorKey = playerColor === 'w' ? 'white' : 'black'
-  const learned = styleProfile.learnedStyle?.byColor?.[colorKey]
-  if (!learned) return 0
-
-  const motifs = learned.motifWeights || {}
-  let score = (learned.pieceSquareWeights?.[`${move.piece}:${move.to}`] || 0) * 42
-  if (move.captured) score += (motifs.capture || 0) * 48
-  if (move.san.includes('+') || move.san.includes('#')) score += (motifs.check || 0) * 80
-  if (move.flags.includes('k') || move.flags.includes('q')) score += (motifs.castle || 0) * 90
-  if (move.piece === 'p') score += (motifs.pawnPush || 0) * 18
-  if (move.piece === 'q') score += (motifs.queenMove || 0) * 26
-  if (move.piece === 'r') score += (motifs.rookMove || 0) * 22
-  if (move.piece === 'p' && ['a', 'b', 'g', 'h'].includes(move.to[0])) {
-    score += (motifs.flankPawn || 0) * 55
-  }
-  if (centerSquares.has(move.to)) score += (motifs.center || 0) * 45
-  if (
-    (move.piece === 'n' || move.piece === 'b') &&
-    ['1', '8'].includes(move.from[1])
-  ) {
-    score += (motifs.development || 0) * 52
-  }
-  if (pieceCount <= 12) {
-    const endgame = learned.endgameHabits || {}
-    if (move.piece === 'k') score += (endgame.kingMoveRate || 0) * 30
-    if (move.piece === 'p') score += (endgame.pawnMoveRate || 0) * 22
-    if (move.captured) score += (endgame.captureRate || 0) * 26
   }
   return score
 }
 
 function orderMoves(moves) {
   return [...moves].sort((a, b) => {
-    const captureA = a.captured ? pieceValue[a.captured] - pieceValue[a.piece] / 10 : 0
-    const captureB = b.captured ? pieceValue[b.captured] - pieceValue[b.piece] / 10 : 0
-    return captureB - captureA
+    const aValue = a.captured ? PIECE_VALUES[a.captured] : 0
+    const bValue = b.captured ? PIECE_VALUES[b.captured] : 0
+    return bValue - aValue
   })
 }
 
-function buildCoachNote(game, move, score, rating) {
-  if (!move) return 'No legal moves.'
-  const source = score > 80 ? 'great' : 'search'
-  return withPhrase(move, game, source, rating)
+function moveFromUci(game, uci) {
+  if (!uci || uci === '(none)') return null
+  return game.moves({ verbose: true }).find((move) =>
+    move.from === uci.slice(0, 2) &&
+    move.to === uci.slice(2, 4) &&
+    (!uci[4] || move.promotion === uci[4]),
+  ) || null
 }
 
-function buildEngineNote(game, move, rating) {
-  const source = move.captured || move.san.includes('+') || rating >= 2700 ? 'great' : 'engine'
-  return withPhrase(move, game, source, rating)
+function positionKey(game) {
+  return game.fen().split(' ').slice(0, 4).join(' ')
 }
 
-function withPhrase(move, game, source, rating = 2300) {
-  return phraseForMove(move, {
-    isOpeningMove: game.history().length === 0,
-    isFreePieceCapture: isFreePieceCapture(game, move),
-    isGreatMove: source === 'great',
-    isWinning: isWinningAfterMove(game, move),
-    isBeltMode: rating >= 2700,
-    isCenterMove: centerSquares.has(move.to),
-    isCastle: move.flags.includes('k') || move.flags.includes('q'),
-    isPromotion: Boolean(move.promotion),
-    isQueenMove: move.piece === 'q',
-    isRookMove: move.piece === 'r',
-    isPawnBreak: isPawnBreak(game, move),
-    isRecapture: isRecapture(game, move),
-    isEscapingCheck: game.inCheck(),
-    isOnlyMove: game.moves().length === 1,
-    isEndgame: countPieces(game) <= 10,
-    source,
-  })
+function cloneGame(game) {
+  const clone = new Chess()
+  for (const san of game.history()) clone.move(san)
+  return clone
 }
 
-function isFreePieceCapture(game, move) {
-  if (!move?.captured) return false
-  const branch = new Chess(game.fen())
-  branch.move(move)
-  return !branch.moves({ verbose: true }).some((reply) => reply.to === move.to && reply.captured)
+function sameMove(a, b) {
+  return a?.from === b?.from && a?.to === b?.to && a?.promotion === b?.promotion
 }
 
-function isWinningAfterMove(game, move) {
-  const branch = new Chess(game.fen())
-  branch.move(move)
-  return -evaluate(branch) > 520
-}
-
-function isPawnBreak(game, move) {
-  if (move.piece !== 'p') return false
-  const fromRank = Number(move.from[1])
-  const toRank = Number(move.to[1])
-  const movedTwoSquares = Math.abs(toRank - fromRank) === 2
-  return movedTwoSquares || centerSquares.has(move.to) || move.captured
-}
-
-function isRecapture(game, move) {
-  if (!move.captured) return false
-  const verboseHistory = game.history({ verbose: true })
-  const previousMove = verboseHistory.at(-1)
-  return previousMove?.to === move.to
-}
-
-function countPieces(game) {
-  return game.board().flat().filter(Boolean).length
+function cleanSan(san) {
+  return String(san || '').replace(/[+#?!]+/g, '')
 }
 
 function isKingsIndianAttack(moves) {
@@ -482,16 +321,4 @@ function isKingsIndianDefense(moves) {
 function isPircDefense(moves) {
   const played = new Set(moves.map(cleanSan))
   return played.has('d6') && played.has('Nf6') && (played.has('g6') || played.has('Bg7'))
-}
-
-function cleanSan(san) {
-  return san.replace(/[+#?!]+/g, '')
-}
-
-function sameMove(a, b) {
-  return a?.from === b?.from && a?.to === b?.to && a?.promotion === b?.promotion
-}
-
-function randomLine(lines) {
-  return lines[Math.floor(Math.random() * lines.length)]
 }

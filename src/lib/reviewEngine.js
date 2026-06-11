@@ -1,286 +1,231 @@
 import { Chess } from 'chess.js'
-import { OPENING_BOOK } from '../data/openingBook'
+import { CLASSIFICATIONS, classifyMove, expectedPointsFromScore } from './bookupClassifications.js'
 
-const values = { p: 100, n: 315, b: 330, r: 500, q: 900, k: 0 }
-const EXPECTED_POINTS_GRADIENT = 0.0035
-const MAX_STOCKFISH_REVIEW_PLIES = 48
-const classificationData = {
-  book: {
-    label: 'Book',
-    icon: './assets/move-classifications/book.png',
-    color: '#b68b5d',
-    note: 'Known opening theory or repertoire memory.',
-  },
-  brilliant: {
-    label: 'Brilliant',
-    icon: './assets/move-classifications/brilliant.png',
-    color: '#25c7d9',
-    note: 'A tactical move that wins material or creates a decisive forcing line.',
-  },
-  great: {
-    label: 'Great',
-    icon: './assets/move-classifications/great.png',
-    color: '#37b6ff',
-    note: 'A forcing accurate move that keeps serious pressure.',
-  },
-  best: {
-    label: 'Best',
-    icon: './assets/move-classifications/best.png',
-    color: '#83c84a',
-    note: 'Engine-approved and clean.',
-  },
-  excellent: {
-    label: 'Excellent',
-    icon: './assets/move-classifications/excellent.png',
-    color: '#95d35b',
-    note: 'A strong practical move with almost no evaluation loss.',
-  },
-  good: {
-    label: 'Good',
-    icon: './assets/move-classifications/good.png',
-    color: '#f1c75b',
-    note: 'Playable, but there was a more precise continuation.',
-  },
-  inaccuracy: {
-    label: 'Inaccuracy',
-    icon: './assets/move-classifications/inaccuracy.png',
-    color: '#f0a13a',
-    note: 'A small drift. Check the candidate move order here.',
-  },
-  mistake: {
-    label: 'Mistake',
-    icon: './assets/move-classifications/mistake.png',
-    color: '#e26b35',
-    note: 'The position changed enough that calculation should slow down.',
-  },
-  blunder: {
-    label: 'Blunder',
-    icon: './assets/move-classifications/blunder.png',
-    color: '#d93a32',
-    note: 'This gives away too much. Look for checks, captures, and threats first.',
-  },
-  miss: {
-    label: 'Miss',
-    icon: './assets/move-classifications/miss.png',
-    color: '#d9912b',
-    note: 'Fails to convert the stronger continuation.',
-  },
-  forced: {
-    label: 'Forced',
-    icon: './assets/move-classifications/best.png',
-    color: '#83c84a',
-    note: 'Only move or forced response.',
-  },
-}
+const REVIEW_OPTIONS = { depth: 8, moveTime: 190, count: 4, timeout: 1450 }
+const TACTICAL_OPTIONS = { depth: 10, moveTime: 330, count: 5, timeout: 1900 }
 
-export function reviewGame(history) {
+export async function reviewGameWithStockfish({
+  history,
+  client,
+  repertoire = {},
+  onProgress = () => {},
+  signal,
+}) {
   const game = new Chess()
   const moments = []
-  let previous = evaluateForSide(game, 'w')
-
-  history.forEach((san, index) => {
-    const side = game.turn()
-    const move = game.move(san)
-    if (!move) return
-    const current = evaluateForSide(game, side)
-    const swing = current - previous
-    if (swing < -180) {
-      moments.push({
-        move: index + 1,
-        san,
-        ...classificationForKey(swing < -420 ? 'blunder' : 'mistake'),
-        note: `${san} changed the evaluation sharply. Look for forcing replies before committing.`,
-      })
-    } else if (move.san.includes('#')) {
-      moments.push({
-        move: index + 1,
-        san,
-        ...classificationForKey('best'),
-        note: `${san} ended the game by force.`,
-      })
-    } else if (move.san.includes('+')) {
-      moments.push({
-        move: index + 1,
-        san,
-        ...classificationForKey('great'),
-        note: `${san} forced the king to respond. Always check the follow-up.`,
-      })
-    } else if (move.captured) {
-      moments.push({
-        move: index + 1,
-        san,
-        ...classificationForKey('great'),
-        note: `${san} is forcing. Check the candidate moves and count material after the sequence.`,
-      })
-    }
-    previous = -evaluateForSide(game, game.turn())
-  })
-
-  return moments.slice(-5).reverse()
-}
-
-export async function reviewGameWithStockfish(history, evaluateFen) {
-  if (!history.length || !evaluateFen) return buildFallbackFinalReview(history)
-
-  const game = new Chess()
-  const moments = []
-  let accuracyTotal = 0
-  let reviewedMoves = 0
+  const positions = [game.fen()]
+  const graph = [{ ply: 0, score: 0 }]
+  const accuracy = { w: [], b: [] }
 
   for (let index = 0; index < history.length; index += 1) {
-    const san = history[index]
+    if (signal?.aborted) throw new DOMException('Review cancelled', 'AbortError')
     const beforeFen = game.fen()
+    const beforeHistory = game.history()
     const legalMoveCount = game.moves().length
-    const bookKey = game.history().join(' ')
-    const isBookMove = Boolean(OPENING_BOOK[bookKey]?.some((option) =>
-      (typeof option === 'string' ? option : option.san) === san,
-    ))
-    const beforeScore = index < MAX_STOCKFISH_REVIEW_PLIES
-      ? await safeEvaluate(evaluateFen, beforeFen, { depth: 6, moveTime: 180 })
-      : null
     const side = game.turn()
-    const move = game.move(san)
-    if (!move) continue
+    const san = history[index]
+    const verboseMove = game.moves({ verbose: true }).find((candidate) => candidate.san === san)
+    if (!verboseMove) continue
 
-    const afterScore = index < MAX_STOCKFISH_REVIEW_PLIES
-      ? await safeEvaluate(evaluateFen, game.fen(), { depth: 6, moveTime: 180 })
-      : null
-    if (typeof beforeScore !== 'number' || typeof afterScore !== 'number') {
-      moments.push(fallbackMoment(move, index))
-      continue
+    let candidates = await safeAnalyze(client, beforeFen, REVIEW_OPTIONS)
+    let playedLine = candidates.find((line) => sameUci(line.uci, toUci(verboseMove)))
+    const tacticalCandidate = Boolean(verboseMove.captured || verboseMove.san.includes('+') || playedLine?.rank <= 3)
+    if (tacticalCandidate) {
+      const deeper = await safeAnalyze(client, beforeFen, TACTICAL_OPTIONS)
+      if (deeper.length) candidates = deeper
+      playedLine = candidates.find((line) => sameUci(line.uci, toUci(verboseMove)))
     }
 
-    const moverBefore = beforeScore
-    const moverAfter = -afterScore
-    const loss = Math.max(0, moverBefore - moverAfter)
-    const expectedLoss = expectedPointsFromCp(moverBefore) - expectedPointsFromCp(moverAfter)
-    const classification = classifyLoss(expectedLoss, move, index, legalMoveCount, isBookMove, expectedPointsFromCp(moverBefore))
-    const accuracy = accuracyFromLoss(loss)
-    accuracyTotal += accuracy
-    reviewedMoves += 1
+    game.move(verboseMove)
+    positions.push(game.fen())
+    if (!playedLine) {
+      const afterLines = await safeAnalyze(client, game.fen(), {
+        ...REVIEW_OPTIONS,
+        count: 1,
+        moveTime: 130,
+        timeout: 1100,
+      })
+      const replyScore = afterLines[0]?.score
+      playedLine = {
+        uci: toUci(verboseMove),
+        rank: 99,
+        score: Number.isFinite(replyScore) ? -replyScore : null,
+        mate: afterLines[0]?.mate === null ? null : negate(afterLines[0]?.mate),
+        pv: [toUci(verboseMove), ...(afterLines[0]?.pv || [])],
+      }
+    }
 
-    moments.push({
-      move: index + 1,
+    const bestLine = candidates[0] || playedLine
+    const inBook = isRepertoireMove(repertoire, beforeHistory, beforeFen, san)
+    const classification = Number.isFinite(bestLine?.score) && Number.isFinite(playedLine?.score)
+      ? classifyMove({
+          beforeFen,
+          move: verboseMove,
+          bestLine,
+          playedLine,
+          candidateLines: candidates,
+          legalMoveCount,
+          openingPhase: index < 20,
+          inBook,
+          isPlayerMove: side === 'w',
+        })
+      : fallbackClassification(game)
+
+    const scoreAfterWhite = scoreForWhite(side, playedLine?.score)
+    const moment = {
+      ply: index + 1,
       moveNumber: Math.floor(index / 2) + 1,
-      san,
       side,
+      san,
+      uci: toUci(verboseMove),
+      beforeFen,
+      afterFen: game.fen(),
+      bestMove: bestLine?.uci || null,
+      bestLine: bestLine?.pv || [],
+      playedLine: playedLine?.pv || [],
+      scoreBefore: scoreForWhite(side, bestLine?.score),
+      scoreAfter: scoreAfterWhite,
+      evaluationChange: scoreDifference(bestLine?.score, playedLine?.score),
+      accuracy: moveAccuracy(classification.expectedPointsLoss),
       ...classification,
-      scoreLoss: loss,
-      expectedPointsLoss: expectedLoss,
-    })
+    }
+    moments.push(moment)
+    graph.push({ ply: index + 1, score: clamp(scoreAfterWhite || 0, -1200, 1200) })
+    accuracy[side].push(moment.accuracy)
+    onProgress({ completed: index + 1, total: history.length, moment })
   }
 
-  const completedWithStockfish = reviewedMoves > 0
-  const counts = buildClassificationCounts(moments)
   return {
     complete: true,
-    engine: completedWithStockfish ? 'Stockfish 18' : 'JS fallback',
-    accuracy: reviewedMoves ? Math.round(accuracyTotal / reviewedMoves) : null,
+    engine: 'Stockfish 18',
     result: finalResult(game),
-    counts,
+    positions,
     moments,
+    graph,
+    counts: classificationCounts(moments),
+    accuracy: {
+      white: average(accuracy.w),
+      black: average(accuracy.b),
+    },
   }
 }
 
 export function buildFallbackFinalReview(history) {
-  const moments = reviewGame(history)
+  const game = new Chess()
+  const positions = [game.fen()]
+  const moments = []
+  history.forEach((san, index) => {
+    const side = game.turn()
+    const move = game.move(san)
+    if (!move) return
+    positions.push(game.fen())
+    const classification = fallbackClassification(game)
+    moments.push({
+      ply: index + 1,
+      moveNumber: Math.floor(index / 2) + 1,
+      side,
+      san,
+      beforeFen: positions[index],
+      afterFen: game.fen(),
+      bestLine: [],
+      playedLine: [],
+      scoreBefore: 0,
+      scoreAfter: 0,
+      evaluationChange: null,
+      accuracy: moveAccuracy(classification.expectedPointsLoss),
+      ...classification,
+    })
+  })
   return {
     complete: true,
-    engine: 'JS fallback',
-    accuracy: null,
-    result: 'Game over',
-    counts: buildClassificationCounts(moments),
+    engine: 'Local fallback',
+    result: finalResult(game),
+    positions,
     moments,
+    graph: positions.map((_, ply) => ({ ply, score: 0 })),
+    counts: classificationCounts(moments),
+    accuracy: {
+      white: average(moments.filter((item) => item.side === 'w').map((item) => item.accuracy)),
+      black: average(moments.filter((item) => item.side === 'b').map((item) => item.accuracy)),
+    },
   }
 }
 
-async function safeEvaluate(evaluateFen, fen, options) {
+async function safeAnalyze(client, fen, options) {
   try {
-    return await evaluateFen(fen, options)
+    return await client.analyze(fen, options) || []
   } catch {
-    return null
+    return []
   }
 }
 
-function evaluateForSide(game, side) {
-  if (game.isCheckmate()) return game.turn() === side ? -99999 : 99999
-  if (game.isDraw()) return 0
-  let score = 0
-  for (const row of game.board()) {
-    for (const piece of row) {
-      if (!piece) continue
-      score += (piece.color === side ? 1 : -1) * values[piece.type]
-    }
-  }
-  return score
-}
-
-function classifyLoss(loss, move, index, legalMoveCount, isBookMove, expectedBefore) {
-  if (legalMoveCount <= 1) return classificationForKey('forced')
-  if (index < 14 && isBookMove && loss <= 0.05) return classificationForKey('book')
-  if (move.san.includes('#')) {
-    return classificationForKey('best')
-  }
-  if (loss <= 0.02 && move.captured && move.piece !== 'p') return classificationForKey('brilliant')
-  if (loss <= 0.02 && move.captured && values[move.captured] >= values[move.piece]) return classificationForKey('brilliant')
-  if (move.san.includes('+') && loss <= 0.05) {
-    return classificationForKey('great')
-  }
-  if (loss <= 0.02 && (move.captured || move.san.includes('+'))) {
-    return classificationForKey('great')
-  }
-  if (expectedBefore >= 0.75 && loss >= 0.05 && loss <= 0.20) return classificationForKey('miss')
-  if (loss <= 0.005) return classificationForKey('best')
-  if (loss <= 0.02) return classificationForKey('excellent')
-  if (loss <= 0.05) return classificationForKey('good')
-  if (loss <= 0.10) return classificationForKey('inaccuracy')
-  if (loss <= 0.20) return classificationForKey('mistake')
-  return classificationForKey('blunder')
-}
-
-function accuracyFromLoss(loss) {
-  if (loss <= 12) return 100
-  if (loss <= 45) return 94
-  if (loss <= 90) return 84
-  if (loss <= 160) return 68
-  if (loss <= 320) return 42
-  return 18
-}
-
-function fallbackMoment(move, index) {
-  const key = move.san.includes('#') ? 'best' : move.san.includes('+') || move.captured ? 'great' : 'good'
+function fallbackClassification(game) {
+  const key = game.isCheckmate() ? 'best' : 'good'
   return {
-    move: index + 1,
-    moveNumber: Math.floor(index / 2) + 1,
-    san: move.san,
-    side: move.color,
-    ...classificationForKey(key),
-    expectedPointsLoss: null,
+    key,
+    ...CLASSIFICATIONS[key],
+    expectedPointsLoss: key === 'best' ? 0 : 0.04,
+    expectedPoints: expectedPointsFromScore(0),
   }
+}
+
+function isRepertoireMove(repertoire, history, fen, san) {
+  const historyOptions = repertoire.openingBook?.[history.join(' ')]
+  const positionKey = fen.split(' ').slice(0, 4).join(' ')
+  const positionOptions = repertoire.openingBook?.[positionKey]
+  return [...(historyOptions || []), ...(positionOptions || [])].some((option) =>
+    cleanSan(typeof option === 'string' ? option : option.san) === cleanSan(san),
+  )
+}
+
+function scoreForWhite(side, score) {
+  if (!Number.isFinite(score)) return null
+  return side === 'w' ? score : -score
+}
+
+function scoreDifference(best, played) {
+  if (!Number.isFinite(best) || !Number.isFinite(played)) return null
+  return Math.max(0, best - played)
+}
+
+function moveAccuracy(loss = 0) {
+  return Math.round(100 * Math.exp(-4.5 * Math.max(0, loss)))
+}
+
+function classificationCounts(moments) {
+  return Object.values(moments.reduce((counts, moment) => {
+    counts[moment.key] ||= { key: moment.key, count: 0, ...CLASSIFICATIONS[moment.key] }
+    counts[moment.key].count += 1
+    return counts
+  }, {})).sort((a, b) => b.count - a.count)
 }
 
 function finalResult(game) {
   if (game.isCheckmate()) return game.turn() === 'w' ? 'Black wins by checkmate' : 'White wins by checkmate'
   if (game.isDraw()) return 'Draw'
-  return 'Game over'
+  return 'Game complete'
 }
 
-function expectedPointsFromCp(cp) {
-  const clamped = Math.max(-4000, Math.min(4000, Number(cp) || 0))
-  return 1 / (1 + Math.exp(-EXPECTED_POINTS_GRADIENT * clamped))
+function average(values) {
+  return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : null
 }
 
-function classificationForKey(key) {
-  return {
-    key,
-    ...classificationData[key],
-  }
+function toUci(move) {
+  return `${move.from}${move.to}${move.promotion || ''}`
 }
 
-function buildClassificationCounts(moments) {
-  const counts = {}
-  for (const moment of moments) counts[moment.key] = (counts[moment.key] || 0) + 1
-  return Object.entries(counts)
-    .map(([key, count]) => ({ key, count, ...classificationData[key] }))
-    .sort((a, b) => b.count - a.count)
+function sameUci(a, b) {
+  return String(a || '') === String(b || '')
+}
+
+function cleanSan(value) {
+  return String(value || '').replace(/[+#?!]+/g, '')
+}
+
+function negate(value) {
+  return Number.isFinite(value) ? -value : null
+}
+
+function clamp(value, minimum, maximum) {
+  return Math.max(minimum, Math.min(maximum, value))
 }

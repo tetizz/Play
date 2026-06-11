@@ -1,18 +1,70 @@
 import { writeFile } from 'node:fs/promises'
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import { Chess } from 'chess.js'
 
-const BOOK_OUTPUT_PATH = new URL('../src/data/generatedRecentAydenRepertoireBook.js', import.meta.url)
-const STYLE_OUTPUT_PATH = new URL('../src/data/generatedAydenStyleProfile.js', import.meta.url)
+const PROFILES = {
+  mubassar: {
+    label: 'Mubassar',
+    bookFile: 'generatedRecentRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_REPERTOIRE_BOOK',
+    styleFile: 'generatedMubassarStyleProfile.js',
+    styleExport: 'GENERATED_MUBASSAR_STYLE_PROFILE',
+    accounts: [
+      { site: 'chess.com', username: 'keepitcoming' },
+      { site: 'lichess', username: 'real64squares' },
+      { site: 'lichess', username: 'guardup' },
+    ],
+  },
+  ayden: {
+    label: 'Ayden',
+    bookFile: 'generatedRecentAydenRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_REPERTOIRE_BOOK',
+    styleFile: 'generatedAydenStyleProfile.js',
+    styleExport: 'GENERATED_AYDEN_STYLE_PROFILE',
+    accounts: [
+      { site: 'chess.com', username: 'AA01001' },
+      { site: 'lichess', username: 'AydenICN' },
+    ],
+  },
+  akshit: {
+    label: 'Akshit',
+    bookFile: 'generatedRecentAkshitRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_AKSHIT_REPERTOIRE_BOOK',
+    styleFile: 'generatedAkshitStyleProfile.js',
+    styleExport: 'GENERATED_AKSHIT_STYLE_PROFILE',
+    accounts: [
+      { site: 'chess.com', username: 'knightmanuveur_12' },
+    ],
+  },
+}
+
+const requestedProfile = process.argv.includes('--profile')
+  ? process.argv[process.argv.indexOf('--profile') + 1]
+  : 'all'
+
+if (requestedProfile === 'all') {
+  for (const profileId of Object.keys(PROFILES)) {
+    const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), '--profile', profileId], {
+      stdio: 'inherit',
+    })
+    if (result.status !== 0) process.exit(result.status || 1)
+  }
+  process.exit(0)
+}
+
+const PROFILE = PROFILES[requestedProfile]
+if (!PROFILE) throw new Error(`Unknown profile "${requestedProfile}"`)
+const BOOK_OUTPUT_PATH = new URL(`../src/data/${PROFILE.bookFile}`, import.meta.url)
+const STYLE_OUTPUT_PATH = new URL(`../src/data/${PROFILE.styleFile}`, import.meta.url)
 const HALF_LIFE_DAYS = 180
 const CHESSCOM_RECENT_MONTHS = 30
 const MAX_LICHESS_GAMES_PER_ACCOUNT = 900
 const MAX_BOOK_PLIES = 24
 const MAX_MOVES_PER_POSITION = 8
 const MIN_RECENT_WEIGHT = 0.05
-const ACCOUNTS = [
-  { site: 'chess.com', username: 'AA01001' },
-  { site: 'lichess', username: 'AydenICN' },
-]
+const MAX_BOOK_POSITIONS = 9000
+const ACCOUNTS = PROFILE.accounts
 
 const now = new Date()
 const book = {}
@@ -48,7 +100,7 @@ for (const account of ACCOUNTS) {
 }
 
 if (styleAccumulator.games === 0) {
-  console.warn('No Ayden games were loaded. Existing generated repertoire and style data were preserved.')
+  console.warn(`No ${PROFILE.label} games were loaded. Existing generated repertoire and style data were preserved.`)
 } else {
   const sortedBook = buildSortedBook()
   const learnedStyle = buildLearnedStyle(sortedBook)
@@ -56,24 +108,24 @@ if (styleAccumulator.games === 0) {
   await Promise.all([
     writeFile(
       BOOK_OUTPUT_PATH,
-      `// Generated from recent public Chess.com/Lichess PGNs for AA01001 and AydenICN.
+      `// Generated from recent public Chess.com/Lichess PGNs for ${PROFILE.label}.
 // Recency uses a ${HALF_LIFE_DAYS}-day half-life, so newer games influence move choice more.
 // Chess.com window: last ${CHESSCOM_RECENT_MONTHS} monthly archives. Lichess cap: latest ${MAX_LICHESS_GAMES_PER_ACCOUNT} games per account.
 // Opening depth: first ${MAX_BOOK_PLIES} plies, max ${MAX_MOVES_PER_POSITION} moves per position.
 // Sources: ${sourceStats.join(', ')}.
 // Generated at ${now.toISOString()}.
-// Do not edit by hand; run npm run build:recent-book.
-export const GENERATED_RECENT_REPERTOIRE_BOOK = ${JSON.stringify(sortedBook, null, 2)}
+// Do not edit by hand; run npm run build:repertoires.
+export const ${PROFILE.bookExport} = ${JSON.stringify(sortedBook, null, 2)}
 `,
     ),
     writeFile(
       STYLE_OUTPUT_PATH,
-      `// Generated from the same public games as generatedRecentAydenRepertoireBook.js.
-// This compact profile lets the runtime preserve Ayden's recurring plans outside exact book positions.
+      `// Generated from the same public games as ${PROFILE.bookFile}.
+// This compact profile lets the runtime preserve ${PROFILE.label}'s recurring plans outside exact book positions.
 // Sources: ${sourceStats.join(', ')}.
 // Generated at ${now.toISOString()}.
-// Do not edit by hand; run npm run build:recent-book.
-export const GENERATED_AYDEN_STYLE_PROFILE = ${JSON.stringify(learnedStyle, null, 2)}
+// Do not edit by hand; run npm run build:repertoires.
+export const ${PROFILE.styleExport} = ${JSON.stringify(learnedStyle, null, 2)}
 `,
     ),
   ])
@@ -225,13 +277,14 @@ function recordMoveMotifs(motifs, move, index, weight) {
 }
 
 function buildSortedBook() {
-  return Object.fromEntries(
-    Object.entries(book)
-      .sort(([a], [b]) => a.localeCompare(b))
+  const reliablePositions = Object.entries(book)
       .map(([key, moves]) => [
         key,
         moves
-          .filter((move) => move.recentWeight >= MIN_RECENT_WEIGHT)
+          .filter((move) =>
+            move.recentWeight >= MIN_RECENT_WEIGHT &&
+            (move.games >= 2 || move.recentWeight >= 0.7),
+          )
           .sort((a, b) => b.recentWeight - a.recentWeight || b.games - a.games)
           .slice(0, MAX_MOVES_PER_POSITION)
           .map((move) => ({
@@ -244,7 +297,16 @@ function buildSortedBook() {
             latestPlayedAt: move.latestPlayedAt,
           })),
       ])
-      .filter(([, moves]) => moves.length),
+      .filter(([, moves]) => moves.length)
+  reliablePositions.sort(([, a], [, b]) => {
+    const aWeight = a.reduce((sum, move) => sum + move.recentWeight, 0)
+    const bWeight = b.reduce((sum, move) => sum + move.recentWeight, 0)
+    return bWeight - aWeight
+  })
+  return Object.fromEntries(
+    reliablePositions
+      .slice(0, MAX_BOOK_POSITIONS)
+      .sort(([a], [b]) => a.localeCompare(b)),
   )
 }
 
@@ -439,7 +501,7 @@ async function fetchLichessGames(username) {
   const response = await fetch(url, {
     headers: {
       Accept: 'application/x-chess-pgn',
-      'User-Agent': 'ayden-bot/1.0',
+        'User-Agent': 'play-bots-repertoire/2.0',
     },
   })
   if (!response.ok) throw new Error(`Lichess ${username}: ${response.status}`)
@@ -452,7 +514,7 @@ async function fetchLichessGames(username) {
 
 async function fetchJson(url) {
   const response = await fetch(url, {
-    headers: { 'User-Agent': 'ayden-bot/1.0' },
+    headers: { 'User-Agent': 'play-bots-repertoire/2.0' },
   })
   if (!response.ok) throw new Error(`${url}: ${response.status}`)
   return response.json()

@@ -5,14 +5,26 @@ import { BOT_PROFILES, getBotProfile } from '../src/data/botProfiles.js'
 import { dialogueAfterBotMove } from '../src/data/dialogue.js'
 import { chooseCoachMove, shouldActivateBeltMode } from '../src/lib/coachEngine.js'
 
-test('the three public bot profiles expose the requested ratings and capabilities', () => {
-  assert.equal(BOT_PROFILES.length, 3)
+test('the four public bot profiles expose the requested ratings and capabilities', () => {
+  assert.equal(BOT_PROFILES.length, 4)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 1000)
+  assert.equal(getBotProfile('trixize').displayRating, 1550)
   assert.equal(getBotProfile('mubassar').capabilities.beltMode, true)
   assert.equal(getBotProfile('ayden').capabilities.beltMode, false)
   assert.equal(getBotProfile('akshit').capabilities.knightSpecialist, true)
+  assert.equal(getBotProfile('trixize').capabilities.perfectTheory, true)
+  assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, 3000)
+})
+
+test('the original bot strength hierarchy is Mubassar, Ayden, then Akshit', () => {
+  const mubassar = getBotProfile('mubassar').strengthPolicy.engineElo
+  const ayden = getBotProfile('ayden').strengthPolicy.engineElo
+  const akshit = getBotProfile('akshit').strengthPolicy.engineElo
+  assert.ok(mubassar > ayden)
+  assert.ok(ayden > akshit)
+  assert.ok(ayden - akshit <= 150)
 })
 
 test('Mubassar always opens with d4 as White', () => {
@@ -75,4 +87,23 @@ test('Akshit must take a clearly superior knight move and only speaks for knight
   assert.equal(decision.move.piece, 'n')
   assert.equal(dialogueAfterBotMove(profile, { move: decision.move }), 'I am the knight manuveur.')
   assert.equal(dialogueAfterBotMove(profile, { move: { piece: 'p' } }), '')
+})
+
+test('Trixize starts with Nf3 and uses only the requested short dialogue', () => {
+  const game = new Chess()
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'd2d4', score: 30, rank: 1 },
+      { uci: 'g1f3', score: 26, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'Nf3')
+  assert.equal(dialogueAfterBotMove(profile, { isTrixizeFirstMove: true }), '1. Nf3 is the starting move.')
+  assert.equal(dialogueAfterBotMove(profile, { isTheoryBest: true }), 'Best move. Too much theory.')
+  assert.equal(dialogueAfterBotMove(profile, { isFreePiece: true }), 'Oops.')
+  assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), 'Rahh!')
 })

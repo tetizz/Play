@@ -126,8 +126,13 @@ export function BoardSurface({
         allowDragOffBoard: false,
         clearArrowsOnPositionChange: false,
         animationDurationInMs: 170,
-        draggingPieceGhostStyle: { opacity: 0 },
-        draggingPieceStyle: { opacity: 1, zIndex: 80 },
+        draggingPieceGhostStyle: { opacity: 0.18 },
+        draggingPieceStyle: {
+          opacity: 1,
+          zIndex: 80,
+          transform: 'scale(1)',
+          transformOrigin: 'center',
+        },
         canDragPiece: ({ square }) => {
           if (!interactive || !latest || !square) return false
           return liveGame.get(square)?.color === playerColor

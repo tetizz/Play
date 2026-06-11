@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js'
+import { classifyMove } from './bookupClassifications.js'
 
 const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
 const CENTER = new Set(['d4', 'e4', 'd5', 'e5'])
@@ -27,6 +28,9 @@ export function chooseCoachMove(game, engineInput, profile, styleProfile = {}, b
       source: 'repertoire',
       score: bookChoice.score,
       rank: bookChoice.rank,
+      line: bookChoice.line,
+      bestLine: candidates[0] || null,
+      candidateLines: candidates,
     }
   }
 
@@ -37,6 +41,9 @@ export function chooseCoachMove(game, engineInput, profile, styleProfile = {}, b
       source: selected.rank === 1 ? 'engine-best' : 'engine-style',
       score: selected.score,
       rank: selected.rank,
+      line: selected,
+      bestLine: candidates[0],
+      candidateLines: candidates,
     }
   }
 
@@ -55,12 +62,25 @@ export function shouldActivateBeltMode(profile, history, humanColor) {
     : isKingsIndianDefense(humanMoves) || isPircDefense(humanMoves)
 }
 
-export function moveContext(beforeGame, move, decision, beltMode, beltActivated = false) {
+export function moveContext(beforeGame, move, decision, beltMode, beltActivated = false, profile = null) {
   const afterGame = cloneGame(beforeGame)
   afterGame.move(move)
   const capturedValue = move.captured ? PIECE_VALUES[move.captured] : 0
   const replyCapturesMovedPiece = afterGame.moves({ verbose: true })
     .some((reply) => reply.to === move.to && reply.captured)
+  const classification = decision.bestLine && decision.line
+    ? classifyMove({
+        beforeFen: beforeGame.fen(),
+        move,
+        bestLine: decision.bestLine,
+        playedLine: decision.line,
+        candidateLines: decision.candidateLines || [],
+        legalMoveCount: beforeGame.moves().length,
+        openingPhase: beforeGame.history().length < 20,
+        inBook: decision.source === 'repertoire',
+        isPlayerMove: true,
+      })
+    : null
 
   return {
     move,
@@ -78,6 +98,11 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
       typeof decision.score === 'number' && decision.score >= 250
     ),
     opponentBlunder: Boolean(move.captured) && capturedValue >= 300 && !replyCapturesMovedPiece,
+    isBrilliant: classification?.key === 'brilliant',
+    isTheoryBest: decision.source === 'repertoire' && decision.rank === 1,
+    isTrixizeFirstMove: profile?.id === 'trixize' &&
+      beforeGame.history().length === 0 &&
+      cleanSan(move.san) === 'Nf3',
   }
 }
 
@@ -135,12 +160,16 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
       weight: stats.force ? Number.MAX_SAFE_INTEGER : Math.max(recentWeight, games),
       score: engineMatch?.score ?? null,
       rank: engineMatch?.rank ?? null,
+      line: engineMatch || null,
     })
   }
 
   if (!playable.length) return null
   const forced = playable.find((entry) => entry.force)
   if (forced) return forced
+  if (profile.capabilities.perfectTheory) {
+    return [...playable].sort((a, b) => (a.rank || 99) - (b.rank || 99))[0]
+  }
   return weightedChoice(playable)
 }
 
@@ -204,6 +233,7 @@ function candidateMetadata(move, candidates) {
     force: true,
     score: match?.score ?? null,
     rank: match?.rank ?? null,
+    line: match || null,
   }
 }
 

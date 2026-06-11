@@ -23,7 +23,7 @@ test('Akshit legal markers and premove chain stay responsive', async ({ page }) 
 
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
   await expect(page.getByText('Akshit is thinking')).toBeVisible()
-  await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming/i)).toHaveCount(0)
+  await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming|trixize1234/i)).toHaveCount(0)
   expect(errors).toEqual([])
 })
 
@@ -55,8 +55,8 @@ test('mobile setup has no horizontal page overflow', async ({ page }) => {
 })
 
 test('all bots start as White, Black, and Random without exposing account names', async ({ page }) => {
-  test.setTimeout(90000)
-  for (const botName of ['Mubassar', 'Ayden Spellman', 'Akshit Sharma']) {
+  test.setTimeout(120000)
+  for (const botName of ['Mubassar', 'Ayden Spellman', 'Akshit Sharma', 'Trixize']) {
     for (const color of ['White', 'Black', 'Random']) {
       await page.evaluate(() => localStorage.clear())
       await page.goto(`/?matrix=${encodeURIComponent(`${botName}-${color}`)}`)
@@ -64,9 +64,17 @@ test('all bots start as White, Black, and Random without exposing account names'
       await page.getByRole('button', { name: color === 'Random' ? /Random/ : color, exact: color !== 'Random' }).click()
       await page.getByRole('button', { name: 'Play', exact: true }).click()
       await expect(page.locator('.board-surface')).toBeVisible()
-      await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming|real64squares|guardup/i)).toHaveCount(0)
+      await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming|real64squares|guardup|trixize1234/i)).toHaveCount(0)
     }
   }
+})
+
+test('Trixize opens with Nf3 and delivers the requested opening line', async ({ page }) => {
+  await page.getByRole('button', { name: /Trixize/ }).click()
+  await page.getByRole('button', { name: 'Black', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
+  await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
 })
 
 test('cancelled drags restore the piece instead of leaving it invisible', async ({ page }) => {
@@ -82,6 +90,36 @@ test('cancelled drags restore the piece instead of leaving it invisible', async 
   await page.mouse.move(board.x + board.width + 30, board.y + board.height / 2, { steps: 5 })
   await page.mouse.up()
   await expect(page.locator('#play-bots-board-piece-wP-e2')).toBeVisible()
+})
+
+test('dragged pieces remain the size of one board square', async ({ page }) => {
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  const pawn = page.locator('#play-bots-board-piece-wP-e2')
+  const square = page.locator('[data-square="e2"]')
+  const pawnBox = await pawn.boundingBox()
+  const squareBox = await square.boundingBox()
+  expect(pawnBox).not.toBeNull()
+  expect(squareBox).not.toBeNull()
+
+  await page.mouse.move(pawnBox.x + pawnBox.width / 2, pawnBox.y + pawnBox.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(pawnBox.x + squareBox.width * 0.8, pawnBox.y - squareBox.height * 0.8, { steps: 4 })
+
+  const pieces = page.locator('[data-piece="wP"]')
+  const pieceCount = await pieces.count()
+  expect(pieceCount).toBeGreaterThanOrEqual(2)
+  const boxes = await Promise.all(Array.from({ length: pieceCount }, (_, index) => pieces.nth(index).boundingBox()))
+  const largest = Math.max(...boxes.filter(Boolean).map((box) => Math.max(box.width, box.height)))
+  expect(largest).toBeLessThanOrEqual(squareBox.width * 1.08)
+
+  await page.mouse.up()
+  await expect(page.locator('[data-piece="wP"]')).toHaveCount(8)
+  const remainingBoxes = await Promise.all(
+    Array.from({ length: 8 }, (_, index) => page.locator('[data-piece="wP"]').nth(index).boundingBox()),
+  )
+  expect(Math.max(...remainingBoxes.filter(Boolean).map((box) => Math.max(box.width, box.height))))
+    .toBeLessThanOrEqual(squareBox.width * 1.08)
 })
 
 test('Alt plus right drag draws a blue analysis arrow', async ({ page }) => {
@@ -120,6 +158,14 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
 
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
   await expect(page.locator('[data-square="e1"] > div')).toHaveCSS('background-image', /211,\s*43,\s*50/)
-  await expect(page.locator('.move-explanation')).toContainText('Best move', { timeout: 8000 })
+  await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible({ timeout: 8000 })
+  await expect(page.getByRole('heading', { name: 'Game performance' })).toBeVisible()
+  const evaluationData = await page.evaluate(() => ({
+    graph: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),
+    bar: Number(document.querySelector('.evaluation-bar')?.dataset.evalPercent),
+  }))
+  expect(evaluationData.graph).toBe(evaluationData.bar)
+  await page.getByRole('tab', { name: 'Review moves' }).click()
+  await expect(page.locator('.move-explanation')).toContainText('Best move')
   expect(Date.now() - startedAt).toBeLessThan(8500)
 })

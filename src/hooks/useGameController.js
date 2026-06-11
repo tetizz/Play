@@ -184,7 +184,14 @@ export function useGameController(defaultBotId) {
         setTurnState('human')
         return
       }
-      const context = moveContext(beforeGame, decision.move, decision, activeBelt || beltActivated, beltActivated)
+      const context = moveContext(
+        beforeGame,
+        decision.move,
+        decision,
+        activeBelt || beltActivated,
+        beltActivated,
+        profile,
+      )
       beforeGame.move(decision.move)
       let nextHistory = beforeGame.history()
       commitHistory(nextHistory, { from: decision.move.from, to: decision.move.to })

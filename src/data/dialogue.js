@@ -83,6 +83,14 @@ const AYDEN_LINES = {
 }
 
 export function dialogueAfterBotMove(profile, context) {
+  if (profile.dialoguePolicy === 'trixize') {
+    if (context.isBrilliant) return 'Rahh!'
+    if (context.isFreePiece || context.opponentBlunder) return 'Oops.'
+    if (context.isTrixizeFirstMove) return '1. Nf3 is the starting move.'
+    if (context.isTheoryBest) return 'Best move. Too much theory.'
+    return ''
+  }
+
   if (profile.dialoguePolicy === 'akshit') {
     return context.move?.piece === 'n' ? 'I am the knight manuveur.' : ''
   }
@@ -113,6 +121,7 @@ export function initialDialogue(profile) {
 }
 
 export function dialogueForGameEnd(profile, result) {
+  if (profile.dialoguePolicy === 'trixize') return result.includes('checkmate') ? 'Good game.' : ''
   if (profile.dialoguePolicy === 'akshit') return ''
   if (profile.dialoguePolicy === 'ayden') return result.includes('checkmate') ? 'Checkmate.' : 'Good game.'
   if (result.toLowerCase().includes('player wins')) return 'Alright, you earned that one.'

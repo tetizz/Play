@@ -37,6 +37,16 @@ const PROFILES = {
       { site: 'chess.com', username: 'knightmanuveur_12' },
     ],
   },
+  trixize: {
+    label: 'Trixize',
+    bookFile: 'generatedRecentTrixizeRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK',
+    styleFile: 'generatedTrixizeStyleProfile.js',
+    styleExport: 'GENERATED_TRIXIZE_STYLE_PROFILE',
+    accounts: [
+      { site: 'chess.com', username: 'trixize1234' },
+    ],
+  },
 }
 
 const requestedProfile = process.argv.includes('--profile')

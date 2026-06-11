@@ -24,14 +24,15 @@ const BOT_PROFILE_LIST = [
     capabilities: {
       beltMode: true,
       knightSpecialist: false,
+      perfectTheory: false,
     },
     strengthPolicy: {
       engineElo: 2400,
-      depth: 10,
-      moveTime: 950,
+      depth: 11,
+      moveTime: 1100,
       candidates: 5,
-      styleWindowCp: 24,
-      bookWindowCp: 45,
+      styleWindowCp: 18,
+      bookWindowCp: 30,
       bookMinGames: 8,
       bookMinRecentWeight: 1.2,
       belt: {
@@ -72,14 +73,15 @@ const BOT_PROFILE_LIST = [
     capabilities: {
       beltMode: false,
       knightSpecialist: false,
+      perfectTheory: false,
     },
     strengthPolicy: {
-      engineElo: 1900,
-      depth: 8,
-      moveTime: 650,
+      engineElo: 2250,
+      depth: 10,
+      moveTime: 900,
       candidates: 5,
-      styleWindowCp: 42,
-      bookWindowCp: 70,
+      styleWindowCp: 24,
+      bookWindowCp: 35,
       bookMinGames: 5,
       bookMinRecentWeight: 0.9,
     },
@@ -113,14 +115,15 @@ const BOT_PROFILE_LIST = [
     capabilities: {
       beltMode: false,
       knightSpecialist: true,
+      perfectTheory: false,
     },
     strengthPolicy: {
-      engineElo: 1400,
-      depth: 7,
-      moveTime: 520,
+      engineElo: 2150,
+      depth: 10,
+      moveTime: 850,
       candidates: 5,
-      styleWindowCp: 105,
-      bookWindowCp: 100,
+      styleWindowCp: 32,
+      bookWindowCp: 45,
       bookMinGames: 4,
       bookMinRecentWeight: 0.65,
       knightRequiredGapCp: 45,
@@ -129,6 +132,49 @@ const BOT_PROFILE_LIST = [
       chesscom: ['knightmanuveur_12'],
       lichess: [],
       recentHalfLifeDays: 180,
+    },
+  },
+  {
+    id: 'trixize',
+    name: 'Trixize',
+    fullName: 'Trixize',
+    displayRating: 1550,
+    country: 'United States',
+    countryCode: 'us',
+    avatar: {
+      type: 'image',
+      src: './assets/trixize-avatar.png',
+      alt: 'Trixize avatar',
+      objectPosition: '50% 50%',
+      scale: 1,
+    },
+    accounts: {
+      chesscom: ['trixize1234'],
+      lichess: [],
+    },
+    goal: 'A maximum-strength theory bot built from Trixize’s current repertoire.',
+    intro: 'Trixize plays precise opening theory and keeps the engine set near maximum strength.',
+    dialoguePolicy: 'trixize',
+    capabilities: {
+      beltMode: false,
+      knightSpecialist: false,
+      perfectTheory: true,
+    },
+    strengthPolicy: {
+      engineElo: 3000,
+      depth: 14,
+      moveTime: 1500,
+      candidates: 6,
+      styleWindowCp: 4,
+      bookWindowCp: 8,
+      bookMinGames: 2,
+      bookMinRecentWeight: 0.2,
+    },
+    repertoireSource: {
+      chesscom: ['trixize1234'],
+      lichess: [],
+      recentHalfLifeDays: 180,
+      forceWhiteFirstMove: 'Nf3',
     },
   },
 ]
@@ -181,14 +227,27 @@ async function loadStyleProfile(botId) {
     }
   }
 
+  if (botId === 'akshit') {
+    const [bookModule, styleModule] = await Promise.all([
+      import('./generatedRecentAkshitRepertoireBook.js').catch(() => ({ GENERATED_RECENT_AKSHIT_REPERTOIRE_BOOK: {} })),
+      import('./generatedAkshitStyleProfile.js').catch(() => ({ GENERATED_AKSHIT_STYLE_PROFILE: null })),
+    ])
+    return {
+      openingBook: bookModule.GENERATED_RECENT_AKSHIT_REPERTOIRE_BOOK || {},
+      bookMaxPlies: 20,
+      bookKeyType: 'position',
+      learnedStyle: styleModule.GENERATED_AKSHIT_STYLE_PROFILE,
+    }
+  }
+
   const [bookModule, styleModule] = await Promise.all([
-    import('./generatedRecentAkshitRepertoireBook.js').catch(() => ({ GENERATED_RECENT_AKSHIT_REPERTOIRE_BOOK: {} })),
-    import('./generatedAkshitStyleProfile.js').catch(() => ({ GENERATED_AKSHIT_STYLE_PROFILE: null })),
+    import('./generatedRecentTrixizeRepertoireBook.js').catch(() => ({ GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK: {} })),
+    import('./generatedTrixizeStyleProfile.js').catch(() => ({ GENERATED_TRIXIZE_STYLE_PROFILE: null })),
   ])
   return {
-    openingBook: bookModule.GENERATED_RECENT_AKSHIT_REPERTOIRE_BOOK || {},
-    bookMaxPlies: 20,
+    openingBook: bookModule.GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK || {},
+    bookMaxPlies: 24,
     bookKeyType: 'position',
-    learnedStyle: styleModule.GENERATED_AKSHIT_STYLE_PROFILE,
+    learnedStyle: styleModule.GENERATED_TRIXIZE_STYLE_PROFILE,
   }
 }

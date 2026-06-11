@@ -273,7 +273,7 @@ button {
   user-select: none;
 }
 
-.board-surface > div {
+.board-surface > #play-bots-board-board {
   width: 100% !important;
   height: 100% !important;
 }
@@ -505,8 +505,8 @@ button {
 }
 
 .review-page {
-  --board-size: min(calc(100svh - 156px), calc(61vw - 72px), 800px);
-  grid-template-columns: minmax(0, calc(var(--board-size) + 42px)) minmax(420px, 680px);
+  --board-size: min(calc(100svh - 156px), calc(58vw - 72px), 790px);
+  grid-template-columns: minmax(0, calc(var(--board-size) + 42px)) minmax(440px, 700px);
 }
 
 .review-board-row {
@@ -519,8 +519,9 @@ button {
 .evaluation-bar {
   position: relative;
   overflow: hidden;
-  border-radius: 5px;
-  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  background: #171717;
 }
 
 .evaluation-white {
@@ -528,34 +529,51 @@ button {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: #eeeae1;
+  background: #f1eee7;
   transition: height 180ms ease;
 }
 
 .evaluation-number {
   position: absolute;
-  z-index: 1;
-  top: 8px;
+  z-index: 2;
+  top: 9px;
   left: 50%;
   color: #fff;
   font-size: 11px;
   font-weight: 900;
+  writing-mode: vertical-rl;
   transform: translateX(-50%);
 }
 
+.evaluation-number.on-white {
+  top: auto;
+  bottom: 9px;
+  color: #111;
+}
+
 .review-sidebar {
-  grid-template-rows: auto auto 92px minmax(92px, 145px) minmax(120px, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 12px;
+  overflow: hidden;
 }
 
 .review-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 
 .review-heading h1 {
   margin: 3px 0 0;
   font-size: 30px;
+}
+
+.review-heading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .eyebrow {
@@ -596,66 +614,310 @@ button {
   color: var(--muted);
 }
 
-.accuracy-strip {
+.review-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.accuracy-strip div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
+  gap: 6px;
+  padding: 4px;
   border: 1px solid var(--border);
   border-radius: 7px;
-  background: #202326;
+  background: rgba(255, 255, 255, 0.035);
 }
 
-.accuracy-strip span {
-  color: var(--muted);
+.review-tabs button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 5px;
+  color: #bdb8ad;
+  background: transparent;
+  font-weight: 850;
 }
 
-.accuracy-strip strong {
-  color: var(--gold);
-  font-size: 24px;
+.review-tabs button.active {
+  color: #fff;
+  background: #34383a;
+}
+
+.review-scroll {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 7px;
+  scrollbar-color: #515557 transparent;
+  scrollbar-width: thin;
+}
+
+.review-summary,
+.move-review {
+  display: grid;
+  gap: 18px;
+}
+
+.review-summary > section,
+.move-review > section {
+  width: min(100%, 720px);
+  margin-inline: auto;
 }
 
 .evaluation-graph {
-  position: relative;
-  height: 92px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.025);
+  display: grid;
+  gap: 8px;
 }
 
-.evaluation-graph svg {
+.graph-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.graph-heading h2,
+.classification-breakdown h2,
+.phase-performance h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.graph-heading strong {
+  color: var(--gold);
+}
+
+.graph-canvas {
+  position: relative;
+  height: 132px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #403f3c;
+}
+
+.graph-canvas svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-.evaluation-graph line {
-  stroke: rgba(255, 255, 255, 0.16);
+.graph-canvas .evaluation-white-area {
+  fill: #f4f3ef;
 }
 
-.evaluation-graph polyline {
+.graph-canvas .evaluation-equal-line {
+  stroke: #aaa8a2;
+  stroke-width: 2.5;
+}
+
+.graph-canvas .evaluation-line {
   fill: none;
-  stroke: var(--gold);
+  stroke: #f4f3ef;
   stroke-width: 4;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
 }
 
-.evaluation-graph input {
+.graph-canvas .evaluation-event {
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.graph-canvas .evaluation-active {
+  fill: transparent;
+  stroke: #fff;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.graph-canvas input {
   position: absolute;
   inset: 0;
   width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
   cursor: pointer;
 }
 
+.review-scoreboard {
+  width: min(100%, 560px) !important;
+  display: grid;
+  grid-template-columns: minmax(150px, 180px) 140px 56px 140px;
+  justify-content: center;
+  gap: 18px 0;
+  align-items: center;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.scoreboard-label {
+  color: #f1eee7;
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.summary-identity {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.summary-identity.player,
+.player-metric {
+  grid-column: 2;
+}
+
+.summary-identity.bot,
+.bot-metric {
+  grid-column: 4;
+}
+
+.summary-identity > strong {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-player-avatar {
+  width: 76px;
+  height: 76px;
+  border: 3px solid var(--green);
+  border-radius: 7px;
+  background:
+    radial-gradient(circle at 50% 34%, #080909 0 21%, transparent 23%),
+    radial-gradient(ellipse at 50% 103%, #080909 0 45%, transparent 47%),
+    #9a9b8d;
+}
+
+.summary-identity .avatar-medium {
+  width: 76px;
+  height: 76px;
+}
+
+.summary-metric {
+  justify-self: center;
+  min-width: 96px;
+  padding: 10px 13px;
+  border-radius: 6px;
+  font-size: 25px;
+  text-align: center;
+}
+
+.player-metric {
+  color: #1c1c1c;
+  background: #f5f4f0;
+}
+
+.bot-metric {
+  color: #fff;
+  background: #242729;
+}
+
+.classification-breakdown,
+.phase-performance {
+  width: min(100%, 560px) !important;
+  display: grid;
+  gap: 3px;
+  padding-block: 8px;
+}
+
+.classification-breakdown h2,
+.phase-performance h2 {
+  margin-bottom: 8px;
+}
+
+.classification-row {
+  min-height: 38px;
+  display: grid;
+  grid-template-columns: minmax(150px, 180px) 140px 56px 140px;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.classification-row:last-child {
+  border-bottom: 0;
+}
+
+.classification-label {
+  color: #eeeae2;
+  font-weight: 750;
+}
+
+.classification-row strong {
+  text-align: center;
+  font-size: 18px;
+}
+
+.classification-row img {
+  width: 30px;
+  height: 30px;
+  justify-self: center;
+  object-fit: contain;
+}
+
+.game-rating-row,
+.phase-row {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: minmax(150px, 180px) 140px 56px 140px;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.game-rating-row strong:last-child,
+.phase-row > :last-child {
+  grid-column: 4;
+}
+
+.game-rating-row > span,
+.phase-row > span:first-child {
+  color: #eeeae2;
+  font-weight: 750;
+}
+
+.game-rating-row strong {
+  justify-self: center;
+  min-width: 78px;
+  padding: 8px;
+  border-radius: 5px;
+  background: #272a2c;
+  font-size: 21px;
+  text-align: center;
+}
+
+.game-rating-row strong:first-of-type {
+  color: #171717;
+  background: #f5f4f0;
+}
+
+.phase-grade {
+  display: grid;
+  grid-template-columns: 30px minmax(44px, auto);
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.phase-grade img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.phase-grade strong {
+  font-size: 13px;
+}
+
+.phase-empty {
+  color: var(--muted);
+  text-align: center;
+}
+
 .move-explanation {
   padding: 16px;
-  overflow: auto;
   border-left: 4px solid var(--classification, var(--gold));
   border-radius: 4px;
   background: #1d2022;
@@ -688,6 +950,7 @@ button {
 
 .move-explanation p {
   color: #d3cec4;
+  line-height: 1.55;
 }
 
 .move-explanation dl {
@@ -715,6 +978,17 @@ button {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.review-nav button {
+  min-height: 48px;
+}
+
+.review-nav button:disabled {
+  cursor: default;
+  opacity: 0.35;
 }
 
 @media (max-width: 1120px) {
@@ -771,6 +1045,11 @@ button {
     padding: 12px;
   }
 
+  .review-page {
+    --board-size: min(calc(100vw - 60px), 680px);
+    grid-template-columns: minmax(0, calc(var(--board-size) + 36px));
+  }
+
   .board-column,
   .review-board-column {
     grid-template-rows: 50px var(--board-size) 50px;
@@ -785,6 +1064,10 @@ button {
 
   .review-board-row {
     grid-template-columns: 28px minmax(0, var(--board-size));
+  }
+
+  .review-sidebar {
+    width: min(100%, calc(var(--board-size) + 36px));
   }
 }
 
@@ -857,5 +1140,35 @@ button {
   .move-explanation dl div {
     grid-template-columns: 1fr;
     gap: 2px;
+  }
+
+  .classification-row {
+    grid-template-columns: minmax(102px, 1fr) 78px 34px 78px;
+    justify-content: stretch;
+  }
+
+  .game-rating-row,
+  .phase-row {
+    grid-template-columns: minmax(100px, 1fr) 78px 28px 78px;
+    justify-content: stretch;
+  }
+
+  .phase-grade {
+    grid-template-columns: 26px;
+    justify-items: center;
+  }
+
+  .review-scoreboard {
+    grid-template-columns: minmax(82px, 1fr) 78px 28px 78px;
+    gap: 12px 0;
+  }
+
+  .scoreboard-label {
+    font-size: 15px;
+  }
+
+  .summary-metric {
+    min-width: 78px;
+    font-size: 20px;
   }
 }

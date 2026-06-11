@@ -307,17 +307,20 @@ function App() {
 
   async function playBotReplyAsync(nextGame, forceBeltMode = beltMode, beltLine = null) {
     const activeLevel = forceBeltMode ? 2700 : coachLevel
-    let engineMove = null
+    let engineCandidates = []
     try {
-      engineMove = await stockfishRef.current?.bestMove(
-        nextGame.fen(),
-        calculationProfile(activeLevel),
-      )
+      const engineProfile = calculationProfile(activeLevel)
+      engineCandidates = stockfishRef.current?.bestMoves
+        ? await stockfishRef.current.bestMoves(nextGame.fen(), {
+            ...engineProfile,
+            count: 4,
+          })
+        : [await stockfishRef.current?.bestMove(nextGame.fen(), engineProfile)].filter(Boolean)
     } catch {
       setEngineStatus('JS fallback ready')
     }
 
-    const decision = chooseCoachMove(nextGame, activeLevel, engineMove, activeBot.styleProfile)
+    const decision = chooseCoachMove(nextGame, activeLevel, engineCandidates, activeBot.styleProfile)
     if (decision.move) {
       nextGame.move(decision.move)
       setLastBotMove({ from: decision.move.from, to: decision.move.to })

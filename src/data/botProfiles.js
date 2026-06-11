@@ -1,5 +1,6 @@
-import { AYDEN_BOOK_MAX_PLIES, AYDEN_OPENING_BOOK } from './aydenOpeningBook'
-import { BOOK_MAX_PLIES, OPENING_BOOK } from './openingBook'
+import { AYDEN_BOOK_MAX_PLIES, AYDEN_OPENING_BOOK } from './aydenOpeningBook.js'
+import { GENERATED_AYDEN_STYLE_PROFILE } from './generatedAydenStyleProfile.js'
+import { BOOK_MAX_PLIES, OPENING_BOOK } from './openingBook.js'
 
 export const BOT_PROFILES = [
   {
@@ -45,6 +46,8 @@ export const BOT_PROFILES = [
     styleProfile: {
       openingBook: AYDEN_OPENING_BOOK,
       bookMaxPlies: AYDEN_BOOK_MAX_PLIES,
+      bookKeyType: 'position',
+      learnedStyle: GENERATED_AYDEN_STYLE_PROFILE,
     },
   },
 ]

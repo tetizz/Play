@@ -1,8 +1,8 @@
 // Weighted repertoire data for the Mubassar bot.
 // This mirrors OpeningTree-style move frequency: key = SAN moves already played,
 // value = Mubassar's preferred legal replies from that position.
-import { GENERATED_REPERTOIRE_BOOK } from './generatedRepertoireBook'
-import { GENERATED_RECENT_REPERTOIRE_BOOK } from './generatedRecentRepertoireBook'
+import { GENERATED_REPERTOIRE_BOOK } from './generatedRepertoireBook.js'
+import { GENERATED_RECENT_REPERTOIRE_BOOK } from './generatedRecentRepertoireBook.js'
 
 const MANUAL_OPENING_BOOK = {
   '': [

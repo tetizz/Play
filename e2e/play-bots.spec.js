@@ -148,7 +148,7 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
       botId: 'mubassar',
       colorChoice: 'white',
       humanColor: 'white',
-      history: ['f3', 'e5', 'g4', 'Qh4#'],
+      history: ['f4', 'e5', 'g4', 'Qh4#'],
       beltMode: false,
       lastMove: { from: 'd8', to: 'h4' },
     }))
@@ -163,8 +163,14 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   const evaluationData = await page.evaluate(() => ({
     graph: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),
     bar: Number(document.querySelector('.evaluation-bar')?.dataset.evalPercent),
+    path: document.querySelector('.evaluation-line')?.getAttribute('d') || '',
   }))
   expect(evaluationData.graph).toBe(evaluationData.bar)
+  expect(evaluationData.path).toContain(' C ')
+  expect(evaluationData.path).not.toMatch(/[HV]/)
+  await expect(page.locator('.evaluation-number')).toHaveText('0-1')
+  await page.getByRole('button', { name: 'Previous', exact: true }).click()
+  await expect(page.locator('.evaluation-number')).toHaveText('M1')
   await page.getByRole('tab', { name: 'Review moves' }).click()
   await expect(page.locator('.move-explanation')).toContainText('Best move')
   expect(Date.now() - startedAt).toBeLessThan(8500)

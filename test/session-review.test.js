@@ -2,7 +2,35 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
 import { applyPremove, gameFromHistory, shouldResumeBotTurn } from '../src/lib/gameSession.js'
+import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
 import { evaluationToWhitePercent, reviewGameWithStockfish } from '../src/lib/reviewEngine.js'
+
+test('the evaluation graph uses a continuous curved path through every point', () => {
+  const path = buildSmoothPath([
+    { x: 0, y: 66 },
+    { x: 100, y: 40 },
+    { x: 200, y: 92 },
+  ])
+  assert.match(path, /^M 0 66 C /)
+  assert.equal((path.match(/ C /g) || []).length, 2)
+  assert.doesNotMatch(path, /[HV]/)
+  assert.match(path, /200 92$/)
+})
+
+test('the evaluation bar follows Chess.com-style side and result labels', () => {
+  assert.deepEqual(
+    evaluationBarDisplay({ percent: 50, score: 0, mate: null }),
+    { percent: 50, label: '0.0', side: 'white' },
+  )
+  assert.deepEqual(
+    evaluationBarDisplay({ percent: 0, score: null, mate: -1 }),
+    { percent: 0, label: 'M1', side: 'black' },
+  )
+  assert.deepEqual(
+    evaluationBarDisplay({ percent: 0, score: null, mate: -1 }, 'Black wins by checkmate', true),
+    { percent: 0, label: '0-1', side: 'black' },
+  )
+})
 
 test('valid and invalid premoves settle without leaving an unresolved turn', () => {
   const afterBot = ['e4']
@@ -22,7 +50,7 @@ test('restored games request exactly the side whose turn is missing', () => {
 })
 
 test('Fools Mate produces a complete navigable review', async () => {
-  const history = ['f3', 'e5', 'g4', 'Qh4#']
+  const history = ['f4', 'e5', 'g4', 'Qh4#']
   const fakeClient = {
     async analyze(fen, options) {
       const game = new Chess(fen)

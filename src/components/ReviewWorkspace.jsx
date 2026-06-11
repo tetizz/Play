@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { BoardSurface } from './BoardSurface'
 import { Avatar, PlayerStrip } from './Identity'
 import { MoveList } from './MoveList'
+import { buildSmoothPath, evaluationBarDisplay } from '../lib/evaluationGraph'
 
 export function ReviewWorkspace({ controller }) {
   const {
@@ -28,7 +29,11 @@ export function ReviewWorkspace({ controller }) {
       <section className="review-board-column">
         <PlayerStrip profile={profile} side="top" />
         <div className="review-board-row">
-          <EvaluationBar point={activePoint} />
+          <EvaluationBar
+            point={activePoint}
+            result={review?.result}
+            isFinal={Boolean(review && reviewPly === history.length)}
+          />
           <BoardSurface
             history={history}
             viewPly={reviewPly}
@@ -229,18 +234,20 @@ function MoveReview({ review, history, activePly, selected, onSelect }) {
   )
 }
 
-function EvaluationBar({ point }) {
-  const white = point?.percent ?? 50
+function EvaluationBar({ point, result, isFinal }) {
+  const display = evaluationBarDisplay(point, result, isFinal)
   return (
     <div
       className="evaluation-bar"
       aria-label={`Evaluation ${formatEvaluation(point)}`}
-      data-eval-percent={white}
+      data-eval-percent={display.percent}
+      style={{ '--white-share': display.percent / 100 }}
     >
-      <span className={`evaluation-number ${white >= 50 ? 'on-black' : 'on-white'}`}>
-        {formatEvaluation(point)}
+      <span className={`evaluation-number on-${display.side}`}>
+        {display.label}
       </span>
-      <div className="evaluation-white" style={{ height: `${white}%` }} />
+      <div className="evaluation-white" />
+      <div className="evaluation-divider" style={{ bottom: `${display.percent}%` }} />
     </div>
   )
 }
@@ -255,9 +262,9 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
     return { x, y, point }
   })
   const active = coordinates[Math.min(activePly, Math.max(0, coordinates.length - 1))]
-  const stepLine = buildStepPath(coordinates)
+  const curve = buildSmoothPath(coordinates)
   const whiteArea = coordinates.length
-    ? `${stepLine} L ${width} ${height} L 0 ${height} Z`
+    ? `${curve} L ${width} ${height} L 0 ${height} Z`
     : ''
   return (
     <section className="evaluation-graph" data-eval-percent={active?.point.percent ?? 50}>
@@ -274,7 +281,8 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
         >
           <path className="evaluation-white-area" d={whiteArea} />
           <line className="evaluation-equal-line" x1="0" y1={height / 2} x2={width} y2={height / 2} />
-          <path className="evaluation-line" d={stepLine} />
+          <path className="evaluation-line-shadow" d={curve} />
+          <path className="evaluation-line" d={curve} />
           {coordinates.filter(({ point }) => highlighted.has(point.classification)).map(({ x, y, point }) => (
             <circle
               className="evaluation-event"
@@ -351,15 +359,6 @@ function formatEvaluation(point) {
   }
   const score = Number(point?.score || 0) / 100
   return `${score >= 0 ? '+' : ''}${score.toFixed(1)}`
-}
-
-function buildStepPath(coordinates) {
-  if (!coordinates.length) return ''
-  let path = `M ${coordinates[0].x} ${coordinates[0].y}`
-  for (let index = 1; index < coordinates.length; index += 1) {
-    path += ` H ${coordinates[index].x} V ${coordinates[index].y}`
-  }
-  return path
 }
 
 function capitalize(value) {

@@ -54,3 +54,21 @@ test('forced positions are classified as Forced', () => {
   })
   assert.equal(result.key, 'forced')
 })
+
+test('a confirmed rank-one engine move remains Best across analysis passes', () => {
+  const game = new Chess()
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'e4')
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'd2d4', score: 25, rank: 1, pv: ['d2d4'] },
+    playedLine: { uci: 'e2e4', score: 24, rank: 1, pv: ['e2e4'] },
+    candidateLines: [
+      { uci: 'e2e4', score: 24, rank: 1, pv: ['e2e4'] },
+      { uci: 'd2d4', score: 25, rank: 2, pv: ['d2d4'] },
+    ],
+    legalMoveCount: game.moves().length,
+  })
+  assert.equal(result.key, 'best')
+  assert.equal(result.expectedPointsLoss, 0.0009)
+})

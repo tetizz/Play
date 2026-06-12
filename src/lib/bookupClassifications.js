@@ -49,7 +49,7 @@ export function classifyMove({
   const loss = Math.max(0, bestExpected - moveExpected)
   const scoreGap = scoreDifference(bestLine?.score, playedLine?.score)
   const rank = playedLine?.rank || findRank(candidateLines, move) || null
-  const isBest = sameUci(toUci(verboseMove), bestLine?.uci)
+  const isBest = sameUci(toUci(verboseMove), bestLine?.uci) || rank === 1
   let key = isBest ? 'best' : bandKey(loss)
 
   if (legalMoveCount <= 1) return payload('forced', loss, moveExpected)

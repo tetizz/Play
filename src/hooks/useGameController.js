@@ -16,6 +16,7 @@ import {
 const restored = typeof localStorage === 'undefined' ? null : loadSession()
 const PLAYER = Object.freeze({ name: 'player', rating: 100, countryCode: 'us' })
 const BOT_DELAY_MS = 2000
+const EMPTY_STYLE_PROFILE = Object.freeze({ openingBook: {}, bookMaxPlies: 0 })
 
 export function useGameController(defaultBotId) {
   const [phase, setPhase] = useState(restored?.phase || 'setup')
@@ -33,12 +34,17 @@ export function useGameController(defaultBotId) {
   const [arrows, setArrows] = useState([])
   const [viewPly, setViewPly] = useState(restored?.history?.length || 0)
   const [beltMode, setBeltMode] = useState(Boolean(restored?.beltMode))
-  const [styleProfile, setStyleProfile] = useState({ openingBook: {}, bookMaxPlies: 0 })
+  const [loadedStyleProfile, setLoadedStyleProfile] = useState({
+    botId: null,
+    data: EMPTY_STYLE_PROFILE,
+  })
   const [review, setReview] = useState(null)
   const [reviewProgress, setReviewProgress] = useState({ completed: 0, total: 0 })
   const [reviewPly, setReviewPly] = useState(0)
 
   const profile = useMemo(() => getBotProfile(botId), [botId])
+  const styleProfileReady = loadedStyleProfile.botId === botId
+  const styleProfile = styleProfileReady ? loadedStyleProfile.data : EMPTY_STYLE_PROFILE
   const game = useMemo(() => gameFromHistory(history), [history])
   const historyRef = useRef(history)
   const premoveRef = useRef(null)
@@ -75,7 +81,9 @@ export function useGameController(defaultBotId) {
   useEffect(() => {
     let cancelled = false
     loadBotStyleProfile(botId).then((loaded) => {
-      if (!cancelled) setStyleProfile(loaded)
+      if (!cancelled) {
+        setLoadedStyleProfile({ botId, data: loaded })
+      }
     })
     return () => {
       cancelled = true
@@ -234,7 +242,7 @@ export function useGameController(defaultBotId) {
   }, [scheduleBotTurn])
 
   useEffect(() => {
-    if (initializedRef.current) return
+    if (initializedRef.current || !styleProfileReady) return
     initializedRef.current = true
     queueMicrotask(() => {
       if (phase === 'review' && game.isGameOver()) {
@@ -243,7 +251,7 @@ export function useGameController(defaultBotId) {
         scheduleBotTurn(history, 250)
       }
     })
-  }, [game, history, humanColor, phase, profile, runReview, scheduleBotTurn])
+  }, [game, history, humanColor, phase, profile, runReview, scheduleBotTurn, styleProfileReady])
 
   useEffect(() => {
     if (phase !== 'game') return undefined

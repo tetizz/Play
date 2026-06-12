@@ -159,6 +159,9 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
   await expect(page.locator('[data-square="e1"] > div')).toHaveCSS('background-image', /211,\s*43,\s*50/)
   await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible({ timeout: 8000 })
+  await expect(page.locator('.bot-metric')).toHaveText('100.0%')
+  await expect(page.locator('.classification-row').filter({ hasText: 'Book' })).toContainText('1')
+  await expect(page.locator('.classification-row').filter({ hasText: 'Best' })).toContainText('1')
   await expect(page.getByRole('heading', { name: 'Game performance' })).toBeVisible()
   const evaluationData = await page.evaluate(() => ({
     graph: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),

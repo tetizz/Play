@@ -262,7 +262,7 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
     return { x, y, point }
   })
   const active = coordinates[Math.min(activePly, Math.max(0, coordinates.length - 1))]
-  const curve = buildSmoothPath(coordinates)
+  const curve = buildSmoothPath(coordinates, width)
   const whiteArea = coordinates.length
     ? `${curve} L ${width} ${height} L 0 ${height} Z`
     : ''
@@ -295,7 +295,9 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
               <title>{`${point.classification} on move ${Math.ceil(point.ply / 2)}`}</title>
             </circle>
           ))}
-          {active ? <circle className="evaluation-active" cx={active.x} cy={active.y} r="7" /> : null}
+          {active && graph.length > 1
+            ? <circle className="evaluation-active" cx={active.x} cy={active.y} r="7" />
+            : null}
         </svg>
         <input
           type="range"

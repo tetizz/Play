@@ -16,6 +16,11 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(getBotProfile('akshit').capabilities.knightSpecialist, true)
   assert.equal(getBotProfile('trixize').capabilities.perfectTheory, true)
   assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, 3000)
+  assert.equal(getBotProfile('ayden').intro, 'Ayden loves the french defense')
+  assert.equal(
+    getBotProfile('akshit').intro,
+    'Akshit is the Knight maneuver loves to move his knight',
+  )
 })
 
 test('the original bot strength hierarchy is Mubassar, Ayden, then Akshit', () => {
@@ -100,6 +105,7 @@ test('Akshit must take a clearly superior knight move and uses his own dialogue 
 test('Trixize starts with Nf3 and uses only the requested short dialogue', () => {
   const game = new Chess()
   const profile = getBotProfile('trixize')
+  assert.equal(profile.intro, 'Adriano plays the kings indian ie the best opening')
   const decision = chooseCoachMove(
     game,
     [

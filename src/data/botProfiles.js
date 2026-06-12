@@ -68,7 +68,7 @@ const BOT_PROFILE_LIST = [
       chesscom: ['AA01001'],
     },
     goal: 'A recent-game version of Ayden with practical, low-noise feedback.',
-    intro: 'Ayden plays from his recent games and keeps the commentary focused.',
+    intro: 'Ayden loves the french defense',
     dialoguePolicy: 'ayden',
     capabilities: {
       beltMode: false,
@@ -110,7 +110,7 @@ const BOT_PROFILE_LIST = [
       lichess: [],
     },
     goal: 'A knight-focused tactical bot built from public games.',
-    intro: 'Akshit likes active knights and direct play.',
+    intro: 'Akshit is the Knight maneuver loves to move his knight',
     dialoguePolicy: 'akshit',
     capabilities: {
       beltMode: false,
@@ -153,7 +153,7 @@ const BOT_PROFILE_LIST = [
       lichess: [],
     },
     goal: 'A maximum-strength theory bot built from Trixize’s current repertoire.',
-    intro: 'Trixize plays precise opening theory and keeps the engine set near maximum strength.',
+    intro: 'Adriano plays the kings indian ie the best opening',
     dialoguePolicy: 'trixize',
     capabilities: {
       beltMode: false,

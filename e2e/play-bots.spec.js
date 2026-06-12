@@ -54,6 +54,25 @@ test('mobile setup has no horizontal page overflow', async ({ page }) => {
   }
 })
 
+test('zero-move review stays flat at equality', async ({ page }) => {
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await page.getByRole('button', { name: 'Resign', exact: true }).click()
+
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible()
+  const graph = await page.evaluate(() => ({
+    percent: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),
+    line: document.querySelector('.evaluation-line')?.getAttribute('d'),
+    area: document.querySelector('.evaluation-white-area')?.getAttribute('d'),
+    activeMarkers: document.querySelectorAll('.evaluation-active').length,
+  }))
+  expect(graph.percent).toBe(50)
+  expect(graph.line).toBe('M 0 66 L 640 66')
+  expect(graph.area).toBe('M 0 66 L 640 66 L 640 132 L 0 132 Z')
+  expect(graph.activeMarkers).toBe(0)
+})
+
 test('all bots start as White, Black, and Random without exposing account names', async ({ page }) => {
   test.setTimeout(120000)
   for (const botName of ['Mubassar', 'Ayden Spellman', 'Akshit Sharma', 'Trixize']) {

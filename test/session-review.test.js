@@ -17,6 +17,11 @@ test('the evaluation graph uses a continuous curved path through every point', (
   assert.match(path, /200 92$/)
 })
 
+test('a zero-move review draws a full-width line at equality', () => {
+  const path = buildSmoothPath([{ x: 0, y: 66 }], 640)
+  assert.equal(path, 'M 0 66 L 640 66')
+})
+
 test('the evaluation bar follows Chess.com-style side and result labels', () => {
   assert.deepEqual(
     evaluationBarDisplay({ percent: 50, score: 0, mate: null }),

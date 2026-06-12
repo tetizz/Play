@@ -1,5 +1,8 @@
-export function buildSmoothPath(coordinates) {
+export function buildSmoothPath(coordinates, width = null) {
   if (!coordinates.length) return ''
+  if (coordinates.length === 1 && Number.isFinite(width)) {
+    return `M 0 ${coordinates[0].y} L ${width} ${coordinates[0].y}`
+  }
   let path = `M ${coordinates[0].x} ${coordinates[0].y}`
   for (let index = 1; index < coordinates.length; index += 1) {
     const previous = coordinates[index - 1]

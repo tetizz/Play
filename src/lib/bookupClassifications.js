@@ -50,10 +50,11 @@ export function classifyMove({
   const scoreGap = scoreDifference(bestLine?.score, playedLine?.score)
   const rank = playedLine?.rank || findRank(candidateLines, move) || null
   const isBest = sameUci(toUci(verboseMove), bestLine?.uci) || rank === 1
-  let key = isBest ? 'best' : bandKey(loss)
+  const mateKey = mateTransitionKey(bestLine, playedLine, isBest)
+  let key = mateKey || (isBest ? 'best' : bandKey(loss))
 
   if (legalMoveCount <= 1) return payload('forced', loss, moveExpected)
-  key = applyPracticalFloors(key, { loss, scoreGap, rank })
+  key = applyPracticalFloors(key, { loss, scoreGap, rank, openingPhase })
   if (openingPhase && inBook && ['best', 'excellent', 'good', 'inaccuracy'].includes(key)) {
     return payload('book', loss, moveExpected)
   }
@@ -98,8 +99,12 @@ export function verifySacrifice(game, move, pv = []) {
   const capturedValue = PIECE_VALUES[move.captured] || 0
   game.move(move)
   const afterBalance = materialBalance(game, mover)
-  const attacked = game.moves({ verbose: true }).some((reply) =>
-    reply.to === move.to && (PIECE_VALUES[reply.captured] || 0) >= movedValue,
+  const firstReply = resolveMove(game, pv[1])
+  const attacked = Boolean(
+    firstReply &&
+    firstReply.to === move.to &&
+    firstReply.captured === move.piece &&
+    (PIECE_VALUES[firstReply.captured] || 0) >= movedValue,
   )
   const immediateInvestment = beforeBalance - afterBalance >= 100 || attacked && movedValue - capturedValue >= 100
   if (!immediateInvestment) return false
@@ -117,10 +122,47 @@ export function verifySacrifice(game, move, pv = []) {
   return confirmedReply && beforeBalance - minimumBalance >= 100
 }
 
-function applyPracticalFloors(key, { loss, scoreGap, rank }) {
+function applyPracticalFloors(key, { loss, scoreGap, rank, openingPhase }) {
   if (rank && rank <= 5 && scoreGap >= 25 && scoreGap <= 120 && loss >= 0.045) return 'inaccuracy'
   if (key === 'excellent' && rank && rank >= 5 && loss >= 0.012 && scoreGap >= 15) return 'good'
+  if (rank === null) {
+    const excellentFloor = openingPhase ? 0.012 : 0.008
+    const goodFloor = openingPhase ? 0.05 : 0.04
+    const inaccuracyFloor = openingPhase ? 0.13 : 0.11
+    if (key === 'excellent' && loss >= excellentFloor) return 'good'
+    if (key === 'good' && loss >= goodFloor) return 'inaccuracy'
+    if (key === 'inaccuracy' && loss >= inaccuracyFloor) return 'mistake'
+  }
   return key
+}
+
+function mateTransitionKey(bestLine, playedLine, isBest) {
+  if (isBest) return 'best'
+  const bestMate = Number.isFinite(bestLine?.mate) ? bestLine.mate : null
+  const playedMate = Number.isFinite(playedLine?.mate) ? playedLine.mate : null
+
+  if (bestMate !== null && playedMate !== null) {
+    if (bestMate > 0 && playedMate < 0) return playedMate < -3 ? 'mistake' : 'blunder'
+    const mateLoss = playedMate - bestMate
+    if (mateLoss < 0 || (mateLoss === 0 && playedMate < 0)) return 'best'
+    if (mateLoss < 2) return 'excellent'
+    if (mateLoss < 7) return 'good'
+    return 'inaccuracy'
+  }
+  if (bestMate !== null && playedMate === null) {
+    if ((playedLine?.score || 0) >= 800) return 'excellent'
+    if ((playedLine?.score || 0) >= 400) return 'good'
+    if ((playedLine?.score || 0) >= 200) return 'inaccuracy'
+    if ((playedLine?.score || 0) >= 0) return 'mistake'
+    return 'blunder'
+  }
+  if (bestMate === null && playedMate !== null) {
+    if (playedMate > 0) return 'best'
+    if (playedMate >= -2) return 'blunder'
+    if (playedMate >= -5) return 'mistake'
+    return 'inaccuracy'
+  }
+  return null
 }
 
 function couldBeBrilliant({ isBest, loss, rank, bestExpected, moveExpected }) {

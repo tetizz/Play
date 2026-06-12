@@ -72,3 +72,32 @@ test('a confirmed rank-one engine move remains Best across analysis passes', () 
   assert.equal(result.key, 'best')
   assert.equal(result.expectedPointsLoss, 0.0009)
 })
+
+test('a move that allows forced mate is not softened into Good', () => {
+  const game = new Chess()
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'f3')
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'e2e4', score: 40, mate: null, rank: 1, pv: ['e2e4'] },
+    playedLine: { uci: 'f2f3', score: -99996, mate: -4, rank: null, pv: ['f2f3'] },
+    candidateLines: [{ uci: 'e2e4', score: 40, mate: null, rank: 1, pv: ['e2e4'] }],
+    legalMoveCount: game.moves().length,
+  })
+  assert.equal(result.key, 'mistake')
+})
+
+test('an exact branch outside MultiPV receives Bookup branch-quality floors', () => {
+  const game = new Chess()
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'f3')
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'e2e4', score: 50, rank: 1, pv: ['e2e4'] },
+    playedLine: { uci: 'f2f3', score: -10, rank: null, pv: ['f2f3'] },
+    candidateLines: [{ uci: 'e2e4', score: 50, rank: 1, pv: ['e2e4'] }],
+    legalMoveCount: game.moves().length,
+    openingPhase: false,
+  })
+  assert.equal(result.key, 'inaccuracy')
+})

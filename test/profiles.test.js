@@ -372,6 +372,52 @@ test('Trixize knows the legal Nf3 b6 tactical repertoire line', () => {
   assert.deepEqual(game.moves().sort(), ['Kd8', 'Kxd7'])
 })
 
+test('Trixize always follows the Nf3 d5 knight-sacrifice theory line', () => {
+  const game = new Chess()
+  const profile = getBotProfile('trixize')
+  const line = [
+    ['Nf3', 'g1f3'], ['d5'], ['g3', 'g2g3'], ['Nc6'],
+    ['Bg2', 'f1g2'], ['e5'], ['d3', 'd2d3'], ['Nf6'],
+    ['O-O', 'e1g1'], ['Bc5'], ['Nxe5', 'f3e5'], ['Nxe5'],
+    ['d4', 'd3d4'], ['Bd6'], ['dxe5', 'd4e5'], ['Bxe5'],
+    ['c4', 'c2c4'], ['c6'], ['cxd5', 'c4d5'], ['Nxd5'],
+    ['e4', 'e2e4'], ['Nb4'], ['Qxd8+', 'd1d8'], ['Kxd8'],
+    ['Nd2', 'b1d2'], ['Nc2'], ['Rb1', 'a1b1'], ['Be6'],
+    ['Nf3', 'd2f3'], ['Bxa2'], ['Nxe5', 'f3e5'], ['f6'],
+    ['Bf4', 'c1f4'], ['Bxb1'], ['Nf7+', 'e5f7'], ['Ke7'],
+    ['Nxh8', 'f7h8'], ['Ba2'],
+  ]
+
+  for (let index = 0; index < line.length; index += 1) {
+    const [san, uci] = line[index]
+    if (index % 2 === 0) {
+      const legalMoves = game.moves({ verbose: true })
+      const expected = legalMoves.find((move) => `${move.from}${move.to}${move.promotion || ''}` === uci)
+      assert.ok(expected, `${san} should be legal at ply ${index + 1}`)
+      const alternatives = legalMoves
+        .filter((move) => move.san !== san)
+        .slice(0, 3)
+        .map((move, rank) => ({
+          uci: `${move.from}${move.to}${move.promotion || ''}`,
+          score: 50 - rank,
+          rank: rank + 1,
+        }))
+      const decision = chooseCoachMove(
+        game,
+        [{ uci, score: 30, rank: alternatives.length + 1 }, ...alternatives],
+        profile,
+        {
+          openingBook: TRIXIZE_OPENING_BOOK,
+          bookMaxPlies: 40,
+          bookKeyType: 'position',
+        },
+      )
+      assert.equal(decision.move.san, san)
+    }
+    game.move(san)
+  }
+})
+
 test('Trixize prefers a familiar Black repertoire move inside the engine-safe window', () => {
   const game = new Chess()
   game.move('e4')

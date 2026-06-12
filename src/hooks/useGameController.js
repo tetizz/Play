@@ -78,6 +78,7 @@ export function useGameController(defaultBotId) {
   const mateClientRef = useRef(null)
   const tablebaseClientRef = useRef(null)
   const reviewClientRef = useRef(null)
+  const reviewPlayedClientRef = useRef(null)
   const reviewAbortRef = useRef(null)
   const scheduleBotTurnRef = useRef(null)
 
@@ -98,11 +99,13 @@ export function useGameController(defaultBotId) {
     mateClientRef.current = createStockfishClient()
     tablebaseClientRef.current = createTablebaseClient()
     reviewClientRef.current = createStockfishClient()
+    reviewPlayedClientRef.current = createStockfishClient()
     return () => {
       gameplayClientRef.current?.destroy()
       mateClientRef.current?.destroy()
       tablebaseClientRef.current?.destroy()
       reviewClientRef.current?.destroy()
+      reviewPlayedClientRef.current?.destroy()
     }
   }, [])
 
@@ -158,6 +161,7 @@ export function useGameController(defaultBotId) {
     mateClientRef.current?.cancelAll()
     tablebaseClientRef.current?.cancelAll()
     reviewClientRef.current?.cancelAll()
+    reviewPlayedClientRef.current?.cancelAll()
     reviewAbortRef.current?.abort()
     reviewAbortRef.current = null
   }, [])
@@ -205,6 +209,7 @@ export function useGameController(defaultBotId) {
       result = await reviewGameWithStockfish({
         history: finishedHistory,
         client: reviewClientRef.current,
+        playedClient: reviewPlayedClientRef.current,
         repertoire,
         signal: controller.signal,
         onProgress: (progress) => {

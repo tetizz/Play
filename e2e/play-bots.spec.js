@@ -184,7 +184,7 @@ test('Trixize opens with Nf3 and delivers the requested opening line', async ({ 
   await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
 })
 
-test('Trixize varies safely between familiar White repertoire branches', async ({ page }) => {
+test('Trixize always enters the requested Nf3 d5 theory branch', async ({ page }) => {
   test.setTimeout(50000)
 
   const playAgainstD5 = async (randomValue) => {
@@ -201,7 +201,7 @@ test('Trixize varies safely between familiar White repertoire branches', async (
     })
     await page.locator('[data-square="d7"]').click()
     await page.locator('[data-square="d5"]').click()
-    await expect(page.locator('.move-row button').filter({ hasText: /g3|c4/ })).toHaveCount(1, {
+    await expect(page.getByRole('button', { name: 'g3', exact: true })).toBeVisible({
       timeout: 20000,
     })
     return page.locator('.move-row button').allTextContents()
@@ -210,8 +210,8 @@ test('Trixize varies safely between familiar White repertoire branches', async (
   const mainLine = await playAgainstD5(0)
   expect(mainLine.filter(Boolean)).toEqual(['Nf3', 'd5', 'g3'])
 
-  const alternateLine = await playAgainstD5(0.999)
-  expect(alternateLine.filter(Boolean)).toEqual(['Nf3', 'd5', 'c4'])
+  const repeatedLine = await playAgainstD5(0.999)
+  expect(repeatedLine.filter(Boolean)).toEqual(['Nf3', 'd5', 'g3'])
 })
 
 test('Trixize follows the full Black Pirc and Kings Indian repertoires', async ({ page }) => {

@@ -103,7 +103,13 @@ test('Fools Mate produces a complete navigable review', async () => {
   const fakeClient = {
     async analyze(fen, options) {
       const game = new Chess(fen)
-      return game.moves({ verbose: true }).slice(0, options.count || 4).map((move, index) => ({
+      const legalMoves = game.moves({ verbose: true })
+      const requested = options.searchMoves?.length
+        ? legalMoves.filter((move) =>
+            options.searchMoves.includes(`${move.from}${move.to}${move.promotion || ''}`),
+          )
+        : legalMoves
+      return requested.slice(0, options.count || 4).map((move, index) => ({
         uci: `${move.from}${move.to}${move.promotion || ''}`,
         score: index === 0 ? 20 : 10 - index,
         mate: move.san.includes('#') ? 1 : null,
@@ -137,10 +143,14 @@ test('Fools Mate produces a complete navigable review', async () => {
 
 test('book and best moves always score 100 percent accuracy', async () => {
   const fakeClient = {
-    async analyze(fen) {
+    async analyze(fen, options = {}) {
       const game = new Chess(fen)
-      const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'Nf3')
-        || game.moves({ verbose: true })[0]
+      const legalMoves = game.moves({ verbose: true })
+      const move = options.searchMoves?.length
+        ? legalMoves.find((candidate) =>
+            options.searchMoves.includes(`${candidate.from}${candidate.to}${candidate.promotion || ''}`),
+          )
+        : legalMoves.find((candidate) => candidate.san === 'Nf3') || legalMoves[0]
       return [{
         uci: `${move.from}${move.to}${move.promotion || ''}`,
         score: 15,
@@ -164,4 +174,48 @@ test('book and best moves always score 100 percent accuracy', async () => {
   assert.equal(review.moments[0].key, 'book')
   assert.equal(review.moments[0].accuracy, 100)
   assert.equal(review.accuracy.white, 100)
+})
+
+test('review scores the played move from the same pre-move position', async () => {
+  const calls = []
+  const fakeClient = {
+    async analyze(fen, options = {}) {
+      calls.push({ fen, searchMoves: options.searchMoves || [] })
+      const game = new Chess(fen)
+      const legalMoves = game.moves({ verbose: true })
+      if (options.searchMoves?.length) {
+        const move = legalMoves.find((candidate) =>
+          options.searchMoves.includes(`${candidate.from}${candidate.to}${candidate.promotion || ''}`),
+        )
+        return move ? [{
+          uci: `${move.from}${move.to}${move.promotion || ''}`,
+          score: -180,
+          mate: null,
+          rank: 1,
+          pv: [`${move.from}${move.to}${move.promotion || ''}`],
+        }] : []
+      }
+      const best = legalMoves.find((candidate) => candidate.san === 'e4')
+      return [{
+        uci: `${best.from}${best.to}`,
+        score: 40,
+        mate: null,
+        rank: 1,
+        pv: [`${best.from}${best.to}`],
+      }]
+    },
+  }
+
+  const review = await reviewGameWithStockfish({
+    history: ['f3'],
+    client: fakeClient,
+    playedClient: fakeClient,
+  })
+
+  const unrestricted = calls.find((call) => call.searchMoves.length === 0)
+  const restricted = calls.find((call) => call.searchMoves[0] === 'f2f3')
+  assert.equal(unrestricted.fen, restricted.fen)
+  assert.equal(review.moments[0].key, 'mistake')
+  assert.equal(review.moments[0].accuracy, 20)
+  assert.equal(review.accuracy.white, 20)
 })

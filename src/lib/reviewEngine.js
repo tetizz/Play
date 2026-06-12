@@ -2,8 +2,10 @@ import { Chess } from 'chess.js'
 import { isAutomaticDraw } from './gameSession.js'
 import { CLASSIFICATIONS, classifyMove, expectedPointsFromScore } from './bookupClassifications.js'
 
-const REVIEW_OPTIONS = { depth: 9, moveTime: 220, count: 5, timeout: 1650 }
-const TACTICAL_OPTIONS = { depth: 11, moveTime: 380, count: 6, timeout: 2200 }
+const REVIEW_OPTIONS = { depth: 12, moveTime: 420, count: 5, timeout: 2600 }
+const TACTICAL_OPTIONS = { depth: 18, moveTime: 1600, count: 6, timeout: 6000 }
+const SHORT_REVIEW_OPTIONS = { depth: 10, moveTime: 160, count: 4, timeout: 1400 }
+const SHORT_TACTICAL_OPTIONS = { depth: 13, moveTime: 360, count: 5, timeout: 1800 }
 const CLASSIFICATION_ORDER = [
   'brilliant',
   'great',
@@ -17,6 +19,19 @@ const CLASSIFICATION_ORDER = [
   'blunder',
   'forced',
 ]
+const CLASSIFICATION_ACCURACY = Object.freeze({
+  brilliant: 100,
+  great: 100,
+  book: 100,
+  best: 100,
+  forced: 100,
+  excellent: 90,
+  good: 75,
+  inaccuracy: 50,
+  mistake: 20,
+  miss: 10,
+  blunder: 0,
+})
 const PIECE_NAMES = {
   p: 'pawn',
   n: 'knight',
@@ -29,6 +44,7 @@ const PIECE_NAMES = {
 export async function reviewGameWithStockfish({
   history,
   client,
+  playedClient = client,
   repertoire = {},
   onProgress = () => {},
   signal,
@@ -37,6 +53,8 @@ export async function reviewGameWithStockfish({
   const moments = []
   const positions = [game.fen()]
   const graph = [{ ply: 0, score: null, mate: null, percent: 50 }]
+  const reviewOptions = history.length <= 8 ? SHORT_REVIEW_OPTIONS : REVIEW_OPTIONS
+  const tacticalOptions = history.length <= 8 ? SHORT_TACTICAL_OPTIONS : TACTICAL_OPTIONS
 
   for (let index = 0; index < history.length; index += 1) {
     if (signal?.aborted) throw new DOMException('Review cancelled', 'AbortError')
@@ -48,25 +66,39 @@ export async function reviewGameWithStockfish({
     const verboseMove = game.moves({ verbose: true }).find((candidate) => candidate.san === san)
     if (!verboseMove) continue
 
-    let candidates = await safeAnalyze(client, beforeFen, REVIEW_OPTIONS)
-    let playedLine = candidates.find((line) => sameUci(line.uci, toUci(verboseMove)))
+    const playedUci = toUci(verboseMove)
+    let [candidates, exactPlayedLine] = await Promise.all([
+      safeAnalyze(client, beforeFen, reviewOptions),
+      analyzeExactPlayedMove(playedClient, beforeFen, playedUci, reviewOptions),
+    ])
+    const candidatePlayedLine = candidates.find((line) => sameUci(line.uci, playedUci))
+    let playedLine = sameUci(candidates[0]?.uci, playedUci)
+      ? candidates[0]
+      : exactPlayedLine || candidatePlayedLine
     const tacticalCandidate = Boolean(
       verboseMove.captured ||
       verboseMove.san.includes('+') ||
       verboseMove.san.includes('#') ||
-      playedLine?.rank <= 3,
+      !playedLine ||
+      scoreDifference(candidates[0]?.score, playedLine?.score) >= 30,
     )
     if (tacticalCandidate) {
-      const deeper = await safeAnalyze(client, beforeFen, TACTICAL_OPTIONS)
+      const [deeper, deeperPlayedLine] = await Promise.all([
+        safeAnalyze(client, beforeFen, tacticalOptions),
+        analyzeExactPlayedMove(playedClient, beforeFen, playedUci, tacticalOptions),
+      ])
       if (deeper.length) candidates = deeper
-      playedLine = candidates.find((line) => sameUci(line.uci, toUci(verboseMove)))
+      const deeperCandidatePlayed = candidates.find((line) => sameUci(line.uci, playedUci))
+      playedLine = sameUci(candidates[0]?.uci, playedUci)
+        ? candidates[0]
+        : deeperPlayedLine || deeperCandidatePlayed || playedLine
     }
 
     const phase = phaseForPosition(game, index)
     game.move(verboseMove)
     positions.push(game.fen())
     if (!playedLine) {
-      playedLine = await analyzePlayedMove(client, game, verboseMove)
+      playedLine = await analyzePlayedMove(client, game, verboseMove, reviewOptions)
     }
 
     const bestLine = candidates[0] || playedLine
@@ -195,11 +227,26 @@ export function evaluationToWhitePercent(score, mate = null) {
   return roundTo(100 / (1 + Math.exp(-score / 220)), 2)
 }
 
-async function analyzePlayedMove(client, game, verboseMove) {
+async function analyzeExactPlayedMove(client, fen, playedUci, options) {
+  const lines = await safeAnalyze(client, fen, {
+    ...options,
+    count: 1,
+    searchMoves: [playedUci],
+  })
+  const line = lines.find((candidate) => sameUci(candidate.uci, playedUci))
+  if (!line) return null
+  return {
+    ...line,
+    uci: playedUci,
+    rank: null,
+  }
+}
+
+async function analyzePlayedMove(client, game, verboseMove, reviewOptions) {
   if (game.isCheckmate()) {
     return {
       uci: toUci(verboseMove),
-      rank: 99,
+      rank: null,
       score: 100000,
       mate: 1,
       pv: [toUci(verboseMove)],
@@ -208,17 +255,17 @@ async function analyzePlayedMove(client, game, verboseMove) {
   if (isAutomaticDraw(game)) {
     return {
       uci: toUci(verboseMove),
-      rank: 99,
+      rank: null,
       score: 0,
       mate: null,
       pv: [toUci(verboseMove)],
     }
   }
   const afterLines = await safeAnalyze(client, game.fen(), {
-    ...REVIEW_OPTIONS,
+    ...reviewOptions,
     count: 1,
-    moveTime: 150,
-    timeout: 1250,
+    moveTime: Math.min(150, reviewOptions.moveTime),
+    timeout: Math.min(1250, reviewOptions.timeout),
   })
   const reply = afterLines[0]
   return {
@@ -318,8 +365,14 @@ function scoreChange(before, after) {
 }
 
 function moveAccuracy(loss = 0, classification = null) {
-  if (['book', 'best', 'forced'].includes(classification)) return 100
-  return Math.round(100 * Math.exp(-4.5 * Math.max(0, loss)))
+  if (Number.isFinite(CLASSIFICATION_ACCURACY[classification])) {
+    return CLASSIFICATION_ACCURACY[classification]
+  }
+  const winPercentLoss = Math.max(0, loss) * 100
+  return Math.round(Math.max(
+    0,
+    Math.min(100, 103.1668 * Math.exp(-0.04354 * winPercentLoss) - 3.1669),
+  ))
 }
 
 function classificationCounts(moments) {

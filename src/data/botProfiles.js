@@ -255,11 +255,11 @@ async function loadStyleProfile(botId) {
   }
 
   const [bookModule, styleModule] = await Promise.all([
-    import('./generatedRecentTrixizeRepertoireBook.js').catch(() => ({ GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK: {} })),
+    import('./trixizeOpeningBook.js').catch(() => ({ TRIXIZE_OPENING_BOOK: {} })),
     import('./generatedTrixizeStyleProfile.js').catch(() => ({ GENERATED_TRIXIZE_STYLE_PROFILE: null })),
   ])
   return {
-    openingBook: bookModule.GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK || {},
+    openingBook: bookModule.TRIXIZE_OPENING_BOOK || {},
     bookMaxPlies: 40,
     bookKeyType: 'position',
     learnedStyle: styleModule.GENERATED_TRIXIZE_STYLE_PROFILE,

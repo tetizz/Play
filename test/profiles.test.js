@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
 import { BOT_PROFILES, getBotProfile } from '../src/data/botProfiles.js'
 import { dialogueAfterBotMove } from '../src/data/dialogue.js'
+import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
   calculationProfile,
   chooseCoachMove,
@@ -248,6 +249,51 @@ test('Trixize follows the full position repertoire after the forced Nf3 start', 
     () => 0,
   )
   assert.equal(g3.move.san, 'g3')
+})
+
+test('Trixize knows the legal Nf3 b6 tactical repertoire line', () => {
+  const game = new Chess()
+  const profile = getBotProfile('trixize')
+  const line = [
+    ['Nf3', 'g8f6'],
+    ['b6'],
+    ['g3', 'g2g3'],
+    ['Bb7'],
+    ['Bg2', 'f1g2'],
+    ['g5'],
+    ['e4', 'e2e4'],
+    ['Bxe4'],
+    ['d3', 'd2d3'],
+    ['Bxf3'],
+    ['Qxf3', 'd1f3'],
+    ['Nc6'],
+    ['Qxc6', 'f3c6'],
+    ['dxc6'],
+    ['Bxc6+', 'c1c6'],
+    ['Qd7'],
+    ['Bxd7+', 'c6d7'],
+  ]
+
+  for (let index = 0; index < line.length; index += 1) {
+    const [san, uci] = line[index]
+    if (index % 2 === 0) {
+      const decision = chooseCoachMove(
+        game,
+        [{ uci, score: 30, rank: 1 }],
+        profile,
+        {
+          openingBook: TRIXIZE_OPENING_BOOK,
+          bookMaxPlies: 40,
+          bookKeyType: 'position',
+        },
+      )
+      assert.equal(decision.move.san, san)
+      assert.equal(decision.source, 'repertoire')
+    }
+    game.move(san)
+  }
+
+  assert.deepEqual(game.moves().sort(), ['Kd8', 'Kxd7'])
 })
 
 test('Trixize prefers a familiar Black repertoire move inside the engine-safe window', () => {

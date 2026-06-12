@@ -9,7 +9,7 @@ export function BoardSurface({
   humanColor,
   turnState,
   lastMove,
-  premove,
+  premoves = [],
   selectedSquare,
   setSelectedSquare,
   arrows,
@@ -41,9 +41,19 @@ export function BoardSurface({
       styles[lastMove.from] = highlight('#e5c04d99')
       styles[lastMove.to] = highlight('#e5c04d99')
     }
-    if (latest && premove) {
-      styles[premove.from] = { boxShadow: 'inset 0 0 0 5px #4c8ed8' }
-      styles[premove.to] = { boxShadow: 'inset 0 0 0 5px #4c8ed8' }
+    if (latest && premoves.length) {
+      premoves.forEach((premove, index) => {
+        const alpha = Math.max(0.52, 0.96 - index * 0.08)
+        const outline = `inset 0 0 0 5px rgba(76, 142, 216, ${alpha})`
+        styles[premove.from] = {
+          ...styles[premove.from],
+          boxShadow: joinShadow(styles[premove.from]?.boxShadow, outline),
+        }
+        styles[premove.to] = {
+          ...styles[premove.to],
+          boxShadow: joinShadow(styles[premove.to]?.boxShadow, outline),
+        }
+      })
     }
     for (const target of legalTargets) {
       styles[target.square] = target.capture
@@ -65,7 +75,7 @@ export function BoardSurface({
       }
     }
     return styles
-  }, [game, lastMove, latest, legalTargets, premove])
+  }, [game, lastMove, latest, legalTargets, premoves])
 
   function chooseSquare(square) {
     if (!interactive || !latest) return
@@ -170,6 +180,10 @@ function checkedKing(game) {
 
 function highlight(color) {
   return { backgroundColor: color }
+}
+
+function joinShadow(current, next) {
+  return current ? `${current}, ${next}` : next
 }
 
 function pseudoLegalTargets(game, square, piece) {

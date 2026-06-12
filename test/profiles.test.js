@@ -121,3 +121,33 @@ test('Trixize starts with Nf3 and uses only the requested short dialogue', () =>
   assert.equal(dialogueAfterBotMove(profile, { isFreePiece: true }), 'Oops.')
   assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), 'Rahh!')
 })
+
+test('Trixize completes the Kings Indian setup before using recent repertoire', () => {
+  const game = new Chess()
+  const profile = getBotProfile('trixize')
+  for (const san of ['Nf3', 'd5', 'g3', 'Nf6', 'Bg2', 'e6']) game.move(san)
+
+  const castle = chooseCoachMove(
+    game,
+    [
+      { uci: 'd2d4', score: 30, rank: 1 },
+      { uci: 'e1g1', score: 28, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 24 },
+  )
+  assert.equal(castle.move.san, 'O-O')
+
+  game.move(castle.move)
+  game.move('Be7')
+  const d3 = chooseCoachMove(
+    game,
+    [
+      { uci: 'd2d4', score: 22, rank: 1 },
+      { uci: 'd2d3', score: 20, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 24 },
+  )
+  assert.equal(d3.move.san, 'd3')
+})

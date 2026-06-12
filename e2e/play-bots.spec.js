@@ -54,6 +54,71 @@ test('mobile setup has no horizontal page overflow', async ({ page }) => {
   }
 })
 
+test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => {
+  test.setTimeout(30000)
+  await page.getByRole('tab', { name: 'Bot vs Bot' }).click()
+  await expect(page.getByRole('heading', { name: 'Bot vs Bot' })).toBeVisible()
+  await expect(page.getByLabel('White bot')).toHaveValue('trixize')
+  await expect(page.getByLabel('Black bot')).toHaveValue('akshit')
+  await page.getByRole('button', { name: 'Start match', exact: true }).click()
+
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
+  await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
+  await expect(page.locator('.move-row button').filter({ hasText: /.+/ })).toHaveCount(2, { timeout: 15000 })
+  const conversation = page.getByLabel('Bot conversation')
+  await expect(conversation.locator('.conversation-row')).toHaveCount(2)
+  await expect(conversation.getByText('Trixize', { exact: true })).toBeVisible()
+  await expect(conversation.getByText('Akshit', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: 'End match', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+})
+
+test('promotion picker supports underpromotion to a knight', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('play-bots-session-v3', JSON.stringify({
+      phase: 'game',
+      gameMode: 'player',
+      botId: 'mubassar',
+      colorChoice: 'white',
+      humanColor: 'white',
+      history: ['a4', 'h5', 'a5', 'h4', 'a6', 'h3', 'axb7', 'hxg2'],
+      beltMode: false,
+      lastMove: { from: 'h3', to: 'g2' },
+      premoveQueue: [],
+      dialogueLog: [],
+    }))
+  })
+  await page.reload()
+  await page.locator('[data-square="b7"]').click()
+  await page.locator('[data-square="a8"]').click()
+  await expect(page.getByRole('dialog', { name: 'Promote pawn' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Promote to Queen' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Promote to Rook' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Promote to Bishop' })).toBeVisible()
+  await page.getByRole('button', { name: 'Promote to Knight' }).click()
+  await expect(page.getByRole('button', { name: 'bxa8=N', exact: true })).toBeVisible()
+})
+
+test('multiple premoves execute in order across bot turns', async ({ page }) => {
+  test.setTimeout(35000)
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await page.locator('[data-square="e2"]').click()
+  await page.locator('[data-square="e4"]').click()
+
+  await page.locator('[data-square="g1"]').click()
+  await page.locator('[data-square="f3"]').click()
+  await page.locator('[data-square="b1"]').click()
+  await page.locator('[data-square="c3"]').click()
+  await expect(page.getByText('2 premoves queued')).toBeVisible()
+
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText('1 premove queued')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Nc3', exact: true })).toBeVisible({ timeout: 15000 })
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
+})
+
 test('zero-move review stays flat at equality', async ({ page }) => {
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()

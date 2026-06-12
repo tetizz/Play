@@ -1,7 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
-import { applyPremove, gameFromHistory, shouldResumeBotTurn } from '../src/lib/gameSession.js'
+import {
+  applyNextPremove,
+  applyPremove,
+  gameFromHistory,
+  shouldResumeBotTurn,
+} from '../src/lib/gameSession.js'
 import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
 import { evaluationToWhitePercent, reviewGameWithStockfish } from '../src/lib/reviewEngine.js'
 
@@ -45,6 +50,22 @@ test('valid and invalid premoves settle without leaving an unresolved turn', () 
   const invalid = applyPremove(afterBot, { from: 'e7', to: 'e4' })
   assert.equal(invalid.applied, false)
   assert.deepEqual(invalid.history, ['e4'])
+})
+
+test('premove queues consume one move at a time and preserve the remainder', () => {
+  const queue = [
+    { from: 'g1', to: 'f3' },
+    { from: 'b1', to: 'c3' },
+  ]
+  const first = applyNextPremove(['e4', 'e5'], queue)
+  assert.equal(first.applied, true)
+  assert.equal(first.move.san, 'Nf3')
+  assert.deepEqual(first.remaining, [queue[1]])
+
+  const second = applyNextPremove([...first.history, 'Nc6'], first.remaining)
+  assert.equal(second.applied, true)
+  assert.equal(second.move.san, 'Nc3')
+  assert.deepEqual(second.remaining, [])
 })
 
 test('restored games request exactly the side whose turn is missing', () => {

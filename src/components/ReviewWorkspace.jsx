@@ -9,7 +9,11 @@ export function ReviewWorkspace({ controller }) {
   const {
     profile,
     player,
+    gameMode,
+    whiteProfile,
+    blackProfile,
     humanColor,
+    boardOrientation,
     history,
     review,
     reviewProgress,
@@ -27,7 +31,7 @@ export function ReviewWorkspace({ controller }) {
   return (
     <main className="review-page">
       <section className="review-board-column">
-        <PlayerStrip profile={profile} side="top" />
+        <PlayerStrip profile={gameMode === 'bots' ? blackProfile : profile} side="top" />
         <div className="review-board-row">
           <EvaluationBar
             point={activePoint}
@@ -37,11 +41,11 @@ export function ReviewWorkspace({ controller }) {
           <BoardSurface
             history={history}
             viewPly={reviewPly}
-            orientation={humanColor}
+            orientation={boardOrientation}
             humanColor={humanColor}
             turnState="game-over"
             lastMove={selected ? uciSquares(selected.uci) : null}
-            premove={null}
+            premoves={[]}
             selectedSquare={null}
             setSelectedSquare={() => {}}
             arrows={[]}
@@ -50,7 +54,9 @@ export function ReviewWorkspace({ controller }) {
             interactive={false}
           />
         </div>
-        <PlayerStrip player={player} side="bottom" />
+        {gameMode === 'bots'
+          ? <PlayerStrip profile={whiteProfile} side="bottom" />
+          : <PlayerStrip player={player} side="bottom" />}
       </section>
 
       <aside className="review-sidebar">
@@ -102,6 +108,9 @@ export function ReviewWorkspace({ controller }) {
                 <ReviewSummary
                   review={review}
                   profile={profile}
+                  gameMode={gameMode}
+                  whiteProfile={whiteProfile}
+                  blackProfile={blackProfile}
                   humanColor={humanColor}
                   activePly={reviewPly}
                   onSelect={setReviewPly}
@@ -140,20 +149,40 @@ export function ReviewWorkspace({ controller }) {
   )
 }
 
-function ReviewSummary({ review, profile, humanColor, activePly, onSelect }) {
-  const humanSide = humanColor === 'white' ? 'white' : 'black'
-  const botSide = humanSide === 'white' ? 'black' : 'white'
+function ReviewSummary({
+  review,
+  profile,
+  gameMode,
+  whiteProfile,
+  blackProfile,
+  humanColor,
+  activePly,
+  onSelect,
+}) {
+  const botMatch = gameMode === 'bots'
+  const leftSide = botMatch ? 'white' : humanColor === 'white' ? 'white' : 'black'
+  const rightSide = botMatch ? 'black' : leftSide === 'white' ? 'black' : 'white'
   return (
     <div className="review-summary">
       <EvaluationGraph graph={review.graph} activePly={activePly} onSelect={onSelect} />
 
       <section className="review-scoreboard" aria-label="Player accuracy">
         <span className="scoreboard-label">Players</span>
-        <SummaryIdentity type="player" name="player" />
-        <SummaryIdentity type="bot" name={profile.name} profile={profile} />
+        {botMatch
+          ? <SummaryIdentity type="white-bot" name={whiteProfile.name} profile={whiteProfile} />
+          : <SummaryIdentity type="player" name="player" />}
+        <SummaryIdentity
+          type={botMatch ? 'black-bot' : 'bot'}
+          name={botMatch ? blackProfile.name : profile.name}
+          profile={botMatch ? blackProfile : profile}
+        />
         <span className="scoreboard-label">Accuracy</span>
-        <strong className="summary-metric player-metric">{formatAccuracy(review.accuracy[humanSide])}</strong>
-        <strong className="summary-metric bot-metric">{formatAccuracy(review.accuracy[botSide])}</strong>
+        <strong className={`summary-metric ${botMatch ? 'white-metric' : 'player-metric'}`}>
+          {formatAccuracy(review.accuracy[leftSide])}
+        </strong>
+        <strong className={`summary-metric ${botMatch ? 'black-metric' : 'bot-metric'}`}>
+          {formatAccuracy(review.accuracy[rightSide])}
+        </strong>
       </section>
 
       <section className="classification-breakdown" aria-labelledby="classification-title">
@@ -161,9 +190,9 @@ function ReviewSummary({ review, profile, humanColor, activePly, onSelect }) {
         {review.counts.filter((item) => item.key !== 'forced').map((item) => (
           <div className="classification-row" key={item.key}>
             <span className="classification-label">{item.label}</span>
-            <strong style={{ color: item.color }}>{item[humanSide]}</strong>
+            <strong style={{ color: item.color }}>{item[leftSide]}</strong>
             <img src={item.icon} alt="" />
-            <strong style={{ color: item.color }}>{item[botSide]}</strong>
+            <strong style={{ color: item.color }}>{item[rightSide]}</strong>
           </div>
         ))}
       </section>
@@ -172,15 +201,15 @@ function ReviewSummary({ review, profile, humanColor, activePly, onSelect }) {
         <h2 id="phase-title">Game performance</h2>
         <div className="game-rating-row">
           <span>Game rating</span>
-          <strong>{review.gameRating[humanSide] ?? '-'}</strong>
-          <strong>{review.gameRating[botSide] ?? '-'}</strong>
+          <strong>{review.gameRating[leftSide] ?? '-'}</strong>
+          <strong>{review.gameRating[rightSide] ?? '-'}</strong>
         </div>
         {['opening', 'middlegame', 'endgame'].map((phase) => (
           <PhaseRow
             key={phase}
             label={capitalize(phase)}
-            player={review.phaseAccuracy[humanSide][phase]}
-            bot={review.phaseAccuracy[botSide][phase]}
+            player={review.phaseAccuracy[leftSide][phase]}
+            bot={review.phaseAccuracy[rightSide][phase]}
           />
         ))}
       </section>

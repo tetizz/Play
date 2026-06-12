@@ -111,6 +111,9 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
   const maxPlies = styleProfile.bookMaxPlies || 0
   if (game.history().length > maxPlies) return null
 
+  const plannedMove = findPlannedOpeningMove(game, profile)
+  if (plannedMove) return candidateMetadata(plannedMove, engineCandidates)
+
   const forcedFirstMove = profile.repertoireSource.forceWhiteFirstMove
   if (game.history().length === 0 && forcedFirstMove) {
     const forced = game.moves({ verbose: true }).find((move) => cleanSan(move.san) === forcedFirstMove)
@@ -171,6 +174,21 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
     return [...playable].sort((a, b) => (a.rank || 99) - (b.rank || 99))[0]
   }
   return weightedChoice(playable)
+}
+
+function findPlannedOpeningMove(game, profile) {
+  if (game.turn() !== 'w') return null
+  const plan = profile.repertoireSource.whiteOpeningPlan
+  if (!Array.isArray(plan) || !plan.length) return null
+
+  const whiteMoves = game.history()
+    .filter((_, index) => index % 2 === 0)
+    .map(cleanSan)
+  const followsPlan = whiteMoves.every((move, index) => move === cleanSan(plan[index]))
+  if (!followsPlan || whiteMoves.length >= plan.length) return null
+
+  const nextMove = cleanSan(plan[whiteMoves.length])
+  return game.moves({ verbose: true }).find((move) => cleanSan(move.san) === nextMove) || null
 }
 
 function selectEngineMove(game, candidates, profile, styleProfile, policy) {

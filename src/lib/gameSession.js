@@ -21,12 +21,17 @@ export function loadSession() {
     const game = gameFromHistory(parsed.history)
     return {
       botId: parsed.botId,
+      gameMode: parsed.gameMode === 'bots' ? 'bots' : 'player',
+      whiteBotId: parsed.whiteBotId || 'trixize',
+      blackBotId: parsed.blackBotId || 'akshit',
       colorChoice: parsed.colorChoice,
       humanColor: parsed.humanColor,
       history: game.history(),
       phase: parsed.phase === 'review' && !game.isGameOver() ? 'game' : parsed.phase,
       beltMode: Boolean(parsed.beltMode),
       lastMove: parsed.lastMove || null,
+      premoveQueue: Array.isArray(parsed.premoveQueue) ? parsed.premoveQueue : [],
+      dialogueLog: Array.isArray(parsed.dialogueLog) ? parsed.dialogueLog.slice(-8) : [],
     }
   } catch {
     return null
@@ -65,5 +70,22 @@ export function applyPremove(history, premove) {
     applied: Boolean(move),
     history: game.history(),
     move,
+  }
+}
+
+export function applyNextPremove(history, queue = []) {
+  if (!queue.length) {
+    return {
+      applied: false,
+      history: gameFromHistory(history).history(),
+      move: null,
+      remaining: [],
+    }
+  }
+  const [premove, ...remaining] = queue
+  const result = applyPremove(history, premove)
+  return {
+    ...result,
+    remaining: result.applied ? remaining : [],
   }
 }

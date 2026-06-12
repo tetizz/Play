@@ -175,6 +175,7 @@ const BOT_PROFILE_LIST = [
       lichess: [],
       recentHalfLifeDays: 180,
       forceWhiteFirstMove: 'Nf3',
+      whiteOpeningPlan: ['Nf3', 'g3', 'Bg2', 'O-O', 'd3', 'e4'],
     },
   },
 ]

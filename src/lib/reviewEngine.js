@@ -74,7 +74,10 @@ export async function reviewGameWithStockfish({
     if (index === 0) {
       graph[0] = graphPoint(0, beforeEvaluation.score, beforeEvaluation.mate)
     }
-    const inBook = isRepertoireMove(repertoire, beforeHistory, beforeFen, san)
+    const sideRepertoire = repertoire.white || repertoire.black
+      ? repertoire[side === 'w' ? 'white' : 'black'] || {}
+      : repertoire
+    const inBook = isRepertoireMove(sideRepertoire, beforeHistory, beforeFen, san)
     const hasEvaluation = hasEngineEvaluation(bestLine) && hasEngineEvaluation(playedLine)
     const classification = hasEvaluation
       ? classifyMove({

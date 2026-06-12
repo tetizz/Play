@@ -3,7 +3,13 @@ import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
 import { BOT_PROFILES, getBotProfile } from '../src/data/botProfiles.js'
 import { dialogueAfterBotMove } from '../src/data/dialogue.js'
-import { chooseCoachMove, shouldActivateBeltMode } from '../src/lib/coachEngine.js'
+import {
+  calculationProfile,
+  chooseCoachMove,
+  isBishopKnightMatePosition,
+  moveContext,
+  shouldActivateBeltMode,
+} from '../src/lib/coachEngine.js'
 
 test('the four public bot profiles expose the requested ratings and capabilities', () => {
   assert.equal(BOT_PROFILES.length, 4)
@@ -16,8 +22,9 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(getBotProfile('akshit').capabilities.knightSpecialist, true)
   assert.equal(getBotProfile('trixize').capabilities.perfectTheory, true)
   assert.equal(getBotProfile('trixize').capabilities.weightedRepertoire, true)
-  assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, 3000)
-  assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 12)
+  assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, null)
+  assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 16)
+  assert.equal(getBotProfile('trixize').capabilities.maximumEngine, true)
   assert.equal(getBotProfile('ayden').intro, 'Ayden loves the french defense')
   assert.equal(
     getBotProfile('akshit').intro,
@@ -122,6 +129,75 @@ test('Trixize starts with Nf3 and uses only the requested short dialogue', () =>
   assert.equal(dialogueAfterBotMove(profile, { isTheoryBest: true }), 'Best move. Too much theory.')
   assert.equal(dialogueAfterBotMove(profile, { isFreePiece: true }), 'Oops.')
   assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), 'Rahh!')
+  assert.equal(dialogueAfterBotMove(profile, { opponentHungQueen: true }), 'Where did your queen go?')
+  assert.equal(
+    dialogueAfterBotMove(profile, { isBishopKnightObjective: true }),
+    "I'm going to checkmate you with a bishop and knight.",
+  )
+})
+
+test('Trixize uses unlimited Stockfish strength and deeper conversion searches', () => {
+  const profile = getBotProfile('trixize')
+  const opening = calculationProfile(profile)
+  assert.equal(opening.elo, undefined)
+  assert.equal(opening.depth, 18)
+  assert.equal(opening.styleWindowCp, 0)
+
+  const promotion = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const endgame = calculationProfile(profile, false, promotion)
+  assert.equal(endgame.elo, undefined)
+  assert.equal(endgame.depth, 22)
+  assert.equal(endgame.count, 16)
+})
+
+test('Trixize can underpromote into a bishop and knight mating objective', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 1200, rank: 1 },
+      { uci: 'a7a8n', score: 900, rank: 2 },
+      { uci: 'g1f2', score: 600, rank: 3 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.promotion, 'n')
+  assert.equal(decision.source, 'engine-objective')
+
+  const context = moveContext(game, decision.move, decision, false, false, profile)
+  assert.equal(context.isBishopKnightObjective, true)
+  assert.equal(dialogueAfterBotMove(profile, context), "I'm going to checkmate you with a bishop and knight.")
+
+  const after = new Chess(game.fen())
+  after.move(decision.move)
+  assert.equal(isBishopKnightMatePosition(after, 'w'), true)
+  assert.equal(calculationProfile(profile, false, after).depth, 26)
+})
+
+test('Trixize queen dialogue excludes a normal queen trade recapture', () => {
+  const beforeTradeRecapture = new Chess()
+  for (const san of ['e4', 'd5', 'exd5', 'Qxd5', 'Qf3', 'Qxf3']) beforeTradeRecapture.move(san)
+  const recapture = beforeTradeRecapture.moves({ verbose: true }).find((move) => move.san === 'Nxf3')
+  assert.ok(recapture)
+
+  const decision = { move: recapture, source: 'engine-best', rank: 1, score: 0 }
+  const context = moveContext(beforeTradeRecapture, recapture, decision, false, false, getBotProfile('trixize'))
+  assert.equal(context.opponentHungQueen, false)
+  assert.equal(dialogueAfterBotMove(getBotProfile('trixize'), context), '')
+})
+
+test('Trixize notices a genuinely hung queen', () => {
+  const game = new Chess()
+  for (const san of ['e4', 'd5', 'exd5', 'Qxd5', 'Nc3', 'Qxg2']) game.move(san)
+  const capture = game.moves({ verbose: true }).find((move) => move.san === 'Bxg2')
+  assert.ok(capture)
+
+  const decision = { move: capture, source: 'engine-best', rank: 1, score: 900 }
+  const context = moveContext(game, capture, decision, false, false, getBotProfile('trixize'))
+  assert.equal(context.opponentHungQueen, true)
+  assert.equal(dialogueAfterBotMove(getBotProfile('trixize'), context), 'Where did your queen go?')
 })
 
 test('Trixize follows the full position repertoire after the forced Nf3 start', () => {

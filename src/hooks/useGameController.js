@@ -251,7 +251,7 @@ export function useGameController(defaultBotId) {
       try {
         candidates = await gameplayClientRef.current.bestMoves(
           beforeGame.fen(),
-          calculationProfile(automatedProfile, activeBelt),
+          calculationProfile(automatedProfile, activeBelt, beforeGame),
         ) || []
       } catch {
         candidates = []

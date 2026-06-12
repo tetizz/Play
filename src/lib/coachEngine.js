@@ -4,13 +4,23 @@ import { classifyMove } from './bookupClassifications.js'
 const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
 const CENTER = new Set(['d4', 'e4', 'd5', 'e5'])
 
-export function calculationProfile(profile, beltMode = false) {
+export function calculationProfile(profile, beltMode = false, game = null) {
   const base = profile.strengthPolicy
-  const active = beltMode && base.belt ? { ...base, ...base.belt } : base
+  let active = beltMode && base.belt ? { ...base, ...base.belt } : base
+  if (profile.capabilities.maximumEngine && game) {
+    if (
+      isBishopKnightMatePosition(game, 'w') ||
+      isBishopKnightMatePosition(game, 'b')
+    ) {
+      active = { ...active, ...base.bishopKnightMate }
+    } else if (isConversionEndgame(game) || canCreateBishopKnightMate(game, game.turn())) {
+      active = { ...active, ...base.endgame }
+    }
+  }
   return {
     depth: active.depth,
     moveTime: active.moveTime,
-    elo: active.engineElo,
+    elo: profile.capabilities.maximumEngine ? undefined : active.engineElo,
     count: active.candidates,
     styleWindowCp: active.styleWindowCp,
     bookWindowCp: active.bookWindowCp,
@@ -25,9 +35,16 @@ export function chooseCoachMove(
   beltMode = false,
   random = Math.random,
 ) {
-  const policy = calculationProfile(profile, beltMode)
+  const policy = calculationProfile(profile, beltMode, game)
   const candidates = normalizeEngineCandidates(game, engineInput)
-  const bookChoice = findBookMove(game, styleProfile, profile, candidates, policy, random)
+  const conversionMode = profile.capabilities.maximumEngine && (
+    isConversionEndgame(game) ||
+    isBishopKnightMatePosition(game, game.turn()) ||
+    canCreateBishopKnightMate(game, game.turn())
+  )
+  const bookChoice = conversionMode
+    ? null
+    : findBookMove(game, styleProfile, profile, candidates, policy, random)
 
   if (bookChoice) {
     return {
@@ -42,6 +59,20 @@ export function chooseCoachMove(
   }
 
   if (candidates.length) {
+    const bishopKnightPromotion = profile.capabilities.bishopKnightObjective
+      ? selectBishopKnightUnderpromotion(game, candidates)
+      : null
+    if (bishopKnightPromotion) {
+      return {
+        move: bishopKnightPromotion.move,
+        source: 'engine-objective',
+        score: bishopKnightPromotion.score,
+        rank: bishopKnightPromotion.rank,
+        line: bishopKnightPromotion,
+        bestLine: candidates[0],
+        candidateLines: candidates,
+      }
+    }
     const selected = selectEngineMove(game, candidates, profile, styleProfile, policy)
     return {
       move: selected.move,
@@ -54,7 +85,9 @@ export function chooseCoachMove(
     }
   }
 
-  const fallbackDepth = profile.id === 'mubassar' ? 3 : 2
+  const fallbackDepth = profile.capabilities.maximumEngine
+    ? isConversionEndgame(game) ? 4 : 3
+    : profile.id === 'mubassar' ? 3 : 2
   const move = fallbackSearch(game, fallbackDepth, styleProfile)
   return { move, source: 'js-fallback', score: null, rank: null }
 }
@@ -73,8 +106,16 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
   const afterGame = cloneGame(beforeGame)
   afterGame.move(move)
   const capturedValue = move.captured ? PIECE_VALUES[move.captured] : 0
+  const priorMove = beforeGame.history({ verbose: true }).at(-1)
   const replyCapturesMovedPiece = afterGame.moves({ verbose: true })
     .some((reply) => reply.to === move.to && reply.captured)
+  const queenTradeRecapture = move.captured === 'q' &&
+    priorMove?.piece === 'q' &&
+    priorMove?.captured === 'q' &&
+    priorMove.to === move.to
+  const entersBishopKnightObjective = profile?.capabilities.bishopKnightObjective &&
+    !isBishopKnightMatePosition(beforeGame, move.color) &&
+    isBishopKnightMatePosition(afterGame, move.color)
   const classification = decision.bestLine && decision.line
     ? classifyMove({
         beforeFen: beforeGame.fen(),
@@ -104,7 +145,13 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
       Boolean(move.captured) ||
       typeof decision.score === 'number' && decision.score >= 250
     ),
-    opponentBlunder: Boolean(move.captured) && capturedValue >= 300 && !replyCapturesMovedPiece,
+    isQueenTradeRecapture: queenTradeRecapture,
+    opponentBlunder: Boolean(move.captured) &&
+      capturedValue >= 300 &&
+      !replyCapturesMovedPiece &&
+      !queenTradeRecapture,
+    opponentHungQueen: move.captured === 'q' && !replyCapturesMovedPiece && !queenTradeRecapture,
+    isBishopKnightObjective: entersBishopKnightObjective,
     isBrilliant: classification?.key === 'brilliant',
     isTheoryBest: decision.source === 'repertoire' && decision.rank === 1,
     isTrixizeFirstMove: profile?.id === 'trixize' &&
@@ -203,6 +250,7 @@ function repertoireChoiceWeight(entry, profile) {
 
 function selectEngineMove(game, candidates, profile, styleProfile, policy) {
   const top = candidates[0]
+  if (profile.capabilities.maximumEngine) return top
   if (profile.capabilities.knightSpecialist && top.move.piece === 'n') {
     const strongestNonKnight = candidates.find((candidate) => candidate.move.piece !== 'n')
     if (
@@ -236,6 +284,22 @@ function selectEngineMove(game, candidates, profile, styleProfile, policy) {
     if (Math.abs(styleDiff) > 0.01) return styleDiff
     return a.rank - b.rank
   })[0]
+}
+
+function selectBishopKnightUnderpromotion(game, candidates) {
+  if (!canCreateBishopKnightMate(game, game.turn())) return null
+  return candidates
+    .filter((candidate) => {
+      if (!['b', 'n'].includes(candidate.move.promotion)) return false
+      if (Number.isFinite(candidate.score) && candidate.score < 500) return false
+      const after = new Chess(game.fen())
+      after.move(candidate.move)
+      return isBishopKnightMatePosition(after, candidate.move.color)
+    })
+    .sort((a, b) => {
+      const scoreDiff = (b.score ?? -Infinity) - (a.score ?? -Infinity)
+      return scoreDiff || a.rank - b.rank
+    })[0] || null
 }
 
 function normalizeEngineCandidates(game, engineInput) {
@@ -326,6 +390,11 @@ function evaluate(game) {
     for (const piece of row) {
       if (!piece) continue
       score += (piece.color === game.turn() ? 1 : -1) * PIECE_VALUES[piece.type]
+      if (piece.type === 'p') {
+        const rank = Number(piece.square?.[1] || 0)
+        const advance = piece.color === 'w' ? rank - 2 : 7 - rank
+        score += (piece.color === game.turn() ? 1 : -1) * advance * advance * 8
+      }
     }
   }
   return score
@@ -333,9 +402,11 @@ function evaluate(game) {
 
 function orderMoves(moves) {
   return [...moves].sort((a, b) => {
+    const aPromotion = a.promotion ? PIECE_VALUES[a.promotion] || 0 : 0
+    const bPromotion = b.promotion ? PIECE_VALUES[b.promotion] || 0 : 0
     const aValue = a.captured ? PIECE_VALUES[a.captured] : 0
     const bValue = b.captured ? PIECE_VALUES[b.captured] : 0
-    return bValue - aValue
+    return bPromotion + bValue - aPromotion - aValue
   })
 }
 
@@ -353,9 +424,7 @@ function positionKey(game) {
 }
 
 function cloneGame(game) {
-  const clone = new Chess()
-  for (const san of game.history()) clone.move(san)
-  return clone
+  return new Chess(game.fen())
 }
 
 function sameMove(a, b) {
@@ -364,6 +433,60 @@ function sameMove(a, b) {
 
 function cleanSan(san) {
   return String(san || '').replace(/[+#?!]+/g, '')
+}
+
+export function isBishopKnightMatePosition(game, color) {
+  const own = materialCounts(game, color)
+  const opponent = materialCounts(game, color === 'w' ? 'b' : 'w')
+  return own.b === 1 &&
+    own.n === 1 &&
+    own.p === 0 &&
+    own.r === 0 &&
+    own.q === 0 &&
+    opponent.p === 0 &&
+    opponent.n === 0 &&
+    opponent.b === 0 &&
+    opponent.r === 0 &&
+    opponent.q === 0
+}
+
+function canCreateBishopKnightMate(game, color) {
+  const own = materialCounts(game, color)
+  const opponent = materialCounts(game, color === 'w' ? 'b' : 'w')
+  const opponentBareKing = opponent.p === 0 &&
+    opponent.n === 0 &&
+    opponent.b === 0 &&
+    opponent.r === 0 &&
+    opponent.q === 0
+  const hasOnePromotingPawn = own.p === 1 &&
+    game.moves({ verbose: true }).some((move) => move.color === color && ['b', 'n'].includes(move.promotion))
+  const missingKnight = own.b === 1 && own.n === 0
+  const missingBishop = own.n === 1 && own.b === 0
+  return opponentBareKing &&
+    hasOnePromotingPawn &&
+    own.r === 0 &&
+    own.q === 0 &&
+    (missingKnight || missingBishop)
+}
+
+function isConversionEndgame(game) {
+  const pieces = game.board().flat().filter(Boolean)
+  const nonPawnMaterial = pieces.reduce((total, piece) =>
+    total + (piece.type === 'p' || piece.type === 'k' ? 0 : PIECE_VALUES[piece.type]), 0)
+  const hasAdvancedPawn = pieces.some((piece) =>
+    piece.type === 'p' && (
+      piece.color === 'w' ? Number(piece.square[1]) >= 6 : Number(piece.square[1]) <= 3
+    ),
+  )
+  return pieces.length <= 10 || nonPawnMaterial <= 1400 || hasAdvancedPawn
+}
+
+function materialCounts(game, color) {
+  const counts = { p: 0, n: 0, b: 0, r: 0, q: 0, k: 0 }
+  for (const piece of game.board().flat()) {
+    if (piece?.color === color) counts[piece.type] += 1
+  }
+  return counts
 }
 
 function isKingsIndianAttack(moves) {

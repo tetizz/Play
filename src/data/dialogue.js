@@ -108,8 +108,10 @@ const AKSHIT_LINES = {
 
 export function dialogueAfterBotMove(profile, context) {
   if (profile.dialoguePolicy === 'trixize') {
+    if (context.isBishopKnightObjective) return "I'm going to checkmate you with a bishop and knight."
+    if (context.opponentHungQueen) return 'Where did your queen go?'
     if (context.isBrilliant) return 'Rahh!'
-    if (context.isFreePiece || context.opponentBlunder) return 'Oops.'
+    if (!context.isQueenTradeRecapture && (context.isFreePiece || context.opponentBlunder)) return 'Oops.'
     if (context.isTrixizeFirstMove) return '1. Nf3 is the starting move.'
     if (context.isTheoryBest) return 'Best move. Too much theory.'
     return ''

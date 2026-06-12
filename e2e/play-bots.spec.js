@@ -334,6 +334,11 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   await expect(page.locator('.classification-row').filter({ hasText: 'Book' })).toContainText('1')
   await expect(page.locator('.classification-row').filter({ hasText: 'Best' })).toContainText('1')
   await expect(page.getByRole('heading', { name: 'Game performance' })).toBeVisible()
+  await page.getByRole('button', { name: 'Black Best: 1. Go to first occurrence.' }).click()
+  await expect(page.getByRole('tab', { name: 'Review moves' })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.locator('.move-explanation')).toContainText('Qh4#')
+  const reviewScrollTop = await page.evaluate(() => document.querySelector('.review-scroll')?.scrollTop)
+  expect(reviewScrollTop).toBe(0)
   const evaluationData = await page.evaluate(() => ({
     graph: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),
     bar: Number(document.querySelector('.evaluation-bar')?.dataset.evalPercent),

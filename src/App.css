@@ -1212,9 +1212,28 @@ button {
   font-weight: 750;
 }
 
-.classification-row strong {
+.classification-count {
+  min-width: 44px;
+  min-height: 34px;
+  justify-self: center;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
   text-align: center;
   font-size: 18px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.classification-count:not(:disabled):hover,
+.classification-count:not(:disabled):focus-visible {
+  background: rgba(255, 255, 255, 0.09);
+  outline: 1px solid currentColor;
+}
+
+.classification-count:disabled {
+  opacity: 0.48;
+  cursor: default;
 }
 
 .classification-row img {

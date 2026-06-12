@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { BoardSurface } from './BoardSurface'
 import { Avatar, PlayerStrip } from './Identity'
@@ -22,11 +22,26 @@ export function ReviewWorkspace({ controller }) {
     returnToSetup,
   } = controller
   const [activeTab, setActiveTab] = useState('summary')
+  const reviewScrollRef = useRef(null)
   const selected = review?.moments?.[Math.max(0, reviewPly - 1)] || null
   const activePoint = review?.graph?.[reviewPly] || review?.graph?.[0] || null
   const progress = reviewProgress.total
     ? Math.round((reviewProgress.completed / reviewProgress.total) * 100)
     : 0
+
+  useEffect(() => {
+    reviewScrollRef.current?.scrollTo({ top: 0 })
+  }, [activeTab])
+
+  const selectClassification = (side, key) => {
+    const moveSide = side === 'white' ? 'w' : 'b'
+    const firstMatch = review?.moments?.find((moment) =>
+      moment.side === moveSide && moment.key === key,
+    )
+    if (!firstMatch) return
+    setReviewPly(firstMatch.ply)
+    setActiveTab('moves')
+  }
 
   return (
     <main className="review-page">
@@ -103,7 +118,7 @@ export function ReviewWorkspace({ controller }) {
               </button>
             </div>
 
-            <div className="review-scroll">
+            <div className="review-scroll" ref={reviewScrollRef}>
               {activeTab === 'summary' ? (
                 <ReviewSummary
                   review={review}
@@ -114,6 +129,7 @@ export function ReviewWorkspace({ controller }) {
                   humanColor={humanColor}
                   activePly={reviewPly}
                   onSelect={setReviewPly}
+                  onSelectClassification={selectClassification}
                 />
               ) : (
                 <MoveReview
@@ -158,6 +174,7 @@ function ReviewSummary({
   humanColor,
   activePly,
   onSelect,
+  onSelectClassification,
 }) {
   const botMatch = gameMode === 'bots'
   const leftSide = botMatch ? 'white' : humanColor === 'white' ? 'white' : 'black'
@@ -190,9 +207,23 @@ function ReviewSummary({
         {review.counts.filter((item) => item.key !== 'forced').map((item) => (
           <div className="classification-row" key={item.key}>
             <span className="classification-label">{item.label}</span>
-            <strong style={{ color: item.color }}>{item[leftSide]}</strong>
+            <ClassificationCount
+              count={item[leftSide]}
+              color={item.color}
+              label={item.label}
+              side={leftSide}
+              onSelect={onSelectClassification}
+              classification={item.key}
+            />
             <img src={item.icon} alt="" />
-            <strong style={{ color: item.color }}>{item[rightSide]}</strong>
+            <ClassificationCount
+              count={item[rightSide]}
+              color={item.color}
+              label={item.label}
+              side={rightSide}
+              onSelect={onSelectClassification}
+              classification={item.key}
+            />
           </div>
         ))}
       </section>
@@ -214,6 +245,22 @@ function ReviewSummary({
         ))}
       </section>
     </div>
+  )
+}
+
+function ClassificationCount({ count, color, label, side, classification, onSelect }) {
+  const sideLabel = side === 'white' ? 'White' : 'Black'
+  return (
+    <button
+      type="button"
+      className="classification-count"
+      style={{ color }}
+      disabled={!count}
+      aria-label={`${sideLabel} ${label}: ${count}. Go to first occurrence.`}
+      onClick={() => onSelect(side, classification)}
+    >
+      {count}
+    </button>
   )
 }
 
@@ -249,6 +296,7 @@ function PhaseGrade({ value }) {
 function MoveReview({ review, history, activePly, selected, onSelect }) {
   return (
     <div className="move-review">
+      <MoveExplanation moment={selected} />
       <EvaluationGraph graph={review.graph} activePly={activePly} onSelect={onSelect} />
       <MoveList
         history={history}
@@ -258,7 +306,6 @@ function MoveReview({ review, history, activePly, selected, onSelect }) {
         onForward={() => onSelect(Math.min(history.length, activePly + 1))}
         title="Moves"
       />
-      <MoveExplanation moment={selected} />
     </div>
   )
 }

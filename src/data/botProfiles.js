@@ -166,7 +166,7 @@ const BOT_PROFILE_LIST = [
       moveTime: 1500,
       candidates: 6,
       styleWindowCp: 4,
-      bookWindowCp: 8,
+      bookWindowCp: 60,
       bookMinGames: 2,
       bookMinRecentWeight: 0.2,
     },
@@ -247,7 +247,7 @@ async function loadStyleProfile(botId) {
   ])
   return {
     openingBook: bookModule.GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK || {},
-    bookMaxPlies: 24,
+    bookMaxPlies: 40,
     bookKeyType: 'position',
     learnedStyle: styleModule.GENERATED_TRIXIZE_STYLE_PROFILE,
   }

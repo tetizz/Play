@@ -151,3 +151,55 @@ test('Trixize completes the Kings Indian setup before using recent repertoire', 
   )
   assert.equal(d3.move.san, 'd3')
 })
+
+test('Trixize prefers a familiar Black repertoire move inside the engine-safe window', () => {
+  const game = new Chess()
+  game.move('e4')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'g8f6', score: 35, rank: 1 },
+      { uci: 'd7d6', score: 30, rank: 2 },
+    ],
+    profile,
+    {
+      openingBook: {
+        [game.fen().split(' ').slice(0, 4).join(' ')]: [
+          { san: 'd6', games: 504, recentWeight: 341.9 },
+          { san: 'Nf6', games: 4, recentWeight: 3.1 },
+        ],
+      },
+      bookMaxPlies: 40,
+      bookKeyType: 'position',
+    },
+  )
+  assert.equal(decision.move.san, 'd6')
+  assert.equal(decision.source, 'repertoire')
+})
+
+test('Trixize rejects an unsafe familiar Black move for a safe repertoire alternative', () => {
+  const game = new Chess()
+  game.move('e4')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'g8f6', score: 80, rank: 1 },
+      { uci: 'd7d6', score: 10, rank: 2 },
+    ],
+    profile,
+    {
+      openingBook: {
+        [game.fen().split(' ').slice(0, 4).join(' ')]: [
+          { san: 'd6', games: 504, recentWeight: 341.9 },
+          { san: 'Nf6', games: 4, recentWeight: 3.1 },
+        ],
+      },
+      bookMaxPlies: 40,
+      bookKeyType: 'position',
+    },
+  )
+  assert.equal(decision.move.san, 'Nf6')
+  assert.equal(decision.source, 'repertoire')
+})

@@ -161,6 +161,37 @@ test('Trixize opens with Nf3 and delivers the requested opening line', async ({ 
   await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
 })
 
+test('Trixize follows the full Black Pirc and Kings Indian repertoires', async ({ page }) => {
+  test.setTimeout(70000)
+
+  const startTrixizeAsBlack = async () => {
+    await page.evaluate(() => localStorage.clear())
+    await page.goto('/')
+    await page.getByRole('button', { name: /Trixize/ }).click()
+    await page.getByRole('button', { name: 'White', exact: true }).click()
+    await page.getByRole('button', { name: 'Play', exact: true }).click()
+  }
+  const playAndWait = async (from, to, expectedSan) => {
+    await page.locator(`[data-square="${from}"]`).click()
+    await page.locator(`[data-square="${to}"]`).click()
+    await expect(page.getByRole('button', { name: expectedSan, exact: true })).toBeVisible({
+      timeout: 15000,
+    })
+  }
+
+  await startTrixizeAsBlack()
+  await playAndWait('e2', 'e4', 'd6')
+  await playAndWait('d2', 'd4', 'Nf6')
+  await playAndWait('b1', 'c3', 'g6')
+  await playAndWait('g1', 'f3', 'Bg7')
+
+  await startTrixizeAsBlack()
+  await playAndWait('d2', 'd4', 'Nf6')
+  await playAndWait('c2', 'c4', 'g6')
+  await playAndWait('b1', 'c3', 'Bg7')
+  await playAndWait('e2', 'e4', 'd6')
+})
+
 test('cancelled drags restore the piece instead of leaving it invisible', async ({ page }) => {
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()

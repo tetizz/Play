@@ -171,7 +171,9 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
   const forced = playable.find((entry) => entry.force)
   if (forced) return forced
   if (profile.capabilities.perfectTheory) {
-    return [...playable].sort((a, b) => (a.rank || 99) - (b.rank || 99))[0]
+    return [...playable].sort((a, b) =>
+      b.weight - a.weight || (a.rank || 99) - (b.rank || 99),
+    )[0]
   }
   return weightedChoice(playable)
 }

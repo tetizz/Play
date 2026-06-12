@@ -43,6 +43,11 @@ const PROFILES = {
     bookExport: 'GENERATED_RECENT_TRIXIZE_REPERTOIRE_BOOK',
     styleFile: 'generatedTrixizeStyleProfile.js',
     styleExport: 'GENERATED_TRIXIZE_STYLE_PROFILE',
+    chessComArchiveMonths: null,
+    maxBookPlies: 40,
+    maxMovesPerPosition: 10,
+    minRecentWeight: 0.01,
+    maxBookPositions: 18000,
     accounts: [
       { site: 'chess.com', username: 'trixize1234' },
     ],
@@ -68,12 +73,14 @@ if (!PROFILE) throw new Error(`Unknown profile "${requestedProfile}"`)
 const BOOK_OUTPUT_PATH = new URL(`../src/data/${PROFILE.bookFile}`, import.meta.url)
 const STYLE_OUTPUT_PATH = new URL(`../src/data/${PROFILE.styleFile}`, import.meta.url)
 const HALF_LIFE_DAYS = 180
-const CHESSCOM_RECENT_MONTHS = 30
+const CHESSCOM_ARCHIVE_MONTHS = Object.hasOwn(PROFILE, 'chessComArchiveMonths')
+  ? PROFILE.chessComArchiveMonths
+  : 30
 const MAX_LICHESS_GAMES_PER_ACCOUNT = 900
-const MAX_BOOK_PLIES = 24
-const MAX_MOVES_PER_POSITION = 8
-const MIN_RECENT_WEIGHT = 0.05
-const MAX_BOOK_POSITIONS = 9000
+const MAX_BOOK_PLIES = PROFILE.maxBookPlies || 24
+const MAX_MOVES_PER_POSITION = PROFILE.maxMovesPerPosition || 8
+const MIN_RECENT_WEIGHT = PROFILE.minRecentWeight || 0.05
+const MAX_BOOK_POSITIONS = PROFILE.maxBookPositions || 9000
 const ACCOUNTS = PROFILE.accounts
 
 const now = new Date()
@@ -118,9 +125,9 @@ if (styleAccumulator.games === 0) {
   await Promise.all([
     writeFile(
       BOOK_OUTPUT_PATH,
-      `// Generated from recent public Chess.com/Lichess PGNs for ${PROFILE.label}.
+      `// Generated from public Chess.com/Lichess PGNs for ${PROFILE.label}.
 // Recency uses a ${HALF_LIFE_DAYS}-day half-life, so newer games influence move choice more.
-// Chess.com window: last ${CHESSCOM_RECENT_MONTHS} monthly archives. Lichess cap: latest ${MAX_LICHESS_GAMES_PER_ACCOUNT} games per account.
+// Chess.com window: ${chessComWindowLabel()}. Lichess cap: latest ${MAX_LICHESS_GAMES_PER_ACCOUNT} games per account.
 // Opening depth: first ${MAX_BOOK_PLIES} plies, max ${MAX_MOVES_PER_POSITION} moves per position.
 // Sources: ${sourceStats.join(', ')}.
 // Generated at ${now.toISOString()}.
@@ -485,9 +492,12 @@ function round(value) {
 
 async function fetchChessComGames(username) {
   const archives = await fetchJson(`https://api.chess.com/pub/player/${username}/games/archives`)
-  const recentArchives = (archives.archives || []).slice(-CHESSCOM_RECENT_MONTHS)
+  const availableArchives = archives.archives || []
+  const selectedArchives = CHESSCOM_ARCHIVE_MONTHS == null
+    ? availableArchives
+    : availableArchives.slice(-CHESSCOM_ARCHIVE_MONTHS)
   const games = []
-  const monthlyArchives = await Promise.all(recentArchives.map((archiveUrl) => fetchJson(archiveUrl)))
+  const monthlyArchives = await Promise.all(selectedArchives.map((archiveUrl) => fetchJson(archiveUrl)))
   for (const archive of monthlyArchives) {
     for (const game of archive.games || []) {
       if (game.rules !== 'chess' || !game.pgn) continue
@@ -498,6 +508,12 @@ async function fetchChessComGames(username) {
     }
   }
   return games
+}
+
+function chessComWindowLabel() {
+  return CHESSCOM_ARCHIVE_MONTHS == null
+    ? 'all public monthly archives'
+    : `last ${CHESSCOM_ARCHIVE_MONTHS} monthly archives`
 }
 
 async function fetchLichessGames(username) {

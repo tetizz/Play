@@ -90,7 +90,7 @@ export function createStockfishClient() {
         return
       }
       active = request
-      const candidateCount = Math.max(1, Math.min(8, request.options.count || 1))
+      const candidateCount = Math.max(1, Math.min(16, request.options.count || 1))
       const limitStrength = Number.isFinite(request.options.elo)
       post(`setoption name UCI_LimitStrength value ${limitStrength ? 'true' : 'false'}`)
       if (limitStrength) post(`setoption name UCI_Elo value ${request.options.elo}`)

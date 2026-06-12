@@ -159,12 +159,13 @@ const BOT_PROFILE_LIST = [
       beltMode: false,
       knightSpecialist: false,
       perfectTheory: true,
+      weightedRepertoire: true,
     },
     strengthPolicy: {
       engineElo: 3000,
       depth: 14,
       moveTime: 1500,
-      candidates: 6,
+      candidates: 12,
       styleWindowCp: 4,
       bookWindowCp: 60,
       bookMinGames: 2,
@@ -175,7 +176,7 @@ const BOT_PROFILE_LIST = [
       lichess: [],
       recentHalfLifeDays: 180,
       forceWhiteFirstMove: 'Nf3',
-      whiteOpeningPlan: ['Nf3', 'g3', 'Bg2', 'O-O', 'd3', 'e4'],
+      repertoireTemperature: 0.72,
     },
   },
 ]

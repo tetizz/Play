@@ -17,10 +17,17 @@ export function calculationProfile(profile, beltMode = false) {
   }
 }
 
-export function chooseCoachMove(game, engineInput, profile, styleProfile = {}, beltMode = false) {
+export function chooseCoachMove(
+  game,
+  engineInput,
+  profile,
+  styleProfile = {},
+  beltMode = false,
+  random = Math.random,
+) {
   const policy = calculationProfile(profile, beltMode)
   const candidates = normalizeEngineCandidates(game, engineInput)
-  const bookChoice = findBookMove(game, styleProfile, profile, candidates, policy)
+  const bookChoice = findBookMove(game, styleProfile, profile, candidates, policy, random)
 
   if (bookChoice) {
     return {
@@ -106,13 +113,10 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
   }
 }
 
-function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
+function findBookMove(game, styleProfile, profile, engineCandidates, policy, random) {
   const openingBook = styleProfile.openingBook || {}
   const maxPlies = styleProfile.bookMaxPlies || 0
   if (game.history().length > maxPlies) return null
-
-  const plannedMove = findPlannedOpeningMove(game, profile)
-  if (plannedMove) return candidateMetadata(plannedMove, engineCandidates)
 
   const forcedFirstMove = profile.repertoireSource.forceWhiteFirstMove
   if (game.history().length === 0 && forcedFirstMove) {
@@ -161,6 +165,11 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
       move,
       force: Boolean(stats.force),
       weight: stats.force ? Number.MAX_SAFE_INTEGER : Math.max(recentWeight, games),
+      games,
+      recentWeight,
+      wins,
+      losses,
+      draws: Number(stats.draws || 0),
       score: engineMatch?.score ?? null,
       rank: engineMatch?.rank ?? null,
       line: engineMatch || null,
@@ -170,6 +179,10 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
   if (!playable.length) return null
   const forced = playable.find((entry) => entry.force)
   if (forced) return forced
+  if (profile.capabilities.weightedRepertoire) {
+    const weights = playable.map((entry) => repertoireChoiceWeight(entry, profile))
+    return weightedChoice(playable, weights, random)
+  }
   if (profile.capabilities.perfectTheory) {
     return [...playable].sort((a, b) =>
       b.weight - a.weight || (a.rank || 99) - (b.rank || 99),
@@ -178,19 +191,14 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy) {
   return weightedChoice(playable)
 }
 
-function findPlannedOpeningMove(game, profile) {
-  if (game.turn() !== 'w') return null
-  const plan = profile.repertoireSource.whiteOpeningPlan
-  if (!Array.isArray(plan) || !plan.length) return null
-
-  const whiteMoves = game.history()
-    .filter((_, index) => index % 2 === 0)
-    .map(cleanSan)
-  const followsPlan = whiteMoves.every((move, index) => move === cleanSan(plan[index]))
-  if (!followsPlan || whiteMoves.length >= plan.length) return null
-
-  const nextMove = cleanSan(plan[whiteMoves.length])
-  return game.moves({ verbose: true }).find((move) => cleanSan(move.san) === nextMove) || null
+function repertoireChoiceWeight(entry, profile) {
+  const games = Math.max(1, entry.games || 1)
+  const recentWeight = Math.max(0.01, entry.recentWeight || 0)
+  const scoreRate = (entry.wins + entry.draws * 0.5 + 1) / (games + 2)
+  const performance = 0.7 + Math.min(0.65, scoreRate * 0.65)
+  const familiarity = recentWeight + Math.sqrt(games) * 0.2
+  const temperature = profile.repertoireSource.repertoireTemperature || 1
+  return Math.pow(familiarity * performance, temperature)
 }
 
 function selectEngineMove(game, candidates, profile, styleProfile, policy) {
@@ -257,10 +265,10 @@ function candidateMetadata(move, candidates) {
   }
 }
 
-function weightedChoice(options, explicitWeights = null) {
+function weightedChoice(options, explicitWeights = null, random = Math.random) {
   const weights = explicitWeights || options.map((option) => Math.max(0.01, option.weight || 1))
   const total = weights.reduce((sum, weight) => sum + weight, 0)
-  let roll = Math.random() * total
+  let roll = random() * total
   for (let index = 0; index < options.length; index += 1) {
     roll -= weights[index]
     if (roll <= 0) return options[index]

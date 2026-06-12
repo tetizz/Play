@@ -15,7 +15,9 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(getBotProfile('ayden').capabilities.beltMode, false)
   assert.equal(getBotProfile('akshit').capabilities.knightSpecialist, true)
   assert.equal(getBotProfile('trixize').capabilities.perfectTheory, true)
+  assert.equal(getBotProfile('trixize').capabilities.weightedRepertoire, true)
   assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, 3000)
+  assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 12)
   assert.equal(getBotProfile('ayden').intro, 'Ayden loves the french defense')
   assert.equal(
     getBotProfile('akshit').intro,
@@ -122,34 +124,54 @@ test('Trixize starts with Nf3 and uses only the requested short dialogue', () =>
   assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), 'Rahh!')
 })
 
-test('Trixize completes the Kings Indian setup before using recent repertoire', () => {
+test('Trixize follows the full position repertoire after the forced Nf3 start', () => {
   const game = new Chess()
   const profile = getBotProfile('trixize')
-  for (const san of ['Nf3', 'd5', 'g3', 'Nf6', 'Bg2', 'e6']) game.move(san)
-
-  const castle = chooseCoachMove(
+  for (const san of ['Nf3', 'd5']) game.move(san)
+  const key = game.fen().split(' ').slice(0, 4).join(' ')
+  const c4 = chooseCoachMove(
     game,
     [
-      { uci: 'd2d4', score: 30, rank: 1 },
-      { uci: 'e1g1', score: 28, rank: 2 },
+      { uci: 'g2g3', score: 30, rank: 1 },
+      { uci: 'c2c4', score: 28, rank: 2 },
     ],
     profile,
-    { openingBook: {}, bookMaxPlies: 24 },
+    {
+      openingBook: {
+        [key]: [
+          { san: 'g3', games: 288, wins: 158, losses: 118, draws: 12, recentWeight: 198 },
+          { san: 'c4', games: 18, wins: 11, losses: 6, draws: 1, recentWeight: 12 },
+        ],
+      },
+      bookMaxPlies: 40,
+      bookKeyType: 'position',
+    },
+    false,
+    () => 0.999,
   )
-  assert.equal(castle.move.san, 'O-O')
+  assert.equal(c4.move.san, 'c4')
 
-  game.move(castle.move)
-  game.move('Be7')
-  const d3 = chooseCoachMove(
+  const g3 = chooseCoachMove(
     game,
     [
-      { uci: 'd2d4', score: 22, rank: 1 },
-      { uci: 'd2d3', score: 20, rank: 2 },
+      { uci: 'g2g3', score: 30, rank: 1 },
+      { uci: 'c2c4', score: 28, rank: 2 },
     ],
     profile,
-    { openingBook: {}, bookMaxPlies: 24 },
+    {
+      openingBook: {
+        [key]: [
+          { san: 'g3', games: 288, wins: 158, losses: 118, draws: 12, recentWeight: 198 },
+          { san: 'c4', games: 18, wins: 11, losses: 6, draws: 1, recentWeight: 12 },
+        ],
+      },
+      bookMaxPlies: 40,
+      bookKeyType: 'position',
+    },
+    false,
+    () => 0,
   )
-  assert.equal(d3.move.san, 'd3')
+  assert.equal(g3.move.san, 'g3')
 })
 
 test('Trixize prefers a familiar Black repertoire move inside the engine-safe window', () => {

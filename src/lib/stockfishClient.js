@@ -103,7 +103,11 @@ export function createStockfishClient() {
       }, request.options.timeout || Math.max(2200, (request.options.moveTime || 500) + 1500))
       const depth = Math.max(1, request.options.depth || 8)
       const moveTime = Math.max(40, request.options.moveTime || 500)
-      post(`go depth ${depth} movetime ${moveTime}`)
+      const searchMoves = Array.isArray(request.options.searchMoves)
+        ? request.options.searchMoves.filter((move) => /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move))
+        : []
+      const searchClause = searchMoves.length ? ` searchmoves ${searchMoves.join(' ')}` : ''
+      post(`go depth ${depth} movetime ${moveTime}${searchClause}`)
     } catch {
       request.resolve(null)
       active = null

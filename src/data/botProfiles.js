@@ -162,6 +162,7 @@ const BOT_PROFILE_LIST = [
       weightedRepertoire: true,
       maximumEngine: true,
       bishopKnightObjective: true,
+      exactTablebase: true,
     },
     strengthPolicy: {
       engineElo: null,
@@ -180,6 +181,11 @@ const BOT_PROFILE_LIST = [
       bishopKnightMate: {
         depth: 30,
         moveTime: 7000,
+        candidates: 1,
+      },
+      mateSafety: {
+        depth: 24,
+        moveTime: 3200,
         candidates: 1,
       },
     },

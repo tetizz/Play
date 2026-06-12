@@ -26,6 +26,7 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, null)
   assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 16)
   assert.equal(getBotProfile('trixize').capabilities.maximumEngine, true)
+  assert.equal(getBotProfile('trixize').capabilities.exactTablebase, true)
   assert.equal(getBotProfile('ayden').intro, 'Ayden loves the french defense')
   assert.equal(
     getBotProfile('akshit').intro,
@@ -143,6 +144,8 @@ test('Trixize uses unlimited Stockfish strength and deeper conversion searches',
   assert.equal(opening.elo, undefined)
   assert.equal(opening.depth, 18)
   assert.equal(opening.styleWindowCp, 0)
+  assert.equal(profile.strengthPolicy.mateSafety.depth, 24)
+  assert.equal(profile.strengthPolicy.mateSafety.candidates, 1)
 
   const promotion = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
   const endgame = calculationProfile(profile, false, promotion)
@@ -199,6 +202,38 @@ test('Trixize always takes a forced mate before repertoire or underpromotion', (
     },
   )
   assert.equal(decision.move.san, 'd4')
+  assert.equal(decision.source, 'engine-mate')
+})
+
+test('Trixize keeps a proven mate while underpromoting into the bishop-knight objective', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 99991, mate: 9, rank: 1 },
+      { uci: 'a7a8n', score: 99970, mate: 30, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.promotion, 'n')
+  assert.equal(decision.source, 'engine-objective')
+})
+
+test('Trixize does not abandon an immediate mate for an unproven underpromotion', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 99997, mate: 3, rank: 1 },
+      { uci: 'a7a8n', score: 900, mate: null, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.promotion, 'q')
   assert.equal(decision.source, 'engine-mate')
 })
 

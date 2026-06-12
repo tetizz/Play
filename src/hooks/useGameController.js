@@ -1,9 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
 import { dialogueAfterBotMove, dialogueForGameEnd, initialDialogue } from '../data/dialogue'
-import { calculationProfile, chooseCoachMove, moveContext, shouldActivateBeltMode } from '../lib/coachEngine'
+import {
+  bishopKnightPromotionUcis,
+  calculationProfile,
+  chooseCoachMove,
+  moveContext,
+  shouldActivateBeltMode,
+} from '../lib/coachEngine'
 import { buildFallbackFinalReview, reviewGameWithStockfish } from '../lib/reviewEngine'
 import { createStockfishClient } from '../lib/stockfishClient'
+import {
+  createTablebaseClient,
+  isTablebaseEligible,
+  selectTablebaseDecision,
+} from '../lib/tablebaseClient'
 import {
   applyNextPremove,
   clearSession,
@@ -64,6 +75,8 @@ export function useGameController(defaultBotId) {
   const timerRef = useRef(null)
   const initializedRef = useRef(false)
   const gameplayClientRef = useRef(null)
+  const mateClientRef = useRef(null)
+  const tablebaseClientRef = useRef(null)
   const reviewClientRef = useRef(null)
   const reviewAbortRef = useRef(null)
   const scheduleBotTurnRef = useRef(null)
@@ -82,9 +95,13 @@ export function useGameController(defaultBotId) {
 
   useEffect(() => {
     gameplayClientRef.current = createStockfishClient()
+    mateClientRef.current = createStockfishClient()
+    tablebaseClientRef.current = createTablebaseClient()
     reviewClientRef.current = createStockfishClient()
     return () => {
       gameplayClientRef.current?.destroy()
+      mateClientRef.current?.destroy()
+      tablebaseClientRef.current?.destroy()
       reviewClientRef.current?.destroy()
     }
   }, [])
@@ -138,6 +155,8 @@ export function useGameController(defaultBotId) {
     clearTimeout(timerRef.current)
     timerRef.current = null
     gameplayClientRef.current?.cancelAll()
+    mateClientRef.current?.cancelAll()
+    tablebaseClientRef.current?.cancelAll()
     reviewClientRef.current?.cancelAll()
     reviewAbortRef.current?.abort()
     reviewAbortRef.current = null
@@ -249,24 +268,65 @@ export function useGameController(defaultBotId) {
         setBeltMode(true)
       }
       const activeBelt = beltRef.current && automatedProfile.capabilities.beltMode
-      let candidates
-      try {
-        candidates = await gameplayClientRef.current.bestMoves(
-          beforeGame.fen(),
-          calculationProfile(automatedProfile, activeBelt, beforeGame),
-        ) || []
-      } catch {
-        candidates = []
+      let decision = null
+      if (
+        automatedProfile.capabilities.exactTablebase &&
+        isTablebaseEligible(beforeGame.fen())
+      ) {
+        const tablebase = await tablebaseClientRef.current.probe(beforeGame.fen())
+        if (generationRef.current !== token) return
+        decision = selectTablebaseDecision(beforeGame, tablebase, {
+          preferBishopKnightObjective: automatedProfile.capabilities.bishopKnightObjective,
+        })
       }
-      if (generationRef.current !== token) return
 
-      const decision = chooseCoachMove(
-        beforeGame,
-        candidates,
-        automatedProfile,
-        styleProfile,
-        activeBelt,
-      )
+      if (!decision) {
+        const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame)
+        let candidates
+        try {
+          const mateSafety = automatedProfile.capabilities.maximumEngine
+            ? automatedProfile.strengthPolicy.mateSafety
+            : null
+          const [engineCandidates, mateCandidates] = await Promise.all([
+            gameplayClientRef.current.bestMoves(beforeGame.fen(), enginePolicy),
+            mateSafety
+              ? mateClientRef.current.bestMoves(beforeGame.fen(), {
+                  ...mateSafety,
+                  elo: undefined,
+                  count: 1,
+                })
+              : Promise.resolve([]),
+          ])
+          candidates = mergeEngineCandidates(engineCandidates || [], mateCandidates || [])
+          const promotionMoves = automatedProfile.capabilities.bishopKnightObjective
+            ? bishopKnightPromotionUcis(beforeGame)
+            : []
+          if (promotionMoves.length) {
+            const objectiveCandidates = await gameplayClientRef.current.bestMoves(
+              beforeGame.fen(),
+              {
+                ...enginePolicy,
+                depth: Math.max(22, enginePolicy.depth),
+                moveTime: Math.max(3200, enginePolicy.moveTime),
+                count: promotionMoves.length,
+                searchMoves: promotionMoves,
+              },
+            ) || []
+            candidates = mergeEngineCandidates(candidates, objectiveCandidates)
+          }
+        } catch {
+          candidates = []
+        }
+        if (generationRef.current !== token) return
+
+        decision = chooseCoachMove(
+          beforeGame,
+          candidates,
+          automatedProfile,
+          styleProfile,
+          activeBelt,
+        )
+      }
       if (!decision.move) {
         if (gameMode === 'bots') scheduleBotTurnRef.current?.(baseHistory)
         else setTurnState('human')
@@ -631,4 +691,26 @@ function needsPromotion(piece, targetSquare) {
 
 function firstDifferentBot(botId) {
   return ['mubassar', 'ayden', 'akshit', 'trixize'].find((id) => id !== botId) || 'mubassar'
+}
+
+function mergeEngineCandidates(primary, objective) {
+  const byMove = new Map()
+  for (const candidate of [...primary, ...objective]) {
+    if (!candidate?.uci) continue
+    const existing = byMove.get(candidate.uci)
+    if (
+      !existing ||
+      (Number.isFinite(candidate.score) && candidate.score > (existing.score ?? -Infinity))
+    ) {
+      byMove.set(candidate.uci, candidate)
+    }
+  }
+  return [...byMove.values()]
+    .sort((a, b) => {
+      const aMate = Number.isFinite(a.mate) && a.mate > 0 ? a.mate : Infinity
+      const bMate = Number.isFinite(b.mate) && b.mate > 0 ? b.mate : Infinity
+      if (aMate !== bMate) return aMate - bMate
+      return (b.score ?? -Infinity) - (a.score ?? -Infinity)
+    })
+    .map((candidate, index) => ({ ...candidate, rank: index + 1 }))
 }

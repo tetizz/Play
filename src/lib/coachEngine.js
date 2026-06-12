@@ -42,7 +42,21 @@ export function chooseCoachMove(
 ) {
   const policy = calculationProfile(profile, beltMode, game)
   const candidates = normalizeEngineCandidates(game, engineInput)
+  const bishopKnightPromotion = profile.capabilities.bishopKnightObjective
+    ? selectBishopKnightUnderpromotion(game, candidates)
+    : null
   const forcedMate = selectFastestMate(candidates)
+  if (bishopKnightPromotion && (!forcedMate || bishopKnightPromotion.mate > 0)) {
+    return {
+      move: bishopKnightPromotion.move,
+      source: 'engine-objective',
+      score: bishopKnightPromotion.score,
+      rank: bishopKnightPromotion.rank,
+      line: bishopKnightPromotion,
+      bestLine: candidates[0],
+      candidateLines: candidates,
+    }
+  }
   if (forcedMate) {
     return {
       move: forcedMate.move,
@@ -77,9 +91,6 @@ export function chooseCoachMove(
   }
 
   if (candidates.length) {
-    const bishopKnightPromotion = profile.capabilities.bishopKnightObjective
-      ? selectBishopKnightUnderpromotion(game, candidates)
-      : null
     if (bishopKnightPromotion) {
       return {
         move: bishopKnightPromotion.move,
@@ -501,12 +512,19 @@ function canCreateBishopKnightMate(game, color) {
 
 function canPursueBishopKnightObjective(game, color) {
   const own = materialCounts(game, color)
-  const canUnderpromote = game.moves({ verbose: true })
-    .some((move) => move.color === color && ['b', 'n'].includes(move.promotion))
+  const canUnderpromote = bishopKnightPromotionUcis(game, color).length > 0
   return canUnderpromote && (
     (own.b >= 1 && own.n === 0) ||
     (own.n >= 1 && own.b === 0)
   )
+}
+
+export function bishopKnightPromotionUcis(game, color = game.turn()) {
+  const own = materialCounts(game, color)
+  if (!((own.b >= 1 && own.n === 0) || (own.n >= 1 && own.b === 0))) return []
+  return game.moves({ verbose: true })
+    .filter((move) => move.color === color && ['b', 'n'].includes(move.promotion))
+    .map((move) => `${move.from}${move.to}${move.promotion}`)
 }
 
 function hasBishopKnightPair(game, color) {

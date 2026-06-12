@@ -10,10 +10,15 @@ export function calculationProfile(profile, beltMode = false, game = null) {
   if (profile.capabilities.maximumEngine && game) {
     if (
       isBishopKnightMatePosition(game, 'w') ||
-      isBishopKnightMatePosition(game, 'b')
+      isBishopKnightMatePosition(game, 'b') ||
+      isBishopKnightConversionPosition(game, game.turn())
     ) {
       active = { ...active, ...base.bishopKnightMate }
-    } else if (isConversionEndgame(game) || canCreateBishopKnightMate(game, game.turn())) {
+    } else if (
+      isConversionEndgame(game) ||
+      canCreateBishopKnightMate(game, game.turn()) ||
+      canPursueBishopKnightObjective(game, game.turn())
+    ) {
       active = { ...active, ...base.endgame }
     }
   }
@@ -37,10 +42,23 @@ export function chooseCoachMove(
 ) {
   const policy = calculationProfile(profile, beltMode, game)
   const candidates = normalizeEngineCandidates(game, engineInput)
+  const forcedMate = selectFastestMate(candidates)
+  if (forcedMate) {
+    return {
+      move: forcedMate.move,
+      source: 'engine-mate',
+      score: forcedMate.score,
+      rank: forcedMate.rank,
+      line: forcedMate,
+      bestLine: candidates[0],
+      candidateLines: candidates,
+    }
+  }
   const conversionMode = profile.capabilities.maximumEngine && (
     isConversionEndgame(game) ||
     isBishopKnightMatePosition(game, game.turn()) ||
-    canCreateBishopKnightMate(game, game.turn())
+    canCreateBishopKnightMate(game, game.turn()) ||
+    canPursueBishopKnightObjective(game, game.turn())
   )
   const bookChoice = conversionMode
     ? null
@@ -114,8 +132,8 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
     priorMove?.captured === 'q' &&
     priorMove.to === move.to
   const entersBishopKnightObjective = profile?.capabilities.bishopKnightObjective &&
-    !isBishopKnightMatePosition(beforeGame, move.color) &&
-    isBishopKnightMatePosition(afterGame, move.color)
+    !hasBishopKnightPair(beforeGame, move.color) &&
+    hasBishopKnightPair(afterGame, move.color)
   const classification = decision.bestLine && decision.line
     ? classifyMove({
         beforeFen: beforeGame.fen(),
@@ -287,19 +305,31 @@ function selectEngineMove(game, candidates, profile, styleProfile, policy) {
 }
 
 function selectBishopKnightUnderpromotion(game, candidates) {
-  if (!canCreateBishopKnightMate(game, game.turn())) return null
+  if (!canPursueBishopKnightObjective(game, game.turn())) return null
+  const top = candidates[0]
   return candidates
     .filter((candidate) => {
       if (!['b', 'n'].includes(candidate.move.promotion)) return false
-      if (Number.isFinite(candidate.score) && candidate.score < 500) return false
+      if (Number.isFinite(candidate.score) && candidate.score < 700) return false
+      if (
+        Number.isFinite(top?.score) &&
+        Number.isFinite(candidate.score) &&
+        top.score - candidate.score > 350
+      ) return false
       const after = new Chess(game.fen())
       after.move(candidate.move)
-      return isBishopKnightMatePosition(after, candidate.move.color)
+      return hasBishopKnightPair(after, candidate.move.color)
     })
     .sort((a, b) => {
       const scoreDiff = (b.score ?? -Infinity) - (a.score ?? -Infinity)
       return scoreDiff || a.rank - b.rank
     })[0] || null
+}
+
+function selectFastestMate(candidates) {
+  return candidates
+    .filter((candidate) => Number.isFinite(candidate.mate) && candidate.mate > 0)
+    .sort((a, b) => a.mate - b.mate || a.rank - b.rank)[0] || null
 }
 
 function normalizeEngineCandidates(game, engineInput) {
@@ -467,6 +497,30 @@ function canCreateBishopKnightMate(game, color) {
     own.r === 0 &&
     own.q === 0 &&
     (missingKnight || missingBishop)
+}
+
+function canPursueBishopKnightObjective(game, color) {
+  const own = materialCounts(game, color)
+  const canUnderpromote = game.moves({ verbose: true })
+    .some((move) => move.color === color && ['b', 'n'].includes(move.promotion))
+  return canUnderpromote && (
+    (own.b >= 1 && own.n === 0) ||
+    (own.n >= 1 && own.b === 0)
+  )
+}
+
+function hasBishopKnightPair(game, color) {
+  const own = materialCounts(game, color)
+  return own.b >= 1 && own.n >= 1
+}
+
+function isBishopKnightConversionPosition(game, color) {
+  if (!hasBishopKnightPair(game, color)) return false
+  const own = materialCounts(game, color)
+  const opponent = materialCounts(game, color === 'w' ? 'b' : 'w')
+  const ownExtraPieces = own.p + own.r + own.q + Math.max(0, own.b - 1) + Math.max(0, own.n - 1)
+  const opponentPieces = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q
+  return ownExtraPieces <= 1 && opponentPieces <= 1
 }
 
 function isConversionEndgame(game) {

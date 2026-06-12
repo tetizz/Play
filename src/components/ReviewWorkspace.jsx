@@ -310,7 +310,6 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
         >
           <path className="evaluation-white-area" d={whiteArea} />
           <line className="evaluation-equal-line" x1="0" y1={height / 2} x2={width} y2={height / 2} />
-          <path className="evaluation-line-shadow" d={curve} />
           <path className="evaluation-line" d={curve} />
           {coordinates.filter(({ point }) => highlighted.has(point.classification)).map(({ x, y, point }) => (
             <circle

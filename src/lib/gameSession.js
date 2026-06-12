@@ -14,6 +14,18 @@ export function gameFromHistory(history = []) {
   return game
 }
 
+export function isAutomaticGameOver(game) {
+  return game.isCheckmate() ||
+    game.isStalemate() ||
+    game.isInsufficientMaterial() ||
+    game.isDrawByFiftyMoves() ||
+    currentPositionOccurrences(game) >= 5
+}
+
+export function isAutomaticDraw(game) {
+  return !game.isCheckmate() && isAutomaticGameOver(game)
+}
+
 export function loadSession() {
   try {
     const parsed = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')
@@ -27,7 +39,7 @@ export function loadSession() {
       colorChoice: parsed.colorChoice,
       humanColor: parsed.humanColor,
       history: game.history(),
-      phase: parsed.phase === 'review' && !game.isGameOver() ? 'game' : parsed.phase,
+      phase: parsed.phase === 'review' && !isAutomaticGameOver(game) ? 'game' : parsed.phase,
       beltMode: Boolean(parsed.beltMode),
       lastMove: parsed.lastMove || null,
       premoveQueue: Array.isArray(parsed.premoveQueue) ? parsed.premoveQueue : [],
@@ -48,9 +60,22 @@ export function clearSession() {
 
 export function shouldResumeBotTurn(history, humanColor) {
   const game = gameFromHistory(history)
-  if (game.isGameOver()) return false
+  if (isAutomaticGameOver(game)) return false
   const playerTurn = humanColor === 'white' ? 'w' : 'b'
   return game.turn() !== playerTurn
+}
+
+function currentPositionOccurrences(game) {
+  const current = positionKey(game.fen())
+  let occurrences = current === positionKey(new Chess().fen()) ? 1 : 0
+  for (const move of game.history({ verbose: true })) {
+    if (positionKey(move.after) === current) occurrences += 1
+  }
+  return occurrences
+}
+
+function positionKey(fen) {
+  return String(fen || '').split(' ').slice(0, 4).join(' ')
 }
 
 export function applyPremove(history, premove) {

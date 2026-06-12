@@ -5,6 +5,7 @@ import {
   applyNextPremove,
   applyPremove,
   gameFromHistory,
+  isAutomaticGameOver,
   shouldResumeBotTurn,
 } from '../src/lib/gameSession.js'
 import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
@@ -73,6 +74,28 @@ test('restored games request exactly the side whose turn is missing', () => {
   assert.equal(shouldResumeBotTurn(['e4'], 'white'), true)
   assert.equal(shouldResumeBotTurn([], 'black'), true)
   assert.deepEqual(gameFromHistory(['e4', 'e5']).history(), ['e4', 'e5'])
+})
+
+test('threefold repetition is claimable but does not automatically end the game', () => {
+  const threefold = gameFromHistory([
+    'Nf3', 'Nf6', 'Ng1', 'Ng8',
+    'Nf3', 'Nf6', 'Ng1', 'Ng8',
+  ])
+  assert.equal(threefold.isThreefoldRepetition(), true)
+  assert.equal(threefold.isGameOver(), true)
+  assert.equal(isAutomaticGameOver(threefold), false)
+  assert.equal(shouldResumeBotTurn(threefold.history(), 'white'), false)
+  assert.equal(shouldResumeBotTurn(threefold.history(), 'black'), true)
+})
+
+test('fivefold repetition automatically ends the game', () => {
+  const fivefold = gameFromHistory([
+    'Nf3', 'Nf6', 'Ng1', 'Ng8',
+    'Nf3', 'Nf6', 'Ng1', 'Ng8',
+    'Nf3', 'Nf6', 'Ng1', 'Ng8',
+    'Nf3', 'Nf6', 'Ng1', 'Ng8',
+  ])
+  assert.equal(isAutomaticGameOver(fivefold), true)
 })
 
 test('Fools Mate produces a complete navigable review', async () => {

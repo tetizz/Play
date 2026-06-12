@@ -36,6 +36,28 @@ test('reload during Mubassar bot delay resumes one forced d4 move', async ({ pag
   await expect(page.locator('.move-row button').filter({ hasText: 'd4' })).toHaveCount(1)
 })
 
+test('a claimable threefold position continues instead of ending as a draw', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('play-bots-session-v3', JSON.stringify({
+      botId: 'trixize',
+      gameMode: 'player',
+      colorChoice: 'black',
+      humanColor: 'black',
+      history: ['Nf3', 'Nf6', 'Ng1', 'Ng8', 'Nf3', 'Nf6', 'Ng1', 'Ng8'],
+      phase: 'game',
+      beltMode: false,
+      premoveQueue: [],
+      dialogueLog: [],
+    }))
+  })
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toHaveCount(0)
+  await expect(page.getByText('Your move', { exact: true })).toBeVisible({ timeout: 12000 })
+  await expect.poll(async () => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').history?.length,
+  )).toBe(9)
+})
+
 test('mobile setup has no horizontal page overflow', async ({ page }) => {
   for (const viewport of [
     { width: 1440, height: 900 },
@@ -136,6 +158,7 @@ test('zero-move review stays flat at equality', async ({ page }) => {
   expect(graph.line).toBe('M 0 66 L 640 66')
   expect(graph.area).toBe('M 0 66 L 640 66 L 640 132 L 0 132 Z')
   expect(graph.activeMarkers).toBe(0)
+  await expect(page.locator('.evaluation-line-shadow')).toHaveCount(0)
 })
 
 test('all bots start as White, Black, and Random without exposing account names', async ({ page }) => {

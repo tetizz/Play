@@ -178,9 +178,9 @@ const BOT_PROFILE_LIST = [
         candidates: 16,
       },
       bishopKnightMate: {
-        depth: 26,
-        moveTime: 4800,
-        candidates: 16,
+        depth: 30,
+        moveTime: 7000,
+        candidates: 1,
       },
     },
     repertoireSource: {

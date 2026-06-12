@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js'
+import { isAutomaticDraw } from './gameSession.js'
 import { CLASSIFICATIONS, classifyMove, expectedPointsFromScore } from './bookupClassifications.js'
 
 const REVIEW_OPTIONS = { depth: 9, moveTime: 220, count: 5, timeout: 1650 }
@@ -204,7 +205,7 @@ async function analyzePlayedMove(client, game, verboseMove) {
       pv: [toUci(verboseMove)],
     }
   }
-  if (game.isDraw()) {
+  if (isAutomaticDraw(game)) {
     return {
       uci: toUci(verboseMove),
       rank: 99,
@@ -503,7 +504,7 @@ function formatEvaluation(score, mate) {
 
 function finalResult(game) {
   if (game.isCheckmate()) return game.turn() === 'w' ? 'Black wins by checkmate' : 'White wins by checkmate'
-  if (game.isDraw()) return 'Draw'
+  if (isAutomaticDraw(game)) return 'Draw'
   return 'Game complete'
 }
 

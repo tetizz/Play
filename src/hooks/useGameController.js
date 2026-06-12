@@ -8,6 +8,8 @@ import {
   applyNextPremove,
   clearSession,
   gameFromHistory,
+  isAutomaticDraw,
+  isAutomaticGameOver,
   loadSession,
   saveSession,
   shouldResumeBotTurn,
@@ -217,7 +219,7 @@ export function useGameController(defaultBotId) {
     timerRef.current = setTimeout(async () => {
       if (generationRef.current !== token) return
       const beforeGame = gameFromHistory(baseHistory)
-      if (beforeGame.isGameOver()) {
+      if (isAutomaticGameOver(beforeGame)) {
         finishGame(beforeGame, beforeGame.history())
         return
       }
@@ -292,7 +294,7 @@ export function useGameController(defaultBotId) {
       } else {
         setMessage(nextMessage)
       }
-      if (beforeGame.isGameOver()) {
+      if (isAutomaticGameOver(beforeGame)) {
         finishGame(beforeGame, nextHistory, automatedProfile)
         return
       }
@@ -318,7 +320,7 @@ export function useGameController(defaultBotId) {
           beltRef.current = true
           setBeltMode(true)
         }
-        if (afterPremove.isGameOver()) {
+        if (isAutomaticGameOver(afterPremove)) {
           finishGame(afterPremove, nextHistory)
         } else {
           scheduleBotTurnRef.current?.(nextHistory)
@@ -348,7 +350,7 @@ export function useGameController(defaultBotId) {
     if (initializedRef.current || !styleProfilesReady) return
     initializedRef.current = true
     queueMicrotask(() => {
-      if (phase === 'review' && game.isGameOver()) {
+      if (phase === 'review' && isAutomaticGameOver(game)) {
         runReview(history)
       } else if (
         phase === 'game' &&
@@ -471,7 +473,7 @@ export function useGameController(defaultBotId) {
     }
     const current = gameFromHistory(historyRef.current)
     const playerTurn = humanColor === 'white' ? 'w' : 'b'
-    if (current.isGameOver()) return false
+    if (isAutomaticGameOver(current)) return false
     const piece = current.get(from)
     const isPremove = current.turn() !== playerTurn || turnState !== 'human'
     if (needsPromotion(piece, to) && !promotion) {
@@ -511,7 +513,7 @@ export function useGameController(defaultBotId) {
       beltRef.current = true
       setBeltMode(true)
     }
-    if (current.isGameOver()) finishGame(current, nextHistory)
+    if (isAutomaticGameOver(current)) finishGame(current, nextHistory)
     else scheduleBotTurn(nextHistory)
     return true
   }
@@ -617,7 +619,7 @@ function gameResult(game, gameMode, whiteProfile, blackProfile) {
       ? `${winner.name} wins by checkmate`
       : game.turn() === 'w' ? 'Black wins by checkmate' : 'Player wins by checkmate'
   }
-  if (game.isDraw()) return 'Draw'
+  if (isAutomaticDraw(game)) return 'Draw'
   return 'Game over'
 }
 

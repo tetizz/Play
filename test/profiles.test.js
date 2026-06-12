@@ -174,7 +174,48 @@ test('Trixize can underpromote into a bishop and knight mating objective', () =>
   const after = new Chess(game.fen())
   after.move(decision.move)
   assert.equal(isBishopKnightMatePosition(after, 'w'), true)
-  assert.equal(calculationProfile(profile, false, after).depth, 26)
+  assert.equal(calculationProfile(profile, false, after).depth, 30)
+  assert.equal(calculationProfile(profile, false, after).count, 1)
+})
+
+test('Trixize always takes a forced mate before repertoire or underpromotion', () => {
+  const game = new Chess()
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'd2d4', score: 99997, mate: 3, rank: 1 },
+      { uci: 'g1f3', score: 40, mate: null, rank: 2 },
+    ],
+    profile,
+    {
+      openingBook: {
+        [game.fen().split(' ').slice(0, 4).join(' ')]: [
+          { san: 'Nf3', force: true, games: 100, recentWeight: 100 },
+        ],
+      },
+      bookMaxPlies: 40,
+      bookKeyType: 'position',
+    },
+  )
+  assert.equal(decision.move.san, 'd4')
+  assert.equal(decision.source, 'engine-mate')
+})
+
+test('Trixize may pursue a sound bishop-knight underpromotion with other material present', () => {
+  const game = new Chess('7k/Pp6/8/8/8/8/8/6BK w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 980, rank: 1 },
+      { uci: 'a7a8n', score: 860, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.promotion, 'n')
+  assert.equal(decision.source, 'engine-objective')
 })
 
 test('Trixize queen dialogue excludes a normal queen trade recapture', () => {

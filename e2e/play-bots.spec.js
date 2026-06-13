@@ -55,7 +55,7 @@ test('a claimable threefold position continues instead of ending as a draw', asy
   await expect(page.getByText('Your move', { exact: true })).toBeVisible({ timeout: 12000 })
   await expect.poll(async () => page.evaluate(() =>
     JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').history?.length,
-  )).toBe(9)
+  ), { timeout: 12000 }).toBe(9)
 })
 
 test('mobile setup has no horizontal page overflow', async ({ page }) => {

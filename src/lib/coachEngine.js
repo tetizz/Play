@@ -45,7 +45,21 @@ export function chooseCoachMove(
   const bishopKnightPromotion = profile.capabilities.bishopKnightObjective
     ? selectBishopKnightUnderpromotion(game, candidates)
     : null
+  const bishopKnightConversion = profile.capabilities.bishopKnightObjective
+    ? selectBishopKnightConversionMove(game, candidates)
+    : null
   const forcedMate = selectFastestMate(candidates)
+  if (bishopKnightConversion) {
+    return {
+      move: bishopKnightConversion.move,
+      source: 'engine-objective',
+      score: bishopKnightConversion.score,
+      rank: bishopKnightConversion.rank,
+      line: bishopKnightConversion,
+      bestLine: candidates[0],
+      candidateLines: candidates,
+    }
+  }
   if (bishopKnightPromotion && (!forcedMate || bishopKnightPromotion.mate > 0)) {
     return {
       move: bishopKnightPromotion.move,
@@ -337,6 +351,79 @@ function selectBishopKnightUnderpromotion(game, candidates) {
     })[0] || null
 }
 
+function selectBishopKnightConversionMove(game, candidates) {
+  const color = game.turn()
+  if (!isBishopKnightDisrespectPosition(game, color)) return null
+
+  return candidates
+    .filter((candidate) => {
+      if (!isWinningObjectiveCandidate(candidate)) return false
+      const after = cloneGame(game)
+      after.move(candidate.move)
+      return !after.isGameOver() && bishopKnightObjectivePriority(game, after, candidate.move) > 0
+    })
+    .sort((a, b) => {
+      const afterA = cloneGame(game)
+      const afterB = cloneGame(game)
+      afterA.move(a.move)
+      afterB.move(b.move)
+      const priorityDiff = bishopKnightObjectivePriority(game, afterB, b.move) -
+        bishopKnightObjectivePriority(game, afterA, a.move)
+      return priorityDiff || (b.score ?? -Infinity) - (a.score ?? -Infinity) || a.rank - b.rank
+    })[0] || null
+}
+
+function isWinningObjectiveCandidate(candidate) {
+  return Number.isFinite(candidate.mate)
+    ? candidate.mate > 0
+    : Number.isFinite(candidate.score) && candidate.score >= 650
+}
+
+function bishopKnightObjectivePriority(before, after, move) {
+  const color = move.color
+  const beforeOwn = materialCounts(before, color)
+  const afterOwn = materialCounts(after, color)
+  const hadPair = beforeOwn.b >= 1 && beforeOwn.n >= 1
+  const hasPair = afterOwn.b >= 1 && afterOwn.n >= 1
+  if (!hadPair && hasPair && ['b', 'n'].includes(move.promotion)) return 20000
+
+  if (hadPair) {
+    const extraType = isSurplusPiece(beforeOwn, move.piece)
+    if (!extraType) return 0
+    if (canOpponentKingCaptureMovedPiece(after, move)) {
+      return 15000 + PIECE_VALUES[move.piece]
+    }
+    const kingSquare = findKingSquare(before, oppositeColor(color))
+    const distanceGain = kingSquare
+      ? squareDistance(move.from, kingSquare) - squareDistance(move.to, kingSquare)
+      : 0
+    return 9000 + PIECE_VALUES[move.piece] + distanceGain * 120
+  }
+
+  if (move.piece === 'p') {
+    const advance = color === 'w'
+      ? Number(move.to[1]) - Number(move.from[1])
+      : Number(move.from[1]) - Number(move.to[1])
+    return 6000 + advance * 200
+  }
+  return 0
+}
+
+function isSurplusPiece(counts, type) {
+  if (['p', 'q', 'r'].includes(type)) return counts[type] > 0
+  if (type === 'b') return counts.b > 1
+  if (type === 'n') return counts.n > 1
+  return false
+}
+
+function canOpponentKingCaptureMovedPiece(game, move) {
+  return game.moves({ verbose: true }).some((reply) =>
+    reply.piece === 'k' &&
+    reply.to === move.to &&
+    Boolean(reply.captured),
+  )
+}
+
 function selectFastestMate(candidates) {
   return candidates
     .filter((candidate) => Number.isFinite(candidate.mate) && candidate.mate > 0)
@@ -527,9 +614,41 @@ export function bishopKnightPromotionUcis(game, color = game.turn()) {
     .map((move) => `${move.from}${move.to}${move.promotion}`)
 }
 
+export function bishopKnightObjectiveUcis(game, color = game.turn()) {
+  if (!isBishopKnightDisrespectPosition(game, color)) {
+    return bishopKnightPromotionUcis(game, color)
+  }
+  const own = materialCounts(game, color)
+  const hasPair = own.b >= 1 && own.n >= 1
+  return game.moves({ verbose: true })
+    .filter((move) => {
+      if (move.color !== color) return false
+      if (move.promotion) return ['b', 'n'].includes(move.promotion)
+      if (hasPair) return isSurplusPiece(own, move.piece)
+      return move.piece === 'p'
+    })
+    .map(moveToUci)
+}
+
 function hasBishopKnightPair(game, color) {
   const own = materialCounts(game, color)
   return own.b >= 1 && own.n >= 1
+}
+
+export function isBishopKnightDisrespectPosition(game, color) {
+  const own = materialCounts(game, color)
+  const opponent = materialCounts(game, oppositeColor(color))
+  const opponentBareKing = opponent.p === 0 &&
+    opponent.n === 0 &&
+    opponent.b === 0 &&
+    opponent.r === 0 &&
+    opponent.q === 0
+  if (!opponentBareKing || isBishopKnightMatePosition(game, color)) return false
+
+  const hasPair = own.b >= 1 && own.n >= 1
+  const canBuildPair = own.p >= 2 ||
+    (own.p >= 1 && (own.b >= 1 || own.n >= 1))
+  return hasPair || canBuildPair
 }
 
 function isBishopKnightConversionPosition(game, color) {
@@ -559,6 +678,25 @@ function materialCounts(game, color) {
     if (piece?.color === color) counts[piece.type] += 1
   }
   return counts
+}
+
+function moveToUci(move) {
+  return `${move.from}${move.to}${move.promotion || ''}`
+}
+
+function oppositeColor(color) {
+  return color === 'w' ? 'b' : 'w'
+}
+
+function findKingSquare(game, color) {
+  return game.board().flat().find((piece) => piece?.color === color && piece.type === 'k')?.square || null
+}
+
+function squareDistance(a, b) {
+  return Math.max(
+    Math.abs(a.charCodeAt(0) - b.charCodeAt(0)),
+    Math.abs(Number(a[1]) - Number(b[1])),
+  )
 }
 
 function isKingsIndianAttack(moves) {

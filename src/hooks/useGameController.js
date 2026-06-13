@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
 import { dialogueAfterBotMove, dialogueForGameEnd, initialDialogue } from '../data/dialogue'
 import {
-  bishopKnightPromotionUcis,
+  bishopKnightObjectiveUcis,
   calculationProfile,
   chooseCoachMove,
   moveContext,
@@ -303,18 +303,18 @@ export function useGameController(defaultBotId) {
               : Promise.resolve([]),
           ])
           candidates = mergeEngineCandidates(engineCandidates || [], mateCandidates || [])
-          const promotionMoves = automatedProfile.capabilities.bishopKnightObjective
-            ? bishopKnightPromotionUcis(beforeGame)
+          const objectiveMoves = automatedProfile.capabilities.bishopKnightObjective
+            ? bishopKnightObjectiveUcis(beforeGame)
             : []
-          if (promotionMoves.length) {
+          if (objectiveMoves.length) {
             const objectiveCandidates = await gameplayClientRef.current.bestMoves(
               beforeGame.fen(),
               {
                 ...enginePolicy,
                 depth: Math.max(22, enginePolicy.depth),
                 moveTime: Math.max(3200, enginePolicy.moveTime),
-                count: promotionMoves.length,
-                searchMoves: promotionMoves,
+                count: Math.min(16, objectiveMoves.length),
+                searchMoves: objectiveMoves,
               },
             ) || []
             candidates = mergeEngineCandidates(candidates, objectiveCandidates)

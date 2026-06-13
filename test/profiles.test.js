@@ -6,6 +6,7 @@ import { dialogueAfterBotMove } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
   calculationProfile,
+  bishopKnightObjectiveUcis,
   chooseCoachMove,
   isBishopKnightMatePosition,
   moveContext,
@@ -221,7 +222,7 @@ test('Trixize keeps a proven mate while underpromoting into the bishop-knight ob
   assert.equal(decision.source, 'engine-objective')
 })
 
-test('Trixize does not abandon an immediate mate for an unproven underpromotion', () => {
+test('Trixize delays an immediate mate for a decisively winning bishop-knight underpromotion', () => {
   const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
   const profile = getBotProfile('trixize')
   const decision = chooseCoachMove(
@@ -233,8 +234,8 @@ test('Trixize does not abandon an immediate mate for an unproven underpromotion'
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
   )
-  assert.equal(decision.move.promotion, 'q')
-  assert.equal(decision.source, 'engine-mate')
+  assert.equal(decision.move.promotion, 'n')
+  assert.equal(decision.source, 'engine-objective')
 })
 
 test('Trixize may pursue a sound bishop-knight underpromotion with other material present', () => {
@@ -251,6 +252,33 @@ test('Trixize may pursue a sound bishop-knight underpromotion with other materia
   )
   assert.equal(decision.move.promotion, 'n')
   assert.equal(decision.source, 'engine-objective')
+})
+
+test('Trixize offers surplus material instead of taking an ordinary mate against a bare king', () => {
+  const game = new Chess('7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1')
+  const profile = getBotProfile('trixize')
+  assert.ok(bishopKnightObjectiveUcis(game).includes('g2g8'))
+
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'c1b3', score: 99997, mate: 3, rank: 1 },
+      { uci: 'g2g8', score: 99970, mate: 24, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'Rg8+')
+  assert.equal(decision.source, 'engine-objective')
+})
+
+test('Trixize excludes queen promotion while building the bishop and knight pair', () => {
+  const game = new Chess('7k/P7/8/8/8/8/P7/7K w - - 0 1')
+  const objectiveMoves = bishopKnightObjectiveUcis(game)
+  assert.ok(objectiveMoves.includes('a7a8b'))
+  assert.ok(objectiveMoves.includes('a7a8n'))
+  assert.equal(objectiveMoves.includes('a7a8q'), false)
+  assert.equal(objectiveMoves.includes('a7a8r'), false)
 })
 
 test('Trixize queen dialogue excludes a normal queen trade recapture', () => {

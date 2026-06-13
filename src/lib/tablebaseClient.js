@@ -88,10 +88,16 @@ export function selectTablebaseDecision(
   if (!exactWins.length) return null
 
   const objectiveMoves = preferBishopKnightObjective
-    ? exactWins.filter(({ move }) => createsBishopKnightPair(game, move))
+    ? exactWins.filter(({ move }) => objectivePriority(game, move) > 0)
     : []
   const pool = objectiveMoves.length ? objectiveMoves : exactWins
-  const selected = [...pool].sort(compareExactWins)[0]
+  const selected = [...pool].sort((a, b) => {
+    if (objectiveMoves.length) {
+      const priorityDifference = objectivePriority(game, b.move) - objectivePriority(game, a.move)
+      if (priorityDifference) return priorityDifference
+    }
+    return compareExactWins(a, b)
+  })[0]
   const line = tablebaseLine(selected, 1)
   const candidateLines = [...exactWins]
     .sort(compareExactWins)
@@ -145,6 +151,69 @@ function createsBishopKnightPair(game, move) {
   after.move(move)
   const counts = materialCounts(after, move.color)
   return counts.b > 0 && counts.n > 0
+}
+
+function objectivePriority(game, move) {
+  const before = fullMaterialCounts(game, move.color)
+  const opponent = fullMaterialCounts(game, move.color === 'w' ? 'b' : 'w')
+  const opponentBareKing = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q === 0
+  if (!opponentBareKing) return 0
+
+  const after = new Chess(game.fen())
+  after.move(move)
+  if (after.isGameOver()) return 0
+  if (move.promotion && !['b', 'n'].includes(move.promotion)) return 0
+  if (before.b < 1 || before.n < 1) {
+    if (createsBishopKnightPair(game, move)) return 20000
+    const canBuildPair = before.p >= 2 ||
+      (before.p >= 1 && (before.b >= 1 || before.n >= 1))
+    if (canBuildPair && move.piece === 'p') {
+      const advance = move.color === 'w'
+        ? Number(move.to[1]) - Number(move.from[1])
+        : Number(move.from[1]) - Number(move.to[1])
+      return 6000 + advance * 200
+    }
+    return 0
+  }
+  if (!isSurplusPiece(before, move.piece)) return 0
+  const capturableByKing = after.moves({ verbose: true }).some((reply) =>
+    reply.piece === 'k' && reply.to === move.to && Boolean(reply.captured),
+  )
+  const kingSquare = findKingSquare(game, move.color === 'w' ? 'b' : 'w')
+  const distanceGain = kingSquare
+    ? squareDistance(move.from, kingSquare) - squareDistance(move.to, kingSquare)
+    : 0
+  return (capturableByKing ? 15000 : 9000) + pieceValue(move.piece) + distanceGain * 120
+}
+
+function fullMaterialCounts(game, color) {
+  const counts = { p: 0, n: 0, b: 0, r: 0, q: 0 }
+  for (const piece of game.board().flat()) {
+    if (piece?.color === color && piece.type in counts) counts[piece.type] += 1
+  }
+  return counts
+}
+
+function isSurplusPiece(counts, type) {
+  if (['p', 'q', 'r'].includes(type)) return counts[type] > 0
+  if (type === 'b') return counts.b > 1
+  if (type === 'n') return counts.n > 1
+  return false
+}
+
+function pieceValue(type) {
+  return { p: 100, n: 320, b: 330, r: 500, q: 900 }[type] || 0
+}
+
+function findKingSquare(game, color) {
+  return game.board().flat().find((piece) => piece?.color === color && piece.type === 'k')?.square || null
+}
+
+function squareDistance(a, b) {
+  return Math.max(
+    Math.abs(a.charCodeAt(0) - b.charCodeAt(0)),
+    Math.abs(Number(a[1]) - Number(b[1])),
+  )
 }
 
 function materialCounts(game, color) {

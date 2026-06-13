@@ -33,6 +33,36 @@ test('an exact winning underpromotion is preferred when it creates bishop and kn
   assert.equal(decision.line.dtm, -44)
 })
 
+test('an exact tablebase win offers surplus material before bishop and knight mate', () => {
+  const game = new Chess('7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1')
+  const decision = selectTablebaseDecision(game, {
+    category: 'win',
+    moves: [
+      { uci: 'c1b3', category: 'loss', checkmate: false, dtm: -5, dtz: -1 },
+      { uci: 'g2g8', category: 'loss', checkmate: false, dtm: -41, dtz: -1 },
+    ],
+  }, {
+    preferBishopKnightObjective: true,
+  })
+  assert.equal(decision.move.san, 'Rg8+')
+  assert.equal(decision.source, 'tablebase-objective')
+})
+
+test('an exact tablebase win advances the pawn needed for the bishop and knight objective', () => {
+  const game = new Chess('7k/8/P7/8/8/8/K7/1B6 w - - 0 1')
+  const decision = selectTablebaseDecision(game, {
+    category: 'win',
+    moves: [
+      { uci: 'b1c2', category: 'loss', checkmate: false, dtm: -15, dtz: -1 },
+      { uci: 'a6a7', category: 'loss', checkmate: false, dtm: -31, dtz: 0 },
+    ],
+  }, {
+    preferBishopKnightObjective: true,
+  })
+  assert.equal(decision.move.san, 'a7')
+  assert.equal(decision.source, 'tablebase-objective')
+})
+
 test('without the special objective the tablebase chooses the shortest exact mate', () => {
   const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
   const decision = selectTablebaseDecision(game, PROMOTION_TABLEBASE)

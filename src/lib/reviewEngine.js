@@ -1,6 +1,11 @@
 import { Chess } from 'chess.js'
 import { isAutomaticDraw } from './gameSession.js'
-import { CLASSIFICATIONS, classifyMove, expectedPointsFromScore } from './bookupClassifications.js'
+import {
+  accuracyFromExpectedPointsLoss,
+  CLASSIFICATIONS,
+  classifyMove,
+  expectedPointsFromScore,
+} from './bookupClassifications.js'
 
 const REVIEW_OPTIONS = { depth: 12, moveTime: 420, count: 5, timeout: 2600 }
 const TACTICAL_OPTIONS = { depth: 18, moveTime: 1600, count: 6, timeout: 6000 }
@@ -19,19 +24,6 @@ const CLASSIFICATION_ORDER = [
   'blunder',
   'forced',
 ]
-const CLASSIFICATION_ACCURACY = Object.freeze({
-  brilliant: 100,
-  great: 100,
-  book: 100,
-  best: 100,
-  forced: 100,
-  excellent: 90,
-  good: 75,
-  inaccuracy: 50,
-  mistake: 20,
-  miss: 10,
-  blunder: 0,
-})
 const PIECE_NAMES = {
   p: 'pawn',
   n: 'knight',
@@ -149,7 +141,10 @@ export async function reviewGameWithStockfish({
       mateAfter: afterEvaluation.mate,
       evaluationChange: scoreChange(beforeEvaluation.score, afterEvaluation.score),
       centipawnLoss: scoreDifference(bestLine?.score, playedLine?.score),
-      accuracy: moveAccuracy(classification.expectedPointsLoss, classification.key),
+      accuracy: accuracyFromExpectedPointsLoss(
+        classification.expectedPointsLoss,
+        classification.key,
+      ),
       ...classification,
     }
     moment.explanation = explainMove({
@@ -205,7 +200,10 @@ export function buildFallbackFinalReview(history) {
       mateAfter: null,
       evaluationChange: 0,
       centipawnLoss: null,
-      accuracy: moveAccuracy(classification.expectedPointsLoss, classification.key),
+      accuracy: accuracyFromExpectedPointsLoss(
+        classification.expectedPointsLoss,
+        classification.key,
+      ),
       ...classification,
     }
     moment.explanation = explainMove({ beforeFen, move, moment })
@@ -305,20 +303,31 @@ function finalizeReview({ engine, game, positions, moments, graph }) {
 }
 
 async function safeAnalyze(client, fen, options) {
-  try {
-    return await client.analyze(fen, options) || []
-  } catch {
-    return []
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const lines = await client.analyze(fen, attempt === 0 ? options : {
+        ...options,
+        depth: Math.min(options.depth || 10, 9),
+        moveTime: Math.min(options.moveTime || 300, 180),
+        timeout: Math.min(options.timeout || 1800, 1600),
+        count: Math.min(options.count || 3, 3),
+      }) || []
+      if (lines.length) return lines
+    } catch {
+      // A second bounded pass handles a worker startup or timeout failure.
+    }
   }
+  return []
 }
 
 function fallbackClassification(game) {
-  const key = game.isCheckmate() ? 'best' : 'good'
+  const key = game.isCheckmate() ? 'best' : 'unreviewed'
   return {
     key,
     ...CLASSIFICATIONS[key],
-    expectedPointsLoss: key === 'best' ? 0 : 0.04,
+    expectedPointsLoss: key === 'best' ? 0 : null,
     expectedPoints: expectedPointsFromScore(0),
+    reason: key === 'best' ? 'checkmate' : 'analysis unavailable',
   }
 }
 
@@ -362,17 +371,6 @@ function scoreDifference(best, played) {
 function scoreChange(before, after) {
   if (!Number.isFinite(before) || !Number.isFinite(after)) return null
   return after - before
-}
-
-function moveAccuracy(loss = 0, classification = null) {
-  if (Number.isFinite(CLASSIFICATION_ACCURACY[classification])) {
-    return CLASSIFICATION_ACCURACY[classification]
-  }
-  const winPercentLoss = Math.max(0, loss) * 100
-  return Math.round(Math.max(
-    0,
-    Math.min(100, 103.1668 * Math.exp(-0.04354 * winPercentLoss) - 3.1669),
-  ))
 }
 
 function classificationCounts(moments) {
@@ -562,8 +560,9 @@ function finalResult(game) {
 }
 
 function average(values) {
-  return values.length
-    ? roundTo(values.reduce((sum, value) => sum + value, 0) / values.length, 1)
+  const measured = values.filter(Number.isFinite)
+  return measured.length
+    ? roundTo(measured.reduce((sum, value) => sum + value, 0) / measured.length, 1)
     : null
 }
 

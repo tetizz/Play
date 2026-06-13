@@ -17,7 +17,7 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(BOT_PROFILES.length, 4)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
-  assert.equal(getBotProfile('akshit').displayRating, 1500)
+  assert.equal(getBotProfile('akshit').displayRating, 2007)
   assert.equal(getBotProfile('trixize').displayRating, 1550)
   assert.equal(getBotProfile('mubassar').capabilities.beltMode, true)
   assert.equal(getBotProfile('ayden').capabilities.beltMode, false)
@@ -25,6 +25,10 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(getBotProfile('trixize').capabilities.perfectTheory, true)
   assert.equal(getBotProfile('trixize').capabilities.weightedRepertoire, true)
   assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, null)
+  assert.equal(getBotProfile('mubassar').strengthPolicy.engineElo, 2300)
+  assert.equal(getBotProfile('mubassar').strengthPolicy.belt.engineElo, 2700)
+  assert.equal(getBotProfile('ayden').strengthPolicy.engineElo, 1900)
+  assert.equal(getBotProfile('akshit').strengthPolicy.engineElo, 2007)
   assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 16)
   assert.equal(getBotProfile('trixize').capabilities.maximumEngine, true)
   assert.equal(getBotProfile('trixize').capabilities.exactTablebase, true)
@@ -35,13 +39,15 @@ test('the four public bot profiles expose the requested ratings and capabilities
   )
 })
 
-test('the original bot strength hierarchy is Mubassar, Ayden, then Akshit', () => {
+test('each rated bot uses its stated internal strength', () => {
   const mubassar = getBotProfile('mubassar').strengthPolicy.engineElo
   const ayden = getBotProfile('ayden').strengthPolicy.engineElo
   const akshit = getBotProfile('akshit').strengthPolicy.engineElo
-  assert.ok(mubassar > ayden)
-  assert.ok(ayden > akshit)
-  assert.ok(ayden - akshit <= 150)
+  assert.equal(mubassar, getBotProfile('mubassar').displayRating)
+  assert.equal(ayden, getBotProfile('ayden').displayRating)
+  assert.equal(akshit, getBotProfile('akshit').displayRating)
+  assert.ok(mubassar > akshit)
+  assert.ok(akshit > ayden)
 })
 
 test('Mubassar always opens with d4 as White', () => {

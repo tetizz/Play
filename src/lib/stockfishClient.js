@@ -67,10 +67,17 @@ export function createStockfishClient() {
   function settleActive(value) {
     if (!active) return
     clearTimeout(active.timeout)
+    clearTimeout(active.stopTimeout)
     const finished = active
     active = null
     finished.resolve(value)
     queueMicrotask(runNext)
+  }
+
+  function resetWorker() {
+    worker?.terminate()
+    worker = null
+    readyPromise = null
   }
 
   async function runNext() {
@@ -99,7 +106,12 @@ export function createStockfishClient() {
       emit(request.label)
       request.timeout = setTimeout(() => {
         post('stop')
-        settleActive(request.kind === 'best' ? null : [])
+        request.stopTimeout = setTimeout(() => {
+          if (active !== request) return
+          const lines = [...request.lines.values()].sort((a, b) => a.rank - b.rank)
+          resetWorker()
+          settleActive(request.kind === 'best' ? lines[0]?.uci || null : lines)
+        }, 500)
       }, request.options.timeout || Math.max(2200, (request.options.moveTime || 500) + 1500))
       const depth = Math.max(1, request.options.depth || 8)
       const moveTime = Math.max(40, request.options.moveTime || 500)
@@ -130,6 +142,7 @@ export function createStockfishClient() {
         label,
         lines: new Map(),
         timeout: null,
+        stopTimeout: null,
         resolve,
       })
       runNext()
@@ -140,8 +153,12 @@ export function createStockfishClient() {
     generation += 1
     while (queue.length) queue.shift().resolve(null)
     if (active) {
-      post('stop')
-      settleActive(active.kind === 'best' ? null : [])
+      const cancelled = active
+      active = null
+      clearTimeout(cancelled.timeout)
+      clearTimeout(cancelled.stopTimeout)
+      cancelled.resolve(cancelled.kind === 'best' ? null : [])
+      resetWorker()
     }
   }
 
@@ -167,9 +184,7 @@ export function createStockfishClient() {
     cancelAll,
     destroy() {
       cancelAll()
-      worker?.terminate()
-      worker = null
-      readyPromise = null
+      resetWorker()
     },
     onStatus(listener) {
       listeners.add(listener)

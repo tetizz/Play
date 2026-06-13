@@ -27,7 +27,7 @@ const BOT_PROFILE_LIST = [
       perfectTheory: false,
     },
     strengthPolicy: {
-      engineElo: 2400,
+      engineElo: 2300,
       depth: 11,
       moveTime: 1100,
       candidates: 5,
@@ -76,7 +76,7 @@ const BOT_PROFILE_LIST = [
       perfectTheory: false,
     },
     strengthPolicy: {
-      engineElo: 2250,
+      engineElo: 1900,
       depth: 10,
       moveTime: 900,
       candidates: 5,
@@ -95,7 +95,7 @@ const BOT_PROFILE_LIST = [
     id: 'akshit',
     name: 'Akshit',
     fullName: 'Akshit Sharma',
-    displayRating: 1500,
+    displayRating: 2007,
     country: 'Nepal',
     countryCode: 'np',
     avatar: {
@@ -118,14 +118,14 @@ const BOT_PROFILE_LIST = [
       perfectTheory: false,
     },
     strengthPolicy: {
-      engineElo: 2150,
+      engineElo: 2007,
       depth: 10,
-      moveTime: 850,
+      moveTime: 900,
       candidates: 5,
-      styleWindowCp: 32,
-      bookWindowCp: 45,
-      bookMinGames: 4,
-      bookMinRecentWeight: 0.65,
+      styleWindowCp: 24,
+      bookWindowCp: 35,
+      bookMinGames: 5,
+      bookMinRecentWeight: 0.9,
       knightRequiredGapCp: 45,
     },
     repertoireSource: {

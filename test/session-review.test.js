@@ -216,6 +216,6 @@ test('review scores the played move from the same pre-move position', async () =
   const restricted = calls.find((call) => call.searchMoves[0] === 'f2f3')
   assert.equal(unrestricted.fen, restricted.fen)
   assert.equal(review.moments[0].key, 'mistake')
-  assert.equal(review.moments[0].accuracy, 20)
-  assert.equal(review.accuracy.white, 20)
+  assert.equal(review.moments[0].accuracy, 42.5)
+  assert.equal(review.accuracy.white, 42.5)
 })

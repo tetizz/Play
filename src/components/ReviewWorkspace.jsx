@@ -342,13 +342,38 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
   const whiteArea = coordinates.length
     ? `${curve} L ${width} ${height} L 0 ${height} Z`
     : ''
+  const selectFromPointer = (event) => {
+    if (graph.length <= 1) return
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const ratio = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width))
+    onSelect(Math.round(ratio * (graph.length - 1)))
+  }
+  const selectFromKeyboard = (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      onSelect(Math.max(0, activePly - 1))
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      onSelect(Math.min(graph.length - 1, activePly + 1))
+    }
+  }
   return (
     <section className="evaluation-graph" data-eval-percent={active?.point.percent ?? 50}>
       <div className="graph-heading">
         <h2>Evaluation</h2>
         <strong>{formatEvaluation(active?.point)}</strong>
       </div>
-      <div className="graph-canvas">
+      <div
+        className="graph-canvas"
+        role="slider"
+        tabIndex={0}
+        aria-label="Review move"
+        aria-valuemin={0}
+        aria-valuemax={Math.max(0, graph.length - 1)}
+        aria-valuenow={activePly}
+        onPointerDown={selectFromPointer}
+        onKeyDown={selectFromKeyboard}
+      >
         <svg
           viewBox={`0 0 ${width} ${height}`}
           preserveAspectRatio="none"
@@ -374,14 +399,6 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
             ? <circle className="evaluation-active" cx={active.x} cy={active.y} r="7" />
             : null}
         </svg>
-        <input
-          type="range"
-          min="0"
-          max={Math.max(0, graph.length - 1)}
-          value={activePly}
-          onChange={(event) => onSelect(Number(event.target.value))}
-          aria-label="Review move"
-        />
       </div>
     </section>
   )
@@ -399,7 +416,7 @@ function MoveExplanation({ moment }) {
   return (
     <section className="move-explanation" style={{ '--classification': moment.color }}>
       <div className="classification-title">
-        <img src={moment.icon} alt="" />
+        {moment.icon ? <img src={moment.icon} alt="" /> : null}
         <div>
           <strong>{moment.san}</strong>
           <span>{moment.label}</span>

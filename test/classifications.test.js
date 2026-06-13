@@ -1,7 +1,37 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
-import { classifyMove, verifySacrifice } from '../src/lib/bookupClassifications.js'
+import {
+  accuracyFromExpectedPointsLoss,
+  classificationKeyFromLoss,
+  classifyMove,
+  expectedPointsFromScore,
+  verifySacrifice,
+} from '../src/lib/bookupClassifications.js'
+
+test('Bookup expected-points thresholds retain their exact boundary behavior', () => {
+  assert.equal(classificationKeyFromLoss(0, true), 'best')
+  assert.equal(classificationKeyFromLoss(0, false), 'excellent')
+  assert.equal(classificationKeyFromLoss(0.02), 'excellent')
+  assert.equal(classificationKeyFromLoss(0.0201), 'good')
+  assert.equal(classificationKeyFromLoss(0.05), 'good')
+  assert.equal(classificationKeyFromLoss(0.0501), 'inaccuracy')
+  assert.equal(classificationKeyFromLoss(0.10), 'inaccuracy')
+  assert.equal(classificationKeyFromLoss(0.1001), 'mistake')
+  assert.equal(classificationKeyFromLoss(0.20), 'mistake')
+  assert.equal(classificationKeyFromLoss(0.2001), 'blunder')
+})
+
+test('expected-points and accuracy use continuous evaluation loss', () => {
+  assert.equal(expectedPointsFromScore(0), 0.5)
+  assert.equal(expectedPointsFromScore(0, 1), 1)
+  assert.equal(expectedPointsFromScore(0, -1), 0)
+  assert.equal(accuracyFromExpectedPointsLoss(0, 'best'), 100)
+  assert.equal(accuracyFromExpectedPointsLoss(0.04, 'book'), 100)
+  assert.ok(accuracyFromExpectedPointsLoss(0.06, 'inaccuracy') < 80)
+  assert.ok(accuracyFromExpectedPointsLoss(0.06, 'inaccuracy') > 70)
+  assert.equal(accuracyFromExpectedPointsLoss(null, 'unreviewed'), null)
+})
 
 test('an ordinary capture is never automatically Brilliant', () => {
   const game = new Chess('4k3/8/8/8/8/8/4p3/3QK3 w - - 0 1')
@@ -55,7 +85,7 @@ test('forced positions are classified as Forced', () => {
   assert.equal(result.key, 'forced')
 })
 
-test('a confirmed rank-one engine move remains Best across analysis passes', () => {
+test('a restricted rank-one result is not mistaken for the actual engine best move', () => {
   const game = new Chess()
   const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'e4')
   const result = classifyMove({
@@ -69,11 +99,11 @@ test('a confirmed rank-one engine move remains Best across analysis passes', () 
     ],
     legalMoveCount: game.moves().length,
   })
-  assert.equal(result.key, 'best')
+  assert.equal(result.key, 'excellent')
   assert.equal(result.expectedPointsLoss, 0.0009)
 })
 
-test('a move that allows forced mate is not softened into Good', () => {
+test('a move that allows forced mate is a Blunder under Bookup expected-points bands', () => {
   const game = new Chess()
   const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'f3')
   const result = classifyMove({
@@ -84,7 +114,7 @@ test('a move that allows forced mate is not softened into Good', () => {
     candidateLines: [{ uci: 'e2e4', score: 40, mate: null, rank: 1, pv: ['e2e4'] }],
     legalMoveCount: game.moves().length,
   })
-  assert.equal(result.key, 'mistake')
+  assert.equal(result.key, 'blunder')
 })
 
 test('an exact branch outside MultiPV receives Bookup branch-quality floors', () => {

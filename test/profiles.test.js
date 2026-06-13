@@ -17,7 +17,7 @@ test('the four public bot profiles expose the requested ratings and capabilities
   assert.equal(BOT_PROFILES.length, 4)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
-  assert.equal(getBotProfile('akshit').displayRating, 1000)
+  assert.equal(getBotProfile('akshit').displayRating, 1500)
   assert.equal(getBotProfile('trixize').displayRating, 1550)
   assert.equal(getBotProfile('mubassar').capabilities.beltMode, true)
   assert.equal(getBotProfile('ayden').capabilities.beltMode, false)

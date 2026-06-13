@@ -95,7 +95,7 @@ const BOT_PROFILE_LIST = [
     id: 'akshit',
     name: 'Akshit',
     fullName: 'Akshit Sharma',
-    displayRating: 1000,
+    displayRating: 1500,
     country: 'Nepal',
     countryCode: 'np',
     avatar: {

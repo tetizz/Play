@@ -57,6 +57,7 @@ export function useGameController(defaultBotId) {
   const [review, setReview] = useState(null)
   const [reviewProgress, setReviewProgress] = useState({ completed: 0, total: 0 })
   const [reviewPly, setReviewPly] = useState(0)
+  const [reviewResult, setReviewResult] = useState(restored?.reviewResult || null)
 
   const profile = useMemo(() => getBotProfile(botId), [botId])
   const whiteProfile = useMemo(() => getBotProfile(whiteBotId), [whiteBotId])
@@ -137,6 +138,7 @@ export function useGameController(defaultBotId) {
       lastMove,
       premoveQueue,
       dialogueLog,
+      reviewResult,
     })
   }, [
     beltMode,
@@ -150,6 +152,7 @@ export function useGameController(defaultBotId) {
     lastMove,
     phase,
     premoveQueue,
+    reviewResult,
     whiteBotId,
   ])
 
@@ -190,12 +193,13 @@ export function useGameController(defaultBotId) {
     }].slice(-8))
   }, [])
 
-  const runReview = useCallback(async (finishedHistory) => {
+  const runReview = useCallback(async (finishedHistory, resultOverride = null) => {
     const token = generationRef.current
     const controller = new AbortController()
     reviewAbortRef.current = controller
     setPhase('review')
     setReview(null)
+    setReviewResult(resultOverride)
     setReviewPly(finishedHistory.length)
     setReviewProgress({ completed: 0, total: finishedHistory.length })
     const repertoire = gameMode === 'bots'
@@ -211,13 +215,14 @@ export function useGameController(defaultBotId) {
         client: reviewClientRef.current,
         playedClient: reviewPlayedClientRef.current,
         repertoire,
+        resultOverride,
         signal: controller.signal,
         onProgress: (progress) => {
           if (generationRef.current === token) setReviewProgress(progress)
         },
       })
     } catch {
-      result = buildFallbackFinalReview(finishedHistory)
+      result = buildFallbackFinalReview(finishedHistory, resultOverride)
     }
     if (generationRef.current !== token) return
     setReview(result)
@@ -415,8 +420,8 @@ export function useGameController(defaultBotId) {
     if (initializedRef.current || !styleProfilesReady) return
     initializedRef.current = true
     queueMicrotask(() => {
-      if (phase === 'review' && isAutomaticGameOver(game)) {
-        runReview(history)
+      if (phase === 'review' && (isAutomaticGameOver(game) || reviewResult)) {
+        runReview(history, reviewResult)
       } else if (
         phase === 'game' &&
         (gameMode === 'bots' || shouldResumeBotTurn(history, humanColor))
@@ -430,6 +435,7 @@ export function useGameController(defaultBotId) {
     history,
     humanColor,
     phase,
+    reviewResult,
     runReview,
     scheduleBotTurn,
     styleProfilesReady,
@@ -488,6 +494,7 @@ export function useGameController(defaultBotId) {
     setBeltMode(false)
     beltRef.current = false
     setReview(null)
+    setReviewResult(null)
     setDialogueLog([])
     setPhase('game')
     setMessage(gameMode === 'bots' ? '' : initialDialogue(profile))
@@ -504,6 +511,7 @@ export function useGameController(defaultBotId) {
       lastMove: null,
       premoveQueue: [],
       dialogueLog: [],
+      reviewResult: null,
     })
     if (gameMode === 'bots' || nextColor === 'black') scheduleBotTurn([], 300, nextColor)
     else setTurnState('human')
@@ -516,6 +524,7 @@ export function useGameController(defaultBotId) {
     setHistory([])
     historyRef.current = []
     setReview(null)
+    setReviewResult(null)
     updatePremoveQueue([])
     setPendingPromotion(null)
     setDialogueLog([])
@@ -627,7 +636,12 @@ export function useGameController(defaultBotId) {
     if (phase !== 'game') return
     cancelWork()
     setTurnState('game-over')
-    runReview(history)
+    const result = gameMode === 'bots'
+      ? 'Match ended'
+      : humanColor === 'white'
+        ? 'Black wins by resignation'
+        : 'White wins by resignation'
+    runReview(history, result)
   }
 
   return {

@@ -38,6 +38,7 @@ export async function reviewGameWithStockfish({
   client,
   playedClient = client,
   repertoire = {},
+  resultOverride = null,
   onProgress = () => {},
   signal,
 }) {
@@ -93,10 +94,10 @@ export async function reviewGameWithStockfish({
       playedLine = await analyzePlayedMove(client, game, verboseMove, reviewOptions)
     }
 
-    const bestLine = candidates[0] || playedLine
+    const bestLine = candidates[0] || null
     const beforeEvaluation = whitePerspective(side, bestLine)
     const afterEvaluation = whitePerspective(side, playedLine)
-    if (index === 0) {
+    if (index === 0 && hasEngineEvaluation(bestLine)) {
       graph[0] = graphPoint(0, beforeEvaluation.score, beforeEvaluation.mate)
     }
     const sideRepertoire = repertoire.white || repertoire.black
@@ -153,7 +154,19 @@ export async function reviewGameWithStockfish({
       moment,
     })
     moments.push(moment)
-    graph.push(graphPoint(index + 1, afterEvaluation.score, afterEvaluation.mate, classification))
+    const previousGraphPoint = graph.at(-1)
+    const graphEvaluation = hasEngineEvaluation(playedLine)
+      ? afterEvaluation
+      : {
+          score: previousGraphPoint?.score ?? null,
+          mate: previousGraphPoint?.mate ?? null,
+        }
+    graph.push(graphPoint(
+      index + 1,
+      graphEvaluation.score,
+      graphEvaluation.mate,
+      classification.key === 'unreviewed' ? null : classification,
+    ))
     onProgress({ completed: index + 1, total: history.length, moment })
   }
 
@@ -163,10 +176,11 @@ export async function reviewGameWithStockfish({
     positions,
     moments,
     graph,
+    resultOverride,
   })
 }
 
-export function buildFallbackFinalReview(history) {
+export function buildFallbackFinalReview(history, resultOverride = null) {
   const game = new Chess()
   const positions = [game.fen()]
   const moments = []
@@ -216,6 +230,7 @@ export function buildFallbackFinalReview(history) {
     positions,
     moments,
     graph,
+    resultOverride,
   })
 }
 
@@ -275,7 +290,7 @@ async function analyzePlayedMove(client, game, verboseMove, reviewOptions) {
   }
 }
 
-function finalizeReview({ engine, game, positions, moments, graph }) {
+function finalizeReview({ engine, game, positions, moments, graph, resultOverride = null }) {
   const whiteMoments = moments.filter((moment) => moment.side === 'w')
   const blackMoments = moments.filter((moment) => moment.side === 'b')
   const accuracy = {
@@ -285,7 +300,7 @@ function finalizeReview({ engine, game, positions, moments, graph }) {
   return {
     complete: true,
     engine,
-    result: finalResult(game),
+    result: resultOverride || finalResult(game),
     positions,
     moments,
     graph,
@@ -435,6 +450,9 @@ function explainMove({ beforeFen, move, moment }) {
   const bestMove = moment.bestMoveSan
   const line = moment.bestLineSan.slice(0, 6).join(' ')
 
+  if (moment.key === 'unreviewed') {
+    return `${move.san} could not be classified because Stockfish did not return a reliable comparison.`
+  }
   if (moment.key === 'brilliant') {
     return joinSentences(
       `${move.san} is a sound tactical investment rather than a free giveaway.`,
@@ -462,6 +480,8 @@ function explainMove({ beforeFen, move, moment }) {
     return joinSentences(
       moment.key === 'forced'
         ? `${move.san} was the only legal continuation.`
+        : moment.reason === 'checkmate'
+          ? `${move.san} delivers checkmate.`
         : `${move.san} was Stockfish’s first choice.`,
       idea,
       evaluation,

@@ -39,11 +39,16 @@ export function loadSession() {
       colorChoice: parsed.colorChoice,
       humanColor: parsed.humanColor,
       history: game.history(),
-      phase: parsed.phase === 'review' && !isAutomaticGameOver(game) ? 'game' : parsed.phase,
+      phase: parsed.phase === 'review' &&
+        !isAutomaticGameOver(game) &&
+        !parsed.reviewResult
+        ? 'game'
+        : parsed.phase,
       beltMode: Boolean(parsed.beltMode),
       lastMove: parsed.lastMove || null,
       premoveQueue: Array.isArray(parsed.premoveQueue) ? parsed.premoveQueue : [],
       dialogueLog: Array.isArray(parsed.dialogueLog) ? parsed.dialogueLog.slice(-8) : [],
+      reviewResult: typeof parsed.reviewResult === 'string' ? parsed.reviewResult : null,
     }
   } catch {
     return null

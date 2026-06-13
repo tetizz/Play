@@ -6,10 +6,15 @@ import {
   applyPremove,
   gameFromHistory,
   isAutomaticGameOver,
+  loadSession,
   shouldResumeBotTurn,
 } from '../src/lib/gameSession.js'
 import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
-import { evaluationToWhitePercent, reviewGameWithStockfish } from '../src/lib/reviewEngine.js'
+import {
+  buildFallbackFinalReview,
+  evaluationToWhitePercent,
+  reviewGameWithStockfish,
+} from '../src/lib/reviewEngine.js'
 
 test('the evaluation graph uses a continuous curved path through every point', () => {
   const path = buildSmoothPath([
@@ -218,4 +223,65 @@ test('review scores the played move from the same pre-move position', async () =
   assert.equal(review.moments[0].key, 'mistake')
   assert.equal(review.moments[0].accuracy, 42.5)
   assert.equal(review.accuracy.white, 42.5)
+})
+
+test('a restricted result cannot become a fake Best move when unrestricted analysis fails', async () => {
+  const client = {
+    async analyze(fen, options = {}) {
+      if (!options.searchMoves?.length) return []
+      return [{
+        uci: options.searchMoves[0],
+        score: 25,
+        mate: null,
+        rank: 1,
+        pv: [options.searchMoves[0]],
+      }]
+    },
+  }
+
+  const review = await reviewGameWithStockfish({
+    history: ['e4'],
+    client,
+  })
+
+  assert.equal(review.moments[0].key, 'unreviewed')
+  assert.equal(review.moments[0].bestMove, null)
+  assert.equal(review.moments[0].accuracy, null)
+  assert.equal(review.accuracy.white, null)
+  assert.match(review.moments[0].explanation, /could not be classified/i)
+  assert.equal(review.graph[0].percent, 50)
+})
+
+test('review result overrides preserve resignation and manual match endings', async () => {
+  const client = { async analyze() { return [] } }
+  const resigned = await reviewGameWithStockfish({
+    history: [],
+    client,
+    resultOverride: 'Black wins by resignation',
+  })
+  assert.equal(resigned.result, 'Black wins by resignation')
+
+  const ended = buildFallbackFinalReview([], 'Match ended')
+  assert.equal(ended.result, 'Match ended')
+})
+
+test('a manually finished review remains a review after session restoration', () => {
+  const previousLocalStorage = globalThis.localStorage
+  globalThis.localStorage = {
+    getItem() {
+      return JSON.stringify({
+        phase: 'review',
+        history: [],
+        reviewResult: 'Black wins by resignation',
+      })
+    },
+  }
+  try {
+    const restored = loadSession()
+    assert.equal(restored.phase, 'review')
+    assert.equal(restored.reviewResult, 'Black wins by resignation')
+  } finally {
+    if (previousLocalStorage) globalThis.localStorage = previousLocalStorage
+    else delete globalThis.localStorage
+  }
 })

@@ -147,6 +147,7 @@ test('zero-move review stays flat at equality', async ({ page }) => {
   await page.getByRole('button', { name: 'Resign', exact: true }).click()
 
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+  await expect(page.getByText('Black wins by resignation', { exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible()
   const graph = await page.evaluate(() => ({
     percent: Number(document.querySelector('.evaluation-graph')?.dataset.evalPercent),
@@ -159,6 +160,10 @@ test('zero-move review stays flat at equality', async ({ page }) => {
   expect(graph.area).toBe('M 0 66 L 640 66 L 640 132 L 0 132 Z')
   expect(graph.activeMarkers).toBe(0)
   await expect(page.locator('.evaluation-line-shadow')).toHaveCount(0)
+
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+  await expect(page.getByText('Black wins by resignation', { exact: true })).toBeVisible()
 })
 
 test('all bots start as White, Black, and Random without exposing account names', async ({ page }) => {

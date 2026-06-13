@@ -111,15 +111,14 @@ export function classifyMove({
   const isDirectMate = after.isCheckmate()
   if (isDirectMate) return payload('best', loss, moveExpected, 'engine top move')
 
+  let isOnlyMoveThatKeepsAdvantage = false
   if (
     isBest &&
     isCriticalCandidate(game, verboseMove, playedLine, secondLine) &&
     secondLoss >= CRITICAL_SECOND_LOSS
   ) {
-    return {
-      ...payload('great', loss, moveExpected, 'only move that keeps the advantage'),
-      isOnlyMoveThatKeepsAdvantage: true,
-    }
+    key = 'great'
+    isOnlyMoveThatKeepsAdvantage = true
   }
 
   const givesCheck = after.inCheck()
@@ -152,7 +151,17 @@ export function classifyMove({
     return payload('miss', loss, moveExpected, 'misses the critical continuation')
   }
 
-  return payload(key, loss, moveExpected, reasonFor(key))
+  return {
+    ...payload(
+      key,
+      loss,
+      moveExpected,
+      isOnlyMoveThatKeepsAdvantage
+        ? 'only move that keeps the advantage'
+        : reasonFor(key),
+    ),
+    ...(isOnlyMoveThatKeepsAdvantage ? { isOnlyMoveThatKeepsAdvantage: true } : {}),
+  }
 }
 
 export function verifySacrifice(game, move, pv = []) {
@@ -245,11 +254,48 @@ function applyLowerRankExcellentFloor(key, { bestLine, playedLine, loss, rank })
 
 function isCriticalCandidate(game, move, moveLine, secondLine) {
   if (!move || !secondLine || game.inCheck()) return false
-  if (move.promotion === 'q' || move.captured) return false
+  if (move.promotion === 'q') return false
   if (scoreType(moveLine) === 'mate' && scoreValue(moveLine) > 0) return false
   if (scoreType(moveLine) === 'centipawn' && scoreValue(moveLine) < 0) return false
   if (scoreType(secondLine) === 'centipawn' && scoreValue(secondLine) >= 700) return false
+  if (move.captured && !capturedPieceWasSafe(game, move)) return false
   return true
+}
+
+function capturedPieceWasSafe(game, move) {
+  const capturedValue = PIECE_VALUES[move.captured] || 0
+  const attackers = game.moves({ verbose: true }).filter((candidate) =>
+    candidate.to === move.to && candidate.captured === move.captured,
+  )
+  if (!attackers.length) return true
+  if (attackers.some((candidate) => (PIECE_VALUES[candidate.piece] || 0) < capturedValue)) {
+    return false
+  }
+
+  let smallestDefenderSet = null
+  for (const attacker of attackers) {
+    const afterCapture = new Chess(game.fen())
+    afterCapture.move(attacker)
+    const defenders = afterCapture.moves({ verbose: true }).filter((reply) =>
+      reply.to === move.to && reply.captured === attacker.piece,
+    )
+    if (smallestDefenderSet === null || defenders.length < smallestDefenderSet.length) {
+      smallestDefenderSet = defenders
+    }
+  }
+  const defenders = smallestDefenderSet || []
+  if (attackers.length <= defenders.length) return true
+
+  const lowestAttackerValue = Math.min(
+    ...attackers.map((candidate) => PIECE_VALUES[candidate.piece] || 0),
+  )
+  if (
+    capturedValue < lowestAttackerValue &&
+    defenders.some((reply) => (PIECE_VALUES[reply.piece] || 0) < lowestAttackerValue)
+  ) {
+    return true
+  }
+  return defenders.some((reply) => reply.piece === 'p')
 }
 
 function recordsAreEffectivelyTied(first, second) {

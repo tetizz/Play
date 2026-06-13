@@ -69,6 +69,59 @@ test('a sound near-best move with a PV-confirmed sacrifice can be Brilliant', ()
   assert.equal(result.isRealPieceSacrifice, true)
 })
 
+test('a verified sacrifice can override an otherwise Great critical move', () => {
+  const game = new Chess('q3k3/p7/8/8/8/8/8/R3K3 w - - 0 1')
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.from === 'a1' && candidate.to === 'a7')
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
+    playedLine: { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
+    candidateLines: [
+      { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
+      { uci: 'a1a6', score: -100, rank: 2, pv: ['a1a6'] },
+    ],
+    legalMoveCount: game.moves().length,
+  })
+  assert.equal(result.key, 'brilliant')
+})
+
+test('a defended critical capture can be Great but taking a loose piece cannot', () => {
+  const defended = new Chess('r3k3/p7/8/8/8/8/8/R3K3 w - - 0 1')
+  const defendedMove = defended.moves({ verbose: true }).find((candidate) =>
+    candidate.from === 'a1' && candidate.to === 'a7',
+  )
+  const defendedResult = classifyMove({
+    beforeFen: defended.fen(),
+    move: defendedMove,
+    bestLine: { uci: 'a1a7', score: 100, rank: 1, pv: ['a1a7'] },
+    playedLine: { uci: 'a1a7', score: 100, rank: 1, pv: ['a1a7'] },
+    candidateLines: [
+      { uci: 'a1a7', score: 100, rank: 1, pv: ['a1a7'] },
+      { uci: 'a1a6', score: -100, rank: 2, pv: ['a1a6'] },
+    ],
+    legalMoveCount: defended.moves().length,
+  })
+  assert.equal(defendedResult.key, 'great')
+
+  const loose = new Chess('4k3/p7/8/8/8/8/8/R3K3 w - - 0 1')
+  const looseMove = loose.moves({ verbose: true }).find((candidate) =>
+    candidate.from === 'a1' && candidate.to === 'a7',
+  )
+  const looseResult = classifyMove({
+    beforeFen: loose.fen(),
+    move: looseMove,
+    bestLine: { uci: 'a1a7', score: 100, rank: 1, pv: ['a1a7'] },
+    playedLine: { uci: 'a1a7', score: 100, rank: 1, pv: ['a1a7'] },
+    candidateLines: [
+      { uci: 'a1a7', score: 100, rank: 1, pv: ['a1a7'] },
+      { uci: 'a1a6', score: -100, rank: 2, pv: ['a1a6'] },
+    ],
+    legalMoveCount: loose.moves().length,
+  })
+  assert.equal(looseResult.key, 'best')
+})
+
 test('forced positions are classified as Forced', () => {
   const game = new Chess('8/8/8/8/Q7/K7/8/k7 b - - 0 1')
   const moves = game.moves({ verbose: true })

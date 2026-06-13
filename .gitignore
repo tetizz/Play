@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 test-results
+hatch-pet-runs/
 *.local
 
 # Editor directories and files

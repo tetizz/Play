@@ -12,7 +12,10 @@ const BANDS = [
 ]
 
 const BOOK_ALLOWED_KEYS = new Set(['best', 'excellent', 'good', 'inaccuracy'])
-const CRITICAL_SECOND_LOSS = 0.10
+const CRITICAL_SECOND_LOSS = 0.08
+const CRITICAL_CP_GAP = 90
+const CRITICAL_LOSING_FLOOR = -125
+const BRILLIANT_MIN_PIECE_VALUE = PIECE_VALUES.n
 const BEST_UNIQUENESS_THRESHOLD = 0.0005
 const BEST_UNIQUENESS_CP_CEILING = 350
 const BEST_EQUIVALENT_CP_GAP = 8
@@ -115,7 +118,7 @@ export function classifyMove({
   if (
     isBest &&
     isCriticalCandidate(game, verboseMove, playedLine, secondLine) &&
-    secondLoss >= CRITICAL_SECOND_LOSS
+    isCriticalSeparation(bestLine, secondLine, secondLoss)
   ) {
     key = 'great'
     isOnlyMoveThatKeepsAdvantage = true
@@ -125,7 +128,6 @@ export function classifyMove({
   const topCandidate = Number.isFinite(rank) && rank <= 3 && loss <= 0.05
   const couldBeBrilliant = (
     moveExpected >= 0.45 &&
-    bestExpected < 0.90 &&
     (isBest || loss <= (givesCheck ? 0.07 : 0.02) || topCandidate)
   )
   if (couldBeBrilliant && verifySacrifice(new Chess(beforeFen), verboseMove, playedLine?.pv || [])) {
@@ -138,7 +140,7 @@ export function classifyMove({
   const bestWasCritical = (
     secondLine &&
     isCriticalCandidate(game, resolveMove(game, bestLine?.uci), bestLine, secondLine) &&
-    secondLoss >= CRITICAL_SECOND_LOSS
+    isCriticalSeparation(bestLine, secondLine, secondLoss)
   )
   if (
     isPlayerMove &&
@@ -167,31 +169,33 @@ export function classifyMove({
 export function verifySacrifice(game, move, pv = []) {
   if (!move || move.piece === 'k') return false
   const mover = move.color
+  const movedValue = PIECE_VALUES[move.piece] || 0
+  if (movedValue < BRILLIANT_MIN_PIECE_VALUE) return false
+
   const beforeBalance = materialBalance(game, mover)
-  const movedValue = PIECE_VALUES[move.piece]
-  const capturedValue = PIECE_VALUES[move.captured] || 0
+  const investment = Math.max(0, -staticExchangeEval(game, move))
+  if (investment < 100) return false
+
   game.move(move)
   const afterBalance = materialBalance(game, mover)
-  const opponentCanTakeMovedPiece = game.moves({ verbose: true }).some((reply) =>
-    reply.to === move.to &&
-    reply.captured === move.piece,
-  )
-  const directInvestment = Math.max(
-    0,
-    beforeBalance - afterBalance,
-    opponentCanTakeMovedPiece ? movedValue - capturedValue : 0,
-  )
-  if (directInvestment < 100 || !opponentCanTakeMovedPiece) return false
-
   const lineGame = new Chess(game.fen())
   const continuation = pv[0] && sameUci(pv[0], toUci(move)) ? pv.slice(1) : pv
   let minimumBalance = afterBalance
   let finalBalance = afterBalance
   let replyTakesInvestment = false
+  let promotionAfterAcceptance = false
   for (const uci of continuation.slice(0, 8)) {
     const next = resolveMove(lineGame, uci)
     if (!next) break
-    if (next.to === move.to && next.captured === move.piece) replyTakesInvestment = true
+    if (
+      lineGame.turn() !== mover &&
+      next.to === move.to &&
+      next.captured === move.piece
+    ) {
+      replyTakesInvestment = true
+    } else if (replyTakesInvestment && lineGame.turn() === mover && next.promotion) {
+      promotionAfterAcceptance = true
+    }
     lineGame.move(next)
     finalBalance = materialBalance(lineGame, mover)
     minimumBalance = Math.min(minimumBalance, finalBalance)
@@ -204,8 +208,19 @@ export function verifySacrifice(game, move, pv = []) {
       (PIECE_VALUES[target.type] || 0) > movedValue &&
       pieceAttacksSquare(game, move.to, move.piece, square, mover)
   })
-  const forcingCompensation = game.inCheck() || highValueThreat || materialSwing >= 100
-  return replyTakesInvestment && beforeBalance - minimumBalance >= 100 && forcingCompensation
+  const forcingCompensation = (
+    game.inCheck() ||
+    highValueThreat ||
+    promotionAfterAcceptance ||
+    materialSwing >= 100
+  )
+  const toleratedDeficit = -(investment + PIECE_VALUES.b)
+  return (
+    replyTakesInvestment &&
+    beforeBalance - minimumBalance >= investment &&
+    finalBalance - beforeBalance >= toleratedDeficit &&
+    forcingCompensation
+  )
 }
 
 function applyPracticalEdgeFloor(key, { bestLine, playedLine, loss, rank, openingPhase }) {
@@ -253,13 +268,31 @@ function applyLowerRankExcellentFloor(key, { bestLine, playedLine, loss, rank })
 }
 
 function isCriticalCandidate(game, move, moveLine, secondLine) {
-  if (!move || !secondLine || game.inCheck()) return false
+  if (!move || !secondLine) return false
   if (move.promotion === 'q') return false
-  if (scoreType(moveLine) === 'mate' && scoreValue(moveLine) > 0) return false
-  if (scoreType(moveLine) === 'centipawn' && scoreValue(moveLine) < 0) return false
+  if (
+    scoreType(moveLine) === 'centipawn' &&
+    scoreValue(moveLine) < CRITICAL_LOSING_FLOOR
+  ) return false
   if (scoreType(secondLine) === 'centipawn' && scoreValue(secondLine) >= 700) return false
   if (move.captured && !capturedPieceWasSafe(game, move)) return false
   return true
+}
+
+function isCriticalSeparation(bestLine, secondLine, secondLoss) {
+  if (!secondLine) return false
+  if (secondLoss >= CRITICAL_SECOND_LOSS) return true
+
+  const bestType = scoreType(bestLine)
+  const secondType = scoreType(secondLine)
+  if (bestType === 'mate') {
+    return scoreValue(bestLine) > 0 && (
+      secondType !== 'mate' ||
+      scoreValue(secondLine) <= 0
+    )
+  }
+  if (bestType !== 'centipawn' || secondType !== 'centipawn') return false
+  return scoreValue(bestLine) - scoreValue(secondLine) >= CRITICAL_CP_GAP
 }
 
 function capturedPieceWasSafe(game, move) {
@@ -393,6 +426,48 @@ function materialBalance(game, color) {
     }
   }
   return total
+}
+
+function staticExchangeEval(game, move) {
+  const capturedValue = PIECE_VALUES[move.captured] || 0
+  const after = new Chess(game.fen())
+  after.move(move)
+  const opponentGain = staticExchangeGain(after, move.to, oppositeColor(move.color))
+  return capturedValue - Math.max(0, opponentGain)
+}
+
+function staticExchangeGain(game, square, color, depth = 0) {
+  if (depth > 16) return 0
+  const probe = gameWithTurn(game, color)
+  const victim = probe.get(square)
+  if (!victim || victim.color === color || victim.type === 'k') return 0
+
+  const captures = probe.moves({ verbose: true })
+    .filter((candidate) => candidate.to === square && candidate.captured)
+    .sort((first, second) =>
+      (PIECE_VALUES[first.piece] || 0) - (PIECE_VALUES[second.piece] || 0),
+    )
+  let bestGain = 0
+  for (const capture of captures) {
+    const reply = new Chess(probe.fen())
+    reply.move(capture)
+    const replyGain = staticExchangeGain(reply, square, oppositeColor(color), depth + 1)
+    bestGain = Math.max(
+      bestGain,
+      (PIECE_VALUES[victim.type] || 0) - Math.max(0, replyGain),
+    )
+  }
+  return bestGain
+}
+
+function gameWithTurn(game, color) {
+  const parts = game.fen().split(' ')
+  parts[1] = color
+  return new Chess(parts.join(' '))
+}
+
+function oppositeColor(color) {
+  return color === 'w' ? 'b' : 'w'
 }
 
 function boardSquares() {

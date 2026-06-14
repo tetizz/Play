@@ -86,6 +86,70 @@ test('a verified sacrifice can override an otherwise Great critical move', () =>
   assert.equal(result.key, 'brilliant')
 })
 
+test('the Rad1 exchange from the supplied game is not a sacrifice or Brilliant', () => {
+  const game = new Chess('3r3r/p1q2p1p/2B1bk1b/1P2pp2/1Qp5/P1N3P1/4PP1P/R4RK1 w - - 4 18')
+  const move = game.moves({ verbose: true }).find((candidate) =>
+    candidate.from === 'a1' && candidate.to === 'd1',
+  )
+  const pv = ['a1d1', 'd8d1', 'f1d1', 'h8d8']
+  assert.equal(verifySacrifice(new Chess(game.fen()), move, pv), false)
+
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'a1d1', score: 33, rank: 1, pv },
+    playedLine: { uci: 'a1d1', score: 33, rank: 1, pv },
+    candidateLines: [
+      { uci: 'a1d1', score: 33, rank: 1, pv },
+      { uci: 'f1d1', score: 31, rank: 2, pv: ['f1d1'] },
+    ],
+    legalMoveCount: game.moves().length,
+  })
+  assert.notEqual(result.key, 'brilliant')
+  assert.notEqual(result.key, 'great')
+})
+
+test('Qe5 from move 88 is the verified queen investment in the supplied game', () => {
+  const game = new Chess('K7/1Pk5/8/8/4q3/8/1Q6/8 w - - 15 88')
+  const move = game.moves({ verbose: true }).find((candidate) =>
+    candidate.from === 'b2' && candidate.to === 'e5',
+  )
+  const pv = ['b2e5', 'e4e5', 'b7b8q', 'c7c6', 'b8e5']
+  assert.equal(verifySacrifice(new Chess(game.fen()), move, pv), true)
+
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'b2e5', score: 99992, mate: 8, rank: 1, pv },
+    playedLine: { uci: 'b2e5', score: 99992, mate: 8, rank: 1, pv },
+    candidateLines: [
+      { uci: 'b2e5', score: 99992, mate: 8, rank: 1, pv },
+      { uci: 'b2c3', score: 467, mate: null, rank: 2, pv: ['b2c3'] },
+    ],
+    legalMoveCount: game.moves().length,
+  })
+  assert.equal(result.key, 'brilliant')
+  assert.equal(result.isRealPieceSacrifice, true)
+})
+
+test('a uniquely necessary best move is Great across a clear evaluation gap', () => {
+  const game = new Chess()
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'Nf3')
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'g1f3', score: 40, rank: 1, pv: ['g1f3'] },
+    playedLine: { uci: 'g1f3', score: 40, rank: 1, pv: ['g1f3'] },
+    candidateLines: [
+      { uci: 'g1f3', score: 40, rank: 1, pv: ['g1f3'] },
+      { uci: 'a2a3', score: -60, rank: 2, pv: ['a2a3'] },
+    ],
+    legalMoveCount: game.moves().length,
+  })
+  assert.equal(result.key, 'great')
+  assert.equal(result.isOnlyMoveThatKeepsAdvantage, true)
+})
+
 test('a defended critical capture can be Great but taking a loose piece cannot', () => {
   const defended = new Chess('r3k3/p7/8/8/8/8/8/R3K3 w - - 0 1')
   const defendedMove = defended.moves({ verbose: true }).find((candidate) =>

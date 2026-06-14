@@ -925,6 +925,31 @@ button {
   font-size: 13px;
 }
 
+.review-heading-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.review-action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.review-action-buttons svg {
+  width: 18px;
+  height: 18px;
+}
+
+.share-status {
+  min-height: 18px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+}
+
 .eyebrow {
   color: var(--gold);
   font-size: 12px;

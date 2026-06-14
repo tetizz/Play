@@ -166,6 +166,45 @@ test('zero-move review stays flat at equality', async ({ page }) => {
   await expect(page.getByText('Black wins by resignation', { exact: true })).toBeVisible()
 })
 
+test('completed reviews share a valid PGN with the correct players and result', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', {
+      configurable: true,
+      value: () => false,
+    })
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async (data) => {
+        window.__sharedPgn = data.text
+      },
+    })
+  })
+  await page.evaluate(() => {
+    localStorage.setItem('play-bots-session-v3', JSON.stringify({
+      phase: 'review',
+      botId: 'mubassar',
+      colorChoice: 'white',
+      humanColor: 'white',
+      history: ['f4', 'e5', 'g4', 'Qh4#'],
+      beltMode: false,
+      lastMove: { from: 'd8', to: 'h4' },
+    }))
+  })
+  await page.reload()
+
+  await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible({
+    timeout: 10000,
+  })
+  await page.getByRole('button', { name: 'Share PGN', exact: true }).click()
+  await expect(page.getByText('PGN shared', { exact: true })).toBeVisible()
+
+  const pgn = await page.evaluate(() => window.__sharedPgn)
+  expect(pgn).toContain('[White "player"]')
+  expect(pgn).toContain('[Black "Mubassar"]')
+  expect(pgn).toContain('[Result "0-1"]')
+  expect(pgn).toContain('1. f4 e5 2. g4 Qh4# 0-1')
+})
+
 test('all bots start as White, Black, and Random without exposing account names', async ({ page }) => {
   test.setTimeout(120000)
   for (const botName of ['Mubassar', 'Ayden Spellman', 'Akshit Sharma', 'Trixize']) {

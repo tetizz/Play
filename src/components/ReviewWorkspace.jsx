@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RotateCcw, Share2 } from 'lucide-react'
 import { BoardSurface } from './BoardSurface'
 import { Avatar, PlayerStrip } from './Identity'
 import { MoveList } from './MoveList'
 import { buildSmoothPath, evaluationBarDisplay } from '../lib/evaluationGraph'
+import { buildGamePgn, pgnFilename } from '../lib/pgnExport'
 
 export function ReviewWorkspace({ controller }) {
   const {
@@ -22,6 +23,7 @@ export function ReviewWorkspace({ controller }) {
     returnToSetup,
   } = controller
   const [activeTab, setActiveTab] = useState('summary')
+  const [shareStatus, setShareStatus] = useState('')
   const reviewScrollRef = useRef(null)
   const selected = review?.moments?.[Math.max(0, reviewPly - 1)] || null
   const activePoint = review?.graph?.[reviewPly] || review?.graph?.[0] || null
@@ -41,6 +43,45 @@ export function ReviewWorkspace({ controller }) {
     if (!firstMatch) return
     setReviewPly(firstMatch.ply)
     setActiveTab('moves')
+  }
+
+  const sharePgn = async () => {
+    const pgn = buildGamePgn({
+      history,
+      result: review?.result,
+      gameMode,
+      humanColor,
+      player,
+      profile,
+      whiteProfile,
+      blackProfile,
+    })
+    const filename = pgnFilename({
+      gameMode,
+      humanColor,
+      profile,
+      whiteProfile,
+      blackProfile,
+    })
+    const file = new File([pgn], filename, { type: 'application/x-chess-pgn' })
+
+    try {
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ title: 'Play Bots game', files: [file] })
+        setShareStatus('PGN shared')
+      } else if (navigator.share) {
+        await navigator.share({ title: 'Play Bots game', text: pgn })
+        setShareStatus('PGN shared')
+      } else {
+        await navigator.clipboard.writeText(pgn)
+        setShareStatus('PGN copied')
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') {
+        downloadPgn(pgn, filename)
+        setShareStatus('PGN downloaded')
+      }
+    }
   }
 
   return (
@@ -81,9 +122,30 @@ export function ReviewWorkspace({ controller }) {
             <h1>Game Review</h1>
             {review ? <p>{review.result}</p> : null}
           </div>
-          <button type="button" className="icon-button" onClick={returnToSetup} title="New game">
-            <RotateCcw />
-          </button>
+          <div className="review-heading-actions">
+            <div className="review-action-buttons">
+              <button
+                type="button"
+                className="icon-button"
+                onClick={sharePgn}
+                title="Share PGN"
+                aria-label="Share PGN"
+                disabled={!review}
+              >
+                <Share2 />
+              </button>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={returnToSetup}
+                title="New game"
+                aria-label="New game"
+              >
+                <RotateCcw />
+              </button>
+            </div>
+            <span className="share-status" aria-live="polite">{shareStatus}</span>
+          </div>
         </div>
 
         {!review ? (
@@ -163,6 +225,15 @@ export function ReviewWorkspace({ controller }) {
       </aside>
     </main>
   )
+}
+
+function downloadPgn(pgn, filename) {
+  const url = URL.createObjectURL(new Blob([pgn], { type: 'application/x-chess-pgn' }))
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  anchor.click()
+  URL.revokeObjectURL(url)
 }
 
 function ReviewSummary({

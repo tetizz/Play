@@ -10,6 +10,7 @@ import {
   shouldResumeBotTurn,
 } from '../src/lib/gameSession.js'
 import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
+import { buildGamePgn, pgnFilename } from '../src/lib/pgnExport.js'
 import {
   aggregateAccuracy,
   buildFallbackFinalReview,
@@ -47,6 +48,29 @@ test('the evaluation bar follows Chess.com-style side and result labels', () => 
     evaluationBarDisplay({ percent: 0, score: null, mate: -1 }, 'Black wins by checkmate', true),
     { percent: 0, label: '0-1', side: 'black' },
   )
+})
+
+test('review PGN export preserves player colors, headers, moves, and result', () => {
+  const pgn = buildGamePgn({
+    history: ['f4', 'e5', 'g4', 'Qh4#'],
+    result: 'Black wins by checkmate',
+    gameMode: 'player',
+    humanColor: 'white',
+    player: { name: 'player' },
+    profile: { name: 'Mubassar' },
+    date: new Date(2026, 5, 14),
+  })
+
+  assert.match(pgn, /\[Date "2026\.06\.14"\]/)
+  assert.match(pgn, /\[White "player"\]/)
+  assert.match(pgn, /\[Black "Mubassar"\]/)
+  assert.match(pgn, /\[Result "0-1"\]/)
+  assert.match(pgn, /1\. f4 e5 2\. g4 Qh4# 0-1/)
+  assert.equal(pgnFilename({
+    gameMode: 'player',
+    humanColor: 'black',
+    profile: { name: 'Ayden' },
+  }), 'ayden-vs-player.pgn')
 })
 
 test('valid and invalid premoves settle without leaving an unresolved turn', () => {

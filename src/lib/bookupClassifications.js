@@ -191,6 +191,10 @@ export function verifySacrifice(game, move, pv = []) {
   let finalBalance = afterBalance
   let replyTakesInvestment = false
   let promotionAfterAcceptance = false
+  let acceptingPiece = null
+  let acceptingSquare = null
+  let sawMoverReplyAfterAcceptance = false
+  let immediateExchangeRecapture = false
   for (const uci of continuation.slice(0, 8)) {
     const next = resolveMove(lineGame, uci)
     if (!next) break
@@ -200,8 +204,17 @@ export function verifySacrifice(game, move, pv = []) {
       next.captured === move.piece
     ) {
       replyTakesInvestment = true
-    } else if (replyTakesInvestment && lineGame.turn() === mover && next.promotion) {
-      promotionAfterAcceptance = true
+      acceptingPiece = next.piece
+      acceptingSquare = next.to
+    } else if (replyTakesInvestment && lineGame.turn() === mover) {
+      if (!sawMoverReplyAfterAcceptance) {
+        sawMoverReplyAfterAcceptance = true
+        immediateExchangeRecapture = (
+          next.to === acceptingSquare &&
+          next.captured === acceptingPiece
+        )
+      }
+      if (next.promotion) promotionAfterAcceptance = true
     }
     lineGame.move(next)
     finalBalance = materialBalance(lineGame, mover)
@@ -219,11 +232,12 @@ export function verifySacrifice(game, move, pv = []) {
     game.inCheck() ||
     highValueThreat ||
     promotionAfterAcceptance ||
-    materialSwing >= 100
+    (!immediateExchangeRecapture && materialSwing >= 100)
   )
   const toleratedDeficit = -(investment + PIECE_VALUES.b)
   return (
     replyTakesInvestment &&
+    !immediateExchangeRecapture &&
     beforeBalance - minimumBalance >= investment &&
     finalBalance - beforeBalance >= toleratedDeficit &&
     forcingCompensation

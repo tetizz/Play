@@ -51,17 +51,18 @@ test('an ordinary capture is never automatically Brilliant', () => {
 })
 
 test('a sound near-best move with a PV-confirmed sacrifice can be Brilliant', () => {
-  const game = new Chess('q3k3/p7/8/8/8/8/8/R3K3 w - - 0 1')
-  const move = game.moves({ verbose: true }).find((candidate) => candidate.from === 'a1' && candidate.to === 'a7')
-  assert.equal(verifySacrifice(new Chess(game.fen()), move, ['a1a7', 'a8a7']), true)
+  const game = new Chess('6k1/7p/8/8/8/3B1N2/8/4K3 w - - 0 1')
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'Bxh7+')
+  const pv = ['d3h7', 'g8h7', 'f3g5']
+  assert.equal(verifySacrifice(new Chess(game.fen()), move, pv), true)
   const result = classifyMove({
     beforeFen: game.fen(),
     move,
-    bestLine: { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
-    playedLine: { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
+    bestLine: { uci: 'd3h7', score: 20, rank: 1, pv },
+    playedLine: { uci: 'd3h7', score: 20, rank: 1, pv },
     candidateLines: [
-      { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
-      { uci: 'a1a6', score: 0, rank: 2, pv: ['a1a6'] },
+      { uci: 'd3h7', score: 20, rank: 1, pv },
+      { uci: 'd3e4', score: 0, rank: 2, pv: ['d3e4'] },
     ],
     legalMoveCount: game.moves().length,
   })
@@ -70,20 +71,54 @@ test('a sound near-best move with a PV-confirmed sacrifice can be Brilliant', ()
 })
 
 test('a verified sacrifice can override an otherwise Great critical move', () => {
-  const game = new Chess('q3k3/p7/8/8/8/8/8/R3K3 w - - 0 1')
-  const move = game.moves({ verbose: true }).find((candidate) => candidate.from === 'a1' && candidate.to === 'a7')
+  const game = new Chess('6k1/7p/8/8/8/3B1N2/8/4K3 w - - 0 1')
+  const move = game.moves({ verbose: true }).find((candidate) => candidate.san === 'Bxh7+')
+  const pv = ['d3h7', 'g8h7', 'f3g5']
   const result = classifyMove({
     beforeFen: game.fen(),
     move,
-    bestLine: { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
-    playedLine: { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
+    bestLine: { uci: 'd3h7', score: 20, rank: 1, pv },
+    playedLine: { uci: 'd3h7', score: 20, rank: 1, pv },
     candidateLines: [
-      { uci: 'a1a7', score: 20, rank: 1, pv: ['a1a7', 'a8a7'] },
-      { uci: 'a1a6', score: -100, rank: 2, pv: ['a1a6'] },
+      { uci: 'd3h7', score: 20, rank: 1, pv },
+      { uci: 'd3e4', score: -100, rank: 2, pv: ['d3e4'] },
     ],
     legalMoveCount: game.moves().length,
   })
   assert.equal(result.key, 'brilliant')
+})
+
+test('the supplied Nd4 liquidation is Best, not a Brilliant sacrifice', () => {
+  const game = new Chess('r1bqk2r/ppp2ppp/2n2n2/2b5/4p3/2P2NP1/PP1NPPBP/R1BQ1RK1 w kq - 0 9')
+  const move = game.moves({ verbose: true }).find((candidate) =>
+    candidate.from === 'f3' && candidate.to === 'd4',
+  )
+  const pv = [
+    'f3d4',
+    'c5d4',
+    'c3d4',
+    'd8d4',
+    'd2e4',
+    'f6e4',
+    'd1d4',
+    'c6d4',
+    'g2e4',
+  ]
+  assert.equal(verifySacrifice(new Chess(game.fen()), move, pv), false)
+
+  const result = classifyMove({
+    beforeFen: game.fen(),
+    move,
+    bestLine: { uci: 'f3d4', score: 10, rank: 1, pv },
+    playedLine: { uci: 'f3d4', score: 10, rank: 1, pv },
+    candidateLines: [
+      { uci: 'f3d4', score: 10, rank: 1, pv },
+      { uci: 'd2b3', score: 0, rank: 2, pv: ['d2b3'] },
+    ],
+    legalMoveCount: game.moves().length,
+  })
+  assert.equal(result.key, 'best')
+  assert.equal(result.isRealPieceSacrifice, undefined)
 })
 
 test('the Rad1 exchange from the supplied game is not a sacrifice or Brilliant', () => {

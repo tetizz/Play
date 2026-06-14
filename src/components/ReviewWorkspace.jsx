@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, RotateCcw, Share2 } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Copy, RotateCcw, Share2, X } from 'lucide-react'
 import { BoardSurface } from './BoardSurface'
 import { Avatar, PlayerStrip } from './Identity'
 import { MoveList } from './MoveList'
 import { buildSmoothPath, evaluationBarDisplay } from '../lib/evaluationGraph'
-import { buildGamePgn, pgnFilename } from '../lib/pgnExport'
+import { buildGamePgn } from '../lib/pgnExport'
 
 export function ReviewWorkspace({ controller }) {
   const {
@@ -24,7 +24,9 @@ export function ReviewWorkspace({ controller }) {
   } = controller
   const [activeTab, setActiveTab] = useState('summary')
   const [shareStatus, setShareStatus] = useState('')
+  const [sharedPgn, setSharedPgn] = useState('')
   const reviewScrollRef = useRef(null)
+  const pgnTextRef = useRef(null)
   const selected = review?.moments?.[Math.max(0, reviewPly - 1)] || null
   const activePoint = review?.graph?.[reviewPly] || review?.graph?.[0] || null
   const progress = reviewProgress.total
@@ -45,7 +47,7 @@ export function ReviewWorkspace({ controller }) {
     setActiveTab('moves')
   }
 
-  const sharePgn = async () => {
+  const openPgn = () => {
     const pgn = buildGamePgn({
       history,
       result: review?.result,
@@ -56,31 +58,23 @@ export function ReviewWorkspace({ controller }) {
       whiteProfile,
       blackProfile,
     })
-    const filename = pgnFilename({
-      gameMode,
-      humanColor,
-      profile,
-      whiteProfile,
-      blackProfile,
+    setSharedPgn(pgn)
+    setShareStatus('')
+    requestAnimationFrame(() => {
+      pgnTextRef.current?.focus()
+      pgnTextRef.current?.select()
     })
-    const file = new File([pgn], filename, { type: 'application/x-chess-pgn' })
+  }
 
+  const copyPgn = async () => {
     try {
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ title: 'Play Bots game', files: [file] })
-        setShareStatus('PGN shared')
-      } else if (navigator.share) {
-        await navigator.share({ title: 'Play Bots game', text: pgn })
-        setShareStatus('PGN shared')
-      } else {
-        await navigator.clipboard.writeText(pgn)
-        setShareStatus('PGN copied')
-      }
-    } catch (error) {
-      if (error?.name !== 'AbortError') {
-        downloadPgn(pgn, filename)
-        setShareStatus('PGN downloaded')
-      }
+      await navigator.clipboard.writeText(sharedPgn)
+      setShareStatus('PGN copied')
+    } catch {
+      pgnTextRef.current?.focus()
+      pgnTextRef.current?.select()
+      const copied = document.execCommand('copy')
+      setShareStatus(copied ? 'PGN copied' : 'PGN selected. Press Ctrl+C to copy.')
     }
   }
 
@@ -127,7 +121,7 @@ export function ReviewWorkspace({ controller }) {
               <button
                 type="button"
                 className="icon-button"
-                onClick={sharePgn}
+                onClick={openPgn}
                 title="Share PGN"
                 aria-label="Share PGN"
                 disabled={!review}
@@ -144,7 +138,6 @@ export function ReviewWorkspace({ controller }) {
                 <RotateCcw />
               </button>
             </div>
-            <span className="share-status" aria-live="polite">{shareStatus}</span>
           </div>
         </div>
 
@@ -223,17 +216,55 @@ export function ReviewWorkspace({ controller }) {
           </button>
         </div>
       </aside>
+      {sharedPgn ? (
+        <div
+          className="pgn-share-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSharedPgn('')
+          }}
+        >
+          <section
+            className="pgn-share-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pgn-share-title"
+          >
+            <header>
+              <div>
+                <span className="eyebrow">Game record</span>
+                <h2 id="pgn-share-title">Copy PGN</h2>
+              </div>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={() => setSharedPgn('')}
+                title="Close PGN"
+                aria-label="Close PGN"
+              >
+                <X />
+              </button>
+            </header>
+            <p>Select any part of the game record, or copy the complete PGN.</p>
+            <textarea
+              ref={pgnTextRef}
+              value={sharedPgn}
+              readOnly
+              aria-label="PGN text"
+              spellCheck="false"
+            />
+            <footer>
+              <span className="pgn-copy-status" aria-live="polite">{shareStatus}</span>
+              <button type="button" className="primary-button pgn-copy-button" onClick={copyPgn}>
+                {shareStatus === 'PGN copied' ? <Check /> : <Copy />}
+                {shareStatus === 'PGN copied' ? 'Copied' : 'Copy PGN'}
+              </button>
+            </footer>
+          </section>
+        </div>
+      ) : null}
     </main>
   )
-}
-
-function downloadPgn(pgn, filename) {
-  const url = URL.createObjectURL(new Blob([pgn], { type: 'application/x-chess-pgn' }))
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = filename
-  anchor.click()
-  URL.revokeObjectURL(url)
 }
 
 function ReviewSummary({

@@ -14,6 +14,8 @@ const BANDS = [
 const BOOK_ALLOWED_KEYS = new Set(['best', 'excellent', 'good', 'inaccuracy'])
 const CRITICAL_SECOND_LOSS = 0.08
 const CRITICAL_CP_GAP = 90
+const CRITICAL_WINNING_CP_GAP = 45
+const CRITICAL_EQUAL_CP_GAP = 55
 const CRITICAL_LOSING_FLOOR = -125
 const BRILLIANT_MIN_PIECE_VALUE = PIECE_VALUES.n
 const BEST_UNIQUENESS_THRESHOLD = 0.0005
@@ -95,10 +97,6 @@ export function classifyMove({
   key = promoteNearBest(key, { bestLine, playedLine, rank })
   key = applyLowerRankExcellentFloor(key, { bestLine, playedLine, loss, rank })
 
-  if (openingPhase && inBook && BOOK_ALLOWED_KEYS.has(key)) {
-    return payload('book', loss, moveExpected, 'opening book move')
-  }
-
   if (
     key === 'best' &&
     secondLine &&
@@ -118,7 +116,7 @@ export function classifyMove({
   if (
     isBest &&
     isCriticalCandidate(game, verboseMove, playedLine, secondLine) &&
-    isCriticalSeparation(bestLine, secondLine, secondLoss)
+    isCriticalSeparation(bestLine, secondLine, secondLoss, verboseMove)
   ) {
     key = 'great'
     isOnlyMoveThatKeepsAdvantage = true
@@ -137,10 +135,19 @@ export function classifyMove({
     }
   }
 
+  if (openingPhase && inBook && BOOK_ALLOWED_KEYS.has(key)) {
+    return payload('book', loss, moveExpected, 'opening book move')
+  }
+
   const bestWasCritical = (
     secondLine &&
     isCriticalCandidate(game, resolveMove(game, bestLine?.uci), bestLine, secondLine) &&
-    isCriticalSeparation(bestLine, secondLine, secondLoss)
+    isCriticalSeparation(
+      bestLine,
+      secondLine,
+      secondLoss,
+      resolveMove(game, bestLine?.uci),
+    )
   )
   if (
     isPlayerMove &&
@@ -279,7 +286,7 @@ function isCriticalCandidate(game, move, moveLine, secondLine) {
   return true
 }
 
-function isCriticalSeparation(bestLine, secondLine, secondLoss) {
+function isCriticalSeparation(bestLine, secondLine, secondLoss, move = null) {
   if (!secondLine) return false
   if (secondLoss >= CRITICAL_SECOND_LOSS) return true
 
@@ -292,7 +299,14 @@ function isCriticalSeparation(bestLine, secondLine, secondLoss) {
     )
   }
   if (bestType !== 'centipawn' || secondType !== 'centipawn') return false
-  return scoreValue(bestLine) - scoreValue(secondLine) >= CRITICAL_CP_GAP
+  const bestScore = scoreValue(bestLine)
+  const gap = bestScore - scoreValue(secondLine)
+  if (gap >= CRITICAL_CP_GAP) return true
+  if (bestScore > 0 && gap >= CRITICAL_WINNING_CP_GAP) return true
+  return bestScore === 0 && (
+    gap >= CRITICAL_EQUAL_CP_GAP ||
+    (gap >= CRITICAL_WINNING_CP_GAP && move?.san?.includes('+'))
+  )
 }
 
 function capturedPieceWasSafe(game, move) {

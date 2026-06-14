@@ -942,12 +942,84 @@ button {
   height: 18px;
 }
 
-.share-status {
-  min-height: 18px;
+.pgn-share-backdrop {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(6px);
+}
+
+.pgn-share-dialog {
+  width: min(720px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  display: grid;
+  grid-template-rows: auto auto minmax(240px, 1fr) auto;
+  gap: 16px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid #4a4d4f;
+  border-radius: 8px;
+  background: #202224;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.pgn-share-dialog header,
+.pgn-share-dialog footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pgn-share-dialog h2 {
+  margin: 3px 0 0;
+  font-size: 26px;
+}
+
+.pgn-share-dialog p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.pgn-share-dialog textarea {
+  width: 100%;
+  min-height: 240px;
+  resize: vertical;
+  padding: 16px;
+  border: 1px solid #4a4d4f;
+  border-radius: 6px;
+  outline: none;
+  background: #151719;
+  color: #f5f3ed;
+  font: 15px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.pgn-share-dialog textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(128, 182, 75, 0.25);
+}
+
+.pgn-copy-status {
   color: var(--gold);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
-  text-align: right;
+}
+
+.pgn-copy-button {
+  min-width: 154px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.pgn-copy-button svg {
+  width: 19px;
+  height: 19px;
 }
 
 .eyebrow {
@@ -1622,5 +1694,24 @@ button {
   .summary-metric {
     min-width: 78px;
     font-size: 20px;
+  }
+
+  .pgn-share-backdrop {
+    padding: 12px;
+  }
+
+  .pgn-share-dialog {
+    max-height: calc(100vh - 24px);
+    grid-template-rows: auto auto minmax(220px, 1fr) auto;
+    padding: 18px;
+  }
+
+  .pgn-share-dialog footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pgn-copy-button {
+    width: 100%;
   }
 }

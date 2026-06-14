@@ -7,10 +7,10 @@ import {
   expectedPointsFromScore,
 } from './bookupClassifications.js'
 
-const REVIEW_OPTIONS = { depth: 12, moveTime: 420, count: 5, timeout: 2600 }
-const TACTICAL_OPTIONS = { depth: 18, moveTime: 1600, count: 6, timeout: 6000 }
-const SHORT_REVIEW_OPTIONS = { depth: 10, moveTime: 160, count: 4, timeout: 1400 }
-const SHORT_TACTICAL_OPTIONS = { depth: 13, moveTime: 360, count: 5, timeout: 1800 }
+const REVIEW_OPTIONS = { depth: 15, moveTime: 700, count: 5, timeout: 3800 }
+const TACTICAL_OPTIONS = { depth: 20, moveTime: 2200, count: 6, timeout: 7600 }
+const SHORT_REVIEW_OPTIONS = { depth: 12, moveTime: 260, count: 4, timeout: 1800 }
+const SHORT_TACTICAL_OPTIONS = { depth: 16, moveTime: 800, count: 5, timeout: 3000 }
 const CLASSIFICATION_ORDER = [
   'brilliant',
   'great',

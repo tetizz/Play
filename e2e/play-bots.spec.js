@@ -166,16 +166,14 @@ test('zero-move review stays flat at equality', async ({ page }) => {
   await expect(page.getByText('Black wins by resignation', { exact: true })).toBeVisible()
 })
 
-test('completed reviews share a valid PGN with the correct players and result', async ({ page }) => {
+test('completed reviews expose a selectable PGN and copy it without downloading', async ({ page }) => {
   await page.addInitScript(() => {
-    Object.defineProperty(navigator, 'canShare', {
+    Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
-      value: () => false,
-    })
-    Object.defineProperty(navigator, 'share', {
-      configurable: true,
-      value: async (data) => {
-        window.__sharedPgn = data.text
+      value: {
+        writeText: async (text) => {
+          window.__copiedPgn = text
+        },
       },
     })
   })
@@ -196,9 +194,13 @@ test('completed reviews share a valid PGN with the correct players and result', 
     timeout: 10000,
   })
   await page.getByRole('button', { name: 'Share PGN', exact: true }).click()
-  await expect(page.getByText('PGN shared', { exact: true })).toBeVisible()
+  const pgnField = page.getByRole('textbox', { name: 'PGN text' })
+  await expect(pgnField).toBeVisible()
+  await expect(pgnField).toHaveValue(/\[White "player"\]/)
+  await page.getByRole('button', { name: 'Copy PGN', exact: true }).click()
+  await expect(page.getByText('PGN copied', { exact: true })).toBeVisible()
 
-  const pgn = await page.evaluate(() => window.__sharedPgn)
+  const pgn = await page.evaluate(() => window.__copiedPgn)
   expect(pgn).toContain('[White "player"]')
   expect(pgn).toContain('[Black "Mubassar"]')
   expect(pgn).toContain('[Result "0-1"]')

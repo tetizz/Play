@@ -28,8 +28,8 @@ test('expected-points and accuracy use continuous evaluation loss', () => {
   assert.equal(expectedPointsFromScore(0, -1), 0)
   assert.equal(accuracyFromExpectedPointsLoss(0, 'best'), 100)
   assert.equal(accuracyFromExpectedPointsLoss(0.04, 'book'), 100)
-  assert.ok(accuracyFromExpectedPointsLoss(0.06, 'inaccuracy') < 80)
-  assert.ok(accuracyFromExpectedPointsLoss(0.06, 'inaccuracy') > 70)
+  assert.ok(accuracyFromExpectedPointsLoss(0.06, 'inaccuracy') < 40)
+  assert.ok(accuracyFromExpectedPointsLoss(0.06, 'inaccuracy') > 30)
   assert.equal(accuracyFromExpectedPointsLoss(null, 'unreviewed'), null)
 })
 
@@ -177,7 +177,7 @@ test('a uniquely necessary best move is Great across a clear evaluation gap', ()
     playedLine: { uci: 'g1f3', score: 40, rank: 1, pv: ['g1f3'] },
     candidateLines: [
       { uci: 'g1f3', score: 40, rank: 1, pv: ['g1f3'] },
-      { uci: 'a2a3', score: -60, rank: 2, pv: ['a2a3'] },
+      { uci: 'a2a3', score: -80, rank: 2, pv: ['a2a3'] },
     ],
     legalMoveCount: game.moves().length,
   })

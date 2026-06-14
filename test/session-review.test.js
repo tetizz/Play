@@ -206,8 +206,9 @@ test('book and best moves always score 100 percent accuracy', async () => {
   assert.equal(review.accuracy.white, 100)
 })
 
-test('game accuracy does not let many perfect moves erase a serious error', () => {
-  const perfectMoves = Array.from({ length: 9 }, () => ({
+test('game accuracy uses surrounding position volatility to preserve serious errors', () => {
+  const perfectMoves = Array.from({ length: 9 }, (_, index) => ({
+    side: index % 2 === 0 ? 'w' : 'b',
     accuracy: 100,
     scoreBefore: 20,
     scoreAfter: 20,
@@ -215,6 +216,7 @@ test('game accuracy does not let many perfect moves erase a serious error', () =
     mateAfter: null,
   }))
   const blunder = {
+    side: 'w',
     accuracy: 30,
     scoreBefore: 250,
     scoreAfter: -250,
@@ -222,14 +224,14 @@ test('game accuracy does not let many perfect moves erase a serious error', () =
     mateAfter: null,
   }
 
-  assert.equal(aggregateAccuracy([...perfectMoves, blunder]), 60.8)
+  assert.equal(aggregateAccuracy([...perfectMoves, blunder], 'w'), 57)
 })
 
 test('game accuracy remains perfect when every reviewed move is perfect', () => {
   assert.equal(aggregateAccuracy([
-    { accuracy: 100, scoreBefore: 0, scoreAfter: 10 },
-    { accuracy: 100, scoreBefore: 10, scoreAfter: 30 },
-  ]), 100)
+    { side: 'w', accuracy: 100, scoreBefore: 0, scoreAfter: 10 },
+    { side: 'b', accuracy: 100, scoreBefore: 10, scoreAfter: 30 },
+  ], 'w'), 100)
   assert.equal(aggregateAccuracy([]), null)
 })
 
@@ -273,8 +275,64 @@ test('review scores the played move from the same pre-move position', async () =
   const restricted = calls.find((call) => call.searchMoves[0] === 'f2f3')
   assert.equal(unrestricted.fen, restricted.fen)
   assert.equal(review.moments[0].key, 'mistake')
-  assert.equal(review.moments[0].accuracy, 42.5)
-  assert.equal(review.accuracy.white, 42.5)
+  assert.equal(review.moments[0].accuracy, 2.8)
+  assert.equal(review.accuracy.white, 2.8)
+})
+
+test('a quiet non-best move receives the deeper review pass', async () => {
+  const calls = []
+  const fakeClient = {
+    async analyze(fen, options = {}) {
+      calls.push({ depth: options.depth, searchMoves: options.searchMoves || [] })
+      const game = new Chess(fen)
+      const legalMoves = game.moves({ verbose: true })
+      const requestedUci = options.searchMoves?.[0]
+      const requested = requestedUci
+        ? legalMoves.find((move) =>
+            `${move.from}${move.to}${move.promotion || ''}` === requestedUci,
+          )
+        : null
+      const played = legalMoves.find((move) => move.san === 'Nf3') || requested || legalMoves[0]
+      const best = legalMoves.find((move) => move.san === 'e4') || legalMoves[0]
+      const isDeep = options.depth >= 22
+      if (options.searchMoves?.length) {
+        return [{
+          uci: requestedUci,
+          score: isDeep ? -260 : 10,
+          mate: null,
+          rank: 1,
+          pv: [requestedUci],
+        }]
+      }
+      return [
+        {
+          uci: `${best.from}${best.to}`,
+          score: isDeep ? 80 : 20,
+          mate: null,
+          rank: 1,
+          pv: [`${best.from}${best.to}`],
+        },
+        {
+          uci: `${played.from}${played.to}`,
+          score: isDeep ? -260 : 10,
+          mate: null,
+          rank: 2,
+          pv: [`${played.from}${played.to}`],
+        },
+      ]
+    },
+  }
+
+  const review = await reviewGameWithStockfish({
+    history: ['Nf3', 'Nf6', 'Ng1', 'Ng8', 'Nf3', 'Nf6', 'Ng1', 'Ng8', 'e4'],
+    client: fakeClient,
+    playedClient: fakeClient,
+  })
+
+  assert.ok(calls.some((call) => call.depth >= 22 && call.searchMoves.length === 0))
+  assert.ok(calls.some((call) => call.depth >= 22 && call.searchMoves[0] === 'g1f3'))
+  assert.ok(['mistake', 'blunder'].includes(review.moments[0].key))
+  assert.ok(review.accuracy.white < 70)
 })
 
 test('a restricted result cannot become a fake Best move when unrestricted analysis fails', async () => {

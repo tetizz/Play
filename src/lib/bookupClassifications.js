@@ -12,11 +12,8 @@ const BANDS = [
 ]
 
 const BOOK_ALLOWED_KEYS = new Set(['best', 'excellent', 'good', 'inaccuracy'])
-const CRITICAL_SECOND_LOSS = 0.08
-const CRITICAL_CP_GAP = 90
-const CRITICAL_WINNING_CP_GAP = 45
-const CRITICAL_EQUAL_CP_GAP = 55
-const CRITICAL_LOSING_FLOOR = -125
+const CRITICAL_SECOND_LOSS = 0.10
+const REVIEW_ACCURACY_LOSS_MULTIPLIER = 3.5
 const BRILLIANT_MIN_PIECE_VALUE = PIECE_VALUES.n
 const BEST_UNIQUENESS_THRESHOLD = 0.0005
 const BEST_UNIQUENESS_CP_CEILING = 350
@@ -54,7 +51,7 @@ export function expectedPointsFromScore(score, mate = null) {
 export function accuracyFromExpectedPointsLoss(loss, classification = null) {
   if (['book', 'best', 'forced', 'great', 'brilliant'].includes(classification)) return 100
   if (!Number.isFinite(loss)) return null
-  const winPercentLoss = Math.max(0, loss) * 100
+  const winPercentLoss = Math.max(0, loss) * 100 * REVIEW_ACCURACY_LOSS_MULTIPLIER
   return roundTo(Math.max(
     0,
     Math.min(100, 103.1668 * Math.exp(-0.04354 * winPercentLoss) - 3.1669),
@@ -116,7 +113,7 @@ export function classifyMove({
   if (
     isBest &&
     isCriticalCandidate(game, verboseMove, playedLine, secondLine) &&
-    isCriticalSeparation(bestLine, secondLine, secondLoss, verboseMove)
+    isCriticalSeparation(secondLine, secondLoss)
   ) {
     key = 'great'
     isOnlyMoveThatKeepsAdvantage = true
@@ -124,8 +121,10 @@ export function classifyMove({
 
   const givesCheck = after.inCheck()
   const topCandidate = Number.isFinite(rank) && rank <= 3 && loss <= 0.05
+  const forcesMate = Number.isFinite(bestLine?.mate) && bestLine.mate > 0
   const couldBeBrilliant = (
     moveExpected >= 0.45 &&
+    (bestExpected < 0.90 || forcesMate) &&
     (isBest || loss <= (givesCheck ? 0.07 : 0.02) || topCandidate)
   )
   if (couldBeBrilliant && verifySacrifice(new Chess(beforeFen), verboseMove, playedLine?.pv || [])) {
@@ -142,12 +141,7 @@ export function classifyMove({
   const bestWasCritical = (
     secondLine &&
     isCriticalCandidate(game, resolveMove(game, bestLine?.uci), bestLine, secondLine) &&
-    isCriticalSeparation(
-      bestLine,
-      secondLine,
-      secondLoss,
-      resolveMove(game, bestLine?.uci),
-    )
+    isCriticalSeparation(secondLine, secondLoss)
   )
   if (
     isPlayerMove &&
@@ -291,36 +285,15 @@ function applyLowerRankExcellentFloor(key, { bestLine, playedLine, loss, rank })
 function isCriticalCandidate(game, move, moveLine, secondLine) {
   if (!move || !secondLine) return false
   if (move.promotion === 'q') return false
-  if (
-    scoreType(moveLine) === 'centipawn' &&
-    scoreValue(moveLine) < CRITICAL_LOSING_FLOOR
-  ) return false
+  if (scoreType(moveLine) === 'centipawn' && scoreValue(moveLine) < 0) return false
   if (scoreType(secondLine) === 'centipawn' && scoreValue(secondLine) >= 700) return false
   if (move.captured && !capturedPieceWasSafe(game, move)) return false
   return true
 }
 
-function isCriticalSeparation(bestLine, secondLine, secondLoss, move = null) {
+function isCriticalSeparation(secondLine, secondLoss) {
   if (!secondLine) return false
-  if (secondLoss >= CRITICAL_SECOND_LOSS) return true
-
-  const bestType = scoreType(bestLine)
-  const secondType = scoreType(secondLine)
-  if (bestType === 'mate') {
-    return scoreValue(bestLine) > 0 && (
-      secondType !== 'mate' ||
-      scoreValue(secondLine) <= 0
-    )
-  }
-  if (bestType !== 'centipawn' || secondType !== 'centipawn') return false
-  const bestScore = scoreValue(bestLine)
-  const gap = bestScore - scoreValue(secondLine)
-  if (gap >= CRITICAL_CP_GAP) return true
-  if (bestScore > 0 && gap >= CRITICAL_WINNING_CP_GAP) return true
-  return bestScore === 0 && (
-    gap >= CRITICAL_EQUAL_CP_GAP ||
-    (gap >= CRITICAL_WINNING_CP_GAP && move?.san?.includes('+'))
-  )
+  return secondLoss >= CRITICAL_SECOND_LOSS
 }
 
 function capturedPieceWasSafe(game, move) {

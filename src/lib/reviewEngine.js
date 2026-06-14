@@ -7,8 +7,8 @@ import {
   expectedPointsFromScore,
 } from './bookupClassifications.js'
 
-const REVIEW_OPTIONS = { depth: 15, moveTime: 700, count: 5, timeout: 3800 }
-const TACTICAL_OPTIONS = { depth: 20, moveTime: 2200, count: 6, timeout: 7600 }
+const REVIEW_OPTIONS = { depth: 22, depthOnly: true, count: 6, timeout: 9800 }
+const TACTICAL_OPTIONS = { depth: 24, depthOnly: true, count: 8, timeout: 15000 }
 const SHORT_REVIEW_OPTIONS = { depth: 12, moveTime: 260, count: 4, timeout: 1800 }
 const SHORT_TACTICAL_OPTIONS = { depth: 16, moveTime: 800, count: 5, timeout: 3000 }
 const CLASSIFICATION_ORDER = [
@@ -73,7 +73,7 @@ export async function reviewGameWithStockfish({
       verboseMove.san.includes('+') ||
       verboseMove.san.includes('#') ||
       !playedLine ||
-      scoreDifference(candidates[0]?.score, playedLine?.score) >= 30,
+      scoreDifference(candidates[0]?.score, playedLine?.score) >= 40,
     )
     if (tacticalCandidate) {
       const [deeper, deeperPlayedLine] = await Promise.all([
@@ -294,8 +294,8 @@ function finalizeReview({ engine, game, positions, moments, graph, resultOverrid
   const whiteMoments = moments.filter((moment) => moment.side === 'w')
   const blackMoments = moments.filter((moment) => moment.side === 'b')
   const accuracy = {
-    white: aggregateAccuracy(whiteMoments),
-    black: aggregateAccuracy(blackMoments),
+    white: aggregateAccuracy(moments, 'w'),
+    black: aggregateAccuracy(moments, 'b'),
   }
   return {
     complete: true,
@@ -579,13 +579,16 @@ function finalResult(game) {
   return 'Game complete'
 }
 
-export function aggregateAccuracy(moments) {
-  const measured = moments.filter((moment) => Number.isFinite(moment?.accuracy))
+export function aggregateAccuracy(moments, side = null) {
+  const measured = moments.filter((moment) =>
+    Number.isFinite(moment?.accuracy) && (!side || moment.side === side),
+  )
   if (!measured.length) return null
   if (measured.length === 1) return roundTo(measured[0].accuracy, 1)
 
   const accuracies = measured.map((moment) => clampAccuracy(moment.accuracy))
-  const weights = measured.map(volatilityWeight)
+  const volatility = volatilityWeights(moments)
+  const weights = measured.map((moment) => volatility.get(moment) ?? 0.5)
   const weightTotal = weights.reduce((sum, weight) => sum + weight, 0)
   const weightedMean = accuracies.reduce(
     (sum, accuracy, index) => sum + accuracy * weights[index],
@@ -598,10 +601,46 @@ export function aggregateAccuracy(moments) {
   return roundTo((weightedMean + harmonicMean) / 2, 1)
 }
 
-function volatilityWeight(moment) {
-  const before = evaluationToWhitePercent(moment.scoreBefore, moment.mateBefore)
-  const after = evaluationToWhitePercent(moment.scoreAfter, moment.mateAfter)
-  return Math.max(0.5, Math.abs(after - before) / 2)
+function volatilityWeights(moments) {
+  const measuredPositions = moments.filter((moment) =>
+    Number.isFinite(moment?.scoreAfter) || Number.isFinite(moment?.mateAfter),
+  )
+  if (!measuredPositions.length) return new Map()
+
+  const first = measuredPositions[0]
+  const winPercents = [
+    evaluationToWhitePercent(first.scoreBefore, first.mateBefore),
+    ...measuredPositions.map((moment) =>
+      evaluationToWhitePercent(moment.scoreAfter, moment.mateAfter),
+    ),
+  ]
+  const windowSize = Math.max(2, Math.min(8, Math.round(measuredPositions.length / 10)))
+  const firstWindow = winPercents.slice(0, windowSize)
+  const windows = [
+    ...Array.from(
+      { length: Math.max(0, Math.min(windowSize, winPercents.length) - 2) },
+      () => firstWindow,
+    ),
+  ]
+  for (let index = 0; index <= winPercents.length - windowSize; index += 1) {
+    windows.push(winPercents.slice(index, index + windowSize))
+  }
+
+  const weights = new Map()
+  measuredPositions.forEach((moment, index) => {
+    weights.set(moment, Math.max(0.5, Math.min(12, standardDeviation(windows[index] || firstWindow))))
+  })
+  return weights
+}
+
+function standardDeviation(values) {
+  if (!values.length) return 0
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length
+  const variance = values.reduce(
+    (sum, value) => sum + ((value - mean) ** 2),
+    0,
+  ) / values.length
+  return Math.sqrt(variance)
 }
 
 function clampAccuracy(value) {

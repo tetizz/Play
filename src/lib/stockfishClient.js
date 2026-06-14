@@ -119,7 +119,10 @@ export function createStockfishClient() {
         ? request.options.searchMoves.filter((move) => /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move))
         : []
       const searchClause = searchMoves.length ? ` searchmoves ${searchMoves.join(' ')}` : ''
-      post(`go depth ${depth} movetime ${moveTime}${searchClause}`)
+      const limits = request.options.depthOnly
+        ? `depth ${depth}`
+        : `depth ${depth} movetime ${moveTime}`
+      post(`go ${limits}${searchClause}`)
     } catch {
       request.resolve(null)
       active = null

@@ -1,0 +1,22 @@
+[Event "Play Bots"]
+[Site "tetizz.github.io/Play"]
+[Date "2026.06.14"]
+[Round "?"]
+[White "Trixize"]
+[Black "Mubassar"]
+[Result "1-0"]
+
+1. Nf3 d5 2. g3 Nf6 3. Bg2 e6 4. d3 Nc6 5. O-O e5 6. Nbd2 Bc5 7. c3 e4
+8. dxe4 dxe4 9. Nd4 Nxd4 10. cxd4 Bxd4 11. Nxe4 O-O 12. e3 Bf5 13. Nd2 Be5
+14. e4 Bg4 15. Qb3 c5 16. h3 Be6 17. Qc2 Bd4 18. Nf3 Qd7 19. Kh2 Rfd8
+20. Rd1 Rac8 21. Qe2 Qe7 22. e5 Bf5 23. Re1 Re8 24. Be3 Bxe5 25. Bf4 Bxf4
+26. Qxe7 Rxe7 27. Rxe7 Rc7 28. Rxc7 Bxc7 29. Rc1 b6 30. b4 Bd6 31. Rd1 Bc7
+32. Ne5 cxb4 33. Nc6 Be6 34. Nxa7 h5 35. Nb5 Be5 36. f4 Bb2 37. Nc7 Bc4
+38. Bf1 Bxf1 39. Rxf1 Bd4 40. Re1 Bc5 41. Kg2 g6 42. Kf3 Kf8 43. Re2 Be7
+44. Rd2 Kg8 45. Na6 Ne8 46. Rd7 Bc5 47. Nxc5 bxc5 48. Rd8 Kf8 49. Rc8 Ke7
+50. Rxc5 Nd6 51. Rd5 f6 52. Rd4 b3 53. axb3 Nf5 54. Rd3 h4 55. g4 Nd6
+56. Rxd6 Kxd6 57. Ke4 Kc5 58. g5 f5+ 59. Ke5 Kb4 60. Kf6 Kc5 61. Kxg6 Kd4
+62. Kxf5 Kc5 63. b4+ Kb5 64. g6 Kb6 65. b5 Ka5 66. b6 Kb5 67. b7 Kb6
+68. b8=B Kc5 69. g7 Kb6 70. g8=B Kc6 71. Ke4 Kd7 72. f5 Kd8 73. f6 Kd7
+74. f7 Ke7 75. f8=Q+ Kxf8 76. Be6 Ke7 77. Kf5 Ke8 78. Bd6 Kd8 79. Kf6 Ke8
+80. Bc7 Kf8 81. Bd7 Kg8 82. Kg6 Kh8 83. Bd6 Kg8 84. Be6+ Kh8 85. Be5# 1-0

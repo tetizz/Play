@@ -294,8 +294,8 @@ function finalizeReview({ engine, game, positions, moments, graph, resultOverrid
   const whiteMoments = moments.filter((moment) => moment.side === 'w')
   const blackMoments = moments.filter((moment) => moment.side === 'b')
   const accuracy = {
-    white: average(whiteMoments.map((moment) => moment.accuracy)),
-    black: average(blackMoments.map((moment) => moment.accuracy)),
+    white: aggregateAccuracy(whiteMoments),
+    black: aggregateAccuracy(blackMoments),
   }
   return {
     complete: true,
@@ -403,7 +403,7 @@ function classificationCounts(moments) {
 function summarizePhases(moments) {
   return Object.fromEntries(['opening', 'middlegame', 'endgame'].map((phase) => {
     const phaseMoves = moments.filter((moment) => moment.phase === phase)
-    const accuracy = average(phaseMoves.map((moment) => moment.accuracy))
+    const accuracy = aggregateAccuracy(phaseMoves)
     const key = phaseGrade(accuracy)
     return [phase, {
       accuracy,
@@ -579,11 +579,33 @@ function finalResult(game) {
   return 'Game complete'
 }
 
-function average(values) {
-  const measured = values.filter(Number.isFinite)
-  return measured.length
-    ? roundTo(measured.reduce((sum, value) => sum + value, 0) / measured.length, 1)
-    : null
+export function aggregateAccuracy(moments) {
+  const measured = moments.filter((moment) => Number.isFinite(moment?.accuracy))
+  if (!measured.length) return null
+  if (measured.length === 1) return roundTo(measured[0].accuracy, 1)
+
+  const accuracies = measured.map((moment) => clampAccuracy(moment.accuracy))
+  const weights = measured.map(volatilityWeight)
+  const weightTotal = weights.reduce((sum, weight) => sum + weight, 0)
+  const weightedMean = accuracies.reduce(
+    (sum, accuracy, index) => sum + accuracy * weights[index],
+    0,
+  ) / weightTotal
+  const harmonicMean = accuracies.some((accuracy) => accuracy === 0)
+    ? 0
+    : accuracies.length / accuracies.reduce((sum, accuracy) => sum + (1 / accuracy), 0)
+
+  return roundTo((weightedMean + harmonicMean) / 2, 1)
+}
+
+function volatilityWeight(moment) {
+  const before = evaluationToWhitePercent(moment.scoreBefore, moment.mateBefore)
+  const after = evaluationToWhitePercent(moment.scoreAfter, moment.mateAfter)
+  return Math.max(0.5, Math.abs(after - before) / 2)
+}
+
+function clampAccuracy(value) {
+  return Math.max(0, Math.min(100, Number(value) || 0))
 }
 
 function toUci(move) {

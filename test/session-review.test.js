@@ -11,6 +11,7 @@ import {
 } from '../src/lib/gameSession.js'
 import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
 import {
+  aggregateAccuracy,
   buildFallbackFinalReview,
   evaluationToWhitePercent,
   reviewGameWithStockfish,
@@ -179,6 +180,33 @@ test('book and best moves always score 100 percent accuracy', async () => {
   assert.equal(review.moments[0].key, 'book')
   assert.equal(review.moments[0].accuracy, 100)
   assert.equal(review.accuracy.white, 100)
+})
+
+test('game accuracy does not let many perfect moves erase a serious error', () => {
+  const perfectMoves = Array.from({ length: 9 }, () => ({
+    accuracy: 100,
+    scoreBefore: 20,
+    scoreAfter: 20,
+    mateBefore: null,
+    mateAfter: null,
+  }))
+  const blunder = {
+    accuracy: 30,
+    scoreBefore: 250,
+    scoreAfter: -250,
+    mateBefore: null,
+    mateAfter: null,
+  }
+
+  assert.equal(aggregateAccuracy([...perfectMoves, blunder]), 60.8)
+})
+
+test('game accuracy remains perfect when every reviewed move is perfect', () => {
+  assert.equal(aggregateAccuracy([
+    { accuracy: 100, scoreBefore: 0, scoreAfter: 10 },
+    { accuracy: 100, scoreBefore: 10, scoreAfter: 30 },
+  ]), 100)
+  assert.equal(aggregateAccuracy([]), null)
 })
 
 test('review scores the played move from the same pre-move position', async () => {

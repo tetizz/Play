@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Chess } from 'chess.js'
 import { getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
 import { dialogueAfterBotMove, dialogueForGameEnd, initialDialogue } from '../data/dialogue'
 import {
@@ -322,7 +323,13 @@ export function useGameController(defaultBotId) {
                 searchMoves: objectiveMoves,
               },
             ) || []
-            candidates = mergeEngineCandidates(candidates, objectiveCandidates)
+            const verifiedObjectiveCandidates = await verifyObjectiveCandidates(
+              beforeGame,
+              objectiveCandidates,
+              gameplayClientRef.current,
+              enginePolicy,
+            )
+            candidates = mergeEngineCandidates(candidates, verifiedObjectiveCandidates)
           }
         } catch {
           candidates = []
@@ -721,7 +728,17 @@ function mergeEngineCandidates(primary, objective) {
       !existing ||
       (Number.isFinite(candidate.score) && candidate.score > (existing.score ?? -Infinity))
     ) {
-      byMove.set(candidate.uci, candidate)
+      byMove.set(candidate.uci, {
+        ...existing,
+        ...candidate,
+        objectiveVerified: existing?.objectiveVerified === true || candidate.objectiveVerified === true,
+      })
+    } else if (candidate.objectiveVerified === true) {
+      byMove.set(candidate.uci, {
+        ...existing,
+        objectiveVerified: true,
+        objectiveVerificationScore: candidate.objectiveVerificationScore ?? existing.objectiveVerificationScore,
+      })
     }
   }
   return [...byMove.values()]
@@ -732,4 +749,69 @@ function mergeEngineCandidates(primary, objective) {
       return (b.score ?? -Infinity) - (a.score ?? -Infinity)
     })
     .map((candidate, index) => ({ ...candidate, rank: index + 1 }))
+}
+
+async function verifyObjectiveCandidates(beforeGame, candidates, client, policy) {
+  const legalMoves = new Map(
+    beforeGame.moves({ verbose: true }).map((move) => [moveToUci(move), move]),
+  )
+  const verified = []
+  for (const candidate of candidates) {
+    const move = legalMoves.get(candidate.uci)
+    if (!move) {
+      verified.push(candidate)
+      continue
+    }
+    const targetGames = objectiveVerificationGames(beforeGame, move)
+    const scores = []
+    let objectiveVerified = targetGames.length > 0
+    for (const targetGame of targetGames) {
+      const proof = await client.bestMoves(targetGame.fen(), {
+        depth: Math.max(20, policy.depth || 0),
+        moveTime: Math.max(2200, policy.moveTime || 0),
+        count: 1,
+        elo: undefined,
+      }) || []
+      const score = scoreForColor(proof[0], targetGame.turn(), move.color)
+      scores.push(score)
+      if (!Number.isFinite(score) || score < 650) {
+        objectiveVerified = false
+        break
+      }
+    }
+    verified.push({
+      ...candidate,
+      objectiveVerified,
+      objectiveVerificationScore: scores.length ? Math.min(...scores) : null,
+    })
+  }
+  return verified
+}
+
+function objectiveVerificationGames(beforeGame, move) {
+  const afterMove = new Chess(beforeGame.fen())
+  afterMove.move(move)
+  if (afterMove.isGameOver()) return []
+  const games = [afterMove]
+  const capture = afterMove.moves({ verbose: true }).find((reply) =>
+    reply.piece === 'k' &&
+    reply.to === move.to &&
+    Boolean(reply.captured),
+  )
+  if (capture) {
+    const afterCapture = new Chess(afterMove.fen())
+    afterCapture.move(capture)
+    if (afterCapture.isGameOver()) return []
+    games.push(afterCapture)
+  }
+  return games
+}
+
+function scoreForColor(line, turn, color) {
+  if (!line || !Number.isFinite(line.score)) return null
+  return turn === color ? line.score : -line.score
+}
+
+function moveToUci(move) {
+  return `${move.from}${move.to}${move.promotion || ''}`
 }

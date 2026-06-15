@@ -335,6 +335,8 @@ function selectBishopKnightUnderpromotion(game, candidates) {
   return candidates
     .filter((candidate) => {
       if (!['b', 'n'].includes(candidate.move.promotion)) return false
+      const verified = candidate.objectiveVerified === true
+      if (!verified) return false
       if (Number.isFinite(candidate.score) && candidate.score < 700) return false
       if (
         Number.isFinite(top?.score) &&
@@ -358,6 +360,7 @@ function selectBishopKnightConversionMove(game, candidates) {
   return candidates
     .filter((candidate) => {
       if (!isWinningObjectiveCandidate(candidate)) return false
+      if (candidate.objectiveVerified !== true) return false
       const after = cloneGame(game)
       after.move(candidate.move)
       return !after.isGameOver() && bishopKnightObjectivePriority(game, after, candidate.move) > 0

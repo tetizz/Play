@@ -168,7 +168,7 @@ test('Trixize can underpromote into a bishop and knight mating objective', () =>
     game,
     [
       { uci: 'a7a8q', score: 1200, rank: 1 },
-      { uci: 'a7a8n', score: 900, rank: 2 },
+      { uci: 'a7a8n', score: 900, rank: 2, objectiveVerified: true },
       { uci: 'g1f2', score: 600, rank: 3 },
     ],
     profile,
@@ -219,7 +219,7 @@ test('Trixize keeps a proven mate while underpromoting into the bishop-knight ob
     game,
     [
       { uci: 'a7a8q', score: 99991, mate: 9, rank: 1 },
-      { uci: 'a7a8n', score: 99970, mate: 30, rank: 2 },
+      { uci: 'a7a8n', score: 99970, mate: 30, rank: 2, objectiveVerified: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
@@ -235,7 +235,7 @@ test('Trixize completes the bishop-knight pair instead of switching to a queen',
     game,
     [
       { uci: 'a7a8q', score: 2300, mate: null, rank: 1 },
-      { uci: 'a7a8n', score: 900, mate: null, rank: 2 },
+      { uci: 'a7a8n', score: 900, mate: null, rank: 2, objectiveVerified: true },
       { uci: 'g1f2', score: 800, mate: null, rank: 3 },
     ],
     profile,
@@ -245,6 +245,22 @@ test('Trixize completes the bishop-knight pair instead of switching to a queen',
   assert.equal(decision.source, 'engine-objective')
 })
 
+test('Trixize refuses unverified bishop-knight underpromotion priority', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 1200, rank: 1 },
+      { uci: 'a7a8n', score: 1000, rank: 2, objectiveVerified: false },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.promotion, 'q')
+  assert.notEqual(decision.source, 'engine-objective')
+})
+
 test('Trixize builds bishop and knight across sequential promotions', () => {
   const game = new Chess('7k/PP6/8/8/8/8/8/7K w - - 0 1')
   const profile = getBotProfile('trixize')
@@ -252,11 +268,11 @@ test('Trixize builds bishop and knight across sequential promotions', () => {
     game,
     [
       { uci: 'a7a8q', score: 2400, rank: 1 },
-      { uci: 'a7a8b', score: 900, rank: 2 },
-      { uci: 'a7a8n', score: 880, rank: 3 },
+      { uci: 'a7a8b', score: 900, rank: 2, objectiveVerified: true },
+      { uci: 'a7a8n', score: 880, rank: 3, objectiveVerified: true },
       { uci: 'b7b8q', score: 2350, rank: 4 },
-      { uci: 'b7b8b', score: 870, rank: 5 },
-      { uci: 'b7b8n', score: 860, rank: 6 },
+      { uci: 'b7b8b', score: 870, rank: 5, objectiveVerified: true },
+      { uci: 'b7b8n', score: 860, rank: 6, objectiveVerified: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
@@ -269,7 +285,7 @@ test('Trixize builds bishop and knight across sequential promotions', () => {
     game,
     [
       { uci: 'b7b8q', score: 2300, rank: 1 },
-      { uci: 'b7b8n', score: 900, rank: 2 },
+      { uci: 'b7b8n', score: 900, rank: 2, objectiveVerified: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
@@ -285,7 +301,7 @@ test('Trixize delays an immediate mate for a decisively winning bishop-knight un
     game,
     [
       { uci: 'a7a8q', score: 99997, mate: 3, rank: 1 },
-      { uci: 'a7a8n', score: 900, mate: null, rank: 2 },
+      { uci: 'a7a8n', score: 900, mate: null, rank: 2, objectiveVerified: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
@@ -301,7 +317,7 @@ test('Trixize may pursue a sound bishop-knight underpromotion with other materia
     game,
     [
       { uci: 'a7a8q', score: 980, rank: 1 },
-      { uci: 'a7a8n', score: 860, rank: 2 },
+      { uci: 'a7a8n', score: 860, rank: 2, objectiveVerified: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
@@ -319,13 +335,29 @@ test('Trixize offers surplus material instead of taking an ordinary mate against
     game,
     [
       { uci: 'c1b3', score: 99997, mate: 3, rank: 1 },
-      { uci: 'g2g8', score: 99970, mate: 24, rank: 2 },
+      { uci: 'g2g8', score: 99970, mate: 24, rank: 2, objectiveVerified: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
   )
   assert.equal(decision.move.san, 'Rg8+')
   assert.equal(decision.source, 'engine-objective')
+})
+
+test('Trixize refuses unverified bishop-knight sacrifice priority', () => {
+  const game = new Chess('7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'c1b3', score: 99997, mate: 3, rank: 1 },
+      { uci: 'g2g8', score: 99970, mate: 24, rank: 2, objectiveVerified: false },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'Nb3')
+  assert.notEqual(decision.source, 'engine-objective')
 })
 
 test('Trixize excludes queen promotion while building the bishop and knight pair', () => {

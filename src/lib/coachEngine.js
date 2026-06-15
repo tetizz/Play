@@ -385,7 +385,9 @@ function bishopKnightObjectivePriority(before, after, move) {
   const afterOwn = materialCounts(after, color)
   const hadPair = beforeOwn.b >= 1 && beforeOwn.n >= 1
   const hasPair = afterOwn.b >= 1 && afterOwn.n >= 1
+  if (move.promotion && !['b', 'n'].includes(move.promotion)) return 0
   if (!hadPair && hasPair && ['b', 'n'].includes(move.promotion)) return 20000
+  if (!hadPair && ['b', 'n'].includes(move.promotion)) return 12000
 
   if (hadPair) {
     const extraType = isSurplusPiece(beforeOwn, move.piece)

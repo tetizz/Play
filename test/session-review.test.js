@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
 import { Chess } from 'chess.js'
 import {
   applyNextPremove,
@@ -15,6 +16,7 @@ import {
   aggregateAccuracy,
   buildFallbackFinalReview,
   evaluationToWhitePercent,
+  reviewPolicyForLength,
   reviewGameWithStockfish,
 } from '../src/lib/reviewEngine.js'
 
@@ -169,6 +171,63 @@ test('Fools Mate produces a complete navigable review', async () => {
   assert.equal(review.phaseAccuracy.white.opening.moves, 2)
   assert.equal(review.phaseAccuracy.black.opening.moves, 2)
   assert.match(review.moments.at(-1).explanation, /game|choice|evaluation|mate/i)
+})
+
+test('long reviews use the bounded fast path without redundant exact searches', async () => {
+  const source = new Chess()
+  source.loadPgn(fs.readFileSync(
+    new URL('./fixtures/trixize-mubassar-reference.pgn', import.meta.url),
+    'utf8',
+  ))
+  const history = source.history()
+  const fenToSan = new Map()
+  const replay = new Chess()
+  history.forEach((san) => {
+    fenToSan.set(replay.fen(), san)
+    replay.move(san)
+  })
+  const calls = []
+  const policy = reviewPolicyForLength(history.length)
+  const fakeClient = {
+    async analyze(fen, options = {}) {
+      calls.push({
+        depth: options.depth,
+        moveTime: options.moveTime || null,
+        searchMoves: options.searchMoves || [],
+      })
+      const game = new Chess(fen)
+      const playedSan = fenToSan.get(fen)
+      const legalMoves = game.moves({ verbose: true })
+      const played = legalMoves.find((move) => move.san === playedSan) || legalMoves[0]
+      const uci = `${played.from}${played.to}${played.promotion || ''}`
+      return [{
+        uci,
+        score: 20,
+        mate: played.san.includes('#') ? 1 : null,
+        rank: 1,
+        pv: [uci],
+      }]
+    },
+  }
+
+  const review = await reviewGameWithStockfish({
+    history,
+    client: fakeClient,
+    playedClient: fakeClient,
+  })
+
+  assert.equal(review.complete, true)
+  assert.equal(review.moments.length, history.length)
+  const deepCalls = calls.filter((call) => call.depth === policy.tacticalOptions.depth)
+  assert.ok(calls.length <= history.length + policy.maxDeepPasses)
+  assert.ok(deepCalls.length <= policy.maxDeepPasses)
+  assert.equal(calls.some((call) => call.searchMoves.length), false)
+  assert.equal(calls.every((call) =>
+    call.depth === policy.reviewOptions.depth ||
+    call.depth === policy.tacticalOptions.depth,
+  ), true)
+  assert.ok(policy.reviewOptions.depth < 22)
+  assert.ok(policy.reviewOptions.moveTime <= 220)
 })
 
 test('book and best moves always score 100 percent accuracy', async () => {

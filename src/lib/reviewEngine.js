@@ -11,6 +11,12 @@ const REVIEW_OPTIONS = { depth: 22, depthOnly: true, count: 6, timeout: 9800 }
 const TACTICAL_OPTIONS = { depth: 24, depthOnly: true, count: 8, timeout: 15000 }
 const SHORT_REVIEW_OPTIONS = { depth: 12, moveTime: 260, count: 4, timeout: 1800 }
 const SHORT_TACTICAL_OPTIONS = { depth: 16, moveTime: 800, count: 5, timeout: 3000 }
+const MEDIUM_REVIEW_OPTIONS = { depth: 16, moveTime: 380, count: 5, timeout: 2600 }
+const MEDIUM_TACTICAL_OPTIONS = { depth: 20, moveTime: 700, count: 6, timeout: 4200 }
+const LONG_REVIEW_OPTIONS = { depth: 12, moveTime: 220, count: 4, timeout: 1600 }
+const LONG_TACTICAL_OPTIONS = { depth: 16, moveTime: 420, count: 5, timeout: 2600 }
+const HUGE_REVIEW_OPTIONS = { depth: 10, moveTime: 160, count: 4, timeout: 1200 }
+const HUGE_TACTICAL_OPTIONS = { depth: 14, moveTime: 320, count: 5, timeout: 2100 }
 const CLASSIFICATION_ORDER = [
   'brilliant',
   'great',
@@ -46,8 +52,9 @@ export async function reviewGameWithStockfish({
   const moments = []
   const positions = [game.fen()]
   const graph = [{ ply: 0, score: null, mate: null, percent: 50 }]
-  const reviewOptions = history.length <= 8 ? SHORT_REVIEW_OPTIONS : REVIEW_OPTIONS
-  const tacticalOptions = history.length <= 8 ? SHORT_TACTICAL_OPTIONS : TACTICAL_OPTIONS
+  const policy = reviewPolicyForLength(history.length)
+  const { reviewOptions, tacticalOptions } = policy
+  let remainingDeepPasses = policy.maxDeepPasses
 
   for (let index = 0; index < history.length; index += 1) {
     if (signal?.aborted) throw new DOMException('Review cancelled', 'AbortError')
@@ -60,34 +67,34 @@ export async function reviewGameWithStockfish({
     if (!verboseMove) continue
 
     const playedUci = toUci(verboseMove)
-    let [candidates, exactPlayedLine] = await Promise.all([
-      safeAnalyze(client, beforeFen, reviewOptions),
-      analyzeExactPlayedMove(playedClient, beforeFen, playedUci, reviewOptions),
-    ])
-    const candidatePlayedLine = candidates.find((line) => sameUci(line.uci, playedUci))
-    let playedLine = sameUci(candidates[0]?.uci, playedUci)
-      ? candidates[0]
-      : exactPlayedLine || candidatePlayedLine
-    const tacticalCandidate = Boolean(
-      verboseMove.captured ||
-      verboseMove.san.includes('+') ||
-      verboseMove.san.includes('#') ||
-      !playedLine ||
-      scoreDifference(candidates[0]?.score, playedLine?.score) >= 40,
-    )
-    if (tacticalCandidate) {
-      const [deeper, deeperPlayedLine] = await Promise.all([
-        safeAnalyze(client, beforeFen, tacticalOptions),
-        analyzeExactPlayedMove(playedClient, beforeFen, playedUci, tacticalOptions),
-      ])
-      if (deeper.length) candidates = deeper
-      const deeperCandidatePlayed = candidates.find((line) => sameUci(line.uci, playedUci))
-      playedLine = sameUci(candidates[0]?.uci, playedUci)
-        ? candidates[0]
-        : deeperPlayedLine || deeperCandidatePlayed || playedLine
+    const phase = phaseForPosition(game, index)
+    let candidates = await safeAnalyze(client, beforeFen, reviewOptions)
+    let playedLine = findCandidateLine(candidates, playedUci)
+    if ((policy.exactCandidate || !playedLine) && candidates.length) {
+      playedLine = await analyzeExactPlayedMove(playedClient, beforeFen, playedUci, reviewOptions) ||
+        playedLine
     }
 
-    const phase = phaseForPosition(game, index)
+    const tacticalCandidate = shouldDeepenReviewMove({
+      candidates,
+      move: verboseMove,
+      phase,
+      playedLine,
+      policy,
+    })
+    if (tacticalCandidate && remainingDeepPasses > 0) {
+      remainingDeepPasses -= 1
+      const deeper = await safeAnalyze(client, beforeFen, tacticalOptions)
+      if (deeper.length) candidates = deeper
+      const deeperCandidatePlayed = candidates.find((line) => sameUci(line.uci, playedUci))
+      if (deeperCandidatePlayed && !policy.exactCandidate) {
+        playedLine = deeperCandidatePlayed
+      } else {
+        playedLine = await analyzeExactPlayedMove(playedClient, beforeFen, playedUci, tacticalOptions) ||
+          playedLine
+      }
+    }
+
     game.move(verboseMove)
     positions.push(game.fen())
     if (!playedLine) {
@@ -238,6 +245,79 @@ export function evaluationToWhitePercent(score, mate = null) {
   if (Number.isFinite(mate)) return mate > 0 ? 100 : 0
   if (!Number.isFinite(score)) return 50
   return roundTo(100 / (1 + Math.exp(-score / 220)), 2)
+}
+
+export function reviewPolicyForLength(totalPlies) {
+  if (totalPlies <= 8) {
+    return {
+      reviewOptions: SHORT_REVIEW_OPTIONS,
+      tacticalOptions: SHORT_TACTICAL_OPTIONS,
+      maxDeepPasses: Number.POSITIVE_INFINITY,
+      tacticalLossThreshold: 40,
+      quietLossThreshold: 40,
+      exactCandidate: true,
+    }
+  }
+  if (totalPlies <= 40) {
+    return {
+      reviewOptions: REVIEW_OPTIONS,
+      tacticalOptions: TACTICAL_OPTIONS,
+      maxDeepPasses: Number.POSITIVE_INFINITY,
+      tacticalLossThreshold: 40,
+      quietLossThreshold: 40,
+      exactCandidate: true,
+    }
+  }
+  if (totalPlies <= 80) {
+    return {
+      reviewOptions: MEDIUM_REVIEW_OPTIONS,
+      tacticalOptions: MEDIUM_TACTICAL_OPTIONS,
+      maxDeepPasses: 28,
+      tacticalLossThreshold: 45,
+      quietLossThreshold: 70,
+      exactCandidate: false,
+    }
+  }
+  if (totalPlies <= 120) {
+    return {
+      reviewOptions: LONG_REVIEW_OPTIONS,
+      tacticalOptions: LONG_TACTICAL_OPTIONS,
+      maxDeepPasses: 18,
+      tacticalLossThreshold: 55,
+      quietLossThreshold: 90,
+      exactCandidate: false,
+    }
+  }
+  return {
+    reviewOptions: HUGE_REVIEW_OPTIONS,
+    tacticalOptions: HUGE_TACTICAL_OPTIONS,
+    maxDeepPasses: 12,
+    tacticalLossThreshold: 65,
+    quietLossThreshold: 110,
+    exactCandidate: false,
+  }
+}
+
+function findCandidateLine(candidates, playedUci) {
+  if (!playedUci) return null
+  return candidates.find((line) => sameUci(line.uci, playedUci)) || null
+}
+
+function shouldDeepenReviewMove({ candidates, move, phase, playedLine, policy }) {
+  if (!candidates.length) return false
+  if (move.san.includes('#')) return true
+  if (Number.isFinite(candidates[0]?.mate) || Number.isFinite(playedLine?.mate)) return true
+
+  const loss = scoreDifference(candidates[0]?.score, playedLine?.score)
+  const forcingMove = Boolean(
+    move.captured ||
+    move.promotion ||
+    move.san.includes('+'),
+  )
+  if (!Number.isFinite(loss)) return forcingMove
+  if (forcingMove) return loss >= policy.tacticalLossThreshold
+  if (phase === 'opening') return false
+  return loss >= policy.quietLossThreshold
 }
 
 async function analyzeExactPlayedMove(client, fen, playedUci, options) {

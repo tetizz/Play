@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "bad-manners": "node scripts/badMannersBridge.mjs",
+    "test:bad-manners": "node scripts/badMannersGauntlet.mjs --limit=200",
     "build": "vite build",
     "build:recent-book": "node scripts/buildRecentRepertoireBook.mjs --profile ayden",
     "build:repertoires": "node scripts/buildRecentRepertoireBook.mjs --profile all",

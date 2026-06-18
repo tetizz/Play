@@ -163,6 +163,7 @@ const BOT_PROFILE_LIST = [
       maximumEngine: true,
       bishopKnightObjective: true,
       exactTablebase: true,
+      badMannersTakeover: true,
     },
     strengthPolicy: {
       engineElo: null,

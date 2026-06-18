@@ -1,0 +1,3376 @@
+{
+  "enginePath": "C:\\Users\\adria\\Downloads\\BadMannersStockfish\\dist\\BadMannersStockfish18.exe",
+  "depth": 14,
+  "moveTime": 650,
+  "total": 200,
+  "passed": 200,
+  "failed": 0,
+  "byCategory": {
+    "minor-promotion": {
+      "total": 60,
+      "passed": 60,
+      "failed": 0
+    },
+    "surplus-sacrifice": {
+      "total": 45,
+      "passed": 45,
+      "failed": 0
+    },
+    "win-enemy-piece": {
+      "total": 45,
+      "passed": 45,
+      "failed": 0
+    },
+    "pawn-race-geometry": {
+      "total": 50,
+      "passed": 50,
+      "failed": 0
+    }
+  },
+  "failures": [],
+  "results": [
+    {
+      "id": "promotion-1",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 219,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-2",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 206,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-3",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 196,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-4",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 197,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-5",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 205,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-6",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 221,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-7",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 214,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-8",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 201,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-9",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 200,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-10",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 196,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-11",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-12",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 187,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-13",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 207,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-14",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 207,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-15",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 200,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-16",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 205,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-17",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 203,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-18",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 199,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-19",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 199,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-20",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 198,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-21",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 203,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-22",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 204,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-23",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 205,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-24",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 199,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-25",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 197,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-26",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-27",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 193,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-28",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 187,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-29",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 209,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-30",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 200,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-31",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 202,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-32",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 194,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-33",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 199,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-34",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 204,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-35",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 187,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-36",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 170,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-37",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-38",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 210,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-39",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 186,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-40",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 193,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-41",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 188,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-42",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-43",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 183,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-44",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 181,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-45",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-46",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 209,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-47",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-48",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 200,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-49",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 190,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-50",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 198,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-51",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 199,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-52",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 189,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-53",
+      "category": "minor-promotion",
+      "fen": "2k5/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 209,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-54",
+      "category": "minor-promotion",
+      "fen": "1k6/6P1/8/8/8/8/8/2KB4 w - - 0 1",
+      "searchMoves": [
+        "g7g8n"
+      ],
+      "selectedUci": "g7g8n",
+      "selectedSan": "g8=N",
+      "source": "engine-objective",
+      "score": 208,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-55",
+      "category": "minor-promotion",
+      "fen": "4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 192,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-56",
+      "category": "minor-promotion",
+      "fen": "5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1",
+      "searchMoves": [
+        "h7h8b"
+      ],
+      "selectedUci": "h7h8b",
+      "selectedSan": "h8=B",
+      "source": "engine-objective",
+      "score": 193,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-57",
+      "category": "minor-promotion",
+      "fen": "6k1/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 189,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-58",
+      "category": "minor-promotion",
+      "fen": "7k/P7/8/8/8/8/8/6BK w - - 0 1",
+      "searchMoves": [
+        "a7a8n"
+      ],
+      "selectedUci": "a7a8n",
+      "selectedSan": "a8=N",
+      "source": "engine-objective",
+      "score": 203,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-59",
+      "category": "minor-promotion",
+      "fen": "5k2/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 192,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "promotion-60",
+      "category": "minor-promotion",
+      "fen": "6k1/1P6/8/8/8/8/8/6NK w - - 0 1",
+      "searchMoves": [
+        "b7b8b"
+      ],
+      "selectedUci": "b7b8b",
+      "selectedSan": "b8=B",
+      "source": "engine-objective",
+      "score": 190,
+      "pass": true,
+      "reason": "promoted to required bishop/knight"
+    },
+    {
+      "id": "sacrifice-1",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Rg7",
+      "source": "engine-objective",
+      "score": 205,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-2",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Qg7+",
+      "source": "engine-objective",
+      "score": 205,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-3",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Rf7",
+      "source": "engine-objective",
+      "score": 194,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-4",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Qf8+",
+      "source": "engine-objective",
+      "score": 202,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-5",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 581,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-6",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Rg8+",
+      "source": "engine-objective",
+      "score": 188,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-7",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Qg7+",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-8",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Rf7",
+      "source": "engine-objective",
+      "score": 193,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-9",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Qf7+",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-10",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 608,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-11",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Rg7",
+      "source": "engine-objective",
+      "score": 182,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-12",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Qg8+",
+      "source": "engine-objective",
+      "score": 185,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-13",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Rf8+",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-14",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Qf7+",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-15",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 695,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-16",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Rg8+",
+      "source": "engine-objective",
+      "score": 189,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-17",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Qg7+",
+      "source": "engine-objective",
+      "score": 187,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-18",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Rf7",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-19",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Qf7+",
+      "source": "engine-objective",
+      "score": 201,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-20",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 99991,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-21",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Rg8+",
+      "source": "engine-objective",
+      "score": 192,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-22",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Qg7+",
+      "source": "engine-objective",
+      "score": 193,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-23",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Rf8+",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-24",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Qf7+",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-25",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 99991,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-26",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Rg7",
+      "source": "engine-objective",
+      "score": 198,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-27",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Qg8+",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-28",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Rf8+",
+      "source": "engine-objective",
+      "score": 194,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-29",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Qf7+",
+      "source": "engine-objective",
+      "score": 195,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-30",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 99991,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-31",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Rg8+",
+      "source": "engine-objective",
+      "score": 197,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-32",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Qg7+",
+      "source": "engine-objective",
+      "score": 194,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-33",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Rf7",
+      "source": "engine-objective",
+      "score": 187,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-34",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Qf8+",
+      "source": "engine-objective",
+      "score": 192,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-35",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 99991,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-36",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Rg7",
+      "source": "engine-objective",
+      "score": 191,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-37",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Qg7+",
+      "source": "engine-objective",
+      "score": 188,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-38",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Rf8+",
+      "source": "engine-objective",
+      "score": 186,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-39",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f7",
+      "selectedSan": "Qf7+",
+      "source": "engine-objective",
+      "score": 184,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-40",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 99991,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-41",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h2"
+      ],
+      "selectedUci": "g2g7",
+      "selectedSan": "Rg7",
+      "source": "engine-objective",
+      "score": 186,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-42",
+      "category": "surplus-sacrifice",
+      "fen": "7k/8/8/8/8/8/K5Q1/1BN5 w - - 0 1",
+      "searchMoves": [
+        "g2a8",
+        "g2g6",
+        "g2g7",
+        "g2g8",
+        "g2h3",
+        "g2h2",
+        "g2h1",
+        "g2b2"
+      ],
+      "selectedUci": "g2g8",
+      "selectedSan": "Qg8+",
+      "source": "engine-objective",
+      "score": 186,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-43",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4R2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g2"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Rf8+",
+      "source": "engine-objective",
+      "score": 193,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-44",
+      "category": "surplus-sacrifice",
+      "fen": "6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1",
+      "searchMoves": [
+        "f2f6",
+        "f2f7",
+        "f2f8",
+        "f2g3",
+        "f2g2",
+        "f2g1"
+      ],
+      "selectedUci": "f2f8",
+      "selectedSan": "Qf8+",
+      "source": "engine-objective",
+      "score": 186,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "sacrifice-45",
+      "category": "surplus-sacrifice",
+      "fen": "5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1",
+      "searchMoves": [
+        "h2h6",
+        "h2h7",
+        "h2h8",
+        "h2f2"
+      ],
+      "selectedUci": "h2h7",
+      "selectedSan": "Rh7",
+      "source": "engine-objective",
+      "score": 99991,
+      "pass": true,
+      "reason": "offered surplus material or captured while converting"
+    },
+    {
+      "id": "capture-1",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99989,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-2",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-3",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-4",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "g1e2",
+      "selectedSan": "Nxe2",
+      "source": "engine-best",
+      "score": 570,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-5",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "g1f2",
+      "selectedSan": "Bxf2",
+      "source": "engine-best",
+      "score": 796,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-6",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-7",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-8",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-9",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-best",
+      "score": 606,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-10",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "f1f2",
+      "selectedSan": "Qxf2+",
+      "source": "engine-mate",
+      "score": 99988,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-11",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-12",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-13",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-14",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99988,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-15",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "g1f2",
+      "selectedSan": "Bxf2",
+      "source": "engine-mate",
+      "score": 99992,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-16",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-17",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-18",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-19",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Rxe2",
+      "source": "engine-mate",
+      "score": 99986,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-20",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "g1f2",
+      "selectedSan": "Bxf2",
+      "source": "engine-mate",
+      "score": 99992,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-21",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-22",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-23",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-24",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "g1e2",
+      "selectedSan": "Nxe2",
+      "source": "engine-mate",
+      "score": 99988,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-25",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "g1f2",
+      "selectedSan": "Bxf2",
+      "source": "engine-mate",
+      "score": 99992,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-26",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "g1e2",
+      "selectedSan": "Nxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-27",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99994,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-28",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-29",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99989,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-30",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "g1f2",
+      "selectedSan": "Bxf2",
+      "source": "engine-mate",
+      "score": 99991,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-31",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99994,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-32",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "g1e2",
+      "selectedSan": "Nxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-33",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-34",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99989,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-35",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "h1f2",
+      "selectedSan": "Nxf2",
+      "source": "engine-mate",
+      "score": 99992,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-36",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-37",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "f1e2",
+      "selectedSan": "Bxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-38",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-39",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Rxe2",
+      "source": "engine-mate",
+      "score": 99988,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-40",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "g1f2",
+      "selectedSan": "Bxf2",
+      "source": "engine-mate",
+      "score": 99992,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-41",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4r3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99994,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "capture-42",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4n3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99994,
+      "pass": true,
+      "reason": "captured n"
+    },
+    {
+      "id": "capture-43",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4b3/2K1QBN1 w - - 0 1",
+      "searchMoves": [
+        "e1d2",
+        "e1c3",
+        "e1b4",
+        "e1a5",
+        "e1e2",
+        "e1f2",
+        "e1g3",
+        "e1h4",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "e1e2",
+      "selectedSan": "Qxe2",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured b"
+    },
+    {
+      "id": "capture-44",
+      "category": "win-enemy-piece",
+      "fen": "6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1",
+      "searchMoves": [
+        "e1e2",
+        "e1d1",
+        "f1e2",
+        "g1e2"
+      ],
+      "selectedUci": "g1e2",
+      "selectedSan": "Nxe2",
+      "source": "engine-mate",
+      "score": 99989,
+      "pass": true,
+      "reason": "captured q"
+    },
+    {
+      "id": "capture-45",
+      "category": "win-enemy-piece",
+      "fen": "5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1",
+      "searchMoves": [
+        "f1e2",
+        "f1d3",
+        "f1c4",
+        "f1b5",
+        "f1a6",
+        "f1f2",
+        "f1g2",
+        "f1h3",
+        "f1e1",
+        "f1d1",
+        "g1f2",
+        "h1f2"
+      ],
+      "selectedUci": "f1f2",
+      "selectedSan": "Qxf2+",
+      "source": "engine-mate",
+      "score": 99993,
+      "pass": true,
+      "reason": "captured r"
+    },
+    {
+      "id": "geometry-1",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 669,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-2",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 501,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-3",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 631,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-4",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 536,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-5",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 712,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-6",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 602,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-7",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 517,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-8",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 657,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-9",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 636,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-10",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 734,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-11",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 599,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-12",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 529,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-13",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 675,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-14",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 632,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-15",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 801,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-16",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 619,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-17",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 580,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-18",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 708,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-19",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 618,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-20",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 776,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-21",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 623,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-22",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 643,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-23",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 756,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-24",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 628,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-25",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 787,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-26",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 590,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-27",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 566,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-28",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 754,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-29",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 630,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-30",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 785,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-31",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 580,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-32",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 617,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-33",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 747,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-34",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 650,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-35",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 786,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-36",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 572,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-37",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 605,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-38",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 754,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-39",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 645,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-40",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 786,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-41",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 625,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-42",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 562,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-43",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 732,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-44",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 770,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-45",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 790,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-46",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/4k3/8/3K4/4P3/2B5 w - - 0 1",
+      "searchMoves": [
+        "e2e3",
+        "e2e4"
+      ],
+      "selectedUci": "e2e4",
+      "selectedSan": "e4",
+      "source": "engine-objective",
+      "score": 626,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-47",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/3k4/8/2K5/3P4/6N1 w - - 0 1",
+      "searchMoves": [
+        "d2d3",
+        "d2d4"
+      ],
+      "selectedUci": "d2d4",
+      "selectedSan": "d4",
+      "source": "engine-objective",
+      "score": 566,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-48",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/2k5/8/1K6/2P5/8/5B2 w - - 0 1",
+      "searchMoves": [
+        "c3c4"
+      ],
+      "selectedUci": "c3c4",
+      "selectedSan": "c4",
+      "source": "engine-objective",
+      "score": 767,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    },
+    {
+      "id": "geometry-49",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1",
+      "searchMoves": [
+        "f3f4"
+      ],
+      "selectedUci": "f3f4",
+      "selectedSan": "f4",
+      "source": "engine-objective",
+      "score": 781,
+      "pass": true,
+      "reason": "advanced conversion pawn"
+    },
+    {
+      "id": "geometry-50",
+      "category": "pawn-race-geometry",
+      "fen": "8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1",
+      "searchMoves": [
+        "b2b3",
+        "b2b4"
+      ],
+      "selectedUci": "b2b4",
+      "selectedSan": "b4",
+      "source": "engine-objective",
+      "score": 767,
+      "pass": true,
+      "reason": "made pawn/king geometry progress"
+    }
+  ]
+}

@@ -9,10 +9,17 @@ import {
   moveContext,
   shouldActivateBeltMode,
 } from '../lib/coachEngine'
+import {
+  annotateBadMannersCandidates,
+  badMannersSearchUcis,
+  createBadMannersClient,
+  shouldUseBadMannersTakeover,
+} from '../lib/badMannersClient'
 import { buildFallbackFinalReview, reviewGameWithStockfish } from '../lib/reviewEngine'
 import { createStockfishClient } from '../lib/stockfishClient'
 import {
   createTablebaseClient,
+  isExactWinningMove,
   isTablebaseEligible,
   selectTablebaseDecision,
 } from '../lib/tablebaseClient'
@@ -32,6 +39,7 @@ const PLAYER = Object.freeze({ name: 'player', rating: 100, countryCode: 'us' })
 const BOT_DELAY_MS = 2000
 const BOT_MATCH_DELAY_MS = 850
 const EMPTY_STYLE_PROFILE = Object.freeze({ openingBook: {}, bookMaxPlies: 0 })
+const BAD_MANNERS_SAFE_SCORE = 120
 
 export function useGameController(defaultBotId) {
   const [phase, setPhase] = useState(restored?.phase || 'setup')
@@ -78,6 +86,7 @@ export function useGameController(defaultBotId) {
   const initializedRef = useRef(false)
   const gameplayClientRef = useRef(null)
   const mateClientRef = useRef(null)
+  const badMannersClientRef = useRef(null)
   const tablebaseClientRef = useRef(null)
   const reviewClientRef = useRef(null)
   const reviewPlayedClientRef = useRef(null)
@@ -99,12 +108,14 @@ export function useGameController(defaultBotId) {
   useEffect(() => {
     gameplayClientRef.current = createStockfishClient()
     mateClientRef.current = createStockfishClient()
+    badMannersClientRef.current = createBadMannersClient()
     tablebaseClientRef.current = createTablebaseClient()
     reviewClientRef.current = createStockfishClient()
     reviewPlayedClientRef.current = createStockfishClient()
     return () => {
       gameplayClientRef.current?.destroy()
       mateClientRef.current?.destroy()
+      badMannersClientRef.current?.destroy()
       tablebaseClientRef.current?.destroy()
       reviewClientRef.current?.destroy()
       reviewPlayedClientRef.current?.destroy()
@@ -163,6 +174,7 @@ export function useGameController(defaultBotId) {
     timerRef.current = null
     gameplayClientRef.current?.cancelAll()
     mateClientRef.current?.cancelAll()
+    badMannersClientRef.current?.cancelAll()
     tablebaseClientRef.current?.cancelAll()
     reviewClientRef.current?.cancelAll()
     reviewPlayedClientRef.current?.cancelAll()
@@ -280,11 +292,81 @@ export function useGameController(defaultBotId) {
       }
       const activeBelt = beltRef.current && automatedProfile.capabilities.beltMode
       let decision = null
-      if (
-        automatedProfile.capabilities.exactTablebase &&
+      const tablebaseEligible = automatedProfile.capabilities.exactTablebase &&
         isTablebaseEligible(beforeGame.fen())
+      let tablebaseLoaded = false
+      let tablebasePayload = null
+      const tablebasePromise = tablebaseEligible
+        ? tablebaseClientRef.current.probe(beforeGame.fen()).catch(() => null)
+        : null
+      const loadTablebase = async () => {
+        if (!tablebasePromise) return null
+        if (!tablebaseLoaded) {
+          tablebasePayload = await tablebasePromise
+          tablebaseLoaded = true
+        }
+        return tablebasePayload
+      }
+
+      if (!decision && shouldUseBadMannersTakeover(beforeGame, automatedProfile)) {
+        const badMannersPolicy = calculationProfile(automatedProfile, activeBelt, beforeGame)
+        const badMannersObjectiveMoves = badMannersSearchUcis(beforeGame)
+        try {
+          const badMannersCandidates = await badMannersClientRef.current?.bestMoves(
+            beforeGame.fen(),
+            {
+              ...badMannersPolicy,
+              depth: Math.max(24, badMannersPolicy.depth || 0),
+              moveTime: Math.max(4200, badMannersPolicy.moveTime || 0),
+              count: badMannersObjectiveMoves.length
+                ? Math.min(16, badMannersObjectiveMoves.length)
+                : Math.max(1, badMannersPolicy.count || 1),
+              searchMoves: badMannersObjectiveMoves,
+              timeout: Math.max(9000, (badMannersPolicy.moveTime || 0) + 6000),
+            },
+          ) || []
+          if (generationRef.current !== token) return
+          if (badMannersCandidates.length) {
+            const annotatedCandidates = annotateBadMannersCandidates(beforeGame, badMannersCandidates)
+            const badMannersDecision = chooseCoachMove(
+              beforeGame,
+              annotatedCandidates,
+              automatedProfile,
+              styleProfile,
+              activeBelt,
+            )
+            if (badMannersDecision.move) {
+              const playedUci = moveToUci(badMannersDecision.move)
+              const exactPayload = tablebaseEligible ? await loadTablebase() : null
+              if (generationRef.current !== token) return
+              const exactSafe = exactPayload ? isExactWinningMove(exactPayload, playedUci) : false
+              const keepsWin = exactSafe ||
+                badMannersDecision.source === 'engine-objective' ||
+                badMannersDecision.source === 'engine-mate' ||
+                Number.isFinite(badMannersDecision.score) &&
+                  badMannersDecision.score >= BAD_MANNERS_SAFE_SCORE
+              if (!badMannersObjectiveMoves.length || keepsWin) {
+                decision = {
+                  ...badMannersDecision,
+                  source: badMannersDecision.source === 'engine-objective'
+                    ? 'bad-manners-objective'
+                    : 'bad-manners-stockfish',
+                  badManners: true,
+                  exact: exactSafe || badMannersDecision.exact,
+                }
+              }
+            }
+          }
+        } catch {
+          decision = null
+        }
+      }
+
+      if (
+        !decision &&
+        tablebaseEligible
       ) {
-        const tablebase = await tablebaseClientRef.current.probe(beforeGame.fen())
+        const tablebase = await loadTablebase()
         if (generationRef.current !== token) return
         decision = selectTablebaseDecision(beforeGame, tablebase, {
           preferBishopKnightObjective: automatedProfile.capabilities.bishopKnightObjective,

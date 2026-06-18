@@ -1,4 +1,4 @@
-import { Bot, Swords, UserRound } from 'lucide-react'
+import { Bot, FlaskConical, Swords, UserRound } from 'lucide-react'
 import { BOT_PROFILES } from '../data/botProfiles'
 import { Avatar, CountryFlag } from './Identity'
 
@@ -22,10 +22,23 @@ export function SetupScreen({
   selectMatchBot,
   startGame,
   styleProfilesReady,
+  onOpenBadManners,
 }) {
   return (
     <main className="setup-page">
-      <header className="app-brand"><Bot /> <span>Play Bots</span></header>
+      <header className="setup-header">
+        <div className="app-brand"><Bot /> <span>Play Bots</span></div>
+        <button
+          type="button"
+          className="gauntlet-open-button"
+          onClick={onOpenBadManners}
+          title="Bad Manners test dashboard"
+          aria-label="Open Bad Manners test dashboard"
+        >
+          <FlaskConical />
+          <span>Bad Manners Tests</span>
+        </button>
+      </header>
       <div className="play-mode-choice" role="tablist" aria-label="Game mode">
         <button
           type="button"

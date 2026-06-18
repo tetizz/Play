@@ -115,6 +115,12 @@ export function selectTablebaseDecision(
   }
 }
 
+export function isExactWinningMove(payload, uci) {
+  return payload?.category === EXACT_WIN &&
+    Array.isArray(payload.moves) &&
+    payload.moves.some((record) => record.uci === uci && record.category === EXACT_LOSS)
+}
+
 function compareExactWins(a, b) {
   if (a.record.checkmate !== b.record.checkmate) return a.record.checkmate ? -1 : 1
   const mateDifference = distance(a.record.dtm) - distance(b.record.dtm)

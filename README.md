@@ -16,6 +16,7 @@ Licensed under GPL-3.0.
 - Ayden's separate low-noise 1900 profile
 - Akshit's knight-specialist policy and restricted dialogue
 - Trixize's displayed 1550 profile, maximum-strength analysis, forced `1. Nf3`, and perfect-theory preference
+- Optional local BadMannersStockfish endgame takeover for Trixize bishop-and-knight disrespect wins
 - Reload-safe game persistence and deterministic turn/premove handling
 - Bookup-derived move classifications, per-side counts, phase accuracy, game rating, evaluation graph, best line, and per-move explanations
 - Unit and Playwright regression coverage for profiles, repertoire selection, classifications, premoves, persistence, review, and responsive layouts
@@ -27,14 +28,28 @@ npm install
 npm run dev
 ```
 
+For the local BadMannersStockfish endgame takeover, start the bridge in a second
+terminal before playing Trixize endgames:
+
+```bash
+npm run bad-manners
+```
+
+By default it uses `C:\Users\adria\Downloads\BadMannersStockfish\dist\BadMannersStockfish18.exe`.
+Override that with `BAD_MANNERS_ENGINE_PATH` if the executable moves.
+
 ## Checks
 
 ```bash
 npm test
+npm run test:bad-manners
 npm run lint
 npm run build
 npm run test:e2e
 ```
+
+`npm run test:bad-manners` runs the 200-position BadMannersStockfish endgame
+gauntlet and writes the full JSON report to `test-results/bad-manners-gauntlet.json`.
 
 ## Repertoire Data
 

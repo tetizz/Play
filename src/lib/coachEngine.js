@@ -42,13 +42,21 @@ export function chooseCoachMove(
 ) {
   const policy = calculationProfile(profile, beltMode, game)
   const candidates = normalizeEngineCandidates(game, engineInput)
+  const badMannersChallenge = profile.capabilities.bishopKnightObjective &&
+    isBishopKnightChallengePosition(game, game.turn())
+  const playableCandidates = badMannersChallenge
+    ? candidates.filter((candidate) => !rejectsBadMannersPureFinal(game, candidate))
+    : candidates
   const bishopKnightPromotion = profile.capabilities.bishopKnightObjective
     ? selectBishopKnightUnderpromotion(game, candidates)
     : null
   const bishopKnightConversion = profile.capabilities.bishopKnightObjective
     ? selectBishopKnightConversionMove(game, candidates)
     : null
-  const forcedMate = selectFastestMate(candidates)
+  const bishopKnightCapture = profile.capabilities.bishopKnightObjective
+    ? selectBishopKnightEnemyCapture(game, candidates)
+    : null
+  const forcedMate = selectFastestMate(playableCandidates)
   if (bishopKnightConversion) {
     return {
       move: bishopKnightConversion.move,
@@ -67,6 +75,17 @@ export function chooseCoachMove(
       score: bishopKnightPromotion.score,
       rank: bishopKnightPromotion.rank,
       line: bishopKnightPromotion,
+      bestLine: candidates[0],
+      candidateLines: candidates,
+    }
+  }
+  if (bishopKnightCapture) {
+    return {
+      move: bishopKnightCapture.move,
+      source: 'engine-objective',
+      score: bishopKnightCapture.score,
+      rank: bishopKnightCapture.rank,
+      line: bishopKnightCapture,
       bestLine: candidates[0],
       candidateLines: candidates,
     }
@@ -104,7 +123,7 @@ export function chooseCoachMove(
     }
   }
 
-  if (candidates.length) {
+  if (playableCandidates.length) {
     if (bishopKnightPromotion) {
       return {
         move: bishopKnightPromotion.move,
@@ -116,15 +135,15 @@ export function chooseCoachMove(
         candidateLines: candidates,
       }
     }
-    const selected = selectEngineMove(game, candidates, profile, styleProfile, policy)
+    const selected = selectEngineMove(game, playableCandidates, profile, styleProfile, policy)
     return {
       move: selected.move,
       source: selected.rank === 1 ? 'engine-best' : 'engine-style',
       score: selected.score,
       rank: selected.rank,
       line: selected,
-      bestLine: candidates[0],
-      candidateLines: candidates,
+      bestLine: playableCandidates[0],
+      candidateLines: playableCandidates,
     }
   }
 
@@ -378,10 +397,53 @@ function selectBishopKnightConversionMove(game, candidates) {
     })[0] || null
 }
 
+function selectBishopKnightEnemyCapture(game, candidates) {
+  const color = game.turn()
+  const own = materialCounts(game, color)
+  const opponent = materialCounts(game, oppositeColor(color))
+  const opponentMaterial = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q
+  if (opponentMaterial === 0) return null
+  if (own.b === 0 && own.n === 0) return null
+
+  return candidates
+    .filter((candidate) => {
+      if (candidate.badManners !== true || candidate.objectiveVerified !== true) return false
+      if (!isWinningObjectiveCandidate(candidate)) return false
+      if (!candidate.move.captured || candidate.move.captured === 'k') return false
+      const after = cloneGame(game)
+      after.move(candidate.move)
+      return !after.isGameOver() && (
+        isBishopKnightDisrespectPosition(after, color) ||
+        canPursueBishopKnightObjective(after, color)
+      )
+    })
+    .sort((a, b) => {
+      const captureDiff = PIECE_VALUES[b.move.captured] - PIECE_VALUES[a.move.captured]
+      return captureDiff || (b.score ?? -Infinity) - (a.score ?? -Infinity) || a.rank - b.rank
+    })[0] || null
+}
+
 function isWinningObjectiveCandidate(candidate) {
   return Number.isFinite(candidate.mate)
     ? candidate.mate > 0
     : Number.isFinite(candidate.score) && candidate.score >= (candidate.badManners ? 120 : 650)
+}
+
+function isBishopKnightChallengePosition(game, color) {
+  return isConversionEndgame(game) ||
+    isBishopKnightMatePosition(game, color) ||
+    isBishopKnightConversionPosition(game, color) ||
+    isBishopKnightDisrespectPosition(game, color) ||
+    canCreateBishopKnightMate(game, color) ||
+    canPursueBishopKnightObjective(game, color)
+}
+
+function rejectsBadMannersPureFinal(game, candidate) {
+  if (!candidate?.move) return false
+  const after = cloneGame(game)
+  after.move(candidate.move)
+  const isMatingLine = after.isCheckmate() || (Number.isFinite(candidate.mate) && candidate.mate > 0)
+  return isMatingLine && !isBishopKnightMatePosition(after, candidate.move.color)
 }
 
 function bishopKnightObjectivePriority(before, after, move) {

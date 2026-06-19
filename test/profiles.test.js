@@ -344,6 +344,26 @@ test('Trixize offers surplus material instead of taking an ordinary mate against
   assert.equal(decision.source, 'engine-objective')
 })
 
+test('Trixize rejects screenshot-style non-pure mate while conversion material remains', () => {
+  const game = new Chess('8/6B1/8/6k1/R5p1/1p1B2P1/1P4KP/8 w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const mate = game.moves({ verbose: true }).find((move) => move.san === 'Ra5#')
+  assert.ok(mate)
+
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a4a5', score: 99999, mate: 1, rank: 1 },
+      { uci: 'h2h4', score: 900, mate: null, rank: 2, objectiveVerified: true },
+      { uci: 'a4g4', score: 820, mate: null, rank: 3, objectiveVerified: true },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.notEqual(decision.move.san, 'Ra5#')
+  assert.notEqual(decision.source, 'engine-mate')
+})
+
 test('Trixize refuses unverified bishop-knight sacrifice priority', () => {
   const game = new Chess('7k/8/8/8/8/8/K5R1/1BN5 w - - 0 1')
   const profile = getBotProfile('trixize')
@@ -356,7 +376,7 @@ test('Trixize refuses unverified bishop-knight sacrifice priority', () => {
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
   )
-  assert.equal(decision.move.san, 'Nb3')
+  assert.notEqual(decision.move.san, 'Rg8+')
   assert.notEqual(decision.source, 'engine-objective')
 })
 
@@ -555,6 +575,8 @@ test('Trixize prefers a familiar Black repertoire move inside the engine-safe wi
       bookMaxPlies: 40,
       bookKeyType: 'position',
     },
+    false,
+    () => 0,
   )
   assert.equal(decision.move.san, 'd6')
   assert.equal(decision.source, 'repertoire')

@@ -3,6 +3,8 @@ import { Chessboard } from 'react-chessboard'
 import {
   ArrowLeft,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   CircleDot,
   Crown,
   RefreshCcw,
@@ -39,6 +41,7 @@ export function BadMannersDashboard({ onBack }) {
   const [status, setStatus] = useState('loading')
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
+  const [linePly, setLinePly] = useState(0)
 
   useEffect(() => {
     if (!accessGranted) return undefined
@@ -53,6 +56,7 @@ export function BadMannersDashboard({ onBack }) {
           setReport(payload)
           setStatus('ready')
           setSelectedId(payload.failures?.[0]?.id || payload.results?.[0]?.id || null)
+          setLinePly(0)
         }
       } catch {
         if (!cancelled) setStatus('missing')
@@ -152,7 +156,10 @@ export function BadMannersDashboard({ onBack }) {
               category={{ key: 'all', total: report?.total || 0, passed: report?.passed || 0, failed: report?.failed || 0 }}
               active={activeCategory === 'all'}
               label="All"
-              onSelect={() => setActiveCategory('all')}
+              onSelect={() => {
+                setActiveCategory('all')
+                setLinePly(0)
+              }}
             />
             {categories.map((category) => (
               <CategoryButton
@@ -160,7 +167,10 @@ export function BadMannersDashboard({ onBack }) {
                 category={category}
                 active={activeCategory === category.key}
                 label={CATEGORY_LABELS[category.key] || category.key}
-                onSelect={() => setActiveCategory(category.key)}
+                onSelect={() => {
+                  setActiveCategory(category.key)
+                  setLinePly(0)
+                }}
               />
             ))}
           </section>
@@ -175,7 +185,10 @@ export function BadMannersDashboard({ onBack }) {
                     result.id === selected?.id ? 'selected' : '',
                     result.pass ? 'pass' : 'fail',
                   ].filter(Boolean).join(' ')}
-                  onClick={() => setSelectedId(result.id)}
+                  onClick={() => {
+                    setSelectedId(result.id)
+                    setLinePly(0)
+                  }}
                 >
                   {result.pass ? <CheckCircle2 /> : <XCircle />}
                   <span>
@@ -190,7 +203,7 @@ export function BadMannersDashboard({ onBack }) {
             <article className="gauntlet-position">
               {selected ? (
                 <>
-                  <FenBoard result={selected} />
+                  <FenBoard result={selected} linePly={linePly} onLinePlyChange={setLinePly} />
                   <div className="position-heading">
                     <div>
                       <span className="eyebrow">{CATEGORY_LABELS[selected.category] || selected.category}</span>
@@ -198,6 +211,8 @@ export function BadMannersDashboard({ onBack }) {
                     </div>
                     <StatusPill pass={selected.pass} />
                   </div>
+                  <LineSummary result={selected} />
+                  <MoveTimeline result={selected} activePly={linePly} onSelect={setLinePly} />
                   <dl>
                     <div>
                       <dt>Move</dt>
@@ -267,8 +282,20 @@ function AccessPanel({ value, error, onChange, onSubmit }) {
   )
 }
 
-function FenBoard({ result }) {
-  const move = parseUci(result.selectedUci)
+function FenBoard({ result, linePly, onLinePlyChange }) {
+  const line = result.line || []
+  const maxPly = line.length
+  const activeMove = line[Math.max(0, Math.min(linePly, maxPly) - 1)] || {
+    ply: 1,
+    role: 'bad-manners',
+    san: result.selectedSan,
+    uci: result.selectedUci,
+    beforeFen: result.fen,
+    afterFen: line[0]?.afterFen || result.finalFen || result.fen,
+    note: result.firstMoveReason,
+  }
+  const boardFen = activeMove.beforeFen || result.fen
+  const move = parseUci(activeMove.uci)
   const squareStyles = move
     ? {
         [move.from]: highlight('#e5c04d99'),
@@ -279,8 +306,8 @@ function FenBoard({ result }) {
     <div className="gauntlet-board-wrap" aria-label="Selected test board">
       <div className="gauntlet-board">
         <Chessboard options={{
-          id: `bad-manners-${result.id}`,
-          position: result.fen,
+          id: `bad-manners-${result.id}-${linePly}`,
+          position: boardFen,
           boardOrientation: 'white',
           boardStyle: { borderRadius: 0 },
           lightSquareStyle: { backgroundColor: '#daba6d' },
@@ -293,11 +320,74 @@ function FenBoard({ result }) {
           animationDurationInMs: 0,
         }} />
       </div>
-      <div>
-        <span>{result.selectedSan || result.selectedUci || 'No move'}</span>
-        <strong>{CATEGORY_LABELS[result.category] || result.category}</strong>
+      <div className="gauntlet-board-side">
+        <span>{activeMove.san || activeMove.uci || 'No move'}</span>
+        <strong>{activeMove.role === 'defender' ? 'Defender reply' : 'Bad Manners engine'}</strong>
+        <small>{activeMove.note || CATEGORY_LABELS[result.category] || result.category}</small>
+        <div className="line-controls" aria-label="Proof line controls">
+          <button
+            type="button"
+            onClick={() => onLinePlyChange(Math.max(0, linePly - 1))}
+            disabled={linePly <= 0}
+            aria-label="Previous move"
+            title="Previous move"
+          >
+            <ChevronLeft />
+          </button>
+          <b>{Math.min(linePly || 1, maxPly || 1)} / {Math.max(maxPly, 1)}</b>
+          <button
+            type="button"
+            onClick={() => onLinePlyChange(Math.min(maxPly, Math.max(1, linePly + 1)))}
+            disabled={linePly >= maxPly}
+            aria-label="Next move"
+            title="Next move"
+          >
+            <ChevronRight />
+          </button>
+        </div>
       </div>
     </div>
+  )
+}
+
+function LineSummary({ result }) {
+  return (
+    <div className="line-summary" aria-label="Proof line summary">
+      <div>
+        <span>KBNK</span>
+        <strong>{result.reachedKbnk ? `Ply ${result.kbnkPly}` : 'No'}</strong>
+      </div>
+      <div>
+        <span>Mate</span>
+        <strong>{result.checkmated ? `Ply ${result.linePlies}` : 'No'}</strong>
+      </div>
+      <div>
+        <span>Line</span>
+        <strong>{result.linePlies || 0} plies</strong>
+      </div>
+    </div>
+  )
+}
+
+function MoveTimeline({ result, activePly, onSelect }) {
+  const line = result.line || []
+  if (!line.length) return null
+  return (
+    <section className="line-timeline" aria-label="Engine proof moves">
+      {line.map((move) => (
+        <button
+          type="button"
+          key={`${result.id}-${move.ply}-${move.uci}`}
+          className={[activePly === move.ply ? 'active' : '', move.role].filter(Boolean).join(' ')}
+          onClick={() => onSelect(move.ply)}
+        >
+          <em>{move.ply}</em>
+          <span>{move.role === 'defender' ? 'Defender' : 'Engine'}</span>
+          <strong>{move.san || move.uci}</strong>
+          <small>{move.note || move.uci}</small>
+        </button>
+      ))}
+    </section>
   )
 }
 

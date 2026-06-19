@@ -86,11 +86,16 @@ export function selectTablebaseDecision(
     return [{ move, record }]
   })
   if (!exactWins.length) return null
+  const allowedWins = preferBishopKnightObjective
+    ? exactWins.filter(({ move, record }) => !isForbiddenNonPureMate(game, move, record))
+    : exactWins
+  if (preferBishopKnightObjective && !allowedWins.length) return null
+  const candidateWins = allowedWins.length ? allowedWins : exactWins
 
   const objectiveMoves = preferBishopKnightObjective
-    ? exactWins.filter(({ move }) => objectivePriority(game, move) > 0)
+    ? candidateWins.filter(({ move }) => objectivePriority(game, move) > 0)
     : []
-  const pool = objectiveMoves.length ? objectiveMoves : exactWins
+  const pool = objectiveMoves.length ? objectiveMoves : candidateWins
   const selected = [...pool].sort((a, b) => {
     if (objectiveMoves.length) {
       const priorityDifference = objectivePriority(game, b.move) - objectivePriority(game, a.move)
@@ -99,7 +104,7 @@ export function selectTablebaseDecision(
     return compareExactWins(a, b)
   })[0]
   const line = tablebaseLine(selected, 1)
-  const candidateLines = [...exactWins]
+  const candidateLines = [...candidateWins]
     .sort(compareExactWins)
     .map((entry, index) => tablebaseLine(entry, index + 1))
 
@@ -119,6 +124,22 @@ export function isExactWinningMove(payload, uci) {
   return payload?.category === EXACT_WIN &&
     Array.isArray(payload.moves) &&
     payload.moves.some((record) => record.uci === uci && record.category === EXACT_LOSS)
+}
+
+function isForbiddenNonPureMate(game, move, record) {
+  if (!record.checkmate) return false
+  const after = new Chess(game.fen())
+  after.move(move)
+  return !isPureBishopKnightMatePosition(after, move.color)
+}
+
+function isPureBishopKnightMatePosition(game, color) {
+  if (!game.isCheckmate()) return false
+  const own = fullMaterialCounts(game, color)
+  const opponent = fullMaterialCounts(game, color === 'w' ? 'b' : 'w')
+  const ownMaterial = own.p + own.n + own.b + own.r + own.q
+  const opponentMaterial = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q
+  return own.b === 1 && own.n === 1 && ownMaterial === 2 && opponentMaterial === 0
 }
 
 function compareExactWins(a, b) {

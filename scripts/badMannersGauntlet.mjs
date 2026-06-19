@@ -20,6 +20,8 @@ const ENGINE_PATH = process.env.BAD_MANNERS_ENGINE_PATH || DEFAULT_ENGINE_PATH
 const LIMIT = Number(process.argv.find((arg) => arg.startsWith('--limit='))?.split('=')[1] || 200)
 const DEPTH = Number(process.argv.find((arg) => arg.startsWith('--depth='))?.split('=')[1] || 14)
 const MOVE_TIME = Number(process.argv.find((arg) => arg.startsWith('--movetime='))?.split('=')[1] || 650)
+const LINE_PLIES = Number(process.argv.find((arg) => arg.startsWith('--line-plies='))?.split('=')[1] || 140)
+const SEED = process.argv.find((arg) => arg.startsWith('--seed='))?.split('=')[1] || String(Date.now())
 const OUT = process.argv.find((arg) => arg.startsWith('--out='))?.split('=')[1] ||
   path.join(repoRoot, 'test-results', 'bad-manners-gauntlet.json')
 const PUBLIC_OUT = process.argv.find((arg) => arg.startsWith('--public-out='))?.split('=')[1] ||
@@ -166,8 +168,16 @@ const engine = new UciEngine(ENGINE_PATH)
 await engine.start(BAD_MANNERS_OPTIONS)
 
 const profile = getBotProfile('trixize')
-const cases = buildCases().slice(0, LIMIT)
+const rng = createRng(hashSeed(SEED))
+const tablebaseCache = new Map()
+const candidateCases = buildCases(rng, LIMIT * 4)
+const { cases, rejectedCases } = await selectWinningCases(candidateCases, LIMIT)
 const results = []
+const proofCache = new Map()
+
+if (cases.length < LIMIT) {
+  console.warn(`Only found ${cases.length}/${LIMIT} winning randomized cases after rejecting ${rejectedCases.length}`)
+}
 
 try {
   for (let index = 0; index < cases.length; index += 1) {
@@ -187,22 +197,34 @@ try {
     )
     const selectedUci = decision.move ? moveToUci(decision.move) : null
     const verdict = evaluateCase(item, game, decision, selectedUci)
+    const lineProof = verdict.pass
+      ? await cachedFullLineProof(item, game, decision, selectedUci)
+      : { pass: false, reason: 'first move failed', line: [] }
+    const pass = verdict.pass && lineProof.pass
     results.push({
       id: item.id,
       category: item.category,
       fen: item.fen,
+      startingTablebase: item.startingTablebase || null,
+      randomized: item.randomized || null,
+      duplicateIndex: item.duplicateIndex || 0,
       searchMoves,
       selectedUci,
       selectedSan: decision.move?.san || null,
       source: decision.source || null,
       score: decision.score ?? null,
-      pass: verdict.pass,
-      reason: verdict.reason,
+      pass,
+      reason: pass ? lineProof.reason : `${verdict.reason}; ${lineProof.reason}`,
+      firstMoveReason: verdict.reason,
+      line: lineProof.line,
+      linePlies: lineProof.line.length,
+      reachedKbnk: lineProof.reachedKbnk,
+      kbnkPly: lineProof.kbnkPly,
+      checkmated: lineProof.checkmated,
+      finalFen: lineProof.finalFen,
     })
-    if ((index + 1) % 25 === 0) {
-      const passed = results.filter((result) => result.pass).length
-      console.log(`${index + 1}/${cases.length} checked, ${passed} passed`)
-    }
+    const passed = results.filter((result) => result.pass).length
+    console.log(`${index + 1}/${cases.length} ${item.id} ${pass ? 'passed' : 'failed'} line=${lineProof.line.length} totalPassed=${passed}`)
   }
 } finally {
   engine.destroy()
@@ -224,10 +246,17 @@ const report = {
   enginePath: ENGINE_PATH,
   depth: DEPTH,
   moveTime: MOVE_TIME,
+  linePlies: LINE_PLIES,
+  seed: SEED,
+  randomized: true,
+  rejectedStartingPositions: rejectedCases.length,
+  tablebasePositions: tablebaseCache.size,
+  proofLines: proofCache.size,
   total: results.length,
   passed,
   failed,
   byCategory,
+  rejectedCases: rejectedCases.slice(0, 50),
   failures: results.filter((result) => !result.pass).slice(0, 25),
   results,
 }
@@ -289,8 +318,239 @@ function evaluateCase(item, game, decision, selectedUci) {
     : { pass: false, reason: `score too low: ${decision.score}` }
 }
 
-function buildCases() {
+async function buildFullLineProof(item, startGame, decision, selectedUci) {
+  if (!decision.move || !selectedUci) return { pass: false, reason: 'no first move', line: [] }
+  const strongColor = decision.move.color
+  const game = new Chess(startGame.fen())
+  const line = []
+  const firstMove = game.move(decision.move)
+  if (!firstMove) return { pass: false, reason: 'first move was illegal', line: [] }
+  line.push(lineEntry({
+    ply: 1,
+    role: 'bad-manners',
+    move: firstMove,
+    beforeFen: startGame.fen(),
+    afterFen: game.fen(),
+    note: item.category,
+  }))
+
+  let reachedKbnk = isPureKbnk(game, strongColor)
+  let kbnkPly = reachedKbnk ? 1 : null
+
+  for (let ply = 2; ply <= LINE_PLIES; ply += 1) {
+    if (game.isGameOver()) break
+    const beforeFen = game.fen()
+    const payload = await probeTablebase(beforeFen)
+    const move = game.turn() === strongColor
+      ? chooseStrongContinuation(game, payload, strongColor, reachedKbnk)
+      : chooseDefenderContinuation(game, payload, strongColor)
+    if (!move) {
+      return {
+        pass: false,
+        reason: `no continuation at ply ${ply}`,
+        line,
+        reachedKbnk,
+        kbnkPly,
+        checkmated: game.isCheckmate(),
+        finalFen: game.fen(),
+      }
+    }
+    const played = game.move(move)
+    line.push(lineEntry({
+      ply,
+      role: played.color === strongColor ? 'bad-manners' : 'defender',
+      move: played,
+      beforeFen,
+      afterFen: game.fen(),
+      note: tablebaseNote(payload, moveToUci(played)),
+    }))
+    if (!reachedKbnk && isPureKbnk(game, strongColor)) {
+      reachedKbnk = true
+      kbnkPly = ply
+    }
+    if (game.isCheckmate()) break
+  }
+
+  const checkmated = game.isCheckmate()
+  const pass = reachedKbnk && checkmated
+  return {
+    pass,
+    reason: pass
+      ? `reached KBNK on ply ${kbnkPly} and checkmated on ply ${line.length}`
+      : `line ended without ${reachedKbnk ? 'checkmate' : 'KBNK conversion'}`,
+    line,
+    reachedKbnk,
+    kbnkPly,
+    checkmated,
+    finalFen: game.fen(),
+  }
+}
+
+async function cachedFullLineProof(item, game, decision, selectedUci) {
+  const key = `${game.fen()}|${selectedUci}`
+  if (!proofCache.has(key)) {
+    proofCache.set(key, buildFullLineProof(item, game, decision, selectedUci))
+  }
+  const proof = await proofCache.get(key)
+  return {
+    ...proof,
+    line: proof.line.map((move) => ({ ...move })),
+  }
+}
+
+async function probeTablebase(fen) {
+  const key = fen.split(' ').slice(0, 4).join(' ')
+  if (tablebaseCache.has(key)) return tablebaseCache.get(key)
+  const url = new URL('https://tablebase.lichess.ovh/standard')
+  url.searchParams.set('fen', fen)
+  const promise = fetchTablebaseWithRetry(url)
+  tablebaseCache.set(key, promise)
+  return promise
+}
+
+async function selectWinningCases(candidates, limit) {
   const cases = []
+  const rejectedCases = []
+  const seen = new Map()
+  for (const candidate of candidates) {
+    if (cases.length >= limit) break
+    const key = candidate.fen.split(' ').slice(0, 4).join(' ')
+    const duplicateCount = seen.get(key) || 0
+    seen.set(key, duplicateCount + 1)
+    const payload = await probeTablebase(candidate.fen)
+    if (payload?.category === 'win') {
+      cases.push({
+        ...candidate,
+        duplicateIndex: duplicateCount,
+        startingTablebase: {
+          category: payload.category,
+          dtm: payload.dtm ?? null,
+          dtz: payload.precise_dtz ?? payload.dtz ?? null,
+        },
+      })
+    } else {
+      rejectedCases.push({
+        id: candidate.id,
+        fen: candidate.fen,
+        category: candidate.category,
+        tablebaseCategory: payload?.category || 'unknown',
+      })
+    }
+  }
+  return { cases, rejectedCases }
+}
+
+async function fetchTablebaseWithRetry(url) {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: { Accept: 'application/json' } })
+      if (response.ok) return response.json()
+    } catch {
+      // retry below
+    }
+    await sleep(160 * (attempt + 1))
+  }
+  return null
+}
+
+function chooseStrongContinuation(game, payload, strongColor, reachedKbnk) {
+  const records = legalRecords(game, payload)
+  if (!records.length) return null
+  const winning = records.filter(({ record }) => record.category === 'loss')
+  const pool = winning.length ? winning : records
+  return pool
+    .map((entry) => ({
+      ...entry,
+      priority: strongContinuationPriority(game, entry.move, entry.record, strongColor, reachedKbnk),
+    }))
+    .sort((a, b) => b.priority - a.priority || compareMateDistance(a.record, b.record, reachedKbnk))[0]?.move || null
+}
+
+function chooseDefenderContinuation(game, payload, strongColor) {
+  const records = legalRecords(game, payload)
+  if (!records.length) return null
+  const stillLosing = records.filter(({ record }) => record.category === 'win')
+  const pool = stillLosing.length ? stillLosing : records
+  return pool
+    .map((entry) => ({
+      ...entry,
+      priority: defenderPriority(game, entry.move, entry.record, strongColor),
+    }))
+    .sort((a, b) => b.priority - a.priority)[0]?.move || null
+}
+
+function strongContinuationPriority(game, move, record, strongColor, reachedKbnk) {
+  const after = new Chess(game.fen())
+  after.move(move)
+  if (after.isCheckmate()) return reachedKbnk ? 1_000_000 : -1_000_000
+  if (isPureKbnk(after, strongColor)) return 900_000
+  if (reachedKbnk) return 500_000 - mateDistance(record)
+  const own = materialCounts(game, strongColor)
+  const opponent = materialCounts(game, oppositeColor(strongColor))
+  const opponentMaterial = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q
+  const hasPair = own.b >= 1 && own.n >= 1
+  let score = 0
+  if (move.captured && move.color === strongColor) score += 120_000 + pieceValue(move.captured)
+  if (move.promotion && ['b', 'n'].includes(move.promotion)) score += 110_000
+  if (move.piece === 'p' && advancedPawn(move)) score += 50_000 + Number(move.to[1]) * 100
+  if (hasPair && opponentMaterial === 0 && isSurplusPiece(own, move.piece)) {
+    score += 100_000 + surplusDisposalScore(game, move)
+  }
+  score += Math.max(0, 20_000 - mateDistance(record))
+  return score
+}
+
+function defenderPriority(game, move, record, strongColor) {
+  const after = new Chess(game.fen())
+  after.move(move)
+  let score = mateDistance(record)
+  if (move.captured) score += pieceValue(move.captured) * 20
+  if (!isPureKbnk(after, strongColor)) score += 10_000
+  return score
+}
+
+function legalRecords(game, payload) {
+  const records = new Map((payload?.moves || []).map((record) => [record.uci, record]))
+  return game.moves({ verbose: true })
+    .map((move) => ({ move, record: records.get(moveToUci(move)) }))
+    .filter((entry) => entry.record)
+}
+
+function compareMateDistance(a, b, reachedKbnk) {
+  const diff = mateDistance(a) - mateDistance(b)
+  return reachedKbnk ? diff : -diff
+}
+
+function mateDistance(record) {
+  const value = Math.abs(record?.dtm ?? record?.dtz ?? record?.precise_dtz ?? 999)
+  return Number.isFinite(value) ? value : 999
+}
+
+function tablebaseNote(payload, uci) {
+  const record = payload?.moves?.find((entry) => entry.uci === uci)
+  if (!record) return null
+  const distance = record.dtm ?? record.precise_dtz ?? record.dtz
+  return distance === undefined ? record.category : `${record.category} ${distance}`
+}
+
+function lineEntry({ ply, role, move, beforeFen, afterFen, note }) {
+  return {
+    ply,
+    role,
+    san: move.san,
+    uci: moveToUci(move),
+    beforeFen,
+    afterFen,
+    note,
+  }
+}
+
+function buildCases(rng, target = 200) {
+  const cases = []
+  const promotionCount = Math.ceil(target * 0.3)
+  const sacrificeCount = Math.ceil(target * 0.225)
+  const captureCount = Math.ceil(target * 0.225)
+  const geometryCount = Math.max(0, target - promotionCount - sacrificeCount - captureCount)
   const add = (item) => {
     try {
       const game = new Chess(item.fen)
@@ -310,9 +570,14 @@ function buildCases() {
     ['4k3/7P/8/8/8/8/8/4K1N1 w - - 0 1', 'b'],
     ['5k2/7P/8/8/8/8/8/4K1N1 w - - 0 1', 'b'],
   ]
-  for (let i = 0; i < 60; i += 1) {
-    const [fen, expectedPromotion] = promotionTemplates[i % promotionTemplates.length]
-    add({ id: `promotion-${i + 1}`, category: 'minor-promotion', fen, expectedPromotion })
+  for (let i = 0; i < promotionCount; i += 1) {
+    const [fen, expectedPromotion] = pickRandom(promotionTemplates, rng)
+    add(randomizedCase({
+      id: `promotion-${i + 1}`,
+      category: 'minor-promotion',
+      fen,
+      expectedPromotion,
+    }, rng))
   }
 
   const sacrificeTemplates = [
@@ -322,8 +587,13 @@ function buildCases() {
     '6k1/8/8/8/8/8/K4Q2/1BN5 w - - 0 1',
     '5k2/8/8/8/8/8/2K4R/2BN4 w - - 0 1',
   ]
-  for (let i = 0; i < 45; i += 1) {
-    add({ id: `sacrifice-${i + 1}`, category: 'surplus-sacrifice', fen: sacrificeTemplates[i % sacrificeTemplates.length], expectedSacrifice: true })
+  for (let i = 0; i < sacrificeCount; i += 1) {
+    add(randomizedCase({
+      id: `sacrifice-${i + 1}`,
+      category: 'surplus-sacrifice',
+      fen: pickRandom(sacrificeTemplates, rng),
+      expectedSacrifice: true,
+    }, rng))
   }
 
   const captureTemplates = [
@@ -333,9 +603,14 @@ function buildCases() {
     ['6k1/8/8/8/8/8/4q3/2K1RBN1 w - - 0 1', 'q'],
     ['5k2/8/8/8/8/8/5r2/2K2QBN w - - 0 1', 'r'],
   ]
-  for (let i = 0; i < 45; i += 1) {
-    const [fen, expectedCapture] = captureTemplates[i % captureTemplates.length]
-    add({ id: `capture-${i + 1}`, category: 'win-enemy-piece', fen, expectedCapture })
+  for (let i = 0; i < captureCount; i += 1) {
+    const [fen, expectedCapture] = pickRandom(captureTemplates, rng)
+    add(randomizedCase({
+      id: `capture-${i + 1}`,
+      category: 'win-enemy-piece',
+      fen,
+      expectedCapture,
+    }, rng))
   }
 
   const geometryTemplates = [
@@ -345,16 +620,90 @@ function buildCases() {
     '8/8/5k2/8/4K3/5P2/8/1N6 w - - 0 1',
     '8/8/8/1k6/8/2K5/1P6/6B1 w - - 0 1',
   ]
-  for (let i = 0; i < 50; i += 1) {
-    add({
+  for (let i = 0; i < geometryCount; i += 1) {
+    add(randomizedCase({
       id: `geometry-${i + 1}`,
       category: 'pawn-race-geometry',
-      fen: geometryTemplates[i % geometryTemplates.length],
+      fen: pickRandom(geometryTemplates, rng),
       expectedPawnProgress: i % 2 === 0,
       expectedKingGeometry: i % 2 === 1,
-    })
+    }, rng))
   }
-  return cases
+  return shuffle(cases, rng)
+}
+
+function randomizedCase(item, rng) {
+  const mirrorFiles = rng() < 0.5
+  return {
+    ...item,
+    id: `${item.id}-${mirrorFiles ? 'mf' : 'base'}`,
+    fen: mirrorFiles ? mirrorFenFiles(item.fen) : item.fen,
+    randomized: { mirrorFiles },
+  }
+}
+
+function mirrorFenFiles(fen) {
+  const parts = fen.split(/\s+/)
+  const ranks = parts[0].split('/').map((rank) => compressRank(expandRank(rank).reverse()))
+  parts[0] = ranks.join('/')
+  if (/^[a-h][36]$/.test(parts[3])) {
+    parts[3] = `${mirrorFile(parts[3][0])}${parts[3][1]}`
+  }
+  return parts.join(' ')
+}
+
+function expandRank(rank) {
+  return [...rank].flatMap((char) => /\d/.test(char) ? Array(Number(char)).fill('1') : [char])
+}
+
+function compressRank(rank) {
+  let output = ''
+  let empty = 0
+  for (const char of rank) {
+    if (char === '1') {
+      empty += 1
+      continue
+    }
+    if (empty) output += String(empty)
+    empty = 0
+    output += char
+  }
+  if (empty) output += String(empty)
+  return output
+}
+
+function mirrorFile(file) {
+  return String.fromCharCode('h'.charCodeAt(0) - (file.charCodeAt(0) - 'a'.charCodeAt(0)))
+}
+
+function pickRandom(items, rng) {
+  return items[Math.floor(rng() * items.length)]
+}
+
+function shuffle(items, rng) {
+  const output = [...items]
+  for (let i = output.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rng() * (i + 1))
+    ;[output[i], output[j]] = [output[j], output[i]]
+  }
+  return output
+}
+
+function hashSeed(seed) {
+  let hash = 2166136261
+  for (const char of String(seed)) {
+    hash ^= char.charCodeAt(0)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function createRng(seed) {
+  let state = seed || 1
+  return () => {
+    state = Math.imul(1664525, state) + 1013904223
+    return ((state >>> 0) / 4294967296)
+  }
 }
 
 function parsePrincipalVariation(text) {
@@ -398,4 +747,53 @@ function distance(a, b) {
 
 function oppositeColor(color) {
   return color === 'w' ? 'b' : 'w'
+}
+
+function materialCounts(game, color) {
+  const counts = { p: 0, n: 0, b: 0, r: 0, q: 0 }
+  for (const piece of game.board().flat()) {
+    if (piece?.color === color && piece.type in counts) counts[piece.type] += 1
+  }
+  return counts
+}
+
+function isPureKbnk(game, strongColor) {
+  const own = materialCounts(game, strongColor)
+  const opponent = materialCounts(game, oppositeColor(strongColor))
+  return own.p === 0 &&
+    own.n === 1 &&
+    own.b === 1 &&
+    own.r === 0 &&
+    own.q === 0 &&
+    opponent.p === 0 &&
+    opponent.n === 0 &&
+    opponent.b === 0 &&
+    opponent.r === 0 &&
+    opponent.q === 0
+}
+
+function pieceValue(type) {
+  return { p: 100, n: 320, b: 330, r: 500, q: 900 }[type] || 0
+}
+
+function isSurplusPiece(counts, type) {
+  if (['p', 'q', 'r'].includes(type)) return counts[type] > 0
+  if (type === 'b') return counts.b > 1
+  if (type === 'n') return counts.n > 1
+  return false
+}
+
+function surplusDisposalScore(game, move) {
+  const enemyKing = findKing(game, oppositeColor(move.color))
+  const after = new Chess(game.fen())
+  after.move(move)
+  const kingCanTake = after.moves({ verbose: true }).some((reply) =>
+    reply.piece === 'k' && reply.to === move.to && Boolean(reply.captured))
+  return (kingCanTake ? 40_000 : 0) +
+    Math.max(0, 8 - distance(move.to, enemyKing)) * 1_000 +
+    (move.san.includes('+') ? 500 : 0)
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

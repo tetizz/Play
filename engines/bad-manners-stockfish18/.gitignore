@@ -1,0 +1,5 @@
+dist/
+toolchain/
+stockfish18-src/src/*.o
+stockfish18-src/src/*.exe
+stockfish18-src/src/*.nnue

@@ -1747,6 +1747,52 @@ bool forbidden_non_pure_mate(const Position& pos, Move move, const ChallengeStat
     return !material_after_move(pos, move, st).pureKbnk;
 }
 
+bool exposes_critical_route_capture(const Position& pos, Move move, const ChallengeState& st) {
+    if (!move.is_ok())
+        return false;
+    const OpponentReplySummary replies = summarize_replies_after(pos, move, st);
+    return replies.survivorCanBeCaptured || replies.requiredPawnCanBeCaptured;
+}
+
+int fallback_safety_score(const Position& pos, const Search::RootMove& rm,
+                          const ChallengeState& st, const OptionsMap& options) {
+    if (rm.pv.empty())
+        return -100000000;
+
+    Move move = rm.pv[0];
+    if (!move.is_ok())
+        return -100000000;
+
+    const DrawRiskAfterMove drawRisk = draw_risk_after_move(pos, move);
+    if (drawRisk.immediateDraw && !drawRisk.immediateCheckmate)
+        return -100000000;
+    if (forbidden_non_pure_mate(pos, move, st, options))
+        return -100000000;
+    if (exposes_critical_route_capture(pos, move, st))
+        return -100000000;
+
+    const Color us = pos.side_to_move();
+    int score = rm.score == -VALUE_INFINITE ? 0 : int(rm.score) / 8;
+    if (required_promotion(st, move))
+        score += 200000;
+    score += promotion_progress_score(pos, move, us, st) * 8;
+
+    const MaterialAfterMove after = material_after_move(pos, move, st);
+    score += material_progress_score(st, after) * 4;
+    if (after.bishopAttackers == 0 && after.knightAttackers == 0)
+        score += 1500;
+
+    StateInfo setupState;
+    StateInfo moveState;
+    Position  next;
+    next.set(pos.fen(), pos.is_chess960(), &setupState);
+    next.do_move(move, moveState);
+    if (next.checkers())
+        score += 700;
+
+    return score;
+}
+
 }  // namespace
 
 bool enabled(const OptionsMap& options) {
@@ -1911,13 +1957,18 @@ void reorder_root_moves(const Position& pos, Search::RootMoves& rootMoves, const
                          });
     else if (bool(options["RequirePureKBNFinal"]))
     {
-        const auto allowed = [&](const Search::RootMove& rm) {
-            return rm.pv.empty() || !forbidden_non_pure_mate(pos, rm.pv[0], st, options);
+        const auto safetyScore = [&](const Search::RootMove& rm) {
+            return fallback_safety_score(pos, rm, st, options);
         };
-        if (std::any_of(rootMoves.begin(), rootMoves.end(), allowed))
+        if (std::any_of(rootMoves.begin(), rootMoves.end(),
+                        [&](const Search::RootMove& rm) { return safetyScore(rm) > -100000000; }))
             std::stable_sort(rootMoves.begin(), rootMoves.end(),
                              [&](const Search::RootMove& a, const Search::RootMove& b) {
-                                 return allowed(a) && !allowed(b);
+                                 const int scoreA = safetyScore(a);
+                                 const int scoreB = safetyScore(b);
+                                 if ((scoreA > -100000000) != (scoreB > -100000000))
+                                     return scoreA > scoreB;
+                                 return scoreA > scoreB;
                              });
     }
 }

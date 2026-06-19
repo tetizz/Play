@@ -256,6 +256,8 @@ def main() -> int:
         ],
     )
     assert "bestmove a4a5" not in screenshot_conversion
+    assert "bestmove h2h3" not in screenshot_conversion
+    assert "bestmove a4g4" in screenshot_conversion
     assert "challenge PROMOTION_REQUIRED_AND_FORCEABLE" in screenshot_conversion
 
     final_kbn_report = run_engine(

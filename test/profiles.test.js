@@ -354,13 +354,15 @@ test('Trixize rejects screenshot-style non-pure mate while conversion material r
     game,
     [
       { uci: 'a4a5', score: 99999, mate: 1, rank: 1 },
-      { uci: 'h2h4', score: 900, mate: null, rank: 2, objectiveVerified: true },
-      { uci: 'a4g4', score: 820, mate: null, rank: 3, objectiveVerified: true },
+      { uci: 'h2h3', score: 990, mate: null, rank: 2, objectiveVerified: true, badManners: true },
+      { uci: 'h2h4', score: 900, mate: null, rank: 3, objectiveVerified: true, badManners: true },
+      { uci: 'a4g4', score: 820, mate: null, rank: 4, objectiveVerified: true, badManners: true },
     ],
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
   )
   assert.notEqual(decision.move.san, 'Ra5#')
+  assert.notEqual(decision.move.san, 'h3')
   assert.notEqual(decision.source, 'engine-mate')
 })
 

@@ -45,16 +45,19 @@ export function chooseCoachMove(
   const badMannersChallenge = profile.capabilities.bishopKnightObjective &&
     isBishopKnightChallengePosition(game, game.turn())
   const playableCandidates = badMannersChallenge
-    ? candidates.filter((candidate) => !rejectsBadMannersPureFinal(game, candidate))
+    ? candidates.filter((candidate) =>
+        !rejectsBadMannersPureFinal(game, candidate) &&
+        !rejectsBadMannersCriticalRoute(game, candidate),
+      )
     : candidates
   const bishopKnightPromotion = profile.capabilities.bishopKnightObjective
-    ? selectBishopKnightUnderpromotion(game, candidates)
+    ? selectBishopKnightUnderpromotion(game, playableCandidates)
     : null
   const bishopKnightConversion = profile.capabilities.bishopKnightObjective
-    ? selectBishopKnightConversionMove(game, candidates)
+    ? selectBishopKnightConversionMove(game, playableCandidates)
     : null
   const bishopKnightCapture = profile.capabilities.bishopKnightObjective
-    ? selectBishopKnightEnemyCapture(game, candidates)
+    ? selectBishopKnightEnemyCapture(game, playableCandidates)
     : null
   const forcedMate = selectFastestMate(playableCandidates)
   if (bishopKnightConversion) {
@@ -442,8 +445,59 @@ function rejectsBadMannersPureFinal(game, candidate) {
   if (!candidate?.move) return false
   const after = cloneGame(game)
   after.move(candidate.move)
-  const isMatingLine = after.isCheckmate() || (Number.isFinite(candidate.mate) && candidate.mate > 0)
-  return isMatingLine && !isBishopKnightMatePosition(after, candidate.move.color)
+  return after.isCheckmate() && !isBishopKnightMatePosition(after, candidate.move.color)
+}
+
+function rejectsBadMannersCriticalRoute(game, candidate) {
+  if (!candidate?.move) return false
+  const color = candidate.move.color
+  const after = cloneGame(game)
+  after.move(candidate.move)
+  if (after.isGameOver()) return false
+
+  const own = materialCounts(after, color)
+  const missingBishop = own.b === 0
+  const missingKnight = own.n === 0
+
+  return after.moves({ verbose: true }).some((reply) => {
+    if (!reply.captured) return false
+    if (reply.captured === 'b' && own.b <= 1) return true
+    if (reply.captured === 'n' && own.n <= 1) return true
+    if (reply.captured !== 'p' || (!missingBishop && !missingKnight)) return false
+
+    const afterReply = cloneGame(after)
+    afterReply.move(reply)
+    return !canStillBuildBishopKnight(afterReply, color)
+  })
+}
+
+function canStillBuildBishopKnight(game, color) {
+  const own = materialCounts(game, color)
+  const viablePawns = viablePromotionPawnCount(game, color)
+  if (own.b >= 1 && own.n >= 1) return true
+  if (own.b >= 1 && own.n === 0) return viablePawns >= 1
+  if (own.n >= 1 && own.b === 0) return viablePawns >= 1
+  return viablePawns >= 2
+}
+
+function viablePromotionPawnCount(game, color) {
+  return game.board().flat().filter((piece) =>
+    piece?.color === color &&
+    piece.type === 'p' &&
+    hasClearForwardPromotionLane(game, piece.square, color),
+  ).length
+}
+
+function hasClearForwardPromotionLane(game, square, color) {
+  const file = square[0]
+  let rank = Number(square[1])
+  const step = color === 'w' ? 1 : -1
+  const promotionRank = color === 'w' ? 8 : 1
+  while (rank !== promotionRank) {
+    rank += step
+    if (game.get(`${file}${rank}`)) return false
+  }
+  return true
 }
 
 function bishopKnightObjectivePriority(before, after, move) {

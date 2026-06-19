@@ -145,6 +145,7 @@ const TRIXIZE_LINES = {
     'Everything is defended for a reason.',
     'I am keeping the pressure.',
     'This is still theory to me.',
+    'I guess I could teach you some theory if you need it, I guess.',
     'The position is doing exactly what I want.',
     'Find the only move.',
   ],

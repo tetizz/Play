@@ -311,7 +311,7 @@ test('Trixize delays an immediate mate for a decisively winning bishop-knight un
   assert.equal(decision.source, 'engine-objective')
 })
 
-test('Trixize may pursue a sound bishop-knight underpromotion with other material present', () => {
+test('Trixize stays with normal conversion while enemy material blocks the KBN route', () => {
   const game = new Chess('7k/Pp6/8/8/8/8/8/6BK w - - 0 1')
   const profile = getBotProfile('trixize')
   const decision = chooseCoachMove(
@@ -323,8 +323,8 @@ test('Trixize may pursue a sound bishop-knight underpromotion with other materia
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
   )
-  assert.equal(decision.move.promotion, 'n')
-  assert.equal(decision.source, 'engine-objective')
+  assert.equal(decision.move.promotion, 'q')
+  assert.notEqual(decision.source, 'engine-objective')
 })
 
 test('Trixize offers surplus material instead of taking an ordinary mate against a bare king', () => {
@@ -345,7 +345,7 @@ test('Trixize offers surplus material instead of taking an ordinary mate against
   assert.equal(decision.source, 'engine-objective')
 })
 
-test('Trixize rejects screenshot-style non-pure mate while conversion material remains', () => {
+test('Trixize takes a normal mate when the KBN route is not currently reachable', () => {
   const game = new Chess('8/6B1/8/6k1/R5p1/1p1B2P1/1P4KP/8 w - - 0 1')
   const profile = getBotProfile('trixize')
   const mate = game.moves({ verbose: true }).find((move) => move.san === 'Ra5#')
@@ -362,10 +362,8 @@ test('Trixize rejects screenshot-style non-pure mate while conversion material r
     profile,
     { openingBook: {}, bookMaxPlies: 0 },
   )
-  assert.notEqual(decision.move.san, 'Ra5#')
-  assert.notEqual(decision.move.san, 'h3')
-  assert.equal(decision.move.san, 'Rxg4+')
-  assert.notEqual(decision.source, 'engine-mate')
+  assert.equal(decision.move.san, 'Ra5#')
+  assert.equal(decision.source, 'engine-mate')
 })
 
 test('Trixize refuses unverified bishop-knight sacrifice priority', () => {

@@ -71,6 +71,21 @@ test('without the special objective the tablebase chooses the shortest exact mat
   assert.equal(decision.line.dtm, -12)
 })
 
+test('the tablebase disengages the bishop-knight objective when the route is impossible', () => {
+  const game = new Chess('7k/8/8/8/8/8/8/Q6K w - - 0 1')
+  const decision = selectTablebaseDecision(game, {
+    category: 'win',
+    moves: [
+      { uci: 'a1a8', category: 'loss', dtm: -1, dtz: -1, checkmate: true },
+      { uci: 'a1a7', category: 'loss', dtm: -7, dtz: -1, checkmate: false },
+    ],
+  }, {
+    preferBishopKnightObjective: true,
+  })
+  assert.equal(decision.move.san, 'Qa8+')
+  assert.equal(decision.source, 'tablebase-mate')
+})
+
 test('drawn and cursed tablebase positions do not claim a forced mate', () => {
   const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
   assert.equal(selectTablebaseDecision(game, { category: 'draw', moves: [] }), null)

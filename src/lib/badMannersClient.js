@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js'
+import { isBishopKnightObjectiveReachable } from './coachEngine.js'
 
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:47818'
 const BAD_MANNERS_PIECE_LIMIT = 12
@@ -79,13 +80,8 @@ export function shouldUseBadMannersTakeover(game, profile) {
   const own = materialCounts(game, side)
   const opponent = materialCounts(game, oppositeColor(side))
   const opponentBareKing = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q === 0
-  if (opponentBareKing) return canBadMannersBareKing(own, game, side)
-
-  const ownMaterial = materialScore(own)
-  const opponentMaterial = materialScore(opponent)
-  return countPieces(game) <= BAD_MANNERS_PIECE_LIMIT &&
-    ownMaterial - opponentMaterial >= 600 &&
-    (own.b > 0 || own.n > 0 || own.p > 0)
+  if (!opponentBareKing) return false
+  return canBadMannersBareKing(own, game, side)
 }
 
 export function annotateBadMannersCandidates(game, candidates) {
@@ -99,32 +95,10 @@ export function annotateBadMannersCandidates(game, candidates) {
 
 export function badMannersSearchUcis(game) {
   const side = game.turn()
-  const own = materialCounts(game, side)
   const opponent = materialCounts(game, oppositeColor(side))
   const opponentBareKing = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q === 0
   if (opponentBareKing) return badMannersBareKingUcis(game)
-
-  const legalMoves = game.moves({ verbose: true })
-  const enemyKing = findKingSquare(game, oppositeColor(side))
-  const ownPawns = legalMoves.filter((move) => move.piece === 'p')
-  const hasPair = own.b >= 1 && own.n >= 1
-  const canBuildPair = own.p >= 2 || (own.p >= 1 && (own.b >= 1 || own.n >= 1))
-  const candidates = legalMoves.filter((move) => {
-    if (move.captured && move.captured !== 'k') return true
-    if (move.promotion) {
-      if (hasPair || canBuildPair) return ['b', 'n'].includes(move.promotion)
-      return false
-    }
-    if (move.piece === 'p') return advancesTowardPromotion(move)
-    if (move.piece === 'k') return supportsPromotionRace(game, move, enemyKing)
-    if (hasPair && isSurplusPiece(own, move.piece)) return true
-    if ((move.piece === 'b' || move.piece === 'n') && !hasPair && ownPawns.length) {
-      return attacksEnemyMaterialAfter(game, move)
-    }
-    return false
-  })
-
-  return uniqueUcis(candidates.length ? candidates.map(moveToUci) : legalMoves.map(moveToUci))
+  return []
 }
 
 function badMannersBareKingUcis(game) {
@@ -132,7 +106,7 @@ function badMannersBareKingUcis(game) {
   const own = materialCounts(game, side)
   const opponent = materialCounts(game, oppositeColor(side))
   const opponentBareKing = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q === 0
-  if (!opponentBareKing) return []
+  if (!opponentBareKing || !isBishopKnightObjectiveReachable(game, side)) return []
 
   const hasPair = own.b >= 1 && own.n >= 1
   const needsBishop = own.b === 0 && own.n >= 1
@@ -163,52 +137,9 @@ function surplusDisposalProgress(game, move) {
   return kingCanTake || distance(move.to, enemyKing) <= 2 || move.san.includes('+')
 }
 
-function supportsPromotionRace(game, move, enemyKing) {
-  if (!enemyKing) return false
-  const pawns = ownPawnSquares(game, move.color)
-  if (!pawns.length) return false
-  const before = Math.min(...pawns.map((square) => distance(square, enemyKing)))
-  const after = new Chess(game.fen())
-  after.move(move)
-  const afterKing = findKingSquare(after, oppositeColor(move.color))
-  const afterPawns = ownPawnSquares(after, move.color)
-  const afterDistance = Math.min(...afterPawns.map((square) => distance(square, afterKing)))
-  return afterDistance >= before || distance(move.to, nearestPromotionSquare(afterPawns, move.color)) <
-    distance(move.from, nearestPromotionSquare(pawns, move.color))
-}
-
-function attacksEnemyMaterialAfter(game, move) {
-  const after = new Chess(game.fen())
-  after.move(move)
-  return after.moves({ verbose: true }).some((reply) => reply.color === move.color && reply.captured)
-}
-
-function advancesTowardPromotion(move) {
-  return move.color === 'w'
-    ? Number(move.to[1]) > Number(move.from[1])
-    : Number(move.to[1]) < Number(move.from[1])
-}
-
-function ownPawnSquares(game, color) {
-  return game.board().flat().filter((piece) =>
-    piece?.color === color && piece.type === 'p').map((piece) => piece.square)
-}
-
-function nearestPromotionSquare(pawns, color) {
-  const rank = color === 'w' ? '8' : '1'
-  return pawns
-    .map((square) => `${square[0]}${rank}`)
-    .sort((a, b) => distance(a, pawns[0]) - distance(b, pawns[0]))[0] || `a${rank}`
-}
-
-function uniqueUcis(ucis) {
-  return [...new Set(ucis)]
-}
-
 function canBadMannersBareKing(own, game, side) {
+  if (!isBishopKnightObjectiveReachable(game, side)) return false
   if (own.b >= 1 && own.n >= 1) return true
-  if (own.p >= 2) return true
-  if (own.p >= 1 && (own.b >= 1 || own.n >= 1)) return true
   return game.moves({ verbose: true }).some((move) =>
     move.color === side && (
       (own.b >= 1 && own.n === 0 && move.promotion === 'n') ||
@@ -227,10 +158,6 @@ function materialCounts(game, color) {
     if (piece?.color === color && piece.type in counts) counts[piece.type] += 1
   }
   return counts
-}
-
-function materialScore(counts) {
-  return counts.p * 100 + counts.n * 320 + counts.b * 330 + counts.r * 500 + counts.q * 900
 }
 
 function isSurplusPiece(counts, type) {

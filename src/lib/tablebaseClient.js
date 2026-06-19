@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js'
+import { isBishopKnightObjectiveReachable } from './coachEngine.js'
 
 const TABLEBASE_ENDPOINT = 'https://tablebase.lichess.ovh/standard'
 const EXACT_WIN = 'win'
@@ -86,10 +87,12 @@ export function selectTablebaseDecision(
     return [{ move, record }]
   })
   if (!exactWins.length) return null
-  const allowedWins = preferBishopKnightObjective
+  const filterNonPureMate = preferBishopKnightObjective &&
+    isBishopKnightObjectiveReachable(game, game.turn())
+  const allowedWins = filterNonPureMate
     ? exactWins.filter(({ move, record }) => !isForbiddenNonPureMate(game, move, record))
     : exactWins
-  if (preferBishopKnightObjective && !allowedWins.length) return null
+  if (filterNonPureMate && !allowedWins.length) return null
   const candidateWins = allowedWins.length ? allowedWins : exactWins
 
   const objectiveMoves = preferBishopKnightObjective
@@ -185,10 +188,12 @@ function objectivePriority(game, move) {
   const opponent = fullMaterialCounts(game, move.color === 'w' ? 'b' : 'w')
   const opponentBareKing = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q === 0
   if (!opponentBareKing) return 0
+  if (!isBishopKnightObjectiveReachable(game, move.color)) return 0
 
   const after = new Chess(game.fen())
   after.move(move)
   if (after.isGameOver()) return 0
+  if (!isBishopKnightObjectiveReachable(after, move.color)) return 0
   if (move.promotion && !['b', 'n'].includes(move.promotion)) return 0
   if (before.b < 1 || before.n < 1) {
     if (createsBishopKnightPair(game, move)) return 20000

@@ -24,6 +24,12 @@ test('Bad Manners takeover waits for an endgame or bishop-knight objective', () 
 
   const winningEndgame = new Chess('7k/8/8/8/8/8/8/QBN3K1 w - - 0 1')
   assert.equal(shouldUseBadMannersTakeover(winningEndgame, trixize), true)
+
+  const winningWithoutRoute = new Chess('7k/8/8/8/8/8/8/Q6K w - - 0 1')
+  assert.equal(shouldUseBadMannersTakeover(winningWithoutRoute, trixize), false)
+
+  const nonBareKingEndgame = new Chess('7k/8/8/8/8/8/6p1/QBN3K1 w - - 0 1')
+  assert.equal(shouldUseBadMannersTakeover(nonBareKingEndgame, trixize), false)
 })
 
 test('Bad Manners candidates are marked objective-verified for local objective moves', () => {

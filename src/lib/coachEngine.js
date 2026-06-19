@@ -18,6 +18,7 @@ export const BAD_MANNERS_ROUTE_WEIGHTS = Object.freeze({
   kingBlocksRoute: 380,
   kbnCornerProgress: 1300,
   preserveWinMargin: 0.16,
+  objectiveLostPenalty: -120000,
   keyPieceHangingPenalty: -32000,
   queenPromotionPenalty: -60000,
   immediateNonKbnMatePenalty: -90000,
@@ -63,7 +64,7 @@ export function chooseCoachMove(
   const policy = calculationProfile(profile, beltMode, game)
   const candidates = normalizeEngineCandidates(game, engineInput)
   const badMannersChallenge = profile.capabilities.bishopKnightObjective &&
-    isBishopKnightChallengePosition(game, game.turn())
+    isBishopKnightObjectiveReachable(game, game.turn())
   const playableCandidates = badMannersChallenge
     ? candidates.filter((candidate) =>
         !rejectsBadMannersPureFinal(game, candidate) &&
@@ -449,15 +450,6 @@ function isWinningObjectiveCandidate(candidate) {
     : Number.isFinite(candidate.score) && candidate.score >= (candidate.badManners ? 120 : 650)
 }
 
-function isBishopKnightChallengePosition(game, color) {
-  return isConversionEndgame(game) ||
-    isBishopKnightMatePosition(game, color) ||
-    isBishopKnightConversionPosition(game, color) ||
-    isBishopKnightDisrespectPosition(game, color) ||
-    canCreateBishopKnightMate(game, color) ||
-    canPursueBishopKnightObjective(game, color)
-}
-
 function rejectsBadMannersPureFinal(game, candidate) {
   if (!candidate?.move) return false
   const after = cloneGame(game)
@@ -490,11 +482,24 @@ function rejectsBadMannersCriticalRoute(game, candidate) {
 
 function canStillBuildBishopKnight(game, color) {
   const own = materialCounts(game, color)
-  const viablePawns = viablePromotionPawnCount(game, color)
+  const viablePawns = Math.max(
+    viablePromotionPawnCount(game, color),
+    potentialPromotionPawnCount(game, color),
+  )
   if (own.b >= 1 && own.n >= 1) return true
   if (own.b >= 1 && own.n === 0) return viablePawns >= 1
   if (own.n >= 1 && own.b === 0) return viablePawns >= 1
   return viablePawns >= 2
+}
+
+export function isBishopKnightObjectiveReachable(game, color = game?.turn?.()) {
+  if (!game || !color || game.isDraw()) return false
+  const own = materialCounts(game, color)
+  const opponent = materialCounts(game, oppositeColor(color))
+  const opponentBareKing = opponent.p + opponent.n + opponent.b + opponent.r + opponent.q === 0
+  if (!opponentBareKing) return false
+  if (own.b >= 1 && own.n >= 1) return true
+  return canStillBuildBishopKnight(game, color)
 }
 
 function viablePromotionPawnCount(game, color) {
@@ -513,6 +518,27 @@ function hasClearForwardPromotionLane(game, square, color) {
   while (rank !== promotionRank) {
     rank += step
     if (game.get(`${file}${rank}`)) return false
+  }
+  return true
+}
+
+function potentialPromotionPawnCount(game, color) {
+  return game.board().flat().filter((piece) =>
+    piece?.color === color &&
+    piece.type === 'p' &&
+    hasPotentialForwardPromotionLane(game, piece.square, color),
+  ).length
+}
+
+function hasPotentialForwardPromotionLane(game, square, color) {
+  const file = square[0]
+  let rank = Number(square[1])
+  const step = color === 'w' ? 1 : -1
+  const promotionRank = color === 'w' ? 8 : 1
+  while (rank !== promotionRank) {
+    rank += step
+    const blocker = game.get(`${file}${rank}`)
+    if (blocker && !(blocker.color === color && blocker.type === 'p')) return false
   }
   return true
 }
@@ -624,6 +650,7 @@ export function badMannersRouteFeatures(before, after, move, candidate = null) {
       ? Number(move.to[1]) - Number(move.from[1])
       : Number(move.from[1]) - Number(move.to[1]))
     : 0
+  const objectiveReachableAfter = isBishopKnightObjectiveReachable(after, color)
 
   return {
     createsPair: !hadPair && hasPair ? 1 : 0,
@@ -640,6 +667,7 @@ export function badMannersRouteFeatures(before, after, move, candidate = null) {
     kingBlocksRoute,
     kbnCornerProgress,
     preserveWinMargin,
+    objectiveLostPenalty: objectiveReachableAfter ? 0 : 1,
     keyPieceHangingPenalty: keyPieceHanging ? 1 : 0,
     queenPromotionPenalty: move.promotion && !['b', 'n'].includes(move.promotion) ? 1 : 0,
     immediateNonKbnMatePenalty: after.isCheckmate() && !pureKbnk ? 1 : 0,
@@ -918,11 +946,8 @@ function canCreateBishopKnightMate(game, color) {
 
 function canPursueBishopKnightObjective(game, color) {
   const own = materialCounts(game, color)
-  const canUnderpromote = bishopKnightPromotionUcis(game, color).length > 0
-  return canUnderpromote && (
-    (own.b >= 1 && own.n === 0) ||
-    (own.n >= 1 && own.b === 0)
-  )
+  if (own.b >= 1 && own.n >= 1) return isBishopKnightObjectiveReachable(game, color)
+  return isBishopKnightObjectiveReachable(game, color) && bishopKnightPromotionUcis(game, color).length > 0
 }
 
 export function bishopKnightPromotionUcis(game, color = game.turn()) {
@@ -934,6 +959,7 @@ export function bishopKnightPromotionUcis(game, color = game.turn()) {
 }
 
 export function bishopKnightObjectiveUcis(game, color = game.turn()) {
+  if (!isBishopKnightObjectiveReachable(game, color)) return []
   if (!isBishopKnightDisrespectPosition(game, color)) {
     return bishopKnightPromotionUcis(game, color)
   }
@@ -955,7 +981,6 @@ function hasBishopKnightPair(game, color) {
 }
 
 export function isBishopKnightDisrespectPosition(game, color) {
-  const own = materialCounts(game, color)
   const opponent = materialCounts(game, oppositeColor(color))
   const opponentBareKing = opponent.p === 0 &&
     opponent.n === 0 &&
@@ -963,11 +988,7 @@ export function isBishopKnightDisrespectPosition(game, color) {
     opponent.r === 0 &&
     opponent.q === 0
   if (!opponentBareKing || isBishopKnightMatePosition(game, color)) return false
-
-  const hasPair = own.b >= 1 && own.n >= 1
-  const canBuildPair = own.p >= 2 ||
-    (own.p >= 1 && (own.b >= 1 || own.n >= 1))
-  return hasPair || canBuildPair
+  return isBishopKnightObjectiveReachable(game, color)
 }
 
 function isBishopKnightConversionPosition(game, color) {

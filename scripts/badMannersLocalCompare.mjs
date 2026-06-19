@@ -33,7 +33,7 @@ const cases = [
     expectedLegacy: 'c1b3',
   },
   {
-    id: 'reject-non-pure-mate',
+    id: 'disengage-when-kbn-route-is-not-reachable',
     fen: '8/6B1/8/6k1/R5p1/1p1B2P1/1P4KP/8 w - - 0 1',
     candidates: [
       { uci: 'a4a5', score: 99999, mate: 1, rank: 1 },
@@ -41,7 +41,7 @@ const cases = [
       { uci: 'h2h4', score: 900, rank: 3, objectiveVerified: true, badManners: true },
       { uci: 'a4g4', score: 820, rank: 4, objectiveVerified: true, badManners: true },
     ],
-    expectedImproved: 'a4g4',
+    expectedImproved: 'a4a5',
     expectedLegacy: 'a4a5',
   },
   {

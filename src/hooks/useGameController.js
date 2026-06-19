@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Chess } from 'chess.js'
 import { getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
-import { dialogueAfterBotMove, dialogueForGameEnd, initialDialogue } from '../data/dialogue'
+import {
+  dialogueAfterBotMove,
+  dialogueForBotBattle,
+  dialogueForGameEnd,
+  initialDialogue,
+} from '../data/dialogue'
 import {
   bishopKnightObjectiveUcis,
   calculationProfile,
@@ -447,7 +452,12 @@ export function useGameController(defaultBotId) {
         to: decision.move.to,
         promotion: decision.move.promotion,
       })
-      const nextMessage = dialogueAfterBotMove(automatedProfile, context)
+      const opponentProfile = gameMode === 'bots'
+        ? side === 'w' ? blackProfile : whiteProfile
+        : null
+      const nextMessage = gameMode === 'bots'
+        ? dialogueForBotBattle(automatedProfile, context, opponentProfile)
+        : dialogueAfterBotMove(automatedProfile, context)
       if (gameMode === 'bots') {
         appendDialogue(automatedProfile, nextMessage, nextHistory.length)
       } else {

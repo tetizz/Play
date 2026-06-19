@@ -77,7 +77,11 @@ export function GameScreen({ controller }) {
       </section>
       <aside className="game-sidebar">
         {botMatch ? (
-          <BotConversation entries={dialogueLog} fallbackProfile={whiteProfile} />
+          <BotConversation
+            entries={dialogueLog}
+            whiteProfile={whiteProfile}
+            blackProfile={blackProfile}
+          />
         ) : (
           <div className="dialogue-row">
             <Avatar profile={profile} size="medium" />
@@ -118,16 +122,17 @@ export function GameScreen({ controller }) {
   )
 }
 
-function BotConversation({ entries, fallbackProfile }) {
-  const visible = entries.slice(-5)
+function BotConversation({ entries, whiteProfile, blackProfile }) {
+  const visible = entries.slice(-6)
   return (
     <section className="bot-conversation" aria-label="Bot conversation">
       {visible.length ? visible.map((entry) => {
         const speaker = getBotProfile(entry.botId)
+        const side = entry.botId === blackProfile.id ? 'black-speaker' : 'white-speaker'
         return (
-          <div className="conversation-row" key={entry.id}>
+          <div className={`conversation-row ${side}`} key={entry.id}>
             <Avatar profile={speaker} size="small" />
-            <div>
+            <div className="conversation-bubble">
               <strong>{speaker.name}</strong>
               <p>{entry.text}</p>
             </div>
@@ -135,7 +140,8 @@ function BotConversation({ entries, fallbackProfile }) {
         )
       }) : (
         <div className="match-waiting">
-          <Avatar profile={fallbackProfile} size="small" />
+          <Avatar profile={whiteProfile} size="small" />
+          <Avatar profile={blackProfile} size="small" />
           <span>The match is starting.</span>
         </div>
       )}

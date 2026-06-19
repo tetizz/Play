@@ -151,6 +151,34 @@ const TRIXIZE_LINES = {
   ],
 }
 
+const BOT_BATTLE_FALLBACK_LINES = {
+  mubassar: [
+    'You have to prove this position works.',
+    'I am keeping it practical.',
+    'One loose move and this turns fast.',
+    'The pressure is building.',
+  ],
+  ayden: [
+    'I am keeping the structure clean.',
+    'No need to force it yet.',
+    'This is still playable.',
+    'I like the setup.',
+    'I will take the small improvement.',
+  ],
+  akshit: [
+    'Okay',
+    'Lil kids play this',
+    'Do not cry after losing',
+    'Chess is not for you',
+  ],
+  trixize: [
+    'I guess I could teach you some theory if you need it, I guess.',
+    'This is still theory to me.',
+    'Everything is defended for a reason.',
+    'Find the only move.',
+  ],
+}
+
 export function dialogueAfterBotMove(profile, context) {
   if (profile.dialoguePolicy === 'trixize') {
     if (context.isBishopKnightObjective) return "I'm going to checkmate you with a bishop and knight."
@@ -197,6 +225,15 @@ export function dialogueAfterBotMove(profile, context) {
   if (context.isGreatMove || context.opponentBlunder) return pick(MUBASSAR_LINES.great)
   if (context.capturedValue > 0) return pick(MUBASSAR_LINES.capture)
   return pick(MUBASSAR_LINES.quiet)
+}
+
+export function dialogueForBotBattle(profile, context, opponentProfile = null) {
+  const direct = dialogueAfterBotMove(profile, context)
+  if (direct) return direct
+  const policy = profile.dialoguePolicy || profile.id || 'mubassar'
+  const lines = BOT_BATTLE_FALLBACK_LINES[policy] || BOT_BATTLE_FALLBACK_LINES.mubassar
+  const opponentName = opponentProfile?.name || 'opponent'
+  return pick(lines).replaceAll('{opponent}', opponentName)
 }
 
 export function initialDialogue(profile) {

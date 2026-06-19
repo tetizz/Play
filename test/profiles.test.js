@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
 import { BOT_PROFILES, getBotProfile } from '../src/data/botProfiles.js'
-import { dialogueAfterBotMove } from '../src/data/dialogue.js'
+import { dialogueAfterBotMove, dialogueForBotBattle } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
   calculationProfile,
@@ -119,6 +119,17 @@ test('Akshit must take a clearly superior knight move and uses his own dialogue 
     dialogueAfterBotMove(profile, { move: { piece: 'p' }, isFreePiece: true }),
     /^(rahhhhhh|Easy belt)$/,
   )
+})
+
+test('bot battles always produce visible dialogue for both sides', () => {
+  const ayden = getBotProfile('ayden')
+  const akshit = getBotProfile('akshit')
+  assert.equal(dialogueAfterBotMove(ayden, { move: { piece: 'p' } }), '')
+  assert.match(
+    dialogueForBotBattle(ayden, { move: { piece: 'p' } }, akshit),
+    /^(I am keeping the structure clean\.|No need to force it yet\.|This is still playable\.|I like the setup\.|I will take the small improvement\.)$/,
+  )
+  assert.match(dialogueForBotBattle(akshit, { move: { piece: 'p' } }, ayden), /.+/)
 })
 
 test('Trixize starts with Nf3 and uses only the requested short dialogue', () => {

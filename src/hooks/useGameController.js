@@ -36,8 +36,8 @@ import {
 
 const restored = typeof localStorage === 'undefined' ? null : loadSession()
 const PLAYER = Object.freeze({ name: 'player', rating: 100, countryCode: 'us' })
-const BOT_DELAY_MS = 2000
-const BOT_MATCH_DELAY_MS = 850
+const BOT_DELAY_MS = 850
+const BOT_MATCH_DELAY_MS = 450
 const EMPTY_STYLE_PROFILE = Object.freeze({ openingBook: {}, bookMaxPlies: 0 })
 const BAD_MANNERS_SAFE_SCORE = 120
 
@@ -377,7 +377,7 @@ export function useGameController(defaultBotId) {
         const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame)
         let candidates
         try {
-          const mateSafety = automatedProfile.capabilities.maximumEngine
+          const mateSafety = shouldRunMateSafety(beforeGame, automatedProfile)
             ? automatedProfile.strengthPolicy.mateSafety
             : null
           const [engineCandidates, mateCandidates] = await Promise.all([
@@ -799,6 +799,20 @@ function needsPromotion(piece, targetSquare) {
 
 function firstDifferentBot(botId) {
   return ['mubassar', 'ayden', 'akshit', 'trixize'].find((id) => id !== botId) || 'mubassar'
+}
+
+function shouldRunMateSafety(game, profile) {
+  if (!profile?.capabilities?.maximumEngine || !profile.strengthPolicy?.mateSafety) return false
+  if (game.inCheck()) return true
+  const pieces = game.board().flat().filter(Boolean)
+  if (pieces.length <= 12) return true
+  const legalMoves = game.moves({ verbose: true })
+  return legalMoves.some((move) =>
+    move.san.includes('+') ||
+    move.san.includes('#') ||
+    move.captured === 'q' ||
+    move.promotion,
+  )
 }
 
 function mergeEngineCandidates(primary, objective) {

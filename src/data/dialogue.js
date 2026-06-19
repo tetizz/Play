@@ -106,6 +106,50 @@ const AKSHIT_LINES = {
   ],
 }
 
+const TRIXIZE_LINES = {
+  check: [
+    'Move the king.',
+    'Your king is getting dragged into this.',
+    'That check is the start of the problem.',
+    'You have to answer me now.',
+  ],
+  mate: [
+    'That is mate.',
+    'Game over.',
+    'No squares left.',
+    'That king had nowhere to run.',
+  ],
+  winning: [
+    'This is already slipping away from you.',
+    'I am not letting this advantage go.',
+    'You are running out of useful moves.',
+    'This position is getting cooked.',
+    'I like this. Your pieces are tied up.',
+  ],
+  great: [
+    'That is the clean way to do it.',
+    'You had to see that one coming.',
+    'That move hits too many things.',
+    'This is why the position works.',
+  ],
+  capture: [
+    'I will take that.',
+    'That piece was loose.',
+    'Free material is still material.',
+    'You gave me a target.',
+  ],
+  quiet: [
+    'Small move, big problem.',
+    'I am improving first.',
+    'You still have to prove this setup works.',
+    'Everything is defended for a reason.',
+    'I am keeping the pressure.',
+    'This is still theory to me.',
+    'The position is doing exactly what I want.',
+    'Find the only move.',
+  ],
+}
+
 export function dialogueAfterBotMove(profile, context) {
   if (profile.dialoguePolicy === 'trixize') {
     if (context.isBishopKnightObjective) return "I'm going to checkmate you with a bishop and knight."
@@ -114,7 +158,13 @@ export function dialogueAfterBotMove(profile, context) {
     if (!context.isQueenTradeRecapture && (context.isFreePiece || context.opponentBlunder)) return 'Oops.'
     if (context.isTrixizeFirstMove) return '1. Nf3 is the starting move.'
     if (context.isTheoryBest) return 'Best move. Too much theory.'
-    return ''
+    if (context.isQueenTradeRecapture) return ''
+    if (context.isCheckmate) return pick(TRIXIZE_LINES.mate)
+    if (context.isCheck) return pick(TRIXIZE_LINES.check)
+    if (context.isWinning) return pick(TRIXIZE_LINES.winning)
+    if (context.isGreatMove) return pick(TRIXIZE_LINES.great)
+    if (context.capturedValue > 0) return pick(TRIXIZE_LINES.capture)
+    return pick(TRIXIZE_LINES.quiet)
   }
 
   if (profile.dialoguePolicy === 'akshit') {

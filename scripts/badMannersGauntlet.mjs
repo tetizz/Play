@@ -22,6 +22,7 @@ const DEPTH = Number(process.argv.find((arg) => arg.startsWith('--depth='))?.spl
 const MOVE_TIME = Number(process.argv.find((arg) => arg.startsWith('--movetime='))?.split('=')[1] || 650)
 const LINE_PLIES = Number(process.argv.find((arg) => arg.startsWith('--line-plies='))?.split('=')[1] || 140)
 const SEED = process.argv.find((arg) => arg.startsWith('--seed='))?.split('=')[1] || String(Date.now())
+const COMPARE = process.argv.includes('--compare')
 const OUT = process.argv.find((arg) => arg.startsWith('--out='))?.split('=')[1] ||
   path.join(repoRoot, 'test-results', 'bad-manners-gauntlet.json')
 const PUBLIC_OUT = process.argv.find((arg) => arg.startsWith('--public-out='))?.split('=')[1] ||
@@ -201,6 +202,9 @@ try {
       ? await cachedFullLineProof(item, game, decision, selectedUci)
       : { pass: false, reason: 'first move failed', line: [] }
     const pass = verdict.pass && lineProof.pass
+    const comparison = COMPARE
+      ? await compareAgainstLegacy(item, game, candidates, decision, selectedUci, pass, lineProof)
+      : null
     results.push({
       id: item.id,
       category: item.category,
@@ -218,6 +222,7 @@ try {
       firstMoveReason: verdict.reason,
       line: lineProof.line,
       linePlies: lineProof.line.length,
+      comparison,
       reachedKbnk: lineProof.reachedKbnk,
       kbnkPly: lineProof.kbnkPly,
       checkmated: lineProof.checkmated,
@@ -252,6 +257,7 @@ const report = {
   rejectedStartingPositions: rejectedCases.length,
   tablebasePositions: tablebaseCache.size,
   proofLines: proofCache.size,
+  comparison: COMPARE ? summarizeComparison(results) : null,
   total: results.length,
   passed,
   failed,
@@ -396,6 +402,86 @@ async function cachedFullLineProof(item, game, decision, selectedUci) {
     ...proof,
     line: proof.line.map((move) => ({ ...move })),
   }
+}
+
+async function compareAgainstLegacy(item, game, candidates, improvedDecision, improvedUci, improvedPass, improvedProof) {
+  const legacyDecision = legacyEngineFirstDecision(candidates)
+  const legacyUci = legacyDecision?.move ? moveToUci(legacyDecision.move) : null
+  if (!legacyDecision || !legacyUci) {
+    return {
+      improvedUci,
+      improvedPass,
+      improvedLinePlies: improvedProof.line.length,
+      legacyUci: null,
+      legacyPass: false,
+      legacyLinePlies: 0,
+      winner: improvedPass ? 'improved' : 'none',
+      reason: 'legacy had no move',
+    }
+  }
+  const legacyVerdict = evaluateCase(item, game, legacyDecision, legacyUci)
+  const legacyProof = legacyVerdict.pass
+    ? await cachedFullLineProof(item, game, legacyDecision, legacyUci)
+    : { pass: false, reason: 'first move failed', line: [] }
+  const legacyPass = legacyVerdict.pass && legacyProof.pass
+  return {
+    improvedUci,
+    improvedPass,
+    improvedLinePlies: improvedProof.line.length,
+    legacyUci,
+    legacyPass,
+    legacyLinePlies: legacyProof.line.length,
+    winner: comparisonWinner(improvedPass, legacyPass, improvedProof.line.length, legacyProof.line.length),
+    reason: legacyPass ? legacyProof.reason : `${legacyVerdict.reason}; ${legacyProof.reason}`,
+  }
+}
+
+function legacyEngineFirstDecision(candidates) {
+  const candidate = candidates.find((entry) => entry?.move) || null
+  if (!candidate) return null
+  return {
+    move: candidate.move,
+    source: 'legacy-engine-first',
+    score: candidate.score,
+    rank: candidate.rank,
+    line: candidate,
+    bestLine: candidates[0] || candidate,
+    candidateLines: candidates,
+  }
+}
+
+function comparisonWinner(improvedPass, legacyPass, improvedLinePlies, legacyLinePlies) {
+  if (improvedPass && !legacyPass) return 'improved'
+  if (!improvedPass && legacyPass) return 'legacy'
+  if (!improvedPass && !legacyPass) return 'none'
+  if (improvedLinePlies < legacyLinePlies) return 'improved'
+  if (legacyLinePlies < improvedLinePlies) return 'legacy'
+  return 'tie'
+}
+
+function summarizeComparison(results) {
+  const rows = results.map((result) => result.comparison).filter(Boolean)
+  const improvedPassed = rows.filter((row) => row.improvedPass).length
+  const legacyPassed = rows.filter((row) => row.legacyPass).length
+  const improvedOnly = rows.filter((row) => row.improvedPass && !row.legacyPass).length
+  const legacyOnly = rows.filter((row) => row.legacyPass && !row.improvedPass).length
+  return {
+    total: rows.length,
+    improvedPassed,
+    legacyPassed,
+    improvedOnly,
+    legacyOnly,
+    improvedWins: rows.filter((row) => row.winner === 'improved').length,
+    legacyWins: rows.filter((row) => row.winner === 'legacy').length,
+    ties: rows.filter((row) => row.winner === 'tie').length,
+    averageImprovedLinePlies: average(rows.filter((row) => row.improvedPass).map((row) => row.improvedLinePlies)),
+    averageLegacyLinePlies: average(rows.filter((row) => row.legacyPass).map((row) => row.legacyLinePlies)),
+  }
+}
+
+function average(values) {
+  if (!values.length) return null
+  return Number((values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(2))
 }
 
 async function probeTablebase(fen) {

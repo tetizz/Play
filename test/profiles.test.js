@@ -6,6 +6,7 @@ import { dialogueAfterBotMove } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
   calculationProfile,
+  badMannersRouteScore,
   bishopKnightObjectiveUcis,
   chooseCoachMove,
   isBishopKnightMatePosition,
@@ -390,6 +391,30 @@ test('Trixize excludes queen promotion while building the bishop and knight pair
   assert.ok(objectiveMoves.includes('a7a8n'))
   assert.equal(objectiveMoves.includes('a7a8q'), false)
   assert.equal(objectiveMoves.includes('a7a8r'), false)
+})
+
+test('Trixize route scorer heavily prefers bishop-knight conversion over queen promotion', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const knight = game.moves({ verbose: true }).find((move) => move.san === 'a8=N')
+  const queen = game.moves({ verbose: true }).find((move) => move.san === 'a8=Q+')
+  assert.ok(knight)
+  assert.ok(queen)
+  assert.ok(
+    badMannersRouteScore(game, knight, { score: 180, badManners: true }) >
+      badMannersRouteScore(game, queen, { score: 1200, badManners: true }) + 20000,
+  )
+})
+
+test('Trixize route scorer penalizes moves that hang the last required minor', () => {
+  const game = new Chess('8/8/8/8/8/2k5/P7/1NBK4 w - - 0 1')
+  const hangsBishop = game.moves({ verbose: true }).find((move) => move.san === 'Bb2+')
+  const pawnProgress = game.moves({ verbose: true }).find((move) => move.san === 'a4+')
+  assert.ok(hangsBishop)
+  assert.ok(pawnProgress)
+  assert.ok(
+    badMannersRouteScore(game, pawnProgress, { score: 900, badManners: true }) >
+      badMannersRouteScore(game, hangsBishop, { score: 900, badManners: true }) + 20000,
+  )
 })
 
 test('Trixize queen dialogue excludes a normal queen trade recapture', () => {

@@ -7,6 +7,8 @@
     "dev": "vite",
     "bad-manners": "node scripts/badMannersBridge.mjs",
     "test:bad-manners": "node scripts/badMannersGauntlet.mjs --limit=200",
+    "test:bad-manners:compare": "node scripts/badMannersGauntlet.mjs --limit=80 --compare",
+    "test:bad-manners:local": "node scripts/badMannersLocalCompare.mjs",
     "build": "vite build",
     "build:recent-book": "node scripts/buildRecentRepertoireBook.mjs --profile ayden",
     "build:repertoires": "node scripts/buildRecentRepertoireBook.mjs --profile all",

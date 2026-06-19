@@ -3,6 +3,26 @@ import { classifyMove } from './bookupClassifications.js'
 
 const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
 const CENTER = new Set(['d4', 'e4', 'd5', 'e5'])
+export const BAD_MANNERS_ROUTE_WEIGHTS = Object.freeze({
+  createsPair: 26000,
+  minorPromotion: 15000,
+  pureKbnk: 18000,
+  surplusCanBeTaken: 15000,
+  surplusNearKing: 1100,
+  surplusCheck: 1200,
+  captureMaterial: 24,
+  pawnAdvance: 900,
+  routeProgressGain: 620,
+  routePressureDrop: 260,
+  stablePawnGain: 1200,
+  kingBlocksRoute: 380,
+  kbnCornerProgress: 1300,
+  preserveWinMargin: 0.16,
+  keyPieceHangingPenalty: -32000,
+  queenPromotionPenalty: -60000,
+  immediateNonKbnMatePenalty: -90000,
+  drawPenalty: -90000,
+})
 
 export function calculationProfile(profile, beltMode = false, game = null) {
   const base = profile.strengthPolicy
@@ -372,8 +392,9 @@ function selectBishopKnightUnderpromotion(game, candidates) {
       return hasBishopKnightPair(after, candidate.move.color)
     })
     .sort((a, b) => {
+      const routeDiff = badMannersRouteScore(game, b.move, b) - badMannersRouteScore(game, a.move, a)
       const scoreDiff = (b.score ?? -Infinity) - (a.score ?? -Infinity)
-      return scoreDiff || a.rank - b.rank
+      return routeDiff || scoreDiff || a.rank - b.rank
     })[0] || null
 }
 
@@ -390,12 +411,8 @@ function selectBishopKnightConversionMove(game, candidates) {
       return !after.isGameOver() && bishopKnightObjectivePriority(game, after, candidate.move) > 0
     })
     .sort((a, b) => {
-      const afterA = cloneGame(game)
-      const afterB = cloneGame(game)
-      afterA.move(a.move)
-      afterB.move(b.move)
-      const priorityDiff = bishopKnightObjectivePriority(game, afterB, b.move) -
-        bishopKnightObjectivePriority(game, afterA, a.move)
+      const priorityDiff = badMannersRouteScore(game, b.move, b) -
+        badMannersRouteScore(game, a.move, a)
       return priorityDiff || (b.score ?? -Infinity) - (a.score ?? -Infinity) || a.rank - b.rank
     })[0] || null
 }
@@ -501,6 +518,9 @@ function hasClearForwardPromotionLane(game, square, color) {
 }
 
 function bishopKnightObjectivePriority(before, after, move) {
+  const learnedScore = badMannersRouteScore(before, move, null, after)
+  if (learnedScore > 0) return learnedScore
+
   const color = move.color
   const beforeOwn = materialCounts(before, color)
   const afterOwn = materialCounts(after, color)
@@ -555,6 +575,111 @@ function bishopKnightObjectivePriority(before, after, move) {
     return 6000 + advance * 260 + routePressureGain * 90 + routeProgressGain * 220
   }
   return 0
+}
+
+export function badMannersRouteScore(before, move, candidate = null, afterInput = null) {
+  if (!before || !move) return 0
+  const after = afterInput || cloneGame(before)
+  if (!afterInput) after.move(move)
+  const features = badMannersRouteFeatures(before, after, move, candidate)
+  return Object.entries(BAD_MANNERS_ROUTE_WEIGHTS)
+    .reduce((total, [key, weight]) => total + (features[key] || 0) * weight, 0)
+}
+
+export function badMannersRouteFeatures(before, after, move, candidate = null) {
+  const color = move.color
+  const opponent = oppositeColor(color)
+  const beforeOwn = materialCounts(before, color)
+  const afterOwn = materialCounts(after, color)
+  const beforeOpponent = materialCounts(before, opponent)
+  const afterOpponent = materialCounts(after, opponent)
+  const hadPair = beforeOwn.b >= 1 && beforeOwn.n >= 1
+  const hasPair = afterOwn.b >= 1 && afterOwn.n >= 1
+  const opponentBareKing = afterOpponent.p + afterOpponent.n + afterOpponent.b + afterOpponent.r + afterOpponent.q === 0
+  const routeBefore = promotionRouteInfo(before, color)
+  const routeAfter = promotionRouteInfo(after, color)
+  const enemyKingBefore = findKingSquare(before, opponent)
+  const enemyKingAfter = findKingSquare(after, opponent)
+  const routeSquare = routeAfter.bestPawn
+  const keyPieceHanging = keyBishopKnightResourceCanBeCaptured(after, color)
+  const pureKbnk = isBishopKnightMatePosition(after, color)
+  const preserveWinMargin = Number.isFinite(candidate?.score)
+    ? Math.max(0, Math.min(candidate.score, 1200))
+    : 0
+  const kbnCornerProgress = hasPair && opponentBareKing
+    ? bishopKnightCornerProgress(before, after, color)
+    : 0
+  const surplusCanBeTaken = hadPair && isSurplusPiece(beforeOwn, move.piece) &&
+    canOpponentKingCaptureMovedPiece(after, move)
+      ? 1
+      : 0
+  const surplusNearKing = hadPair && isSurplusPiece(beforeOwn, move.piece) && enemyKingAfter
+    ? Math.max(0, 8 - squareDistance(move.to, enemyKingAfter))
+    : 0
+  const kingBlocksRoute = move.piece === 'k' && enemyKingBefore && enemyKingAfter && routeSquare
+    ? Math.max(0, squareDistance(enemyKingAfter, routeSquare) - squareDistance(enemyKingBefore, routeSquare))
+    : 0
+  const pawnAdvance = move.piece === 'p'
+    ? Math.max(0, color === 'w'
+      ? Number(move.to[1]) - Number(move.from[1])
+      : Number(move.from[1]) - Number(move.to[1]))
+    : 0
+
+  return {
+    createsPair: !hadPair && hasPair ? 1 : 0,
+    minorPromotion: ['b', 'n'].includes(move.promotion) ? 1 : 0,
+    pureKbnk: pureKbnk ? 1 : 0,
+    surplusCanBeTaken,
+    surplusNearKing,
+    surplusCheck: hadPair && isSurplusPiece(beforeOwn, move.piece) && move.san.includes('+') ? 1 : 0,
+    captureMaterial: move.captured ? PIECE_VALUES[move.captured] || 0 : 0,
+    pawnAdvance,
+    routeProgressGain: Math.max(0, routeAfter.bestProgress - routeBefore.bestProgress),
+    routePressureDrop: Math.max(0, routeBefore.pressure - routeAfter.pressure),
+    stablePawnGain: Math.max(0, routeAfter.stablePawns - routeBefore.stablePawns),
+    kingBlocksRoute,
+    kbnCornerProgress,
+    preserveWinMargin,
+    keyPieceHangingPenalty: keyPieceHanging ? 1 : 0,
+    queenPromotionPenalty: move.promotion && !['b', 'n'].includes(move.promotion) ? 1 : 0,
+    immediateNonKbnMatePenalty: after.isCheckmate() && !pureKbnk ? 1 : 0,
+    drawPenalty: after.isDraw() ? 1 : 0,
+    hadPair: hadPair ? 1 : 0,
+    hasPair: hasPair ? 1 : 0,
+    opponentMaterialBefore: beforeOpponent.p + beforeOpponent.n + beforeOpponent.b + beforeOpponent.r + beforeOpponent.q,
+  }
+}
+
+function keyBishopKnightResourceCanBeCaptured(game, color) {
+  const own = materialCounts(game, color)
+  const missingBishop = own.b === 0
+  const missingKnight = own.n === 0
+  return game.moves({ verbose: true }).some((reply) => {
+    if (!reply.captured) return false
+    if (reply.captured === 'b' && own.b <= 1) return true
+    if (reply.captured === 'n' && own.n <= 1) return true
+    if (reply.captured !== 'p' || (!missingBishop && !missingKnight)) return false
+    const afterReply = cloneGame(game)
+    afterReply.move(reply)
+    return !canStillBuildBishopKnight(afterReply, color)
+  })
+}
+
+function bishopKnightCornerProgress(before, after, color) {
+  const beforeKing = findKingSquare(before, oppositeColor(color))
+  const afterKing = findKingSquare(after, oppositeColor(color))
+  const bishop = after.board().flat().find((piece) => piece?.color === color && piece.type === 'b')
+  if (!beforeKing || !afterKing || !bishop) return 0
+  const targetCorners = bishopSquareColor(bishop.square) === 0
+    ? ['a1', 'h8']
+    : ['a8', 'h1']
+  const beforeDistance = Math.min(...targetCorners.map((corner) => squareDistance(beforeKing, corner)))
+  const afterDistance = Math.min(...targetCorners.map((corner) => squareDistance(afterKing, corner)))
+  return Math.max(0, beforeDistance - afterDistance)
+}
+
+function bishopSquareColor(square) {
+  return (square.charCodeAt(0) - 'a'.charCodeAt(0) + Number(square[1])) % 2
 }
 
 function promotionRouteInfo(game, color) {

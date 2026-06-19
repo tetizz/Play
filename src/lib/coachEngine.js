@@ -510,6 +510,11 @@ function bishopKnightObjectivePriority(before, after, move) {
   if (!hadPair && hasPair && ['b', 'n'].includes(move.promotion)) return 20000
   if (!hadPair && ['b', 'n'].includes(move.promotion)) return 12000
 
+  const routeBefore = promotionRouteInfo(before, color)
+  const routeAfter = promotionRouteInfo(after, color)
+  const routePressureGain = routeBefore.pressure - routeAfter.pressure
+  const routeProgressGain = routeAfter.bestProgress - routeBefore.bestProgress
+
   if (hadPair) {
     const extraType = isSurplusPiece(beforeOwn, move.piece)
     if (!extraType) return 0
@@ -523,13 +528,79 @@ function bishopKnightObjectivePriority(before, after, move) {
     return 9000 + PIECE_VALUES[move.piece] + distanceGain * 120
   }
 
+  if (move.captured && canStillBuildBishopKnight(after, color)) {
+    return 7000 +
+      PIECE_VALUES[move.captured] +
+      routePressureGain * 80 +
+      routeProgressGain * 260 +
+      routeAfter.stablePawns * 300
+  }
+
+  if (move.piece === 'k' && canStillBuildBishopKnight(after, color)) {
+    const kingSquare = findKingSquare(before, oppositeColor(color))
+    const afterKingSquare = findKingSquare(after, oppositeColor(color))
+    const routeSquare = routeAfter.bestPawn
+    const blocksEnemyKing = kingSquare && afterKingSquare && routeSquare
+      ? squareDistance(afterKingSquare, routeSquare) - squareDistance(kingSquare, routeSquare)
+      : 0
+    if (routePressureGain > 0 || blocksEnemyKing > 0) {
+      return 4200 + routePressureGain * 70 + blocksEnemyKing * 180
+    }
+  }
+
   if (move.piece === 'p') {
     const advance = color === 'w'
       ? Number(move.to[1]) - Number(move.from[1])
       : Number(move.from[1]) - Number(move.to[1])
-    return 6000 + advance * 200
+    return 6000 + advance * 260 + routePressureGain * 90 + routeProgressGain * 220
   }
   return 0
+}
+
+function promotionRouteInfo(game, color) {
+  const opponent = oppositeColor(color)
+  const opponentMoves = legalMovesForColor(game, opponent)
+  const info = { stablePawns: 0, pressure: 0, bestProgress: 0, bestPawn: null }
+  for (const piece of game.board().flat()) {
+    if (piece?.color !== color || piece.type !== 'p') continue
+    if (!hasClearForwardPromotionLane(game, piece.square, color)) continue
+    const progress = color === 'w' ? Number(piece.square[1]) : 9 - Number(piece.square[1])
+    if (progress > info.bestProgress) {
+      info.bestProgress = progress
+      info.bestPawn = piece.square
+    }
+    let pawnPressure = 0
+    for (const square of promotionPathSquares(piece.square, color)) {
+      pawnPressure += opponentMoves.filter((move) => move.to === square).length
+    }
+    if (pawnPressure === 0) info.stablePawns += 1
+    info.pressure += pawnPressure
+  }
+  return info
+}
+
+function promotionPathSquares(square, color) {
+  const file = square[0]
+  let rank = Number(square[1])
+  const step = color === 'w' ? 1 : -1
+  const promotionRank = color === 'w' ? 8 : 1
+  const path = [square]
+  while (rank !== promotionRank) {
+    rank += step
+    path.push(`${file}${rank}`)
+  }
+  return path
+}
+
+function legalMovesForColor(game, color) {
+  if (game.turn() === color) return game.moves({ verbose: true })
+  const parts = game.fen().split(' ')
+  parts[1] = color
+  try {
+    return new Chess(parts.join(' ')).moves({ verbose: true })
+  } catch {
+    return []
+  }
 }
 
 function isSurplusPiece(counts, type) {

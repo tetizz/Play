@@ -127,6 +127,8 @@ struct ChallengeState {
     int             promotionPawnCandidates = 0;
     int             stablePromotionPawnCandidates = 0;
     int             attackedPromotionPawnCandidates = 0;
+    int             promotionRoutePressure = 0;
+    int             bestPromotionRouteProgress = 0;
     int             missingRequiredMinors = 0;
     int             immediateUnderpromotions = 0;
     int             immediateUnderpromotionPawns = 0;
@@ -197,6 +199,8 @@ struct PromotionSafetySummary {
     int distinctPawns         = 0;
     int stableDistinctPawns   = 0;
     int attackedDistinctPawns = 0;
+    int routePressure         = 0;
+    int bestRouteProgress     = 0;
 };
 
 int count_legal_moves(const Position& pos);
@@ -493,6 +497,7 @@ PromotionSafetySummary promotion_safety(const Position& pos, Color us, bool need
     if (!needBishop && !needKnight)
         return summary;
 
+    const Square enemyKing = pos.square<KING>(~us);
     Bitboard pawns = pos.pieces(us, PAWN);
     while (pawns)
     {
@@ -502,12 +507,31 @@ PromotionSafetySummary promotion_safety(const Position& pos, Color us, bool need
 
         summary.routeCandidates += int(needBishop) + int(needKnight);
         ++summary.distinctPawns;
+        summary.bestRouteProgress =
+          std::max(summary.bestRouteProgress, int(relative_rank(us, pawn)));
 
         const bool attacked = bool(pos.attackers_to(pawn, pos.pieces()) & pos.pieces(~us));
         if (attacked)
             ++summary.attackedDistinctPawns;
         else
             ++summary.stableDistinctPawns;
+
+        Square path = pawn;
+        while (relative_rank(us, path) != RANK_8)
+        {
+            const int attackers =
+              popcount(pos.attackers_to(path, pos.pieces()) & pos.pieces(~us));
+            if (attackers > 0)
+                summary.routePressure += attackers * (10 + int(relative_rank(us, path)));
+            if (enemyKing != SQ_NONE)
+            {
+                const int kingDistance = int(SquareDistance[enemyKing][path]);
+                const int raceDistance = 7 - int(relative_rank(us, path));
+                if (kingDistance <= raceDistance + 1)
+                    summary.routePressure += (raceDistance + 2 - kingDistance) * 6;
+            }
+            path += pawn_push(us);
+        }
     }
     return summary;
 }
@@ -582,6 +606,8 @@ int promotion_progress_score(const Position& pos, Move move, Color us, const Cha
       promotion_safety(next, us, st.bishopMustBePromoted, st.knightMustBePromoted);
     score += (afterPromotion.stableDistinctPawns - st.stablePromotionPawnCandidates) * 260;
     score -= (afterPromotion.attackedDistinctPawns - st.attackedPromotionPawnCandidates) * 120;
+    score += std::clamp(st.promotionRoutePressure - afterPromotion.routePressure, -20, 20) * 45;
+    score += (afterPromotion.bestRouteProgress - st.bestPromotionRouteProgress) * 120;
     return score;
 }
 
@@ -1405,6 +1431,8 @@ ChallengeState analyze(const Position& pos, const OptionsMap& options) {
     st.promotionPawnCandidates         = promotion.distinctPawns;
     st.stablePromotionPawnCandidates   = promotion.stableDistinctPawns;
     st.attackedPromotionPawnCandidates = promotion.attackedDistinctPawns;
+    st.promotionRoutePressure          = promotion.routePressure;
+    st.bestPromotionRouteProgress      = promotion.bestRouteProgress;
     st.missingRequiredMinors = int(st.bishopMustBePromoted) + int(st.knightMustBePromoted);
     st.immediateUnderpromotions = immediate_required_underpromotions(pos, st);
     st.immediateUnderpromotionPawns = immediate_required_underpromotion_pawns(pos, st);
@@ -1722,6 +1750,20 @@ int rank_move(const Position& pos, const Search::RootMove& rm, const ChallengeSt
     if (bool(options["PromoteMissingMinor"]))
         score += promotion_progress_score(pos, move, us, st) * std::max(1, mode_multiplier(options));
     score += material_progress_score(st, after) * std::max(1, mode_multiplier(options));
+    if (needs_promotion_piece(st))
+    {
+        StateInfo routeSetupState;
+        StateInfo routeMoveState;
+        Position  routeNext;
+        routeNext.set(pos.fen(), pos.is_chess960(), &routeSetupState);
+        routeNext.do_move(move, routeMoveState);
+        const PromotionSafetySummary routeAfter =
+          promotion_safety(routeNext, us, st.bishopMustBePromoted, st.knightMustBePromoted);
+        score += std::clamp(st.promotionRoutePressure - routeAfter.routePressure, -30, 30)
+               * 70 * std::max(1, mode_multiplier(options));
+        score += (routeAfter.bestRouteProgress - st.bestPromotionRouteProgress)
+               * 220 * std::max(1, mode_multiplier(options));
+    }
     if (st.pureKbnk)
     {
         score += kbn_after_move_score(pos, move, us, st) * std::max(1, mode_multiplier(options));
@@ -1777,16 +1819,29 @@ int fallback_safety_score(const Position& pos, const Search::RootMove& rm,
         score += 200000;
     score += promotion_progress_score(pos, move, us, st) * 8;
 
-    const MaterialAfterMove after = material_after_move(pos, move, st);
-    score += material_progress_score(st, after) * 4;
-    if (after.bishopAttackers == 0 && after.knightAttackers == 0)
-        score += 1500;
-
     StateInfo setupState;
     StateInfo moveState;
     Position  next;
     next.set(pos.fen(), pos.is_chess960(), &setupState);
     next.do_move(move, moveState);
+
+    const MaterialAfterMove after = material_after_move(pos, move, st);
+    score += material_progress_score(st, after) * 4;
+    if (needs_promotion_piece(st))
+    {
+        const PromotionSafetySummary routeAfter =
+          promotion_safety(next, us, st.bishopMustBePromoted, st.knightMustBePromoted);
+        score += std::clamp(st.promotionRoutePressure - routeAfter.routePressure, -30, 30) * 140;
+        score += (routeAfter.bestRouteProgress - st.bestPromotionRouteProgress) * 600;
+        score += (routeAfter.stableDistinctPawns - st.stablePromotionPawnCandidates) * 900;
+    }
+    const Square capturedSquare = move.type_of() == EN_PASSANT ? Square(move.to_sq() + pawn_push(~us))
+                                                               : move.to_sq();
+    const Piece victim = pos.piece_on(capturedSquare);
+    if (victim != NO_PIECE && color_of(victim) == ~us)
+        score += 1200 + int(PieceValue[type_of(victim)]);
+    if (after.bishopAttackers == 0 && after.knightAttackers == 0)
+        score += 1500;
     if (next.checkers())
         score += 700;
 
@@ -1841,6 +1896,8 @@ std::string report(const Position& pos, const OptionsMap& options) {
     os << "Distinct promotion pawns: " << st.promotionPawnCandidates << "\n";
     os << "Stable promotion pawns: " << st.stablePromotionPawnCandidates << "\n";
     os << "Attacked promotion pawns: " << st.attackedPromotionPawnCandidates << "\n";
+    os << "Promotion route pressure: " << st.promotionRoutePressure << "\n";
+    os << "Best promotion route progress: " << st.bestPromotionRouteProgress << "\n";
     os << "Immediate required underpromotions: " << st.immediateUnderpromotions << "\n";
     os << "Immediate required underpromotion pawns: " << st.immediateUnderpromotionPawns << "\n";
     os << "Designated bishop: " << piece_identity_text(pos, st.bishop) << "\n";

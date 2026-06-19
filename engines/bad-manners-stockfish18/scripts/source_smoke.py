@@ -260,6 +260,18 @@ def main() -> int:
     assert "bestmove a4g4" in screenshot_conversion
     assert "challenge PROMOTION_REQUIRED_AND_FORCEABLE" in screenshot_conversion
 
+    route_pressure_report = run_engine(
+        ENGINE,
+        [
+            "uci",
+            "isready",
+            "setoption name BadMannersMode value Puzzle",
+            "bmreport 8/6B1/8/6k1/R5p1/1p1B2P1/1P4KP/8 w - - 0 1",
+        ],
+    )
+    assert "Promotion route pressure:" in route_pressure_report
+    assert "Best promotion route progress:" in route_pressure_report
+
     final_kbn_report = run_engine(
         ENGINE,
         [

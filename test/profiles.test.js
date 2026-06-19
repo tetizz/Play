@@ -363,6 +363,7 @@ test('Trixize rejects screenshot-style non-pure mate while conversion material r
   )
   assert.notEqual(decision.move.san, 'Ra5#')
   assert.notEqual(decision.move.san, 'h3')
+  assert.equal(decision.move.san, 'Rxg4+')
   assert.notEqual(decision.source, 'engine-mate')
 })
 

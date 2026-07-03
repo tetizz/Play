@@ -57,7 +57,6 @@ button {
 }
 
 .home-nav-button,
-.gauntlet-open-button,
 .gauntlet-report-link {
   min-height: 42px;
   display: inline-flex;
@@ -74,14 +73,12 @@ button {
 }
 
 .home-nav-button:hover,
-.gauntlet-open-button:hover,
 .gauntlet-report-link:hover {
   border-color: var(--green);
   background: rgba(45, 54, 44, 0.94);
 }
 
 .home-nav-button svg,
-.gauntlet-open-button svg,
 .gauntlet-report-link svg {
   width: 19px;
   height: 19px;
@@ -2313,7 +2310,7 @@ button {
   }
 
   .home-nav-button,
-  .gauntlet-open-button {
+  .gauntlet-report-link {
     width: 100%;
   }
 

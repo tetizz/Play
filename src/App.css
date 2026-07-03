@@ -17,12 +17,109 @@ button {
 .game-page,
 .review-page,
 .bad-manners-page {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
   min-height: 100svh;
   color: #f6f3ec;
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px) 0 0 / 72px 72px,
     linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px) 0 0 / 72px 72px,
-    linear-gradient(104deg, #0b0e10 0 62%, #211214 62% 100%);
+    linear-gradient(104deg, #070b0d 0 52%, #0c1212 52% 70%, #211214 70% 100%);
+  animation: playAmbientGrid 24s linear infinite;
+}
+
+.setup-page::before,
+.game-page::before,
+.review-page::before,
+.bad-manners-page::before,
+.setup-page::after,
+.game-page::after,
+.review-page::after,
+.bad-manners-page::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.setup-page::before,
+.game-page::before,
+.review-page::before,
+.bad-manners-page::before {
+  inset: 0;
+  opacity: 0.74;
+  background-image:
+    linear-gradient(116deg, transparent 0 42%, rgba(123, 170, 67, 0.15) 42.25% 42.55%, transparent 42.85% 100%),
+    linear-gradient(63deg, transparent 0 59%, rgba(227, 189, 99, 0.12) 59.2% 59.45%, transparent 59.75% 100%),
+    repeating-linear-gradient(90deg, transparent 0 71px, rgba(255, 255, 255, 0.046) 71px 72px),
+    repeating-linear-gradient(0deg, transparent 0 71px, rgba(255, 255, 255, 0.034) 71px 72px),
+    conic-gradient(from 45deg at 50% 50%, rgba(255, 255, 255, 0.035) 0 25%, rgba(123, 170, 67, 0.045) 0 50%, rgba(0, 0, 0, 0) 0 75%, rgba(227, 189, 99, 0.035) 0 100%);
+  background-position:
+    -180px 14vh,
+    52vw -120px,
+    0 0,
+    0 0,
+    0 0;
+  background-size:
+    760px 460px,
+    640px 520px,
+    72px 72px,
+    72px 72px,
+    144px 144px;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 88%, transparent 100%);
+  animation: playBoardDrift 32s linear infinite;
+}
+
+.setup-page::after,
+.game-page::after,
+.review-page::after,
+.bad-manners-page::after {
+  inset: -10%;
+  opacity: 0.7;
+  background-image:
+    linear-gradient(120deg, transparent 0 45%, rgba(123, 170, 67, 0.2) 45.15% 45.45%, transparent 45.75% 100%),
+    linear-gradient(120deg, transparent 0 51%, rgba(123, 170, 67, 0.1) 51.1% 51.3%, transparent 51.65% 100%),
+    linear-gradient(34deg, transparent 0 62%, rgba(227, 189, 99, 0.14) 62.15% 62.45%, transparent 62.8% 100%),
+    repeating-linear-gradient(120deg, transparent 0 84px, rgba(255, 255, 255, 0.044) 85px 86px, transparent 87px 190px);
+  background-position:
+    -22vw 12vh,
+    48vw 8vh,
+    18vw 54vh,
+    0 0;
+  background-size:
+    840px 470px,
+    620px 340px,
+    760px 520px,
+    480px 480px;
+  mix-blend-mode: screen;
+  animation: playRouteSweep 17s ease-in-out infinite alternate;
+}
+
+.game-page::before,
+.review-page::before {
+  opacity: 0.46;
+}
+
+.game-page::after,
+.review-page::after {
+  opacity: 0.42;
+}
+
+.bad-manners-page::before {
+  opacity: 0.5;
+}
+
+.bad-manners-page::after {
+  opacity: 0.44;
+}
+
+.setup-page > *,
+.game-page > *,
+.review-page > *,
+.bad-manners-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 .app-brand {
@@ -2677,6 +2774,65 @@ button {
   *::after {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+@keyframes playAmbientGrid {
+  from {
+    background-position:
+      0 0,
+      0 0,
+      center;
+  }
+  to {
+    background-position:
+      72px 36px,
+      -36px 72px,
+      center;
+  }
+}
+
+@keyframes playBoardDrift {
+  from {
+    background-position:
+      -180px 14vh,
+      52vw -120px,
+      0 0,
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      90px 18vh,
+      calc(52vw - 240px) 40px,
+      72px 36px,
+      -36px 72px,
+      144px 144px;
+  }
+}
+
+@keyframes playRouteSweep {
+  0% {
+    opacity: 0.42;
+    transform: translate3d(-1.8%, -0.8%, 0);
+    background-position:
+      -22vw 12vh,
+      48vw 8vh,
+      18vw 54vh,
+      0 0;
+  }
+  52% {
+    opacity: 0.78;
+    transform: translate3d(1.4%, 0.9%, 0);
+  }
+  100% {
+    opacity: 0.56;
+    transform: translate3d(2.2%, 1.4%, 0);
+    background-position:
+      16vw 8vh,
+      34vw 20vh,
+      8vw 48vh,
+      180px -120px;
   }
 }
 

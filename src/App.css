@@ -465,9 +465,13 @@ button {
 
 .bot-match-setup {
   grid-column: 1 / -1;
+  align-self: start;
+  justify-self: center;
+  align-content: start;
+  width: min(100%, 1180px);
   display: grid;
-  gap: 28px;
-  padding: clamp(22px, 4vw, 42px);
+  gap: clamp(18px, 2vw, 26px);
+  padding: clamp(22px, 2.8vw, 34px);
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(16, 18, 20, 0.82);
@@ -499,17 +503,18 @@ button {
 
 .matchup-seats {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
-  align-items: center;
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(14px, 2vw, 22px);
 }
 
 .bot-seat {
   min-width: 0;
   display: grid;
   justify-items: center;
-  gap: 15px;
-  padding: 24px;
+  align-content: start;
+  gap: 12px;
+  padding: clamp(18px, 2vw, 24px);
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #1c1f21;
@@ -532,7 +537,7 @@ button {
 
 .bot-seat .setup-name-line h2 {
   margin: 0;
-  font-size: 25px;
+  font-size: clamp(22px, 2vw, 28px);
 }
 
 .bot-seat .setup-name-line > span:not(.title-badge) {
@@ -541,9 +546,11 @@ button {
 }
 
 .bot-seat > p {
-  min-height: 48px;
+  min-height: 0;
+  max-width: 36ch;
   margin: 0;
   color: #c9c4ba;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -559,7 +566,7 @@ button {
 
 .bot-seat select {
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0 42px 0 14px;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -571,7 +578,7 @@ button {
 
 .seat-color {
   min-width: 76px;
-  padding: 7px 12px;
+  padding: 6px 12px;
   border-radius: 5px;
   font-weight: 900;
 }
@@ -589,14 +596,27 @@ button {
 .versus-mark {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 54px;
+  height: 54px;
   border: 1px solid var(--border);
   border-radius: 50%;
   color: var(--gold);
   background: #25282a;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 950;
+}
+
+.bot-seat .avatar-large {
+  width: 142px;
+  height: 142px;
+}
+
+.bot-match-setup .primary-play {
+  justify-self: center;
+  width: min(100%, 520px);
+  min-height: 58px;
+  margin-top: 2px;
+  font-size: 21px;
 }
 
 .game-page,

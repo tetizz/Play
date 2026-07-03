@@ -1,8 +1,10 @@
-import { Flag, RotateCcw, X } from 'lucide-react'
+import { Flag, Home, RotateCcw, X } from 'lucide-react'
 import { getBotProfile } from '../data/botProfiles'
 import { Avatar, PlayerStrip } from './Identity'
 import { BoardSurface } from './BoardSurface'
 import { MoveList } from './MoveList'
+
+const HOME_URL = 'https://tetizz.github.io/Home/'
 
 export function GameScreen({ controller }) {
   const {
@@ -110,6 +112,9 @@ export function GameScreen({ controller }) {
           {beltMode ? <strong>Belt mode</strong> : null}
         </div>
         <div className="game-actions">
+          <a className="home-nav-button game-home-button" href={HOME_URL} role="button">
+            <Home /><span>Home</span>
+          </a>
           <button type="button" onClick={resign}>
             <Flag /><span>{botMatch ? 'End match' : 'Resign'}</span>
           </button>

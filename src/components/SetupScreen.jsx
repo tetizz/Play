@@ -1,6 +1,8 @@
-import { Bot, FlaskConical, Swords, UserRound } from 'lucide-react'
+import { Bot, FlaskConical, Home, Swords, UserRound } from 'lucide-react'
 import { BOT_PROFILES } from '../data/botProfiles'
 import { Avatar, CountryFlag } from './Identity'
+
+const HOME_URL = 'https://tetizz.github.io/Home/'
 
 const choices = [
   { id: 'white', image: './assets/white-king.png', label: 'White' },
@@ -28,16 +30,22 @@ export function SetupScreen({
     <main className="setup-page">
       <header className="setup-header">
         <div className="app-brand"><Bot /> <span>Play Bots</span></div>
-        <button
-          type="button"
-          className="gauntlet-open-button"
-          onClick={onOpenBadManners}
-          title="Bad Manners test dashboard"
-          aria-label="Open Bad Manners test dashboard"
-        >
-          <FlaskConical />
-          <span>Bad Manners Tests</span>
-        </button>
+        <div className="setup-header-actions">
+          <a className="home-nav-button" href={HOME_URL} role="button">
+            <Home />
+            <span>Home</span>
+          </a>
+          <button
+            type="button"
+            className="gauntlet-open-button"
+            onClick={onOpenBadManners}
+            title="Bad Manners test dashboard"
+            aria-label="Open Bad Manners test dashboard"
+          >
+            <FlaskConical />
+            <span>Bad Manners Tests</span>
+          </button>
+        </div>
       </header>
       <div className="play-mode-choice" role="tablist" aria-label="Game mode">
         <button

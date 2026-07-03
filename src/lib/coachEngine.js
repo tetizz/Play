@@ -374,20 +374,13 @@ function selectEngineMove(game, candidates, profile, styleProfile, policy) {
 
 function selectBishopKnightUnderpromotion(game, candidates) {
   if (!canPursueBishopKnightObjective(game, game.turn())) return null
-  const top = candidates[0]
   return candidates
     .filter((candidate) => {
       if (!['b', 'n'].includes(candidate.move.promotion)) return false
       const verified = candidate.objectiveVerified === true
       if (!verified) return false
-      const minimumScore = candidate.badManners ? 120 : 700
+      const minimumScore = objectiveScoreFloor(candidate)
       if (Number.isFinite(candidate.score) && candidate.score < minimumScore) return false
-      if (
-        !candidate.badManners &&
-        Number.isFinite(top?.score) &&
-        Number.isFinite(candidate.score) &&
-        top.score - candidate.score > 350
-      ) return false
       const after = new Chess(game.fen())
       after.move(candidate.move)
       return hasBishopKnightPair(after, candidate.move.color)
@@ -447,7 +440,11 @@ function selectBishopKnightEnemyCapture(game, candidates) {
 function isWinningObjectiveCandidate(candidate) {
   return Number.isFinite(candidate.mate)
     ? candidate.mate > 0
-    : Number.isFinite(candidate.score) && candidate.score >= (candidate.badManners ? 120 : 650)
+    : Number.isFinite(candidate.score) && candidate.score >= objectiveScoreFloor(candidate)
+}
+
+function objectiveScoreFloor(candidate) {
+  return candidate.objectiveVerified === true || candidate.badManners === true ? 120 : 650
 }
 
 function rejectsBadMannersPureFinal(game, candidate) {

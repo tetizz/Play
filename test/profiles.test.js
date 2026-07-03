@@ -261,6 +261,22 @@ test('Trixize completes the bishop-knight pair instead of switching to a queen',
   assert.equal(decision.source, 'engine-objective')
 })
 
+test('Trixize accepts modest verified KBN scores instead of defaulting to queen promotion', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 2300, rank: 1 },
+      { uci: 'a7a8n', score: 183, rank: 2, objectiveVerified: true },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'a8=N')
+  assert.equal(decision.source, 'engine-objective')
+})
+
 test('Trixize refuses unverified bishop-knight underpromotion priority', () => {
   const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
   const profile = getBotProfile('trixize')
@@ -308,6 +324,26 @@ test('Trixize builds bishop and knight across sequential promotions', () => {
   )
   assert.equal(second.move.promotion, 'n')
   assert.equal(second.source, 'engine-objective')
+})
+
+test('Trixize starts a two-pawn KBN build even when the first minor has a modest verified score', () => {
+  const game = new Chess('7k/PP6/8/8/8/8/8/7K w - - 0 1')
+  const profile = getBotProfile('trixize')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 2400, rank: 1 },
+      { uci: 'a7a8b', score: 183, rank: 2, objectiveVerified: true },
+      { uci: 'a7a8n', score: 180, rank: 3, objectiveVerified: true },
+      { uci: 'b7b8q', score: 2350, rank: 4 },
+      { uci: 'b7b8b', score: 178, rank: 5, objectiveVerified: true },
+      { uci: 'b7b8n', score: 176, rank: 6, objectiveVerified: true },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'a8=B')
+  assert.equal(decision.source, 'engine-objective')
 })
 
 test('Trixize delays an immediate mate for a decisively winning bishop-knight underpromotion', () => {

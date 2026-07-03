@@ -30,7 +30,7 @@ export function SetupScreen({
       <header className="setup-header">
         <div className="app-brand"><Bot /> <span>Play Bots</span></div>
         <div className="setup-header-actions">
-          <a className="home-nav-button" href={HOME_URL} role="button">
+          <a className="home-nav-button" href={HOME_URL} aria-label="Open tetizz chess projects home">
             <Home />
             <span>Home</span>
           </a>

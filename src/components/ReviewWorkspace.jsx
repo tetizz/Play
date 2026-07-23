@@ -17,6 +17,7 @@ export function ReviewWorkspace({ controller }) {
     boardOrientation,
     history,
     review,
+    reviewResult,
     reviewProgress,
     reviewPly,
     setReviewPly,
@@ -27,11 +28,14 @@ export function ReviewWorkspace({ controller }) {
   const [sharedPgn, setSharedPgn] = useState('')
   const reviewScrollRef = useRef(null)
   const pgnTextRef = useRef(null)
-  const selected = review?.moments?.[Math.max(0, reviewPly - 1)] || null
+  const selected = reviewPly > 0
+    ? review?.moments?.find((moment) => moment.ply === reviewPly) || null
+    : null
   const activePoint = review?.graph?.[reviewPly] || review?.graph?.[0] || null
   const progress = reviewProgress.total
     ? Math.round((reviewProgress.completed / reviewProgress.total) * 100)
     : 0
+  const displayedResult = review?.result || reviewResult
 
   useEffect(() => {
     reviewScrollRef.current?.scrollTo({ top: 0 })
@@ -85,8 +89,8 @@ export function ReviewWorkspace({ controller }) {
         <div className="review-board-row">
           <EvaluationBar
             point={activePoint}
-            result={review?.result}
-            isFinal={Boolean(review && reviewPly === history.length)}
+            result={displayedResult}
+            isFinal={Boolean(displayedResult && reviewPly === history.length)}
           />
           <BoardSurface
             history={history}
@@ -114,7 +118,7 @@ export function ReviewWorkspace({ controller }) {
           <div>
             <span className="eyebrow">{review?.engine || 'Stockfish 18'}</span>
             <h1>Game Review</h1>
-            {review ? <p>{review.result}</p> : null}
+            {displayedResult ? <p>{displayedResult}</p> : null}
           </div>
           <div className="review-heading-actions">
             <div className="review-action-buttons">
@@ -317,7 +321,7 @@ function ReviewSummary({
               onSelect={onSelectClassification}
               classification={item.key}
             />
-            <img src={item.icon} alt="" />
+            {item.icon ? <img src={item.icon} alt="" /> : <span aria-hidden="true">—</span>}
             <ClassificationCount
               count={item[rightSide]}
               color={item.color}
@@ -439,7 +443,11 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
     const y = height - ((point.percent ?? 50) / 100) * height
     return { x, y, point }
   })
-  const active = coordinates[Math.min(activePly, Math.max(0, coordinates.length - 1))]
+  const activeIndex = Math.max(0, Math.min(
+    Number.isFinite(activePly) ? activePly : 0,
+    Math.max(0, coordinates.length - 1),
+  ))
+  const active = coordinates[activeIndex]
   const curve = buildSmoothPath(coordinates, width)
   const whiteArea = coordinates.length
     ? `${curve} L ${width} ${height} L 0 ${height} Z`
@@ -472,7 +480,7 @@ function EvaluationGraph({ graph = [], activePly, onSelect }) {
         aria-label="Review move"
         aria-valuemin={0}
         aria-valuemax={Math.max(0, graph.length - 1)}
-        aria-valuenow={activePly}
+        aria-valuenow={activeIndex}
         onPointerDown={selectFromPointer}
         onKeyDown={selectFromKeyboard}
       >

@@ -19,9 +19,10 @@ export function createBadMannersClient({
     const controller = new AbortController()
     controllers.add(controller)
     const timeout = setTimeout(() => controller.abort(), options.timeout || timeoutMs)
+    const requestUrl = `${String(endpoint).replace(/\/+$/, '')}/bestmove`
 
     try {
-      const response = await fetchImpl(`${endpoint}/bestmove`, {
+      const response = await fetchImpl(requestUrl, {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -38,14 +39,22 @@ export function createBadMannersClient({
       if (!response.ok || requestGeneration !== generation) return []
       const payload = await response.json()
       if (requestGeneration !== generation || !Array.isArray(payload.lines)) return []
+      const seen = new Set()
       return payload.lines
         .filter((line) => /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(line?.uci || ''))
+        .filter((line) => {
+          if (seen.has(line.uci)) return false
+          seen.add(line.uci)
+          return true
+        })
         .map((line, index) => ({
           uci: line.uci,
           score: Number.isFinite(line.score) ? line.score : null,
           mate: Number.isFinite(line.mate) ? line.mate : null,
           rank: Number(line.rank || index + 1),
-          pv: Array.isArray(line.pv) ? line.pv : [line.uci],
+          pv: Array.isArray(line.pv)
+            ? line.pv.filter((move) => /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(move))
+            : [line.uci],
           objectiveVerified: line.objectiveVerified === true,
           badManners: true,
         }))
@@ -68,6 +77,23 @@ export function createBadMannersClient({
     cancelAll,
     destroy: cancelAll,
   }
+}
+
+export function isBadMannersDecisionSafe(
+  decision,
+  {
+    hasObjectiveMoves = false,
+    exactPayloadAvailable = false,
+    exactWinning = false,
+    minimumScore = 120,
+  } = {},
+) {
+  if (!decision?.move) return false
+  if (exactPayloadAvailable) return exactWinning
+  if (!hasObjectiveMoves) return true
+  return decision.source === 'engine-objective' ||
+    decision.source === 'engine-mate' ||
+    Number.isFinite(decision.score) && decision.score >= minimumScore
 }
 
 export function shouldUseBadMannersTakeover(game, profile) {

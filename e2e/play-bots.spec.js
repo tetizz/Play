@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.reload()
 })
 
-test('Akshit legal markers and premove chain stay responsive', async ({ page }) => {
+test('Akshit legal markers and a single premove stay responsive', async ({ page }) => {
   const errors = []
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
@@ -23,6 +23,14 @@ test('Akshit legal markers and premove chain stay responsive', async ({ page }) 
 
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
   await expect(page.getByText('Akshit is thinking')).toBeVisible()
+  await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
+    'animation-name',
+    'botAvatarReact',
+  )
+  await expect(page.locator('.dialogue-row.bot-speaking .speech-bubble')).toHaveCSS(
+    'animation-iteration-count',
+    '1',
+  )
   await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming|trixize1234/i)).toHaveCount(0)
   expect(errors).toEqual([])
 })
@@ -58,7 +66,7 @@ test('a claimable threefold position continues instead of ending as a draw', asy
   ), { timeout: 12000 }).toBe(9)
 })
 
-test('mobile setup has no horizontal page overflow', async ({ page }) => {
+test('setup and game board fit desktop and mobile without horizontal overflow', async ({ page }) => {
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 1280, height: 720 },
@@ -73,6 +81,31 @@ test('mobile setup has no horizontal page overflow', async ({ page }) => {
     }))
     expect(sizes.scrollWidth).toBeLessThanOrEqual(sizes.clientWidth)
     await expect(page.getByRole('button', { name: 'Play', exact: true })).toBeVisible()
+  }
+
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport)
+    const layout = await page.locator('.board-surface').evaluate((board) => {
+      const box = board.getBoundingClientRect()
+      return {
+        left: box.left,
+        right: box.right,
+        width: box.width,
+        height: box.height,
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }
+    })
+    expect(layout.left).toBeGreaterThanOrEqual(0)
+    expect(layout.right).toBeLessThanOrEqual(viewport.width)
+    expect(Math.abs(layout.width - layout.height)).toBeLessThanOrEqual(1)
+    expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth)
+    await expect(page.locator('[data-square="a1"]')).toContainText(/a|1/)
   }
 })
 
@@ -89,6 +122,11 @@ test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => 
   await expect(page.locator('.move-row button').filter({ hasText: /.+/ })).toHaveCount(2, { timeout: 15000 })
   const conversation = page.getByLabel('Bot conversation')
   await expect(conversation.locator('.conversation-row')).toHaveCount(2)
+  await expect(conversation.locator('.conversation-row.active-speaker')).toHaveCount(1)
+  await expect(conversation.locator('.conversation-row.active-speaker .avatar-small')).toHaveCSS(
+    'animation-name',
+    'botAvatarReact',
+  )
   await expect(conversation.getByText('Trixize', { exact: true })).toBeVisible()
   await expect(conversation.getByText('Akshit', { exact: true })).toBeVisible()
 
@@ -122,7 +160,7 @@ test('promotion picker supports underpromotion to a knight', async ({ page }) =>
   await expect(page.getByRole('button', { name: 'bxa8=N', exact: true })).toBeVisible()
 })
 
-test('multiple premoves execute in order across bot turns', async ({ page }) => {
+test('a new premove replaces the old one and executes immediately after the bot reply', async ({ page }) => {
   test.setTimeout(35000)
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
@@ -131,22 +169,172 @@ test('multiple premoves execute in order across bot turns', async ({ page }) => 
 
   await page.locator('[data-square="g1"]').click()
   await page.locator('[data-square="f3"]').click()
+  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await expect(page.locator('[data-square="g1"] > div')).toHaveCSS(
+    'background-color',
+    /rgba?\(205,\s*55,\s*64/,
+  )
+  await expect(page.locator('[data-square="f3"] > div')).toHaveCSS(
+    'background-color',
+    /rgba?\(205,\s*55,\s*64/,
+  )
+
   await page.locator('[data-square="b1"]').click()
   await page.locator('[data-square="c3"]').click()
-  await expect(page.getByText('2 premoves queued')).toBeVisible()
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(1)
+  await expect(page.locator('[data-square="b1"] > div')).toHaveCSS(
+    'background-color',
+    /rgba?\(205,\s*55,\s*64/,
+  )
+  await expect(page.locator('[data-square="c3"] > div')).toHaveCSS(
+    'background-color',
+    /rgba?\(205,\s*55,\s*64/,
+  )
+  await expect(page.locator('[data-square="g1"] > div')).not.toHaveCSS(
+    'background-color',
+    /rgba?\(205,\s*55,\s*64/,
+  )
 
-  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 15000 })
-  await expect(page.getByText('1 premove queued')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Nc3', exact: true })).toBeVisible({ timeout: 15000 })
-  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toHaveCount(0)
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
 })
 
-test('zero-move review stays flat at equality', async ({ page }) => {
+test('a queued premove can be cancelled with Escape or the visible cancel button', async ({ page }) => {
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await page.locator('[data-square="e2"]').click()
+  await page.locator('[data-square="e4"]').click()
+
+  await page.locator('[data-square="g1"]').click()
+  await page.locator('[data-square="f3"]').click()
+  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
+
+  await page.locator('[data-square="b1"]').click()
+  await page.locator('[data-square="c3"]').click()
+  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Cancel premove' }).click()
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
+})
+
+test('keyboard users can move, premove, navigate, and cancel on the board', async ({ page }) => {
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
+  })
+  await page.reload()
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  const e2 = page.locator('[data-square="e2"]')
+  await e2.focus()
+  await expect(e2).toHaveAttribute('role', 'button')
+  await expect(e2).toHaveAttribute('tabindex', '0')
+  await expect(e2).toHaveAttribute('aria-label', /e2, White pawn/)
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('ArrowUp')
+  await expect(page.locator('[data-square="e3"]')).toBeFocused()
+  await expect(page.locator('[data-square="e3"]')).toHaveCSS('outline-style', 'solid')
+  await page.keyboard.press('ArrowUp')
+  await expect(page.locator('[data-square="e4"]')).toBeFocused()
+  await page.keyboard.press('Space')
+  await expect(page.getByRole('button', { name: 'e4', exact: true })).toBeVisible()
+
+  await page.locator('[data-square="g1"]').focus()
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('ArrowLeft')
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('ArrowUp')
+  await expect(page.locator('[data-square="f3"]')).toBeFocused()
+  await page.keyboard.press('Space')
+  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+
+  await page.locator('[data-square="f1"]').focus()
+  await expect(page.getByRole('button', { name: 'Next move' })).toBeDisabled()
+  await expect(page.locator('.move-row button')).toHaveCount(2, { timeout: 12000 })
+  await expect(page.locator('[data-square="f1"]')).toBeFocused()
+
+  await page.locator('[data-square="g1"]').focus()
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('ArrowLeft')
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('ArrowUp')
+  await expect(page.locator('[data-square="f3"]')).toBeFocused()
+  await page.keyboard.press('Space')
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible()
+
+  await page.locator('[data-square="b1"]').focus()
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('ArrowUp')
+  await expect(page.locator('[data-square="c3"]')).toBeFocused()
+  await page.keyboard.press('Space')
+  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await expect(page.locator('[data-square="b1"]')).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('[data-square="c3"]')).toHaveAttribute('aria-pressed', 'true')
+
+  await page.keyboard.press('Escape')
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
+})
+
+test('a king that has moved cannot highlight or queue a castling premove', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('play-bots-session-v3', JSON.stringify({
+      phase: 'game',
+      gameMode: 'player',
+      botId: 'akshit',
+      colorChoice: 'white',
+      humanColor: 'white',
+      history: ['Nf3', 'a6', 'g3', 'a5', 'Bg2', 'a4', 'Kf1', 'a3', 'Ke1'],
+      beltMode: false,
+      premoveQueue: [],
+      dialogueLog: [],
+    }))
+  })
+  await page.reload()
+
+  await page.locator('[data-square="e1"]').focus()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('[data-square="g1"] > div')).not.toHaveCSS(
+    'background-image',
+    /radial-gradient/,
+  )
+  await page.locator('[data-square="g1"]').focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
+})
+
+test('speaking reactions respect reduced motion without delaying the game', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
+    'animation-name',
+    'none',
+  )
+  await page.locator('[data-square="e2"]').click()
+  await page.locator('[data-square="e4"]').click()
+  await expect(page.locator('.move-row button')).toHaveCount(2, { timeout: 12000 })
+})
+
+test('zero-move resignation review reflects the terminal result', async ({ page }) => {
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.getByRole('button', { name: 'Resign', exact: true }).click()
 
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+  await expect(page.locator('[data-square][role="button"]')).toHaveCount(0)
   await expect(page.getByText('Black wins by resignation', { exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible()
   const graph = await page.evaluate(() => ({
@@ -155,9 +343,9 @@ test('zero-move review stays flat at equality', async ({ page }) => {
     area: document.querySelector('.evaluation-white-area')?.getAttribute('d'),
     activeMarkers: document.querySelectorAll('.evaluation-active').length,
   }))
-  expect(graph.percent).toBe(50)
-  expect(graph.line).toBe('M 0 66 L 640 66')
-  expect(graph.area).toBe('M 0 66 L 640 66 L 640 132 L 0 132 Z')
+  expect(graph.percent).toBe(0)
+  expect(graph.line).toBe('M 0 132 L 640 132')
+  expect(graph.area).toBe('M 0 132 L 640 132 L 640 132 L 0 132 Z')
   expect(graph.activeMarkers).toBe(0)
   await expect(page.locator('.evaluation-line-shadow')).toHaveCount(0)
 

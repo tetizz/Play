@@ -29,6 +29,7 @@ const CLASSIFICATION_ORDER = [
   'miss',
   'blunder',
   'forced',
+  'unreviewed',
 ]
 const PIECE_NAMES = {
   p: 'pawn',
@@ -57,7 +58,7 @@ export async function reviewGameWithStockfish({
   let remainingDeepPasses = policy.maxDeepPasses
 
   for (let index = 0; index < history.length; index += 1) {
-    if (signal?.aborted) throw new DOMException('Review cancelled', 'AbortError')
+    throwIfReviewAborted(signal)
     const beforeFen = game.fen()
     const beforeHistory = game.history()
     const legalMoveCount = game.moves().length
@@ -68,10 +69,16 @@ export async function reviewGameWithStockfish({
 
     const playedUci = toUci(verboseMove)
     const phase = phaseForPosition(game, index)
-    let candidates = await safeAnalyze(client, beforeFen, reviewOptions)
+    let candidates = await safeAnalyze(client, beforeFen, reviewOptions, signal)
     let playedLine = findCandidateLine(candidates, playedUci)
     if ((policy.exactCandidate || !playedLine) && candidates.length) {
-      playedLine = await analyzeExactPlayedMove(playedClient, beforeFen, playedUci, reviewOptions) ||
+      playedLine = await analyzeExactPlayedMove(
+        playedClient,
+        beforeFen,
+        playedUci,
+        reviewOptions,
+        signal,
+      ) ||
         playedLine
     }
 
@@ -84,22 +91,36 @@ export async function reviewGameWithStockfish({
     })
     if (tacticalCandidate && remainingDeepPasses > 0) {
       remainingDeepPasses -= 1
-      const deeper = await safeAnalyze(client, beforeFen, tacticalOptions)
+      const deeper = await safeAnalyze(client, beforeFen, tacticalOptions, signal)
       if (deeper.length) candidates = deeper
       const deeperCandidatePlayed = candidates.find((line) => sameUci(line.uci, playedUci))
       if (deeperCandidatePlayed && !policy.exactCandidate) {
         playedLine = deeperCandidatePlayed
       } else {
-        playedLine = await analyzeExactPlayedMove(playedClient, beforeFen, playedUci, tacticalOptions) ||
+        playedLine = await analyzeExactPlayedMove(
+          playedClient,
+          beforeFen,
+          playedUci,
+          tacticalOptions,
+          signal,
+        ) ||
           playedLine
       }
     }
 
+    throwIfReviewAborted(signal)
     game.move(verboseMove)
     positions.push(game.fen())
     if (!playedLine) {
-      playedLine = await analyzePlayedMove(client, game, verboseMove, reviewOptions)
+      playedLine = await analyzePlayedMove(
+        client,
+        game,
+        verboseMove,
+        reviewOptions,
+        signal,
+      )
     }
+    throwIfReviewAborted(signal)
 
     const bestLine = candidates[0] || null
     const beforeEvaluation = whitePerspective(side, bestLine)
@@ -126,8 +147,10 @@ export async function reviewGameWithStockfish({
         })
       : fallbackClassification(game)
 
-    const bestLineSan = uciLineToSan(beforeFen, bestLine?.pv || [])
-    const playedLineSan = uciLineToSan(beforeFen, playedLine?.pv || [])
+    const bestLineUci = principalVariation(bestLine)
+    const playedLineUci = principalVariation(playedLine)
+    const bestLineSan = uciLineToSan(beforeFen, bestLineUci)
+    const playedLineSan = uciLineToSan(beforeFen, playedLineUci)
     const moment = {
       ply: index + 1,
       moveNumber: Math.floor(index / 2) + 1,
@@ -139,9 +162,9 @@ export async function reviewGameWithStockfish({
       afterFen: game.fen(),
       bestMove: bestLine?.uci || null,
       bestMoveSan: bestLineSan[0] || null,
-      bestLine: bestLine?.pv || [],
+      bestLine: bestLineUci,
       bestLineSan,
-      playedLine: playedLine?.pv || [],
+      playedLine: playedLineUci,
       playedLineSan,
       scoreBefore: beforeEvaluation.score,
       scoreAfter: afterEvaluation.score,
@@ -174,6 +197,7 @@ export async function reviewGameWithStockfish({
       graphEvaluation.mate,
       classification.key === 'unreviewed' ? null : classification,
     ))
+    throwIfReviewAborted(signal)
     onProgress({ completed: index + 1, total: history.length, moment })
   }
 
@@ -320,12 +344,12 @@ function shouldDeepenReviewMove({ candidates, move, phase, playedLine, policy })
   return loss >= policy.quietLossThreshold
 }
 
-async function analyzeExactPlayedMove(client, fen, playedUci, options) {
+async function analyzeExactPlayedMove(client, fen, playedUci, options, signal) {
   const lines = await safeAnalyze(client, fen, {
     ...options,
     count: 1,
     searchMoves: [playedUci],
-  })
+  }, signal)
   const line = lines.find((candidate) => sameUci(candidate.uci, playedUci))
   if (!line) return null
   return {
@@ -335,7 +359,7 @@ async function analyzeExactPlayedMove(client, fen, playedUci, options) {
   }
 }
 
-async function analyzePlayedMove(client, game, verboseMove, reviewOptions) {
+async function analyzePlayedMove(client, game, verboseMove, reviewOptions, signal) {
   if (game.isCheckmate()) {
     return {
       uci: toUci(verboseMove),
@@ -359,7 +383,7 @@ async function analyzePlayedMove(client, game, verboseMove, reviewOptions) {
     count: 1,
     moveTime: Math.min(150, reviewOptions.moveTime),
     timeout: Math.min(1250, reviewOptions.timeout),
-  })
+  }, signal)
   const reply = afterLines[0]
   return {
     uci: toUci(verboseMove),
@@ -377,13 +401,15 @@ function finalizeReview({ engine, game, positions, moments, graph, resultOverrid
     white: aggregateAccuracy(moments, 'w'),
     black: aggregateAccuracy(moments, 'b'),
   }
+  const result = resultOverride || finalResult(game)
+  const finalizedGraph = graphWithFinalOutcome(graph, result)
   return {
     complete: true,
     engine,
-    result: resultOverride || finalResult(game),
+    result,
     positions,
     moments,
-    graph,
+    graph: finalizedGraph,
     counts: classificationCounts(moments),
     accuracy,
     gameRating: {
@@ -397,8 +423,9 @@ function finalizeReview({ engine, game, positions, moments, graph, resultOverrid
   }
 }
 
-async function safeAnalyze(client, fen, options) {
+async function safeAnalyze(client, fen, options, signal) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
+    throwIfReviewAborted(signal)
     try {
       const lines = await client.analyze(fen, attempt === 0 ? options : {
         ...options,
@@ -407,12 +434,38 @@ async function safeAnalyze(client, fen, options) {
         timeout: Math.min(options.timeout || 1800, 1600),
         count: Math.min(options.count || 3, 3),
       }) || []
+      throwIfReviewAborted(signal)
       if (lines.length) return lines
-    } catch {
+    } catch (error) {
+      if (error?.name === 'AbortError' || signal?.aborted) {
+        throw abortError(error)
+      }
       // A second bounded pass handles a worker startup or timeout failure.
     }
   }
   return []
+}
+
+function throwIfReviewAborted(signal) {
+  if (signal?.aborted) throw abortError(signal.reason)
+}
+
+function abortError(reason) {
+  if (reason?.name === 'AbortError') return reason
+  return new DOMException('Review cancelled', 'AbortError')
+}
+
+function graphWithFinalOutcome(graph, result) {
+  if (!graph.length) return graph
+  const normalized = String(result || '').toLowerCase()
+  let percent = null
+  if (/^(white|player) wins/.test(normalized) || normalized === '1-0') percent = 100
+  else if (/^black wins/.test(normalized) || normalized === '0-1') percent = 0
+  else if (normalized.includes('draw') || normalized === '1/2-1/2') percent = 50
+  if (!Number.isFinite(percent)) return graph
+  return graph.map((point, index) =>
+    index === graph.length - 1 ? { ...point, percent, terminal: true } : point,
+  )
 }
 
 function fallbackClassification(game) {
@@ -644,6 +697,13 @@ function uciLineToSan(fen, line) {
     game.move(move)
   }
   return sans
+}
+
+function principalVariation(line) {
+  if (!line) return []
+  const variation = Array.isArray(line.pv) ? line.pv.filter(Boolean) : []
+  if (!line.uci || sameUci(variation[0], line.uci)) return variation
+  return [line.uci, ...variation]
 }
 
 function formatEvaluation(score, mate) {

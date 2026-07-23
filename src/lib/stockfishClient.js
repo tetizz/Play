@@ -1,8 +1,15 @@
 const ENGINE_FILE = 'stockfish/stockfish-18-lite-single.js'
 
-export function createStockfishClient() {
+export function createStockfishClient({
+  workerFactory = (url) => new Worker(url),
+  engineUrl = null,
+  readyTimeoutMs = 1800,
+  stopGraceMs = 500,
+} = {}) {
   let worker = null
   let readyPromise = null
+  let readyState = null
+  let starting = null
   let active = null
   let generation = 0
   let requestId = 0
@@ -15,12 +22,17 @@ export function createStockfishClient() {
 
   function ensureWorker() {
     if (worker) return worker
-    worker = new Worker(`${import.meta.env.BASE_URL}${ENGINE_FILE}`)
+    const baseUrl = import.meta.env?.BASE_URL || './'
+    worker = workerFactory(engineUrl || `${baseUrl}${ENGINE_FILE}`)
     worker.onmessage = ({ data }) => handleMessage(String(data))
-    worker.onerror = () => {
+    worker.onerror = (error) => {
+      rejectReady(error instanceof Error ? error : new Error('Stockfish worker failed'))
       emit('Stockfish unavailable')
-      settleActive(null)
-      while (queue.length) queue.shift().resolve(null)
+      if (active) settleActive(emptyResult(active))
+      while (queue.length) {
+        const queued = queue.shift()
+        queued.resolve(emptyResult(queued))
+      }
       worker?.terminate()
       worker = null
       readyPromise = null
@@ -32,23 +44,37 @@ export function createStockfishClient() {
   }
 
   function waitForReady() {
-    return new Promise((resolve) => {
-      const timeout = setTimeout(resolve, 1800)
-      const listener = (status) => {
-        if (status !== 'Stockfish ready') return
-        clearTimeout(timeout)
-        listeners.delete(listener)
-        resolve()
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        readyState = null
+        reject(new Error('Stockfish readiness timed out'))
+      }, Math.max(100, readyTimeoutMs))
+      readyState = {
+        resolve: () => {
+          clearTimeout(timeout)
+          readyState = null
+          resolve()
+        },
+        reject: (error) => {
+          clearTimeout(timeout)
+          readyState = null
+          reject(error)
+        },
       }
-      listeners.add(listener)
     })
   }
 
+  function rejectReady(error) {
+    readyState?.reject(error)
+  }
+
   function handleMessage(text) {
-    if (text === 'uciok' || text === 'readyok') {
+    if (text === 'readyok') {
+      readyState?.resolve()
       emit('Stockfish ready')
       return
     }
+    if (text === 'uciok') return
     if (!active) return
     if (text.startsWith('info ')) {
       const line = parsePrincipalVariation(text)
@@ -75,27 +101,32 @@ export function createStockfishClient() {
   }
 
   function resetWorker() {
+    rejectReady(new Error('Stockfish worker reset'))
     worker?.terminate()
     worker = null
     readyPromise = null
   }
 
   async function runNext() {
-    if (active || !queue.length) return
+    if (starting || active || !queue.length) return
     const request = queue.shift()
     if (request.generation !== generation) {
-      request.resolve(null)
+      request.resolve(emptyResult(request))
       queueMicrotask(runNext)
       return
     }
+    starting = request
     try {
       ensureWorker()
       await readyPromise
+      if (starting !== request) return
       if (request.generation !== generation) {
-        request.resolve(null)
+        starting = null
+        request.resolve(emptyResult(request))
         queueMicrotask(runNext)
         return
       }
+      starting = null
       active = request
       const candidateCount = Math.max(1, Math.min(16, request.options.count || 1))
       const limitStrength = Number.isFinite(request.options.elo)
@@ -111,7 +142,7 @@ export function createStockfishClient() {
           const lines = [...request.lines.values()].sort((a, b) => a.rank - b.rank)
           resetWorker()
           settleActive(request.kind === 'best' ? lines[0]?.uci || null : lines)
-        }, 500)
+        }, Math.max(50, stopGraceMs))
       }, request.options.timeout || Math.max(2200, (request.options.moveTime || 500) + 1500))
       const depth = Math.max(1, request.options.depth || 8)
       const moveTime = Math.max(40, request.options.moveTime || 500)
@@ -124,8 +155,15 @@ export function createStockfishClient() {
         : `depth ${depth} movetime ${moveTime}`
       post(`go ${limits}${searchClause}`)
     } catch {
-      request.resolve(null)
-      active = null
+      if (starting !== request && active !== request) return
+      if (starting === request) starting = null
+      if (active === request) {
+        clearTimeout(request.timeout)
+        clearTimeout(request.stopTimeout)
+        active = null
+      }
+      request.resolve(emptyResult(request))
+      resetWorker()
       queueMicrotask(runNext)
     }
   }
@@ -154,13 +192,26 @@ export function createStockfishClient() {
 
   function cancelAll() {
     generation += 1
-    while (queue.length) queue.shift().resolve(null)
+    while (queue.length) {
+      const queued = queue.shift()
+      queued.resolve(emptyResult(queued))
+    }
+    let resetRequired = false
+    if (starting) {
+      const cancelled = starting
+      starting = null
+      cancelled.resolve(emptyResult(cancelled))
+      resetRequired = true
+    }
     if (active) {
       const cancelled = active
       active = null
       clearTimeout(cancelled.timeout)
       clearTimeout(cancelled.stopTimeout)
-      cancelled.resolve(cancelled.kind === 'best' ? null : [])
+      cancelled.resolve(emptyResult(cancelled))
+      resetRequired = true
+    }
+    if (resetRequired) {
       resetWorker()
     }
   }
@@ -194,6 +245,10 @@ export function createStockfishClient() {
       return () => listeners.delete(listener)
     },
   }
+}
+
+function emptyResult(request) {
+  return request?.kind === 'best' ? null : []
 }
 
 function parsePrincipalVariation(text) {

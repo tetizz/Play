@@ -8,6 +8,7 @@ import {
   gameFromHistory,
   isAutomaticGameOver,
   loadSession,
+  saveSession,
   shouldResumeBotTurn,
 } from '../src/lib/gameSession.js'
 import { buildSmoothPath, evaluationBarDisplay } from '../src/lib/evaluationGraph.js'
@@ -75,6 +76,31 @@ test('review PGN export preserves player colors, headers, moves, and result', ()
   }), 'ayden-vs-player.pgn')
 })
 
+test('review PGN export resolves player and bot names to the correct result color', () => {
+  const playerWin = buildGamePgn({
+    history: ['e4', 'e5'],
+    result: 'player wins by resignation',
+    gameMode: 'player',
+    humanColor: 'white',
+    player: { name: 'player' },
+    profile: { name: 'Mubassar' },
+    date: new Date(2026, 5, 14),
+  })
+  assert.match(playerWin, /\[Result "1-0"\]/)
+  assert.match(playerWin, /1\. e4 e5 1-0/)
+
+  const botWin = buildGamePgn({
+    history: ['e4', 'e5'],
+    result: 'Akshit Sharma wins by resignation',
+    gameMode: 'bots',
+    whiteProfile: { name: 'Trixize' },
+    blackProfile: { name: 'Akshit Sharma' },
+    date: new Date(2026, 5, 14),
+  })
+  assert.match(botWin, /\[Result "0-1"\]/)
+  assert.match(botWin, /1\. e4 e5 0-1/)
+})
+
 test('valid and invalid premoves settle without leaving an unresolved turn', () => {
   const afterBot = ['e4']
   const valid = applyPremove(afterBot, { from: 'e7', to: 'e5' })
@@ -85,20 +111,21 @@ test('valid and invalid premoves settle without leaving an unresolved turn', () 
   assert.deepEqual(invalid.history, ['e4'])
 })
 
-test('premove queues consume one move at a time and preserve the remainder', () => {
-  const queue = [
-    { from: 'g1', to: 'f3' },
-    { from: 'b1', to: 'c3' },
-  ]
-  const first = applyNextPremove(['e4', 'e5'], queue)
-  assert.equal(first.applied, true)
-  assert.equal(first.move.san, 'Nf3')
-  assert.deepEqual(first.remaining, [queue[1]])
+test('the single pending premove settles once and always clears', () => {
+  const valid = applyNextPremove(
+    ['e4', 'e5'],
+    [{ from: 'g1', to: 'f3' }],
+  )
+  assert.equal(valid.applied, true)
+  assert.equal(valid.move.san, 'Nf3')
+  assert.deepEqual(valid.remaining, [])
 
-  const second = applyNextPremove([...first.history, 'Nc6'], first.remaining)
-  assert.equal(second.applied, true)
-  assert.equal(second.move.san, 'Nc3')
-  assert.deepEqual(second.remaining, [])
+  const invalid = applyNextPremove(
+    ['e4'],
+    [{ from: 'e7', to: 'e4' }],
+  )
+  assert.equal(invalid.applied, false)
+  assert.deepEqual(invalid.remaining, [])
 })
 
 test('restored games request exactly the side whose turn is missing', () => {
@@ -128,6 +155,14 @@ test('fivefold repetition automatically ends the game', () => {
     'Nf3', 'Nf6', 'Ng1', 'Ng8',
   ])
   assert.equal(isAutomaticGameOver(fivefold), true)
+})
+
+test('the fifty-move draw is claimable while the seventy-five-move draw is automatic', () => {
+  const claimable = new Chess('6k1/7r/8/8/8/8/R7/1K6 w - - 100 51')
+  const automatic = new Chess('6k1/7r/8/8/8/8/R7/1K6 w - - 150 76')
+  assert.equal(claimable.isDrawByFiftyMoves(), true)
+  assert.equal(isAutomaticGameOver(claimable), false)
+  assert.equal(isAutomaticGameOver(automatic), true)
 })
 
 test('Fools Mate produces a complete navigable review', async () => {
@@ -421,14 +456,57 @@ test('a restricted result cannot become a fake Best move when unrestricted analy
   assert.equal(review.graph[0].percent, 50)
 })
 
+test('unreviewed engine timeouts remain visible in per-side classification totals', async () => {
+  const client = {
+    async analyze() {
+      throw new DOMException('Review timed out', 'TimeoutError')
+    },
+  }
+  const review = await reviewGameWithStockfish({
+    history: ['e4', 'e5'],
+    client,
+  })
+
+  const unreviewed = review.counts.find((item) => item.key === 'unreviewed')
+  assert.equal(unreviewed.white, 1)
+  assert.equal(unreviewed.black, 1)
+  assert.equal(review.counts.reduce((sum, item) => sum + item.white, 0), 1)
+  assert.equal(review.counts.reduce((sum, item) => sum + item.black, 0), 1)
+  assert.equal(review.accuracy.white, null)
+  assert.equal(review.accuracy.black, null)
+})
+
+test('cancelling during analysis stops retry work and rejects the review', async () => {
+  const controller = new AbortController()
+  let calls = 0
+  const client = {
+    async analyze() {
+      calls += 1
+      controller.abort()
+      return []
+    },
+  }
+
+  await assert.rejects(
+    reviewGameWithStockfish({
+      history: ['e4'],
+      client,
+      signal: controller.signal,
+    }),
+    (error) => error?.name === 'AbortError',
+  )
+  assert.equal(calls, 1)
+})
+
 test('review result overrides preserve resignation and manual match endings', async () => {
   const client = { async analyze() { return [] } }
   const resigned = await reviewGameWithStockfish({
-    history: [],
+    history: ['e4'],
     client,
     resultOverride: 'Black wins by resignation',
   })
   assert.equal(resigned.result, 'Black wins by resignation')
+  assert.equal(resigned.graph.at(-1).percent, 0)
 
   const ended = buildFallbackFinalReview([], 'Match ended')
   assert.equal(ended.result, 'Match ended')
@@ -449,6 +527,21 @@ test('a manually finished review remains a review after session restoration', ()
     const restored = loadSession()
     assert.equal(restored.phase, 'review')
     assert.equal(restored.reviewResult, 'Black wins by resignation')
+  } finally {
+    if (previousLocalStorage) globalThis.localStorage = previousLocalStorage
+    else delete globalThis.localStorage
+  }
+})
+
+test('session persistence failures do not crash gameplay', () => {
+  const previousLocalStorage = globalThis.localStorage
+  globalThis.localStorage = {
+    setItem() {
+      throw new DOMException('Storage disabled', 'SecurityError')
+    },
+  }
+  try {
+    assert.equal(saveSession({ phase: 'game', history: ['e4'] }), false)
   } finally {
     if (previousLocalStorage) globalThis.localStorage = previousLocalStorage
     else delete globalThis.localStorage

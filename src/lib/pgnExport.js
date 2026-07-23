@@ -20,7 +20,8 @@ export function buildGamePgn({
     whiteProfile,
     blackProfile,
   })
-  const resultTag = resultCode(result)
+  for (const san of history) game.move(san)
+  const resultTag = resultCode(result, { white, black, game })
 
   game.header(
     'Event', 'Play Bots',
@@ -31,7 +32,6 @@ export function buildGamePgn({
     'Black', black,
     'Result', resultTag,
   )
-  for (const san of history) game.move(san)
 
   return game.pgn({ maxWidth: 80, newline: '\n' })
 }
@@ -62,12 +62,25 @@ function playerNames({ gameMode, humanColor, player, profile, whiteProfile, blac
     : { white: playerName, black: botName }
 }
 
-function resultCode(result) {
-  const normalized = String(result || '').toLowerCase()
-  if (normalized.startsWith('white wins')) return '1-0'
-  if (normalized.startsWith('black wins')) return '0-1'
+function resultCode(result, { white, black, game }) {
+  if (game.isCheckmate()) return game.turn() === 'w' ? '0-1' : '1-0'
+
+  const normalized = normalizeResultText(result)
+  if (normalized === '1-0' || normalized.startsWith('white wins')) return '1-0'
+  if (normalized === '0-1' || normalized.startsWith('black wins')) return '0-1'
+  if (winnerMatches(normalized, white)) return '1-0'
+  if (winnerMatches(normalized, black)) return '0-1'
   if (normalized.includes('draw') || normalized.includes('stalemate')) return '1/2-1/2'
   return '*'
+}
+
+function winnerMatches(result, name) {
+  const normalizedName = normalizeResultText(name)
+  return Boolean(normalizedName) && result.startsWith(`${normalizedName} wins`)
+}
+
+function normalizeResultText(value) {
+  return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ')
 }
 
 function formatPgnDate(date) {

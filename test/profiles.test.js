@@ -1,7 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { Chess } from 'chess.js'
-import { BOT_PROFILES, getBotProfile } from '../src/data/botProfiles.js'
+import {
+  BOT_PROFILES,
+  getBotProfile,
+  loadBotStyleProfile,
+} from '../src/data/botProfiles.js'
 import { dialogueAfterBotMove, dialogueForBotBattle } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
@@ -49,6 +53,43 @@ test('each rated bot uses its stated internal strength', () => {
   assert.equal(akshit, getBotProfile('akshit').displayRating)
   assert.ok(mubassar > akshit)
   assert.ok(akshit > ayden)
+})
+
+test('an invalid restored bot id keeps the default profile and repertoire aligned', async () => {
+  assert.equal(getBotProfile('removed-profile').id, 'mubassar')
+  const [fallbackStyle, defaultStyle] = await Promise.all([
+    loadBotStyleProfile('removed-profile'),
+    loadBotStyleProfile('mubassar'),
+  ])
+  assert.equal(fallbackStyle, defaultStyle)
+  assert.equal(fallbackStyle.bookKeyType, 'mixed')
+  assert.equal(fallbackStyle.bookMaxPlies, 14)
+})
+
+test('Mubassar can use recent position entries alongside the legacy history book', () => {
+  const game = new Chess()
+  game.move('e4')
+  const position = game.fen().split(' ').slice(0, 4).join(' ')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'c7c5', score: 30, rank: 1 },
+      { uci: 'e7e5', score: 28, rank: 2 },
+    ],
+    getBotProfile('mubassar'),
+    {
+      openingBook: {
+        e4: [{ san: 'e5', games: 500 }],
+        [position]: [{ san: 'c5', games: 20, recentWeight: 15 }],
+      },
+      bookMaxPlies: 14,
+      bookKeyType: 'mixed',
+    },
+    false,
+    () => 0,
+  )
+  assert.equal(decision.move.san, 'c5')
+  assert.equal(decision.source, 'repertoire')
 })
 
 test('Mubassar always opens with d4 as White', () => {
@@ -275,6 +316,27 @@ test('Trixize accepts modest verified KBN scores instead of defaulting to queen 
   )
   assert.equal(decision.move.san, 'a8=N')
   assert.equal(decision.source, 'engine-objective')
+})
+
+test('Trixize does not trust an unscored bridge underpromotion as a proven win', () => {
+  const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'a7a8q', score: 2300, rank: 1 },
+      {
+        uci: 'a7a8n',
+        score: null,
+        rank: 2,
+        objectiveVerified: true,
+        badManners: true,
+      },
+    ],
+    getBotProfile('trixize'),
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'a8=Q+')
+  assert.notEqual(decision.source, 'engine-objective')
 })
 
 test('Trixize refuses unverified bishop-knight underpromotion priority', () => {

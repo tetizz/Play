@@ -18,7 +18,7 @@ export function isAutomaticGameOver(game) {
   return game.isCheckmate() ||
     game.isStalemate() ||
     game.isInsufficientMaterial() ||
-    game.isDrawByFiftyMoves() ||
+    halfmoveClock(game) >= 150 ||
     currentPositionOccurrences(game) >= 5
 }
 
@@ -56,11 +56,21 @@ export function loadSession() {
 }
 
 export function saveSession(session) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+    return true
+  } catch {
+    return false
+  }
 }
 
 export function clearSession() {
-  localStorage.removeItem(SESSION_KEY)
+  try {
+    localStorage.removeItem(SESSION_KEY)
+    return true
+  } catch {
+    return false
+  }
 }
 
 export function shouldResumeBotTurn(history, humanColor) {
@@ -81,6 +91,10 @@ function currentPositionOccurrences(game) {
 
 function positionKey(fen) {
   return String(fen || '').split(' ').slice(0, 4).join(' ')
+}
+
+function halfmoveClock(game) {
+  return Number(game.fen().split(' ')[4]) || 0
 }
 
 export function applyPremove(history, premove) {

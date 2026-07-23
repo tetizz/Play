@@ -159,7 +159,7 @@ export function chooseCoachMove(
         candidateLines: candidates,
       }
     }
-    const selected = selectEngineMove(game, playableCandidates, profile, styleProfile, policy)
+    const selected = selectEngineMove(game, playableCandidates, profile, styleProfile, policy, random)
     return {
       move: selected.move,
       source: selected.rank === 1 ? 'engine-best' : 'engine-style',
@@ -257,10 +257,14 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy, ran
     if (forced) return candidateMetadata(forced, engineCandidates)
   }
 
-  const key = styleProfile.bookKeyType === 'position'
-    ? positionKey(game)
-    : game.history().join(' ')
-  const options = openingBook[key]
+  const historyKey = game.history().join(' ')
+  const positionBookKey = positionKey(game)
+  const keys = styleProfile.bookKeyType === 'position'
+    ? [positionBookKey]
+    : styleProfile.bookKeyType === 'mixed'
+      ? [positionBookKey, historyKey]
+      : [historyKey]
+  const options = preferredBookOptions(keys.flatMap((key) => openingBook[key] || []))
   if (!Array.isArray(options) || !options.length) return null
 
   const legal = new Map(game.moves({ verbose: true }).map((move) => [cleanSan(move.san), move]))
@@ -321,7 +325,29 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy, ran
       b.weight - a.weight || (a.rank || 99) - (b.rank || 99),
     )[0]
   }
-  return weightedChoice(playable)
+  return weightedChoice(playable, null, random)
+}
+
+function preferredBookOptions(options) {
+  const byMove = new Map()
+  for (const option of options) {
+    const san = typeof option === 'string' ? option : option?.san
+    const key = cleanSan(san)
+    if (!key) continue
+    const current = byMove.get(key)
+    if (!current || bookOptionPriority(option) > bookOptionPriority(current)) {
+      byMove.set(key, option)
+    }
+  }
+  return [...byMove.values()]
+}
+
+function bookOptionPriority(option) {
+  if (typeof option === 'string') return 0
+  if (option?.force) return Number.MAX_SAFE_INTEGER
+  const recentWeight = Number(option?.recentWeight || 0)
+  const games = Number(option?.games || 0)
+  return (recentWeight > 0 ? 1_000_000 : 0) + recentWeight * 100 + games
 }
 
 function repertoireChoiceWeight(entry, profile) {
@@ -334,7 +360,7 @@ function repertoireChoiceWeight(entry, profile) {
   return Math.pow(familiarity * performance, temperature)
 }
 
-function selectEngineMove(game, candidates, profile, styleProfile, policy) {
+function selectEngineMove(game, candidates, profile, styleProfile, policy, random) {
   const top = candidates[0]
   if (profile.capabilities.maximumEngine) return top
   if (profile.capabilities.knightSpecialist && top.move.piece === 'n') {
@@ -361,7 +387,7 @@ function selectEngineMove(game, candidates, profile, styleProfile, policy) {
       const knightBoost = candidate.move.piece === 'n' ? 2.4 : 1
       return rankWeight * knightBoost
     })
-    return weightedChoice(nearBest, weights)
+    return weightedChoice(nearBest, weights, random)
   }
 
   return [...nearBest].sort((a, b) => {
@@ -379,10 +405,10 @@ function selectBishopKnightUnderpromotion(game, candidates) {
       if (!['b', 'n'].includes(candidate.move.promotion)) return false
       const verified = candidate.objectiveVerified === true
       if (!verified) return false
-      const minimumScore = objectiveScoreFloor(candidate)
-      if (Number.isFinite(candidate.score) && candidate.score < minimumScore) return false
+      if (!isWinningObjectiveCandidate(candidate)) return false
       const after = new Chess(game.fen())
       after.move(candidate.move)
+      if (after.isDraw()) return false
       return hasBishopKnightPair(after, candidate.move.color)
     })
     .sort((a, b) => {

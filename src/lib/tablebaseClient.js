@@ -92,7 +92,6 @@ export function selectTablebaseDecision(
   const allowedWins = filterNonPureMate
     ? exactWins.filter(({ move, record }) => !isForbiddenNonPureMate(game, move, record))
     : exactWins
-  if (filterNonPureMate && !allowedWins.length) return null
   const candidateWins = allowedWins.length ? allowedWins : exactWins
 
   const objectiveMoves = preferBishopKnightObjective

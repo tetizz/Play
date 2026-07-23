@@ -19,6 +19,7 @@ export function GameScreen({ controller }) {
     boardOrientation,
     turnState,
     message,
+    speechEventId,
     dialogueLog,
     lastMove,
     premoveQueue,
@@ -63,6 +64,7 @@ export function GameScreen({ controller }) {
             arrows={arrows}
             setArrows={setArrows}
             onMove={makeMove}
+            onCancelPremove={clearPremoves}
             interactive={!botMatch}
           />
           {pendingPromotion ? (
@@ -85,7 +87,11 @@ export function GameScreen({ controller }) {
             blackProfile={blackProfile}
           />
         ) : (
-          <div className="dialogue-row">
+          <div
+            className={`dialogue-row ${message ? 'bot-speaking' : ''}`}
+            key={`${profile.id}-${speechEventId}`}
+            aria-live="polite"
+          >
             <Avatar profile={profile} size="medium" />
             {message
               ? <div className="speech-bubble">{message}</div>
@@ -103,8 +109,8 @@ export function GameScreen({ controller }) {
           <span>{status}</span>
           {!botMatch && premoveQueue.length ? (
             <span className="premove-status">
-              {premoveQueue.length} premove{premoveQueue.length === 1 ? '' : 's'} queued
-              <button type="button" onClick={clearPremoves} title="Clear premoves" aria-label="Clear premoves">
+              Premove ready
+              <button type="button" onClick={clearPremoves} title="Cancel premove" aria-label="Cancel premove">
                 <X />
               </button>
             </span>
@@ -129,13 +135,22 @@ export function GameScreen({ controller }) {
 
 function BotConversation({ entries, whiteProfile, blackProfile }) {
   const visible = entries.slice(-6)
+  const activeEntryId = visible.at(-1)?.id
   return (
-    <section className="bot-conversation" aria-label="Bot conversation">
+    <section
+      className="bot-conversation"
+      aria-label="Bot conversation"
+      aria-live="polite"
+      role="log"
+    >
       {visible.length ? visible.map((entry) => {
         const speaker = getBotProfile(entry.botId)
         const side = entry.botId === blackProfile.id ? 'black-speaker' : 'white-speaker'
         return (
-          <div className={`conversation-row ${side}`} key={entry.id}>
+          <div
+            className={`conversation-row ${side} ${entry.id === activeEntryId ? 'active-speaker' : ''}`}
+            key={entry.id}
+          >
             <Avatar profile={speaker} size="small" />
             <div className="conversation-bubble">
               <strong>{speaker.name}</strong>

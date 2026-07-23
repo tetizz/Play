@@ -6,6 +6,7 @@ import { chooseCoachMove } from '../src/lib/coachEngine.js'
 import {
   annotateBadMannersCandidates,
   createBadMannersClient,
+  isBadMannersDecisionSafe,
   shouldUseBadMannersTakeover,
 } from '../src/lib/badMannersClient.js'
 import { isExactWinningMove } from '../src/lib/tablebaseClient.js'
@@ -70,17 +71,41 @@ test('exact tablebase validation recognizes winning Bad Manners moves', () => {
   }, 'a7a8n'), false)
 })
 
+test('exact tablebase knowledge overrides a heuristic Bad Manners choice', () => {
+  const decision = {
+    move: { from: 'a7', to: 'a8', promotion: 'n' },
+    source: 'engine-objective',
+    score: 900,
+  }
+  assert.equal(isBadMannersDecisionSafe(decision, {
+    hasObjectiveMoves: true,
+    exactPayloadAvailable: true,
+    exactWinning: false,
+  }), false)
+  assert.equal(isBadMannersDecisionSafe(decision, {
+    hasObjectiveMoves: true,
+    exactPayloadAvailable: true,
+    exactWinning: true,
+  }), true)
+  assert.equal(isBadMannersDecisionSafe(decision, {
+    hasObjectiveMoves: true,
+  }), true)
+})
+
 test('Bad Manners client returns sanitized bridge candidates', async () => {
+  let receivedUrl = null
   let receivedBody = null
   const client = createBadMannersClient({
-    endpoint: 'http://127.0.0.1:47818',
-    fetchImpl: async (_url, request) => {
+    endpoint: 'http://127.0.0.1:47818/',
+    fetchImpl: async (url, request) => {
+      receivedUrl = url
       receivedBody = JSON.parse(request.body)
       return {
         ok: true,
         json: async () => ({
           lines: [
-            { uci: 'a7a8n', score: 900, mate: 30, rank: 1, pv: ['a7a8n'] },
+            { uci: 'a7a8n', score: 900, mate: 30, rank: 1, pv: ['a7a8n', 'invalid'] },
+            { uci: 'a7a8n', score: 700, mate: null, rank: 2, pv: ['a7a8n'] },
             { uci: 'bad', score: 1, rank: 2 },
           ],
         }),
@@ -93,8 +118,10 @@ test('Bad Manners client returns sanitized bridge candidates', async () => {
     moveTime: 4200,
     count: 8,
   })
+  assert.equal(receivedUrl, 'http://127.0.0.1:47818/bestmove')
   assert.equal(receivedBody.options.depth, 24)
   assert.equal(lines.length, 1)
   assert.equal(lines[0].uci, 'a7a8n')
+  assert.deepEqual(lines[0].pv, ['a7a8n'])
   assert.equal(lines[0].badManners, true)
 })

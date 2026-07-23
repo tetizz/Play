@@ -738,11 +738,46 @@ button {
   width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
-  border: 8px solid #272019;
-  border-radius: 8px;
-  background: #272019;
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
+  border: 8px solid #211c18;
+  border-radius: 10px;
+  outline: 1px solid rgba(227, 189, 99, 0.34);
+  background: #211c18;
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(0, 0, 0, 0.72);
+  touch-action: none;
   user-select: none;
+}
+
+.board-surface[data-turn-state="human"] {
+  outline-color: rgba(123, 170, 67, 0.72);
+}
+
+.board-surface[data-has-premove="true"] {
+  outline-color: rgba(231, 91, 99, 0.9);
+}
+
+.board-surface [data-square],
+.board-surface [data-piece] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.board-surface [data-square][role="button"]:focus-visible {
+  position: relative;
+  z-index: 4;
+  outline: 4px solid #fff;
+  outline-offset: -4px;
+  box-shadow:
+    inset 0 0 0 7px #1769e0,
+    0 0 0 3px rgba(23, 105, 224, 0.74);
+}
+
+.board-surface [data-piece] {
+  cursor: grab;
+}
+
+.board-surface [data-piece]:active {
+  cursor: grabbing;
 }
 
 .board-stage {
@@ -833,6 +868,14 @@ button {
   gap: 18px;
 }
 
+.dialogue-row.bot-speaking .avatar-medium {
+  animation: botAvatarReact 560ms cubic-bezier(0.2, 0.88, 0.32, 1);
+}
+
+.dialogue-row.bot-speaking .speech-bubble {
+  animation: botBubbleEnter 360ms cubic-bezier(0.2, 0.82, 0.28, 1) both;
+}
+
 .speech-bubble,
 .silent-bubble {
   position: relative;
@@ -918,6 +961,15 @@ button {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
 }
 
+.conversation-row.active-speaker .avatar-small {
+  animation: botAvatarReact 560ms cubic-bezier(0.2, 0.88, 0.32, 1);
+}
+
+.conversation-row.active-speaker .conversation-bubble {
+  outline: 2px solid rgba(227, 189, 99, 0.5);
+  animation: botBubbleEnter 360ms cubic-bezier(0.2, 0.82, 0.28, 1) both;
+}
+
 .conversation-bubble::before {
   content: "";
   position: absolute;
@@ -996,6 +1048,11 @@ button {
   background: #25282b;
 }
 
+.history-controls button:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
 .move-table {
   max-height: 100%;
   overflow: auto;
@@ -1045,6 +1102,7 @@ button {
 .game-status {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
   color: #d8d3c9;
@@ -1054,7 +1112,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #7db5f1;
+  color: #ff8d94;
   font-size: 13px;
   font-weight: 800;
 }
@@ -1064,7 +1122,7 @@ button {
   height: 26px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(125, 181, 241, 0.35);
+  border: 1px solid rgba(255, 141, 148, 0.42);
   border-radius: 5px;
   color: inherit;
   background: transparent;
@@ -2539,8 +2597,12 @@ button {
   .game-sidebar,
   .review-sidebar {
     max-height: none;
-    min-height: 520px;
+    min-height: 440px;
     padding-bottom: 24px;
+  }
+
+  .game-sidebar {
+    gap: 14px;
   }
 
   .review-board-row {
@@ -2766,6 +2828,22 @@ button {
   .pgn-copy-button {
     width: 100%;
   }
+
+  .board-surface {
+    border-width: 5px;
+    border-radius: 7px;
+  }
+
+  .game-actions {
+    gap: 6px;
+  }
+
+  .game-actions .home-nav-button,
+  .game-actions button {
+    min-height: 54px;
+    gap: 6px;
+    font-size: 13px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2890,5 +2968,33 @@ button {
   }
   to {
     transform: translateX(120%);
+  }
+}
+
+@keyframes botAvatarReact {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  42% {
+    transform: translateY(-8px) scale(1.045);
+    filter: brightness(1.12);
+  }
+  72% {
+    transform: translateY(2px) scale(0.99);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    filter: none;
+  }
+}
+
+@keyframes botBubbleEnter {
+  from {
+    opacity: 0;
+    transform: translateY(7px) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

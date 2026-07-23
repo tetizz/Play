@@ -210,14 +210,15 @@ export function getBotProfile(botId) {
 }
 
 export async function loadBotStyleProfile(botId) {
-  if (styleCache.has(botId)) return styleCache.get(botId)
+  const profileId = getBotProfile(botId).id
+  if (styleCache.has(profileId)) return styleCache.get(profileId)
 
-  const promise = loadStyleProfile(botId).catch(() => ({
+  const promise = loadStyleProfile(profileId).catch(() => ({
     openingBook: {},
     bookMaxPlies: 0,
     bookKeyType: 'position',
   }))
-  styleCache.set(botId, promise)
+  styleCache.set(profileId, promise)
   return promise
 }
 
@@ -230,7 +231,7 @@ async function loadStyleProfile(botId) {
     return {
       openingBook: OPENING_BOOK,
       bookMaxPlies: BOOK_MAX_PLIES,
-      bookKeyType: 'history',
+      bookKeyType: 'mixed',
       learnedStyle: styleModule.GENERATED_MUBASSAR_STYLE_PROFILE,
     }
   }
@@ -261,14 +262,18 @@ async function loadStyleProfile(botId) {
     }
   }
 
-  const [bookModule, styleModule] = await Promise.all([
-    import('./trixizeOpeningBook.js').catch(() => ({ TRIXIZE_OPENING_BOOK: {} })),
-    import('./generatedTrixizeStyleProfile.js').catch(() => ({ GENERATED_TRIXIZE_STYLE_PROFILE: null })),
-  ])
-  return {
-    openingBook: bookModule.TRIXIZE_OPENING_BOOK || {},
-    bookMaxPlies: 40,
-    bookKeyType: 'position',
-    learnedStyle: styleModule.GENERATED_TRIXIZE_STYLE_PROFILE,
+  if (botId === 'trixize') {
+    const [bookModule, styleModule] = await Promise.all([
+      import('./trixizeOpeningBook.js').catch(() => ({ TRIXIZE_OPENING_BOOK: {} })),
+      import('./generatedTrixizeStyleProfile.js').catch(() => ({ GENERATED_TRIXIZE_STYLE_PROFILE: null })),
+    ])
+    return {
+      openingBook: bookModule.TRIXIZE_OPENING_BOOK || {},
+      bookMaxPlies: 40,
+      bookKeyType: 'position',
+      learnedStyle: styleModule.GENERATED_TRIXIZE_STYLE_PROFILE,
+    }
   }
+
+  throw new Error(`Unknown bot profile: ${botId}`)
 }

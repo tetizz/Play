@@ -86,6 +86,21 @@ test('the tablebase disengages the bishop-knight objective when the route is imp
   assert.equal(decision.source, 'tablebase-mate')
 })
 
+test('the tablebase still takes the only exact win when a personality filter dislikes it', () => {
+  const game = new Chess('7k/8/5N2/8/8/8/K1B3R1/8 w - - 0 1')
+  const decision = selectTablebaseDecision(game, {
+    category: 'win',
+    moves: [
+      { uci: 'g2g8', category: 'loss', dtm: -1, dtz: -1, checkmate: true },
+    ],
+  }, {
+    preferBishopKnightObjective: true,
+  })
+  assert.equal(decision.move.san, 'Rg8#')
+  assert.equal(decision.source, 'tablebase-mate')
+  assert.equal(decision.exact, true)
+})
+
 test('drawn and cursed tablebase positions do not claim a forced mate', () => {
   const game = new Chess('7k/P7/8/8/8/8/8/6BK w - - 0 1')
   assert.equal(selectTablebaseDecision(game, { category: 'draw', moves: [] }), null)

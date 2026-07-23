@@ -18,6 +18,7 @@ import {
   annotateBadMannersCandidates,
   badMannersSearchUcis,
   createBadMannersClient,
+  isBadMannersDecisionSafe,
   shouldUseBadMannersTakeover,
 } from '../lib/badMannersClient'
 import { buildFallbackFinalReview, reviewGameWithStockfish } from '../lib/reviewEngine'
@@ -38,6 +39,7 @@ import {
   saveSession,
   shouldResumeBotTurn,
 } from '../lib/gameSession'
+import { hasCastlingRight } from '../lib/premoveRules'
 
 const restored = typeof localStorage === 'undefined' ? null : loadSession()
 const PLAYER = Object.freeze({ name: 'player', rating: 100, countryCode: 'us' })
@@ -59,9 +61,12 @@ export function useGameController(defaultBotId) {
   const [message, setMessage] = useState(() =>
     initialDialogue(getBotProfile(restored?.botId || defaultBotId)),
   )
+  const [speechEventId, setSpeechEventId] = useState(0)
   const [dialogueLog, setDialogueLog] = useState(restored?.dialogueLog || [])
   const [lastMove, setLastMove] = useState(restored?.lastMove || null)
-  const [premoveQueue, setPremoveQueue] = useState(restored?.premoveQueue || [])
+  const [premoveQueue, setPremoveQueue] = useState(() =>
+    normalizePremoveQueue(restored?.premoveQueue),
+  )
   const [pendingPromotion, setPendingPromotion] = useState(null)
   const [selectedSquare, setSelectedSquare] = useState(null)
   const [arrows, setArrows] = useState([])
@@ -253,8 +258,11 @@ export function useGameController(defaultBotId) {
     const speaker = lastSpeaker || profile
     const line = dialogueForGameEnd(speaker, result)
     if (gameMode === 'bots') appendDialogue(speaker, line, nextHistory.length)
-    else if (line) setMessage(line)
-    runReview(nextHistory)
+    else if (line) {
+      setMessage(line)
+      setSpeechEventId((current) => current + 1)
+    }
+    runReview(nextHistory, result)
   }, [appendDialogue, blackProfile, gameMode, profile, runReview, whiteProfile])
 
   const scheduleBotTurn = useCallback((baseHistory, delay = null, humanColorOverride = null) => {
@@ -345,12 +353,13 @@ export function useGameController(defaultBotId) {
               const exactPayload = tablebaseEligible ? await loadTablebase() : null
               if (generationRef.current !== token) return
               const exactSafe = exactPayload ? isExactWinningMove(exactPayload, playedUci) : false
-              const keepsWin = exactSafe ||
-                badMannersDecision.source === 'engine-objective' ||
-                badMannersDecision.source === 'engine-mate' ||
-                Number.isFinite(badMannersDecision.score) &&
-                  badMannersDecision.score >= BAD_MANNERS_SAFE_SCORE
-              if (!badMannersObjectiveMoves.length || keepsWin) {
+              const keepsWin = isBadMannersDecisionSafe(badMannersDecision, {
+                hasObjectiveMoves: badMannersObjectiveMoves.length > 0,
+                exactPayloadAvailable: Boolean(exactPayload),
+                exactWinning: exactSafe,
+                minimumScore: BAD_MANNERS_SAFE_SCORE,
+              })
+              if (keepsWin) {
                 decision = {
                   ...badMannersDecision,
                   source: badMannersDecision.source === 'engine-objective'
@@ -431,10 +440,18 @@ export function useGameController(defaultBotId) {
           activeBelt,
         )
       }
-      if (!decision.move) {
-        if (gameMode === 'bots') scheduleBotTurnRef.current?.(baseHistory)
-        else setTurnState('human')
-        return
+      if (!decision?.move) {
+        const fallbackMove = beforeGame.moves({ verbose: true })[0]
+        if (!fallbackMove) {
+          finishGame(beforeGame, beforeGame.history(), automatedProfile)
+          return
+        }
+        decision = {
+          move: fallbackMove,
+          source: 'legal-fallback',
+          rank: null,
+          score: null,
+        }
       }
 
       const context = moveContext(
@@ -462,6 +479,7 @@ export function useGameController(defaultBotId) {
         appendDialogue(automatedProfile, nextMessage, nextHistory.length)
       } else {
         setMessage(nextMessage)
+        setSpeechEventId((current) => current + 1)
       }
       if (isAutomaticGameOver(beforeGame)) {
         finishGame(beforeGame, nextHistory, automatedProfile)
@@ -543,6 +561,11 @@ export function useGameController(defaultBotId) {
   useEffect(() => {
     if (phase !== 'game') return undefined
     const onKeyDown = (event) => {
+      if (event.key === 'Escape' && premoveQueueRef.current.length) {
+        updatePremoveQueue([])
+        setSelectedSquare(null)
+        return
+      }
       if (event.key === 'ArrowLeft') setViewPly((ply) => Math.max(0, ply - 1))
       if (event.key === 'ArrowRight') {
         setViewPly((ply) => Math.min(historyRef.current.length, ply + 1))
@@ -550,7 +573,7 @@ export function useGameController(defaultBotId) {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [phase])
+  }, [phase, updatePremoveQueue])
 
   function selectBot(nextBotId) {
     if (phase !== 'setup') return
@@ -597,6 +620,7 @@ export function useGameController(defaultBotId) {
     setDialogueLog([])
     setPhase('game')
     setMessage(gameMode === 'bots' ? '' : initialDialogue(profile))
+    if (gameMode === 'player') setSpeechEventId((current) => current + 1)
     saveSession({
       phase: 'game',
       gameMode,
@@ -656,14 +680,21 @@ export function useGameController(defaultBotId) {
     }
 
     if (isPremove) {
-      if (!piece || piece.color !== playerTurn || from === to) return false
+      if (
+        !piece ||
+        piece.color !== playerTurn ||
+        from === to ||
+        !isPotentialPremove(current, from, to, piece)
+      ) {
+        return false
+      }
       const queued = {
-        id: `${Date.now()}-${premoveQueueRef.current.length}`,
+        id: `${Date.now()}`,
         from,
         to,
         promotion: promotion || 'q',
       }
-      updatePremoveQueue([...premoveQueueRef.current, queued])
+      updatePremoveQueue([queued])
       setSelectedSquare(null)
       return true
     }
@@ -761,6 +792,7 @@ export function useGameController(defaultBotId) {
     game,
     turnState,
     message,
+    speechEventId,
     dialogueLog,
     lastMove,
     premoveQueue,
@@ -805,6 +837,82 @@ function needsPromotion(piece, targetSquare) {
   return piece?.type === 'p' && (
     piece.color === 'w' ? targetSquare?.[1] === '8' : targetSquare?.[1] === '1'
   )
+}
+
+function normalizePremoveQueue(queue) {
+  if (!Array.isArray(queue) || !queue.length) return []
+  const premove = queue.at(-1)
+  return premove?.from && premove?.to ? [premove] : []
+}
+
+function isPotentialPremove(game, from, to, piece) {
+  const fromFile = from.charCodeAt(0) - 97
+  const fromRank = Number(from[1]) - 1
+  const toFile = to.charCodeAt(0) - 97
+  const toRank = Number(to[1]) - 1
+  if (
+    fromFile < 0 || fromFile > 7 ||
+    fromRank < 0 || fromRank > 7 ||
+    toFile < 0 || toFile > 7 ||
+    toRank < 0 || toRank > 7
+  ) {
+    return false
+  }
+  const occupant = game.get(to)
+  if (occupant?.color === piece.color) return false
+  const fileDistance = Math.abs(toFile - fromFile)
+  const rankDistance = Math.abs(toRank - fromRank)
+
+  if (piece.type === 'n') {
+    return (fileDistance === 1 && rankDistance === 2) ||
+      (fileDistance === 2 && rankDistance === 1)
+  }
+  if (piece.type === 'k') {
+    if (fileDistance <= 1 && rankDistance <= 1) return true
+    const homeRank = piece.color === 'w' ? 0 : 7
+    if (fromFile !== 4 || fromRank !== homeRank || rankDistance !== 0 || fileDistance !== 2) {
+      return false
+    }
+    const rookFile = toFile < fromFile ? 0 : 7
+    const rook = game.get(`${String.fromCharCode(97 + rookFile)}${homeRank + 1}`)
+    const path = rookFile === 0 ? [1, 2, 3] : [5, 6]
+    return hasCastlingRight(game, piece.color, rookFile === 0 ? -1 : 1) &&
+      rook?.type === 'r' &&
+      rook.color === piece.color &&
+      path.every((file) => !game.get(`${String.fromCharCode(97 + file)}${homeRank + 1}`))
+  }
+  if (piece.type === 'p') {
+    const direction = piece.color === 'w' ? 1 : -1
+    const rankDelta = toRank - fromRank
+    if (fileDistance === 1 && rankDelta === direction) return true
+    if (fileDistance !== 0 || occupant) return false
+    if (rankDelta === direction) return true
+    const homeRank = piece.color === 'w' ? 1 : 6
+    const middleRank = fromRank + direction
+    return fromRank === homeRank &&
+      rankDelta === direction * 2 &&
+      !game.get(`${from[0]}${middleRank + 1}`)
+  }
+
+  const diagonal = fileDistance === rankDistance
+  const straight = fromFile === toFile || fromRank === toRank
+  if (
+    (piece.type === 'b' && !diagonal) ||
+    (piece.type === 'r' && !straight) ||
+    (piece.type === 'q' && !diagonal && !straight)
+  ) {
+    return false
+  }
+  const fileStep = Math.sign(toFile - fromFile)
+  const rankStep = Math.sign(toRank - fromRank)
+  for (
+    let file = fromFile + fileStep, rank = fromRank + rankStep;
+    file !== toFile || rank !== toRank;
+    file += fileStep, rank += rankStep
+  ) {
+    if (game.get(`${String.fromCharCode(97 + file)}${rank + 1}`)) return false
+  }
+  return true
 }
 
 function firstDifferentBot(botId) {

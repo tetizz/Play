@@ -39,7 +39,12 @@ import {
   saveSession,
   shouldResumeBotTurn,
 } from '../lib/gameSession'
-import { hasCastlingRight } from '../lib/premoveRules'
+import {
+  buildPremoveProjection,
+  isPotentialPremove,
+  normalizePremoveQueue,
+  premovePieceAt,
+} from '../lib/premoveRules'
 
 const restored = typeof localStorage === 'undefined' ? null : loadSession()
 const PLAYER = Object.freeze({ name: 'player', rating: 100, countryCode: 'us' })
@@ -253,6 +258,7 @@ export function useGameController(defaultBotId) {
   }, [blackBotId, botId, gameMode, loadedStyleProfiles, whiteBotId])
 
   const finishGame = useCallback((finishedGame, nextHistory, lastSpeaker = null) => {
+    updatePremoveQueue([])
     setTurnState('game-over')
     const result = gameResult(finishedGame, gameMode, whiteProfile, blackProfile)
     const speaker = lastSpeaker || profile
@@ -263,7 +269,56 @@ export function useGameController(defaultBotId) {
       setSpeechEventId((current) => current + 1)
     }
     runReview(nextHistory, result)
-  }, [appendDialogue, blackProfile, gameMode, profile, runReview, whiteProfile])
+  }, [
+    appendDialogue,
+    blackProfile,
+    gameMode,
+    profile,
+    runReview,
+    updatePremoveQueue,
+    whiteProfile,
+  ])
+
+  const settleReadyPremove = useCallback((baseHistory) => {
+    const playerTurn = humanColor === 'white' ? 'w' : 'b'
+    const readyGame = gameFromHistory(baseHistory)
+    if (readyGame.turn() !== playerTurn) return false
+
+    const queue = normalizePremoveQueue(premoveQueueRef.current)
+    if (!queue.length) return false
+    const queued = applyNextPremove(baseHistory, queue)
+    if (!queued.applied) {
+      updatePremoveQueue([])
+      return false
+    }
+
+    const afterPremove = gameFromHistory(queued.history)
+    const projection = buildPremoveProjection(afterPremove, queued.remaining, playerTurn)
+    updatePremoveQueue(projection.acceptedMoves)
+    commitHistory(queued.history, {
+      from: queued.move.from,
+      to: queued.move.to,
+      promotion: queued.move.promotion,
+    })
+    const activated = beltRef.current ||
+      shouldActivateBeltMode(profile, queued.history, humanColor)
+    if (!beltRef.current && activated) {
+      beltRef.current = true
+      setBeltMode(true)
+    }
+    if (isAutomaticGameOver(afterPremove)) {
+      finishGame(afterPremove, queued.history)
+    } else {
+      scheduleBotTurnRef.current?.(queued.history)
+    }
+    return true
+  }, [
+    commitHistory,
+    finishGame,
+    humanColor,
+    profile,
+    updatePremoveQueue,
+  ])
 
   const scheduleBotTurn = useCallback((baseHistory, delay = null, humanColorOverride = null) => {
     const token = ++generationRef.current
@@ -491,29 +546,7 @@ export function useGameController(defaultBotId) {
         return
       }
 
-      const queued = applyNextPremove(nextHistory, premoveQueueRef.current)
-      updatePremoveQueue(queued.remaining)
-      if (queued.applied) {
-        nextHistory = queued.history
-        const afterPremove = gameFromHistory(nextHistory)
-        commitHistory(nextHistory, {
-          from: queued.move.from,
-          to: queued.move.to,
-          promotion: queued.move.promotion,
-        })
-        const activated = beltRef.current ||
-          shouldActivateBeltMode(profile, nextHistory, humanColor)
-        if (!beltRef.current && activated) {
-          beltRef.current = true
-          setBeltMode(true)
-        }
-        if (isAutomaticGameOver(afterPremove)) {
-          finishGame(afterPremove, nextHistory)
-        } else {
-          scheduleBotTurnRef.current?.(nextHistory)
-        }
-        return
-      }
+      if (settleReadyPremove(nextHistory)) return
       setTurnState('human')
     }, activeDelay)
   }, [
@@ -525,13 +558,46 @@ export function useGameController(defaultBotId) {
     humanColor,
     loadedStyleProfiles,
     profile,
-    updatePremoveQueue,
+    settleReadyPremove,
     whiteProfile,
   ])
 
   useEffect(() => {
     scheduleBotTurnRef.current = scheduleBotTurn
   }, [scheduleBotTurn])
+
+  useEffect(() => {
+    if (
+      phase !== 'game' ||
+      gameMode !== 'player' ||
+      !styleProfilesReady ||
+      turnState === 'game-over' ||
+      !premoveQueue.length
+    ) {
+      return
+    }
+    let cancelled = false
+    queueMicrotask(() => {
+      if (cancelled) return
+      const currentHistory = historyRef.current
+      const readyGame = gameFromHistory(currentHistory)
+      const playerTurn = humanColor === 'white' ? 'w' : 'b'
+      if (readyGame.turn() !== playerTurn || !premoveQueueRef.current.length) return
+      if (!settleReadyPremove(currentHistory)) setTurnState('human')
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [
+    gameMode,
+    history,
+    humanColor,
+    phase,
+    premoveQueue.length,
+    settleReadyPremove,
+    styleProfilesReady,
+    turnState,
+  ])
 
   useEffect(() => {
     if (initializedRef.current || !styleProfilesReady) return
@@ -671,8 +737,11 @@ export function useGameController(defaultBotId) {
     const current = gameFromHistory(historyRef.current)
     const playerTurn = humanColor === 'white' ? 'w' : 'b'
     if (isAutomaticGameOver(current)) return false
-    const piece = current.get(from)
     const isPremove = current.turn() !== playerTurn || turnState !== 'human'
+    const projection = isPremove
+      ? buildPremoveProjection(current, premoveQueueRef.current, playerTurn)
+      : null
+    const piece = isPremove ? premovePieceAt(projection, from) : current.get(from)
     if (needsPromotion(piece, to) && !promotion) {
       setPendingPromotion({ from, to, isPremove, color: piece?.color || playerTurn })
       setSelectedSquare(null)
@@ -684,17 +753,17 @@ export function useGameController(defaultBotId) {
         !piece ||
         piece.color !== playerTurn ||
         from === to ||
-        !isPotentialPremove(current, from, to, piece)
+        !isPotentialPremove(projection, from, to, piece)
       ) {
         return false
       }
       const queued = {
-        id: `${Date.now()}`,
+        id: `${Date.now()}-${projection.acceptedMoves.length}`,
         from,
         to,
         promotion: promotion || 'q',
       }
-      updatePremoveQueue([queued])
+      updatePremoveQueue([...projection.acceptedMoves, queued])
       setSelectedSquare(null)
       return true
     }
@@ -765,6 +834,9 @@ export function useGameController(defaultBotId) {
   function resign() {
     if (phase !== 'game') return
     cancelWork()
+    updatePremoveQueue([])
+    setPendingPromotion(null)
+    setSelectedSquare(null)
     setTurnState('game-over')
     const result = gameMode === 'bots'
       ? 'Match ended'
@@ -837,82 +909,6 @@ function needsPromotion(piece, targetSquare) {
   return piece?.type === 'p' && (
     piece.color === 'w' ? targetSquare?.[1] === '8' : targetSquare?.[1] === '1'
   )
-}
-
-function normalizePremoveQueue(queue) {
-  if (!Array.isArray(queue) || !queue.length) return []
-  const premove = queue.at(-1)
-  return premove?.from && premove?.to ? [premove] : []
-}
-
-function isPotentialPremove(game, from, to, piece) {
-  const fromFile = from.charCodeAt(0) - 97
-  const fromRank = Number(from[1]) - 1
-  const toFile = to.charCodeAt(0) - 97
-  const toRank = Number(to[1]) - 1
-  if (
-    fromFile < 0 || fromFile > 7 ||
-    fromRank < 0 || fromRank > 7 ||
-    toFile < 0 || toFile > 7 ||
-    toRank < 0 || toRank > 7
-  ) {
-    return false
-  }
-  const occupant = game.get(to)
-  if (occupant?.color === piece.color) return false
-  const fileDistance = Math.abs(toFile - fromFile)
-  const rankDistance = Math.abs(toRank - fromRank)
-
-  if (piece.type === 'n') {
-    return (fileDistance === 1 && rankDistance === 2) ||
-      (fileDistance === 2 && rankDistance === 1)
-  }
-  if (piece.type === 'k') {
-    if (fileDistance <= 1 && rankDistance <= 1) return true
-    const homeRank = piece.color === 'w' ? 0 : 7
-    if (fromFile !== 4 || fromRank !== homeRank || rankDistance !== 0 || fileDistance !== 2) {
-      return false
-    }
-    const rookFile = toFile < fromFile ? 0 : 7
-    const rook = game.get(`${String.fromCharCode(97 + rookFile)}${homeRank + 1}`)
-    const path = rookFile === 0 ? [1, 2, 3] : [5, 6]
-    return hasCastlingRight(game, piece.color, rookFile === 0 ? -1 : 1) &&
-      rook?.type === 'r' &&
-      rook.color === piece.color &&
-      path.every((file) => !game.get(`${String.fromCharCode(97 + file)}${homeRank + 1}`))
-  }
-  if (piece.type === 'p') {
-    const direction = piece.color === 'w' ? 1 : -1
-    const rankDelta = toRank - fromRank
-    if (fileDistance === 1 && rankDelta === direction) return true
-    if (fileDistance !== 0 || occupant) return false
-    if (rankDelta === direction) return true
-    const homeRank = piece.color === 'w' ? 1 : 6
-    const middleRank = fromRank + direction
-    return fromRank === homeRank &&
-      rankDelta === direction * 2 &&
-      !game.get(`${from[0]}${middleRank + 1}`)
-  }
-
-  const diagonal = fileDistance === rankDistance
-  const straight = fromFile === toFile || fromRank === toRank
-  if (
-    (piece.type === 'b' && !diagonal) ||
-    (piece.type === 'r' && !straight) ||
-    (piece.type === 'q' && !diagonal && !straight)
-  ) {
-    return false
-  }
-  const fileStep = Math.sign(toFile - fromFile)
-  const rankStep = Math.sign(toRank - fromRank)
-  for (
-    let file = fromFile + fileStep, rank = fromRank + rankStep;
-    file !== toFile || rank !== toRank;
-    file += fileStep, rank += rankStep
-  ) {
-    if (game.get(`${String.fromCharCode(97 + file)}${rank + 1}`)) return false
-  }
-  return true
 }
 
 function firstDifferentBot(botId) {

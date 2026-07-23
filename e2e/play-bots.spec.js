@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.reload()
 })
 
-test('Akshit legal markers and a single premove stay responsive', async ({ page }) => {
+test('Akshit legal markers and premoves stay responsive', async ({ page }) => {
   const errors = []
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
@@ -160,8 +160,14 @@ test('promotion picker supports underpromotion to a knight', async ({ page }) =>
   await expect(page.getByRole('button', { name: 'bxa8=N', exact: true })).toBeVisible()
 })
 
-test('a new premove replaces the old one and executes immediately after the bot reply', async ({ page }) => {
+test('projected same-piece premoves append in FIFO order and execute one per bot reply', async ({ page }) => {
   test.setTimeout(35000)
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
+  })
+  await page.reload()
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.locator('[data-square="e2"]').click()
@@ -169,38 +175,219 @@ test('a new premove replaces the old one and executes immediately after the bot 
 
   await page.locator('[data-square="g1"]').click()
   await page.locator('[data-square="f3"]').click()
-  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await page.locator('[data-square="f3"]').click()
+  await page.locator('[data-square="g5"]').click()
+  await page.locator('[data-square="g5"]').click()
+  await page.locator('[data-square="h7"]').click()
+
+  await expect(page.getByText('3 premoves queued', { exact: true })).toBeVisible()
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '3')
+  await expect(page.locator('#play-bots-board-piece-wN-h7')).toBeVisible()
   await expect(page.locator('[data-square="g1"] > div')).toHaveCSS(
     'background-color',
     /rgba?\(205,\s*55,\s*64/,
   )
-  await expect(page.locator('[data-square="f3"] > div')).toHaveCSS(
-    'background-color',
-    /rgba?\(205,\s*55,\s*64/,
+  for (const square of ['f3', 'g5', 'h7']) {
+    await expect(page.locator(`[data-square="${square}"] > div`)).toHaveCSS(
+      'background-color',
+      /rgba?\(205,\s*55,\s*64/,
+    )
+  }
+  await expect(page.locator('[data-square="h7"]')).toHaveAttribute('data-premove-step', '3')
+  await expect(page.locator('[data-square="f3"]')).toHaveAttribute(
+    'aria-label',
+    /premove 1 destination, premove 2 source/,
   )
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
+  )).toBe(3)
 
-  await page.locator('[data-square="b1"]').click()
-  await page.locator('[data-square="c3"]').click()
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(1)
-  await expect(page.locator('[data-square="b1"] > div')).toHaveCSS(
-    'background-color',
-    /rgba?\(205,\s*55,\s*64/,
-  )
-  await expect(page.locator('[data-square="c3"] > div')).toHaveCSS(
-    'background-color',
-    /rgba?\(205,\s*55,\s*64/,
-  )
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({
+    timeout: 15000,
+  })
+  await expect(page.getByText('2 premoves queued', { exact: true })).toBeVisible()
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '2')
   await expect(page.locator('[data-square="g1"] > div')).not.toHaveCSS(
     'background-color',
     /rgba?\(205,\s*55,\s*64/,
   )
+})
 
-  await expect(page.getByRole('button', { name: 'Nc3', exact: true })).toBeVisible({ timeout: 15000 })
-  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toHaveCount(0)
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+test('a ready-turn premove is consumed instead of remaining active after the bot move', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('play-bots-session-v3', JSON.stringify({
+      phase: 'game',
+      gameMode: 'player',
+      botId: 'mubassar',
+      colorChoice: 'white',
+      humanColor: 'white',
+      history: ['Nf3', 'd5', 'g3', 'Nf6', 'Bg2', 'c5', 'O-O', 'Nc6', 'd3', 'e5', 'Nbd2', 'Be7'],
+      beltMode: false,
+      lastMove: { from: 'f8', to: 'e7' },
+      premoveQueue: [{ id: 'stuck-e4', from: 'e2', to: 'e4', promotion: 'q' }],
+      dialogueLog: [],
+    }))
+  })
+  await page.reload()
+
+  await expect(page.getByRole('button', { name: 'e4', exact: true })).toBeVisible({
+    timeout: 10000,
+  })
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
+})
+
+test('a three-move queue plays through three alternating Trixize replies', async ({ page }) => {
+  test.setTimeout(50000)
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 850 ? 1500 : delay, ...args)
+  })
+  await page.reload()
+  await page.getByRole('button', { name: /Trixize/ }).click()
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  await page.locator('[data-square="e2"]').click()
+  await page.locator('[data-square="e4"]').click()
+  for (const [from, to] of [['d2', 'd4'], ['b1', 'c3'], ['g1', 'f3']]) {
+    await page.locator(`[data-square="${from}"]`).click()
+    await page.locator(`[data-square="${to}"]`).click()
+  }
+  await expect(page.getByText('3 premoves queued', { exact: true })).toBeVisible()
+
+  await expect(page.locator('.move-row button')).toHaveCount(8, {
+    timeout: 45000,
+  })
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
+  const moves = (await page.locator('.move-row button').allTextContents()).filter(Boolean)
+  expect(moves.filter((_, index) => index % 2 === 0)).toEqual(['e4', 'd4', 'Nc3', 'Nf3'])
+})
+
+test('multiple projected premoves remain usable on a mobile board', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
+  })
+  await page.reload()
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await page.locator('[data-square="e2"]').click()
+  await page.locator('[data-square="e4"]').click()
+  for (const [from, to] of [['g1', 'f3'], ['f3', 'g5'], ['g5', 'h7']]) {
+    await page.locator(`[data-square="${from}"]`).click()
+    await page.locator(`[data-square="${to}"]`).click()
+  }
+
+  await expect(page.getByText('3 premoves queued', { exact: true })).toBeVisible()
+  const layout = await page.evaluate(() => {
+    const clearButton = document.querySelector('.premove-status button')?.getBoundingClientRect()
+    const board = document.querySelector('.board-surface')?.getBoundingClientRect()
+    return {
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      boardWidth: board?.width,
+      boardHeight: board?.height,
+      clearWidth: clearButton?.width,
+      clearHeight: clearButton?.height,
+    }
+  })
+  expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth)
+  expect(Math.abs(layout.boardWidth - layout.boardHeight)).toBeLessThanOrEqual(1)
+  expect(layout.clearWidth).toBeGreaterThanOrEqual(44)
+  expect(layout.clearHeight).toBeGreaterThanOrEqual(44)
+
+  await page.getByRole('button', { name: 'Clear all 3 queued premoves' }).click()
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
+})
+
+test('a deep repeated-square queue keeps badges and labels compact on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 250 || delay === 850 ? 3500 : delay, ...args)
+    const cycle = [
+      { from: 'g1', to: 'f3' },
+      { from: 'f3', to: 'g5' },
+      { from: 'g5', to: 'f3' },
+      { from: 'f3', to: 'g1' },
+    ]
+    localStorage.setItem('play-bots-session-v3', JSON.stringify({
+      phase: 'game',
+      gameMode: 'player',
+      botId: 'mubassar',
+      colorChoice: 'white',
+      humanColor: 'white',
+      history: ['e4'],
+      beltMode: false,
+      lastMove: { from: 'e2', to: 'e4' },
+      premoveQueue: Array.from({ length: 40 }, (_, index) => ({
+        id: `deep-${index}`,
+        promotion: 'q',
+        ...cycle[index % cycle.length],
+      })),
+      dialogueLog: [],
+    }))
+  })
+  await page.reload()
+
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '40')
+  await expect(page.getByText('40 premoves queued', { exact: true })).toBeVisible()
+  const compact = await page.locator('[data-square="f3"]').evaluate((square) => {
+    const badgeWidth = Number.parseFloat(
+      getComputedStyle(square, '::after').width,
+    )
+    return {
+      badge: square.dataset.premoveStep,
+      badgeWidth,
+      labelLength: square.getAttribute('aria-label')?.length,
+      squareWidth: square.getBoundingClientRect().width,
+      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    }
+  })
+  expect(compact.badge).toMatch(/^\d+\+\d+$/)
+  expect(compact.badgeWidth).toBeLessThan(compact.squareWidth)
+  expect(compact.labelLength).toBeLessThan(180)
+  expect(compact.overflow).toBe(0)
+})
+
+test('resigning clears queued premoves from the persisted review', async ({ page }) => {
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
+  })
+  await page.reload()
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await page.locator('[data-square="e2"]').click()
+  await page.locator('[data-square="e4"]').click()
+  await page.locator('[data-square="g1"]').click()
+  await page.locator('[data-square="f3"]').click()
+  await expect(page.getByText('1 premove queued', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Resign', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
+  )).toBe(0)
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
 })
 
 test('a queued premove can be cancelled with Escape or the visible cancel button', async ({ page }) => {
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    window.setTimeout = (handler, delay, ...args) =>
+      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
+  })
+  await page.reload()
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.locator('[data-square="e2"]').click()
@@ -208,16 +395,16 @@ test('a queued premove can be cancelled with Escape or the visible cancel button
 
   await page.locator('[data-square="g1"]').click()
   await page.locator('[data-square="f3"]').click()
-  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await expect(page.getByText('1 premove queued', { exact: true })).toBeVisible()
   await page.keyboard.press('Escape')
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
   await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
 
   await page.locator('[data-square="b1"]').click()
   await page.locator('[data-square="c3"]').click()
-  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Cancel premove' }).click()
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.getByText('1 premove queued', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Clear all 1 queued premove' }).click()
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
   await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
 })
 
@@ -252,9 +439,9 @@ test('keyboard users can move, premove, navigate, and cancel on the board', asyn
   await page.keyboard.press('ArrowUp')
   await expect(page.locator('[data-square="f3"]')).toBeFocused()
   await page.keyboard.press('Space')
-  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
+  await expect(page.getByText('1 premove queued', { exact: true })).toBeVisible()
   await page.keyboard.press('Escape')
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
 
   await page.locator('[data-square="f1"]').focus()
   await expect(page.getByRole('button', { name: 'Next move' })).toBeDisabled()
@@ -277,12 +464,12 @@ test('keyboard users can move, premove, navigate, and cancel on the board', asyn
   await page.keyboard.press('ArrowUp')
   await expect(page.locator('[data-square="c3"]')).toBeFocused()
   await page.keyboard.press('Space')
-  await expect(page.getByText('Premove ready', { exact: true })).toBeVisible()
-  await expect(page.locator('[data-square="b1"]')).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.locator('[data-square="c3"]')).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByText('1 premove queued', { exact: true })).toBeVisible()
+  await expect(page.locator('[data-square="b1"]')).toHaveAttribute('aria-label', /premove 1 source/)
+  await expect(page.locator('[data-square="c3"]')).toHaveAttribute('aria-label', /premove 1 destination/)
 
   await page.keyboard.press('Escape')
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
   await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
 })
 
@@ -310,7 +497,7 @@ test('a king that has moved cannot highlight or queue a castling premove', async
   )
   await page.locator('[data-square="g1"]').focus()
   await page.keyboard.press('Enter')
-  await expect(page.getByText('Premove ready', { exact: true })).toHaveCount(0)
+  await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
   await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
 })
 

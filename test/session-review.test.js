@@ -111,14 +111,17 @@ test('valid and invalid premoves settle without leaving an unresolved turn', () 
   assert.deepEqual(invalid.history, ['e4'])
 })
 
-test('the single pending premove settles once and always clears', () => {
+test('the next pending premove settles once and preserves its queue tail', () => {
   const valid = applyNextPremove(
     ['e4', 'e5'],
-    [{ from: 'g1', to: 'f3' }],
+    [
+      { from: 'g1', to: 'f3' },
+      { from: 'f3', to: 'g5' },
+    ],
   )
   assert.equal(valid.applied, true)
   assert.equal(valid.move.san, 'Nf3')
-  assert.deepEqual(valid.remaining, [])
+  assert.deepEqual(valid.remaining, [{ from: 'f3', to: 'g5' }])
 
   const invalid = applyNextPremove(
     ['e4'],

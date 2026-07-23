@@ -108,9 +108,14 @@ export function GameScreen({ controller }) {
         <div className="game-status">
           <span>{status}</span>
           {!botMatch && premoveQueue.length ? (
-            <span className="premove-status">
-              Premove ready
-              <button type="button" onClick={clearPremoves} title="Cancel premove" aria-label="Cancel premove">
+            <span className="premove-status" aria-live="polite">
+              {premoveQueue.length} {premoveQueue.length === 1 ? 'premove' : 'premoves'} queued
+              <button
+                type="button"
+                onClick={clearPremoves}
+                title="Clear premoves"
+                aria-label={`Clear all ${premoveQueue.length} queued ${premoveQueue.length === 1 ? 'premove' : 'premoves'}`}
+              >
                 <X />
               </button>
             </span>

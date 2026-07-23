@@ -762,6 +762,32 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
+.board-surface [data-square] {
+  position: relative;
+}
+
+.board-surface [data-square][data-premove-step]::after {
+  content: attr(data-premove-step);
+  position: absolute;
+  top: clamp(3px, 0.55vw, 7px);
+  right: clamp(3px, 0.55vw, 7px);
+  z-index: 70;
+  min-width: clamp(15px, 2vw, 20px);
+  height: clamp(15px, 2vw, 20px);
+  padding: 0 3px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 227, 229, 0.9);
+  border-radius: 999px;
+  color: #fff7f7;
+  background: rgba(135, 17, 27, 0.9);
+  box-shadow: 0 2px 8px rgba(43, 0, 4, 0.42);
+  font-size: clamp(9px, 1.25vw, 12px);
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+}
+
 .board-surface [data-square][role="button"]:focus-visible {
   position: relative;
   z-index: 4;
@@ -1118,8 +1144,8 @@ button {
 }
 
 .premove-status button {
-  width: 26px;
-  height: 26px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 141, 148, 0.42);

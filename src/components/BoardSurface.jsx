@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Chessboard } from 'react-chessboard'
 import { gameFromHistory } from '../lib/gameSession'
-import { hasCastlingRight } from '../lib/premoveRules'
+import {
+  buildPremoveProjection,
+  potentialPremoveTargets,
+  premovePieceAt,
+  premovePositionObject,
+} from '../lib/premoveRules'
 
 export function BoardSurface({
   history,
@@ -33,6 +38,14 @@ export function BoardSurface({
   const liveGame = useMemo(() => gameFromHistory(history), [history])
   const latest = viewPly === history.length
   const playerColor = humanColor === 'white' ? 'w' : 'b'
+  const premoveProjection = useMemo(
+    () => buildPremoveProjection(liveGame, premoves, playerColor),
+    [liveGame, playerColor, premoves],
+  )
+  const projectedPremoves = premoveProjection.acceptedMoves
+  const displayedPosition = latest
+    ? premovePositionObject(premoveProjection)
+    : game.fen()
 
   const scheduleKeyboardFocus = useCallback(() => {
     if (focusFrame.current !== null) {
@@ -66,10 +79,27 @@ export function BoardSurface({
 
   const legalTargets = useMemo(() => {
     if (!selectedSquare || !latest || !interactive) return []
-    const piece = liveGame.get(selectedSquare)
+    const piece = premovePieceAt(premoveProjection, selectedSquare)
     if (!piece || piece.color !== playerColor) return []
-    return moveTargets(liveGame, selectedSquare, piece, playerColor, turnState)
-  }, [interactive, latest, liveGame, playerColor, selectedSquare, turnState])
+    return moveTargets(
+      liveGame,
+      premoveProjection,
+      selectedSquare,
+      piece,
+      playerColor,
+      turnState,
+      projectedPremoves.length,
+    )
+  }, [
+    interactive,
+    latest,
+    liveGame,
+    playerColor,
+    premoveProjection,
+    projectedPremoves.length,
+    selectedSquare,
+    turnState,
+  ])
 
   const squareStyles = useMemo(() => {
     const styles = {}
@@ -101,17 +131,23 @@ export function BoardSurface({
         ),
       }
     }
-    const premove = latest ? premoves.at(-1) : null
-    if (premove) {
-      for (const square of [premove.from, premove.to]) {
-        styles[square] = {
-          ...styles[square],
-          backgroundColor: 'rgba(205, 55, 64, 0.82)',
-          backgroundImage: 'none',
-          boxShadow: joinShadow(
-            styles[square]?.boxShadow,
-            'inset 0 0 0 4px rgba(255, 188, 192, 0.78)',
-          ),
+    if (latest) {
+      for (let index = projectedPremoves.length - 1; index >= 0; index -= 1) {
+        const premove = projectedPremoves[index]
+        const next = index === 0
+        for (const square of [premove.from, premove.to]) {
+          const fillAlpha = next ? 0.84 : Math.max(0.5, 0.68 - index * 0.035)
+          const borderAlpha = next ? 0.9 : 0.66
+          const borderWidth = next ? '4px' : '3px'
+          styles[square] = {
+            ...styles[square],
+            backgroundColor: `rgba(205, 55, 64, ${fillAlpha})`,
+            backgroundImage: 'none',
+            boxShadow: joinShadow(
+              styles[square]?.boxShadow,
+              `inset 0 0 0 ${borderWidth} rgba(255, 188, 192, ${borderAlpha})`,
+            ),
+          }
         }
       }
     }
@@ -127,7 +163,7 @@ export function BoardSurface({
       }
     }
     return styles
-  }, [game, lastMove, latest, legalTargets, premoves, selectedSquare])
+  }, [game, lastMove, latest, legalTargets, projectedPremoves, selectedSquare])
 
   useEffect(() => {
     const board = boardRef.current
@@ -145,20 +181,24 @@ export function BoardSurface({
       }
       for (const squareElement of squares) {
         const square = squareElement.dataset.square
-        const piece = game.get(square)
+        const piece = latest
+          ? premovePieceAt(premoveProjection, square)
+          : game.get(square)
         const status = []
         if (selectedSquare === square) status.push('selected')
-        const premove = premoves.at(-1)
-        if (premove?.from === square) status.push('premove source')
-        if (premove?.to === square) status.push('premove destination')
+        const premoveStatuses = queueStatuses(projectedPremoves, square)
+        status.push(...premoveStatuses.labels)
+        if (premoveStatuses.badge) {
+          squareElement.dataset.premoveStep = premoveStatuses.badge
+        } else {
+          delete squareElement.dataset.premoveStep
+        }
         squareElement.setAttribute('role', 'button')
         squareElement.setAttribute('tabindex', square === keyboardSquare.current ? '0' : '-1')
         squareElement.setAttribute('aria-label', squareLabel(square, piece, status))
         squareElement.setAttribute(
           'aria-pressed',
-          selectedSquare === square || premove?.from === square || premove?.to === square
-            ? 'true'
-            : 'false',
+          selectedSquare === square ? 'true' : 'false',
         )
       }
     }
@@ -178,7 +218,15 @@ export function BoardSurface({
         focusFrame.current = null
       }
     }
-  }, [game, interactive, latest, premoves, scheduleKeyboardFocus, selectedSquare])
+  }, [
+    game,
+    interactive,
+    latest,
+    premoveProjection,
+    projectedPremoves,
+    scheduleKeyboardFocus,
+    selectedSquare,
+  ])
 
   function chooseSquare(square) {
     if (!interactive || !latest) return
@@ -193,7 +241,7 @@ export function BoardSurface({
         return
       }
     }
-    const piece = liveGame.get(square)
+    const piece = premovePieceAt(premoveProjection, square)
     setSelectedSquare(piece?.color === playerColor ? square : null)
   }
 
@@ -323,7 +371,8 @@ export function BoardSurface({
       aria-label={`${orientation === 'black' ? 'Black' : 'White'}-oriented chessboard`}
       aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Enter Space Escape"
       data-turn-state={turnState}
-      data-has-premove={premoves.length ? 'true' : 'false'}
+      data-has-premove={projectedPremoves.length ? 'true' : 'false'}
+      data-premove-count={projectedPremoves.length}
       onContextMenu={(event) => event.preventDefault()}
       onFocus={handleBoardFocus}
       onKeyDown={handleBoardKeyDown}
@@ -333,7 +382,7 @@ export function BoardSurface({
     >
       <Chessboard options={{
         id: 'play-bots-board',
-        position: game.fen(),
+        position: displayedPosition,
         boardOrientation: orientation,
         boardStyle: { borderRadius: 2 },
         lightSquareStyle: { backgroundColor: '#e0bf78' },
@@ -367,7 +416,7 @@ export function BoardSurface({
         },
         canDragPiece: ({ square }) => {
           if (!interactive || !latest || !square || turnState === 'game-over') return false
-          return liveGame.get(square)?.color === playerColor
+          return premovePieceAt(premoveProjection, square)?.color === playerColor
         },
         onPieceDrag: ({ square }) => setSelectedSquare(square),
         onPieceDrop: ({ sourceSquare, targetSquare }) => {
@@ -375,14 +424,16 @@ export function BoardSurface({
             setSelectedSquare(null)
             return false
           }
-          const piece = liveGame.get(sourceSquare)
+          const piece = premovePieceAt(premoveProjection, sourceSquare)
           const targetIsAvailable = piece?.color === playerColor &&
             moveTargets(
               liveGame,
+              premoveProjection,
               sourceSquare,
               piece,
               playerColor,
               turnState,
+              projectedPremoves.length,
             ).some((target) => target.square === targetSquare)
           if (!targetIsAvailable) {
             setSelectedSquare(null)
@@ -421,82 +472,22 @@ function joinShadow(current, next) {
   return current ? `${current}, ${next}` : next
 }
 
-function moveTargets(game, square, piece, playerColor, turnState) {
-  if (game.turn() === playerColor && turnState === 'human') {
+function moveTargets(
+  game,
+  projection,
+  square,
+  piece,
+  playerColor,
+  turnState,
+  premoveCount,
+) {
+  if (game.turn() === playerColor && turnState === 'human' && premoveCount === 0) {
     return game.moves({ square, verbose: true }).map((move) => ({
       square: move.to,
       capture: Boolean(move.captured),
     }))
   }
-  return pseudoLegalTargets(game, square, piece)
-}
-
-function pseudoLegalTargets(game, square, piece) {
-  const file = square.charCodeAt(0) - 97
-  const rank = Number(square[1]) - 1
-  const targets = []
-  const add = (nextFile, nextRank) => {
-    if (nextFile < 0 || nextFile > 7 || nextRank < 0 || nextRank > 7) return false
-    const target = `${String.fromCharCode(97 + nextFile)}${nextRank + 1}`
-    const occupant = game.get(target)
-    if (occupant?.color === piece.color) return false
-    targets.push({ square: target, capture: Boolean(occupant) })
-    return !occupant
-  }
-  if (piece.type === 'n') {
-    for (const [df, dr] of [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]]) add(file + df, rank + dr)
-  } else if (piece.type === 'k') {
-    for (let df = -1; df <= 1; df += 1) {
-      for (let dr = -1; dr <= 1; dr += 1) if (df || dr) add(file + df, rank + dr)
-    }
-    const homeRank = piece.color === 'w' ? 0 : 7
-    if (file === 4 && rank === homeRank) {
-      for (const rookFile of [0, 7]) {
-        const direction = rookFile === 0 ? -1 : 1
-        const rookSquare = `${String.fromCharCode(97 + rookFile)}${homeRank + 1}`
-        const rook = game.get(rookSquare)
-        const path = direction < 0 ? [1, 2, 3] : [5, 6]
-        if (
-          hasCastlingRight(game, piece.color, direction) &&
-          rook?.type === 'r' &&
-          rook.color === piece.color &&
-          path.every((pathFile) => !game.get(`${String.fromCharCode(97 + pathFile)}${homeRank + 1}`))
-        ) {
-          targets.push({
-            square: `${String.fromCharCode(97 + file + direction * 2)}${homeRank + 1}`,
-            capture: false,
-          })
-        }
-      }
-    }
-  } else if (piece.type === 'p') {
-    const direction = piece.color === 'w' ? 1 : -1
-    const oneStep = `${String.fromCharCode(97 + file)}${rank + direction + 1}`
-    if (!game.get(oneStep)) {
-      add(file, rank + direction)
-      const homeRank = piece.color === 'w' ? 1 : 6
-      if (rank === homeRank) add(file, rank + direction * 2)
-    }
-    for (const df of [-1, 1]) {
-      const targetFile = file + df
-      const targetRank = rank + direction
-      if (targetFile < 0 || targetFile > 7 || targetRank < 0 || targetRank > 7) continue
-      const target = `${String.fromCharCode(97 + targetFile)}${targetRank + 1}`
-      if (game.get(target)?.color !== piece.color) targets.push({ square: target, capture: true })
-    }
-  } else {
-    const directions = piece.type === 'b'
-      ? [[1, 1], [1, -1], [-1, 1], [-1, -1]]
-      : piece.type === 'r'
-        ? [[1, 0], [-1, 0], [0, 1], [0, -1]]
-        : [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1]]
-    for (const [df, dr] of directions) {
-      for (let step = 1; step < 8; step += 1) {
-        if (!add(file + df * step, rank + dr * step)) break
-      }
-    }
-  }
-  return targets
+  return potentialPremoveTargets(projection, square, piece)
 }
 
 function squareLabel(square, piece, status) {
@@ -512,6 +503,37 @@ function squareLabel(square, piece, status) {
     ? `${piece.color === 'w' ? 'White' : 'Black'} ${pieceNames[piece.type]}`
     : 'empty'
   return `${square}, ${contents}${status.length ? `, ${status.join(', ')}` : ''}`
+}
+
+function queueStatuses(premoves, square) {
+  const events = []
+  const destinations = []
+  premoves.forEach((premove, index) => {
+    const step = index + 1
+    if (premove.from === square) events.push({ step, role: 'source' })
+    if (premove.to === square) {
+      events.push({ step, role: 'destination' })
+      destinations.push(step)
+    }
+  })
+  return {
+    labels: queueEventLabels(events),
+    badge: queueStepBadge(destinations),
+  }
+}
+
+function queueEventLabels(events) {
+  const chronological = [...events].sort((a, b) => a.step - b.step)
+  if (chronological.length <= 3) {
+    return chronological.map(({ step, role }) => `premove ${step} ${role}`)
+  }
+  const first = chronological[0]
+  return [`premove ${first.step} ${first.role} and ${chronological.length - 1} later queue visits`]
+}
+
+function queueStepBadge(steps) {
+  if (steps.length <= 2) return steps.join('·')
+  return `${steps[0]}+${steps.length - 1}`
 }
 
 function keyboardDestination(square, key, orientation) {

@@ -6,11 +6,85 @@ test.beforeEach(async ({ page }) => {
   await page.reload()
 })
 
+async function holdFirstPlayerBotTurn(page) {
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window)
+    const nativeClearTimeout = window.clearTimeout.bind(window)
+    let heldTurn = null
+    let releasedTurn = null
+    let gateState = 'waiting'
+
+    window.clearTimeout = (timerId) => {
+      if (heldTurn?.timerId === timerId) {
+        heldTurn = null
+        gateState = 'cancelled'
+      } else if (releasedTurn?.timerId === timerId) {
+        nativeClearTimeout(releasedTurn.releaseTimerId)
+        releasedTurn = null
+        gateState = 'cancelled'
+      }
+      return nativeClearTimeout(timerId)
+    }
+    window.setTimeout = (handler, delay, ...args) => {
+      if (delay !== 850 || gateState !== 'waiting') {
+        return nativeSetTimeout(handler, delay, ...args)
+      }
+      const timerId = nativeSetTimeout(() => {}, 60000)
+      heldTurn = { timerId, handler, args }
+      gateState = 'held'
+      return timerId
+    }
+    window.__playerBotTurnGate = {
+      state: () => gateState,
+      release: () => {
+        if (gateState !== 'held' || !heldTurn) return false
+        const pendingTurn = heldTurn
+        heldTurn = null
+        gateState = 'released'
+        nativeClearTimeout(pendingTurn.timerId)
+        const releaseTimerId = nativeSetTimeout(() => {
+          if (releasedTurn?.releaseTimerId !== releaseTimerId) return
+          releasedTurn = null
+          gateState = 'fired'
+          pendingTurn.handler(...pendingTurn.args)
+        }, 0)
+        releasedTurn = { timerId: pendingTurn.timerId, releaseTimerId }
+        return true
+      },
+      cancel: () => {
+        if (gateState === 'held' && heldTurn) {
+          nativeClearTimeout(heldTurn.timerId)
+          heldTurn = null
+        } else if (gateState === 'released' && releasedTurn) {
+          nativeClearTimeout(releasedTurn.releaseTimerId)
+          releasedTurn = null
+        } else {
+          return false
+        }
+        gateState = 'cancelled'
+        return true
+      },
+    }
+  })
+  await page.reload()
+}
+
+async function waitForHeldPlayerBotTurn(page) {
+  await expect.poll(() => page.evaluate(() => window.__playerBotTurnGate?.state()))
+    .toBe('held')
+}
+
+async function releaseHeldPlayerBotTurn(page) {
+  await waitForHeldPlayerBotTurn(page)
+  expect(await page.evaluate(() => window.__playerBotTurnGate.release())).toBe(true)
+}
+
 test('Akshit legal markers and premoves stay responsive', async ({ page }) => {
   const errors = []
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
   })
+  await holdFirstPlayerBotTurn(page)
   await page.getByRole('button', { name: /Akshit Sharma/ }).click()
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
@@ -21,8 +95,16 @@ test('Akshit legal markers and premoves stay responsive', async ({ page }) => {
   await page.locator('[data-square="g1"]').click()
   await page.locator('[data-square="f3"]').click()
 
-  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
+  await waitForHeldPlayerBotTurn(page)
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '1')
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
+  )).toBe(1)
   await expect(page.getByText('Akshit is thinking')).toBeVisible()
+  await releaseHeldPlayerBotTurn(page)
+  await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({
+    timeout: 15000,
+  })
   await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
     'animation-name',
     'botAvatarReact',
@@ -31,6 +113,7 @@ test('Akshit legal markers and premoves stay responsive', async ({ page }) => {
     'animation-iteration-count',
     '1',
   )
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
   await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming|trixize1234/i)).toHaveCount(0)
   expect(errors).toEqual([])
 })
@@ -182,12 +265,7 @@ test('promotion picker supports underpromotion to a knight', async ({ page }) =>
 
 test('projected same-piece premoves append in FIFO order and execute one per bot reply', async ({ page }) => {
   test.setTimeout(35000)
-  await page.addInitScript(() => {
-    const nativeSetTimeout = window.setTimeout.bind(window)
-    window.setTimeout = (handler, delay, ...args) =>
-      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
-  })
-  await page.reload()
+  await holdFirstPlayerBotTurn(page)
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.locator('[data-square="e2"]').click()
@@ -222,11 +300,15 @@ test('projected same-piece premoves append in FIFO order and execute one per bot
     JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
   )).toBe(3)
 
+  await releaseHeldPlayerBotTurn(page)
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({
     timeout: 15000,
   })
   await expect(page.getByText('2 premoves queued', { exact: true })).toBeVisible()
   await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '2')
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
+  )).toBe(2)
   await expect(page.locator('[data-square="g1"] > div')).not.toHaveCSS(
     'background-color',
     /rgba?\(205,\s*55,\s*64/,
@@ -432,12 +514,7 @@ test('resigning clears queued premoves from the persisted review', async ({ page
 })
 
 test('a queued premove can be cancelled with Escape or the visible cancel button', async ({ page }) => {
-  await page.addInitScript(() => {
-    const nativeSetTimeout = window.setTimeout.bind(window)
-    window.setTimeout = (handler, delay, ...args) =>
-      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
-  })
-  await page.reload()
+  await holdFirstPlayerBotTurn(page)
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.locator('[data-square="e2"]').click()
@@ -453,9 +530,19 @@ test('a queued premove can be cancelled with Escape or the visible cancel button
   await page.locator('[data-square="b1"]').click()
   await page.locator('[data-square="c3"]').click()
   await expect(page.getByText('1 premove queued', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Clear all 1 queued premove' }).click()
+  const clearPremoves = page.getByRole('button', {
+    name: 'Clear all 1 queued premove',
+    exact: true,
+  })
+  await expect(clearPremoves).toBeVisible()
+  await clearPremoves.click()
   await expect(page.getByText(/premoves? queued/)).toHaveCount(0)
   await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
+  )).toBe(0)
+  expect(await page.evaluate(() => window.__playerBotTurnGate.cancel())).toBe(true)
+  expect(await page.evaluate(() => window.__playerBotTurnGate.release())).toBe(false)
 })
 
 test('keyboard users can move, premove, navigate, and cancel on the board', async ({ page }) => {
@@ -801,6 +888,8 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
   await expect(page.locator('[data-square="e1"] > div')).toHaveCSS('background-image', /211,\s*43,\s*50/)
   await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible({ timeout: 8000 })
+  const reviewDuration = Date.now() - startedAt
+  expect(reviewDuration).toBeLessThan(8500)
   await expect(page.locator('.bot-metric')).toHaveText('100.0%')
   await expect(page.locator('.classification-row').filter({ hasText: 'Book' })).toContainText('1')
   await expect(page.locator('.classification-row').filter({ hasText: 'Best' })).toContainText('1')
@@ -823,7 +912,6 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   await expect(page.locator('.evaluation-number')).toHaveText('M1')
   await page.getByRole('tab', { name: 'Review moves' }).click()
   await expect(page.locator('.move-explanation')).toContainText('Best move')
-  expect(Date.now() - startedAt).toBeLessThan(8500)
 })
 
 test('a played Fool’s Mate reaches a complete synchronized review', async ({ page }) => {

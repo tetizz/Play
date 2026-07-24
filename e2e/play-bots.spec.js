@@ -261,8 +261,33 @@ test('a three-move queue plays through three alternating Trixize replies', async
   test.setTimeout(50000)
   await page.addInitScript(() => {
     const nativeSetTimeout = window.setTimeout.bind(window)
-    window.setTimeout = (handler, delay, ...args) =>
-      nativeSetTimeout(handler, delay === 850 ? 1500 : delay, ...args)
+    const nativeClearTimeout = window.clearTimeout.bind(window)
+    let heldTimerId = null
+    let heldTimerCancelled = false
+    let releaseFirstBotTurn = null
+    let holdFirstBotTurn = true
+
+    window.clearTimeout = (timerId) => {
+      if (heldTimerId !== null && timerId === heldTimerId && holdFirstBotTurn) {
+        heldTimerCancelled = true
+      }
+      return nativeClearTimeout(timerId)
+    }
+    window.setTimeout = (handler, delay, ...args) => {
+      if (delay !== 850 || !holdFirstBotTurn || releaseFirstBotTurn) {
+        return nativeSetTimeout(handler, delay, ...args)
+      }
+      heldTimerId = nativeSetTimeout(() => {}, 60000)
+      releaseFirstBotTurn = () => {
+        if (!holdFirstBotTurn || heldTimerCancelled) return false
+        holdFirstBotTurn = false
+        nativeClearTimeout(heldTimerId)
+        nativeSetTimeout(handler, 0, ...args)
+        return true
+      }
+      return heldTimerId
+    }
+    window.__releaseFirstBotTurn = () => releaseFirstBotTurn?.() ?? false
   })
   await page.reload()
   await page.getByRole('button', { name: /Trixize/ }).click()
@@ -276,6 +301,11 @@ test('a three-move queue plays through three alternating Trixize replies', async
     await page.locator(`[data-square="${to}"]`).click()
   }
   await expect(page.getByText('3 premoves queued', { exact: true })).toBeVisible()
+  await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '3')
+  await expect.poll(() => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
+  )).toBe(3)
+  expect(await page.evaluate(() => window.__releaseFirstBotTurn())).toBe(true)
 
   await expect(page.locator('.move-row button')).toHaveCount(8, {
     timeout: 45000,

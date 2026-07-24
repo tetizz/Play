@@ -66,4 +66,11 @@ External account names are import configuration only and are never displayed in 
 
 The browser classification behavior and move-classification PNG assets are adapted
 from [tetizz/Bookup](https://github.com/tetizz/Bookup), used under GPL-3.0.
-This repository's existing `LICENSE` file remains the governing license.
+
+The board uses the human-drawn
+[Kaneo chess-piece set](https://github.com/Kadagaden/chess-pieces/tree/b035b0cc6a68e9fb99c872c8fe073c3ae3eba8a0/chess_kaneo)
+by Kadagaden under CC BY 4.0. The pinned, unmodified artwork, attribution, and
+complete license are stored in `public/assets/pieces/kaneo`.
+
+The original Play code remains governed by this repository's `LICENSE`; the
+vendored Kaneo artwork remains governed by its bundled CC BY 4.0 license.

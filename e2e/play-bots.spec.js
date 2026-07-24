@@ -109,6 +109,26 @@ test('setup and game board fit desktop and mobile without horizontal overflow', 
   }
 })
 
+test('the board loads the complete Kaneo artwork set on desktop and mobile', async ({ page }) => {
+  await page.getByRole('button', { name: 'White', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport)
+    const pieces = page.locator(
+      '.board-surface [data-piece] img[src*="assets/pieces/kaneo/"]',
+    )
+    await expect(pieces).toHaveCount(32)
+    await expect.poll(async () => pieces.evaluateAll((images) => ({
+      loaded: images.every((image) => image.complete && image.naturalWidth > 0),
+      uniqueSources: new Set(images.map((image) => image.src)).size,
+    }))).toEqual({ loaded: true, uniqueSources: 12 })
+  }
+})
+
 test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => {
   test.setTimeout(30000)
   await page.getByRole('tab', { name: 'Bot vs Bot' }).click()

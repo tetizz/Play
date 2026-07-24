@@ -7,6 +7,7 @@ import {
   premovePieceAt,
   premovePositionObject,
 } from '../lib/premoveRules'
+import { kaneoPieces } from '../lib/kaneoPieces'
 
 export function BoardSurface({
   history,
@@ -383,6 +384,7 @@ export function BoardSurface({
       <Chessboard options={{
         id: 'play-bots-board',
         position: displayedPosition,
+        pieces: kaneoPieces,
         boardOrientation: orientation,
         boardStyle: { borderRadius: 2 },
         lightSquareStyle: { backgroundColor: '#e0bf78' },

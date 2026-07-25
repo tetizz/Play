@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test'
 
 const e2ePort = 4178
+const isCi = Boolean(globalThis.process?.env?.CI)
 
 export default defineConfig({
   testDir: './e2e',
@@ -14,6 +15,6 @@ export default defineConfig({
   webServer: {
     command: `npm run dev -- --host 127.0.0.1 --port ${e2ePort}`,
     url: `http://127.0.0.1:${e2ePort}`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !isCi,
   },
 })

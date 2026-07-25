@@ -48,11 +48,34 @@ export function loadSession() {
       lastMove: parsed.lastMove || null,
       premoveQueue: Array.isArray(parsed.premoveQueue) ? parsed.premoveQueue : [],
       dialogueLog: Array.isArray(parsed.dialogueLog) ? parsed.dialogueLog.slice(-8) : [],
+      variantEvents: normalizeVariantEvents(parsed.variantEvents),
       reviewResult: typeof parsed.reviewResult === 'string' ? parsed.reviewResult : null,
     }
   } catch {
     return null
   }
+}
+
+export function normalizeVariantEvents(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return {}
+  return Object.fromEntries(
+    Object.entries(input).flatMap(([botId, events]) => {
+      if (!events || typeof events !== 'object' || Array.isArray(events)) return []
+      return [[botId, {
+        botMoves: nonNegativeInteger(events.botMoves),
+        opponentChecks: nonNegativeInteger(events.opponentChecks),
+        opponentBestMoves: nonNegativeInteger(events.opponentBestMoves),
+        opponentWorstMoves: nonNegativeInteger(events.opponentWorstMoves),
+        applied: Array.isArray(events.applied)
+          ? events.applied.filter((entry) => typeof entry === 'string').slice(-240)
+          : [],
+      }]]
+    }),
+  )
+}
+
+function nonNegativeInteger(value) {
+  return Math.max(0, Math.floor(Number(value) || 0))
 }
 
 export function saveSession(session) {

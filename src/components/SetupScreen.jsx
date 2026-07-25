@@ -138,7 +138,7 @@ function BotRoster({ selectedId, onSelect }) {
           <Avatar profile={bot} size="small" />
           <span>
             <strong>{bot.fullName}</strong>
-            <small>{`${bot.title ? `${bot.title} ` : ''}(${bot.displayRating})`}</small>
+            <small>{bot.videoLabel || `${bot.title ? `${bot.title} ` : ''}(${bot.displayRating})`}</small>
           </span>
           <CountryFlag code={bot.countryCode} label={bot.country} />
         </button>

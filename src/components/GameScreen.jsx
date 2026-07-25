@@ -31,6 +31,7 @@ export function GameScreen({ controller }) {
     viewPly,
     setViewPly,
     beltMode,
+    ratingFor,
     makeMove,
     confirmPromotion,
     cancelPromotion,
@@ -39,6 +40,8 @@ export function GameScreen({ controller }) {
     resign,
   } = controller
   const botMatch = gameMode === 'bots'
+  const topProfile = botMatch ? blackProfile : profile
+  const topProfileColor = botMatch ? 'black' : humanColor === 'white' ? 'black' : 'white'
   const activeBot = game.turn() === 'w' ? whiteProfile : blackProfile
   const status = turnState === 'game-over'
     ? 'Game over'
@@ -49,7 +52,11 @@ export function GameScreen({ controller }) {
   return (
     <main className={`game-page ${botMatch ? 'bot-match-page' : ''}`}>
       <section className="board-column">
-        <PlayerStrip profile={botMatch ? blackProfile : profile} side="top" />
+        <PlayerStrip
+          profile={topProfile}
+          side="top"
+          ratingState={ratingFor?.(topProfile, topProfileColor)}
+        />
         <div className="board-stage">
           <BoardSurface
             history={history}
@@ -76,7 +83,7 @@ export function GameScreen({ controller }) {
           ) : null}
         </div>
         {botMatch
-          ? <PlayerStrip profile={whiteProfile} side="bottom" />
+          ? <PlayerStrip profile={whiteProfile} side="bottom" ratingState={ratingFor?.(whiteProfile, 'white')} />
           : <PlayerStrip player={player} side="bottom" />}
       </section>
       <aside className="game-sidebar">
@@ -86,7 +93,7 @@ export function GameScreen({ controller }) {
             whiteProfile={whiteProfile}
             blackProfile={blackProfile}
           />
-        ) : (
+        ) : profile.dialoguePolicy !== 'silent' ? (
           <div
             className={`dialogue-row ${message ? 'bot-speaking' : ''}`}
             key={`${profile.id}-${speechEventId}`}
@@ -97,7 +104,7 @@ export function GameScreen({ controller }) {
               ? <div className="speech-bubble">{message}</div>
               : <div className="silent-bubble" aria-label={`${profile.name} is focused`} />}
           </div>
-        )}
+        ) : null}
         <MoveList
           history={history}
           activePly={viewPly}
@@ -139,6 +146,7 @@ export function GameScreen({ controller }) {
 }
 
 function BotConversation({ entries, whiteProfile, blackProfile }) {
+  if (whiteProfile.dialoguePolicy === 'silent' && blackProfile.dialoguePolicy === 'silent') return null
   const visible = entries.slice(-6)
   const activeEntryId = visible.at(-1)?.id
   return (

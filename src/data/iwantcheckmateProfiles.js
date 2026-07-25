@@ -9,8 +9,8 @@ function stockfishVariant({
 }) {
   return Object.freeze({
     id,
-    name: 'Stockfish',
-    fullName: 'Stockfish',
+    name: 'PityFish',
+    fullName: 'PityFish',
     displayRating: rating,
     title: 'IWantCheckmate',
     dialoguePolicy: SILENT_DIALOGUE_POLICY,

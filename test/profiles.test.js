@@ -18,8 +18,8 @@ import {
   shouldActivateBeltMode,
 } from '../src/lib/coachEngine.js'
 
-test('the four public bot profiles expose the requested ratings and capabilities', () => {
-  assert.equal(BOT_PROFILES.length, 4)
+test('public and video bot profiles expose the requested ratings and capabilities', () => {
+  assert.equal(BOT_PROFILES.length, 13)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 2007)
@@ -42,6 +42,13 @@ test('the four public bot profiles expose the requested ratings and capabilities
     getBotProfile('akshit').intro,
     'Akshit is the Knight maneuver loves to move his knight',
   )
+  assert.equal(getBotProfile('iwc-worst-move').name, 'PityFish')
+  assert.equal(getBotProfile('iwc-worst-move').displayRating, 3600)
+  assert.equal(getBotProfile('iwc-worst-move').countryCode, 'us')
+  assert.equal(getBotProfile('iwc-worst-move').dialoguePolicy, 'silent')
+  assert.equal(getBotProfile('martinfish').name, 'Martin')
+  assert.equal(getBotProfile('martinfish').displayRating, 250)
+  assert.equal(getBotProfile('martinfish').videoLabel, 'Gain 100 every move')
 })
 
 test('each rated bot uses its stated internal strength', () => {

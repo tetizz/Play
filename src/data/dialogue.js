@@ -180,6 +180,7 @@ const BOT_BATTLE_FALLBACK_LINES = {
 }
 
 export function dialogueAfterBotMove(profile, context) {
+  if (profile.dialoguePolicy === 'silent') return ''
   if (profile.dialoguePolicy === 'trixize') {
     if (context.isBishopKnightObjective) return "I'm going to checkmate you with a bishop and knight."
     if (context.opponentHungQueen) return 'Where did your queen go?'
@@ -228,6 +229,7 @@ export function dialogueAfterBotMove(profile, context) {
 }
 
 export function dialogueForBotBattle(profile, context, opponentProfile = null) {
+  if (profile.dialoguePolicy === 'silent') return ''
   const direct = dialogueAfterBotMove(profile, context)
   if (direct) return direct
   const policy = profile.dialoguePolicy || profile.id || 'mubassar'
@@ -237,11 +239,13 @@ export function dialogueForBotBattle(profile, context, opponentProfile = null) {
 }
 
 export function initialDialogue(profile) {
+  if (profile.dialoguePolicy === 'silent') return ''
   if (profile.id === 'mubassar') return 'Prepare for belt.'
   return ''
 }
 
 export function dialogueForGameEnd(profile, result) {
+  if (profile.dialoguePolicy === 'silent') return ''
   if (profile.dialoguePolicy === 'trixize') return result.includes('checkmate') ? 'Good game.' : ''
   if (profile.dialoguePolicy === 'akshit') {
     return result.toLowerCase().includes('player wins') ? 'Okay' : pick(AKSHIT_LINES.mate)

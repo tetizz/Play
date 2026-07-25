@@ -4,7 +4,7 @@ export function Avatar({ profile, size = 'medium' }) {
     return <div className={`avatar avatar-${size} avatar-placeholder`}>{avatar.text}</div>
   }
   return (
-    <div className={`avatar avatar-${size}`}>
+    <div className={`avatar avatar-${size}${avatar.transparent ? ' avatar-transparent' : ''}`}>
       <img
         src={avatar.src}
         alt={avatar.alt}
@@ -21,7 +21,7 @@ export function CountryFlag({ code, label }) {
   return <img className="country-flag" src={`./assets/flags/${code}.svg`} alt={label || code} />
 }
 
-export function PlayerStrip({ profile, player, side = 'top' }) {
+export function PlayerStrip({ profile, player, side = 'top', ratingState = null }) {
   if (player) {
     return (
       <div className={`player-strip ${side}`}>
@@ -31,12 +31,33 @@ export function PlayerStrip({ profile, player, side = 'top' }) {
       </div>
     )
   }
+  const rating = ratingState?.rating ?? profile.displayRating
   return (
     <div className={`player-strip ${side}`}>
       <Avatar profile={profile} size="small" />
       {profile.title ? <span className="title-badge">{profile.title}</span> : null}
-      <div className="player-name"><strong>{profile.name}</strong> <span>{`(${profile.displayRating})`}</span></div>
+      <div className="player-name">
+        <strong>{profile.name}</strong>
+        <EloRating rating={rating} event={ratingState?.event} />
+      </div>
       <CountryFlag code={profile.countryCode} label={profile.country} />
     </div>
+  )
+}
+
+function EloRating({ rating, event = null }) {
+  return (
+    <span className="elo-rating-wrap">
+      <span className="elo-rating">{`(${rating})`}</span>
+      {event ? (
+        <span
+          className={`elo-delta ${event.delta > 0 ? 'gain' : 'loss'}`}
+          key={event.id}
+          aria-label={`${event.delta > 0 ? 'Gained' : 'Lost'} ${Math.abs(event.delta)} Elo`}
+        >
+          {event.delta > 0 ? '+' : ''}{event.delta}
+        </span>
+      ) : null}
+    </span>
   )
 }

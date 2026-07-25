@@ -1,5 +1,6 @@
 import { Chess } from 'chess.js'
 import { classifyMove } from './bookupClassifications.js'
+import { selectIWantCheckmateCandidate } from './iwantcheckmateVariants.js'
 
 const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
 const CENTER = new Set(['d4', 'e4', 'd5', 'e5'])
@@ -25,7 +26,7 @@ export const BAD_MANNERS_ROUTE_WEIGHTS = Object.freeze({
   drawPenalty: -90000,
 })
 
-export function calculationProfile(profile, beltMode = false, game = null) {
+export function calculationProfile(profile, beltMode = false, game = null, engineEloOverride = null) {
   const base = profile.strengthPolicy
   let active = beltMode && base.belt ? { ...base, ...base.belt } : base
   if (profile.capabilities.maximumEngine && game) {
@@ -46,7 +47,9 @@ export function calculationProfile(profile, beltMode = false, game = null) {
   return {
     depth: active.depth,
     moveTime: active.moveTime,
-    elo: profile.capabilities.maximumEngine ? undefined : active.engineElo,
+    elo: Number.isFinite(engineEloOverride)
+      ? engineEloOverride
+      : profile.capabilities.maximumEngine ? undefined : active.engineElo,
     count: active.candidates,
     styleWindowCp: active.styleWindowCp,
     bookWindowCp: active.bookWindowCp,
@@ -80,6 +83,9 @@ export function chooseCoachMove(
   const bishopKnightCapture = profile.capabilities.bishopKnightObjective
     ? selectBishopKnightEnemyCapture(game, playableCandidates)
     : null
+  const videoChoice = profile.capabilities.videoVariant
+    ? selectIWantCheckmateCandidate(profile, playableCandidates, random)
+    : null
   const forcedMate = selectFastestMate(playableCandidates)
   if (bishopKnightConversion) {
     return {
@@ -111,6 +117,17 @@ export function chooseCoachMove(
       rank: bishopKnightCapture.rank,
       line: bishopKnightCapture,
       bestLine: candidates[0],
+      candidateLines: candidates,
+    }
+  }
+  if (videoChoice) {
+    return {
+      move: videoChoice.move,
+      source: 'video-variant',
+      score: videoChoice.score,
+      rank: videoChoice.rank,
+      line: videoChoice,
+      bestLine: candidates[0] || null,
       candidateLines: candidates,
     }
   }

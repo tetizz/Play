@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Chess } from 'chess.js'
-import { getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
+import { BOT_PROFILES, getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
+import { isIWantCheckmateProfile } from '../data/iwantcheckmateProfiles'
+import { runningVariantElo, variantEngineElo } from '../lib/iwantcheckmateVariants'
 import {
   dialogueAfterBotMove,
   dialogueForBotBattle,
@@ -36,6 +38,7 @@ import {
   isAutomaticDraw,
   isAutomaticGameOver,
   loadSession,
+  normalizeVariantEvents,
   saveSession,
   shouldResumeBotTurn,
 } from '../lib/gameSession'
@@ -82,6 +85,8 @@ export function useGameController(defaultBotId) {
   const [reviewProgress, setReviewProgress] = useState({ completed: 0, total: 0 })
   const [reviewPly, setReviewPly] = useState(0)
   const [reviewResult, setReviewResult] = useState(restored?.reviewResult || null)
+  const [variantEvents, setVariantEvents] = useState(() => normalizeVariantEvents(restored?.variantEvents))
+  const [eloDropEvent, setEloDropEvent] = useState(null)
 
   const profile = useMemo(() => getBotProfile(botId), [botId])
   const whiteProfile = useMemo(() => getBotProfile(whiteBotId), [whiteBotId])
@@ -107,6 +112,9 @@ export function useGameController(defaultBotId) {
   const reviewPlayedClientRef = useRef(null)
   const reviewAbortRef = useRef(null)
   const scheduleBotTurnRef = useRef(null)
+  const variantClientRef = useRef(null)
+  const variantEventsRef = useRef(variantEvents)
+  const eloDropTimerRef = useRef(null)
 
   useEffect(() => {
     historyRef.current = history
@@ -121,12 +129,17 @@ export function useGameController(defaultBotId) {
   }, [premoveQueue])
 
   useEffect(() => {
+    variantEventsRef.current = variantEvents
+  }, [variantEvents])
+
+  useEffect(() => {
     gameplayClientRef.current = createStockfishClient()
     mateClientRef.current = createStockfishClient()
     badMannersClientRef.current = createBadMannersClient()
     tablebaseClientRef.current = createTablebaseClient()
     reviewClientRef.current = createStockfishClient()
     reviewPlayedClientRef.current = createStockfishClient()
+    variantClientRef.current = createStockfishClient()
     return () => {
       gameplayClientRef.current?.destroy()
       mateClientRef.current?.destroy()
@@ -134,6 +147,8 @@ export function useGameController(defaultBotId) {
       tablebaseClientRef.current?.destroy()
       reviewClientRef.current?.destroy()
       reviewPlayedClientRef.current?.destroy()
+      variantClientRef.current?.destroy()
+      clearTimeout(eloDropTimerRef.current)
     }
   }, [])
 
@@ -165,6 +180,7 @@ export function useGameController(defaultBotId) {
       lastMove,
       premoveQueue,
       dialogueLog,
+      variantEvents,
       reviewResult,
     })
   }, [
@@ -180,6 +196,7 @@ export function useGameController(defaultBotId) {
     phase,
     premoveQueue,
     reviewResult,
+    variantEvents,
     whiteBotId,
   ])
 
@@ -193,6 +210,7 @@ export function useGameController(defaultBotId) {
     tablebaseClientRef.current?.cancelAll()
     reviewClientRef.current?.cancelAll()
     reviewPlayedClientRef.current?.cancelAll()
+    variantClientRef.current?.cancelAll()
     reviewAbortRef.current?.abort()
     reviewAbortRef.current = null
   }, [])
@@ -201,6 +219,100 @@ export function useGameController(defaultBotId) {
     premoveQueueRef.current = nextQueue
     setPremoveQueue(nextQueue)
   }, [])
+
+  const recordVariantEvent = useCallback((targetProfile, field, ply) => {
+    if (!isIWantCheckmateProfile(targetProfile) || !variantUsesEvent(targetProfile, field)) {
+      return variantEventsRef.current
+    }
+    const marker = `${field}:${ply}`
+    const current = variantEventsRef.current
+    const previousEvents = current[targetProfile.id] || emptyVariantEvents()
+    if (previousEvents.applied.includes(marker)) return current
+
+    const nextEvents = {
+      ...previousEvents,
+      [field]: previousEvents[field] + 1,
+      applied: [...previousEvents.applied, marker].slice(-240),
+    }
+    const next = { ...current, [targetProfile.id]: nextEvents }
+    const before = runningVariantElo(targetProfile, previousEvents)
+    const after = runningVariantElo(targetProfile, nextEvents)
+    variantEventsRef.current = next
+    setVariantEvents(next)
+    if (after !== before) {
+      const event = {
+        id: `${targetProfile.id}:${marker}:${Date.now()}`,
+        botId: targetProfile.id,
+        delta: after - before,
+      }
+      setEloDropEvent(event)
+      clearTimeout(eloDropTimerRef.current)
+      eloDropTimerRef.current = setTimeout(() => setEloDropEvent(null), 1020)
+    }
+    return next
+  }, [])
+
+  const assessVariantOpponentMove = useCallback(async (targetProfile, baseHistory) => {
+    if (!isIWantCheckmateProfile(targetProfile) || !baseHistory.length) {
+      return variantEventsRef.current
+    }
+    const variantType = targetProfile.variant?.type
+    if (!['opponent-check', 'opponent-best-move', 'opponent-worst-move'].includes(variantType)) {
+      return variantEventsRef.current
+    }
+    const before = gameFromHistory(baseHistory.slice(0, -1))
+    const played = before.moves({ verbose: true }).find((move) => move.san === baseHistory.at(-1))
+    if (!played) return variantEventsRef.current
+    const ply = baseHistory.length
+    if (variantType === 'opponent-check') {
+      return played.san.includes('+') || played.san.includes('#')
+        ? recordVariantEvent(targetProfile, 'opponentChecks', ply)
+        : variantEventsRef.current
+    }
+
+    const beforeFen = before.fen()
+    const candidates = await variantClientRef.current.bestMoves(beforeFen, {
+      elo: undefined,
+      depth: 14,
+      moveTime: 420,
+      count: 8,
+      timeout: 1800,
+    })
+    const best = candidates[0]
+    if (!best || !Number.isFinite(best.score)) return variantEventsRef.current
+    const playedUci = moveToUci(played)
+    let playedLine = candidates.find((candidate) => candidate.uci === playedUci) || null
+    if (!playedLine) {
+      const after = gameFromHistory(baseHistory)
+      const replyScore = await variantClientRef.current.evaluateFen(after.fen(), {
+        depth: 14,
+        moveTime: 420,
+        timeout: 1800,
+      })
+      if (Number.isFinite(replyScore)) {
+        playedLine = { uci: playedUci, score: -replyScore, rank: 99 }
+      }
+    }
+    if (!playedLine || !Number.isFinite(playedLine.score)) return variantEventsRef.current
+    if (variantType === 'opponent-best-move') {
+      return playedLine.rank === 1 || best.score - playedLine.score <= 5
+        ? recordVariantEvent(targetProfile, 'opponentBestMoves', ply)
+        : variantEventsRef.current
+    }
+    return best.score - playedLine.score >= 260
+      ? recordVariantEvent(targetProfile, 'opponentWorstMoves', ply)
+      : variantEventsRef.current
+  }, [recordVariantEvent])
+
+  const ratingFor = useCallback((targetProfile) => {
+    if (!isIWantCheckmateProfile(targetProfile)) {
+      return { rating: targetProfile.displayRating, event: null }
+    }
+    return {
+      rating: runningVariantElo(targetProfile, variantEvents[targetProfile.id]),
+      event: eloDropEvent?.botId === targetProfile.id ? eloDropEvent : null,
+    }
+  }, [eloDropEvent, variantEvents])
 
   const commitHistory = useCallback((nextHistory, nextLastMove = null) => {
     historyRef.current = nextHistory
@@ -359,6 +471,16 @@ export function useGameController(defaultBotId) {
         setBeltMode(true)
       }
       const activeBelt = beltRef.current && automatedProfile.capabilities.beltMode
+      let activeVariantEvents = variantEventsRef.current
+      try {
+        activeVariantEvents = await assessVariantOpponentMove(automatedProfile, baseHistory)
+      } catch {
+        // Retain the current persisted Elo when a one-off trigger probe is unavailable.
+      }
+      if (generationRef.current !== token) return
+      const engineEloOverride = isIWantCheckmateProfile(automatedProfile)
+        ? variantEngineElo(automatedProfile, activeVariantEvents[automatedProfile.id])
+        : null
       let decision = null
       const tablebaseEligible = automatedProfile.capabilities.exactTablebase &&
         isTablebaseEligible(beforeGame.fen())
@@ -377,7 +499,7 @@ export function useGameController(defaultBotId) {
       }
 
       if (!decision && shouldUseBadMannersTakeover(beforeGame, automatedProfile)) {
-        const badMannersPolicy = calculationProfile(automatedProfile, activeBelt, beforeGame)
+        const badMannersPolicy = calculationProfile(automatedProfile, activeBelt, beforeGame, engineEloOverride)
         const badMannersObjectiveMoves = badMannersSearchUcis(beforeGame)
         try {
           const badMannersCandidates = await badMannersClientRef.current?.bestMoves(
@@ -443,7 +565,7 @@ export function useGameController(defaultBotId) {
       }
 
       if (!decision) {
-        const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame)
+        const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame, engineEloOverride)
         let candidates
         try {
           const mateSafety = shouldRunMateSafety(beforeGame, automatedProfile)
@@ -519,6 +641,7 @@ export function useGameController(defaultBotId) {
       )
       beforeGame.move(decision.move)
       let nextHistory = beforeGame.history()
+      recordVariantEvent(automatedProfile, 'botMoves', nextHistory.length)
       commitHistory(nextHistory, {
         from: decision.move.from,
         to: decision.move.to,
@@ -558,6 +681,8 @@ export function useGameController(defaultBotId) {
     humanColor,
     loadedStyleProfiles,
     profile,
+    assessVariantOpponentMove,
+    recordVariantEvent,
     settleReadyPremove,
     whiteProfile,
   ])
@@ -684,6 +809,10 @@ export function useGameController(defaultBotId) {
     setReview(null)
     setReviewResult(null)
     setDialogueLog([])
+    variantEventsRef.current = {}
+    setVariantEvents({})
+    clearTimeout(eloDropTimerRef.current)
+    setEloDropEvent(null)
     setPhase('game')
     setMessage(gameMode === 'bots' ? '' : initialDialogue(profile))
     if (gameMode === 'player') setSpeechEventId((current) => current + 1)
@@ -700,6 +829,7 @@ export function useGameController(defaultBotId) {
       lastMove: null,
       premoveQueue: [],
       dialogueLog: [],
+      variantEvents: {},
       reviewResult: null,
     })
     if (gameMode === 'bots' || nextColor === 'black') scheduleBotTurn([], 300, nextColor)
@@ -717,6 +847,10 @@ export function useGameController(defaultBotId) {
     updatePremoveQueue([])
     setPendingPromotion(null)
     setDialogueLog([])
+    variantEventsRef.current = {}
+    setVariantEvents({})
+    clearTimeout(eloDropTimerRef.current)
+    setEloDropEvent(null)
     setBeltMode(false)
     beltRef.current = false
     setLastMove(null)
@@ -813,6 +947,11 @@ export function useGameController(defaultBotId) {
     cancelWork()
     const count = Math.min(2, history.length)
     const nextHistory = history.slice(0, history.length - count)
+    const nextVariantEvents = pruneVariantEvents(variantEventsRef.current, nextHistory.length)
+    variantEventsRef.current = nextVariantEvents
+    setVariantEvents(nextVariantEvents)
+    clearTimeout(eloDropTimerRef.current)
+    setEloDropEvent(null)
     commitHistory(nextHistory, null)
     updatePremoveQueue([])
     setPendingPromotion(null)
@@ -876,6 +1015,7 @@ export function useGameController(defaultBotId) {
     viewPly,
     setViewPly,
     beltMode,
+    ratingFor,
     styleProfilesReady,
     review,
     reviewProgress,
@@ -912,7 +1052,41 @@ function needsPromotion(piece, targetSquare) {
 }
 
 function firstDifferentBot(botId) {
-  return ['mubassar', 'ayden', 'akshit', 'trixize'].find((id) => id !== botId) || 'mubassar'
+  return BOT_PROFILES.find((profile) => profile.id !== botId)?.id || 'mubassar'
+}
+
+function emptyVariantEvents() {
+  return {
+    botMoves: 0,
+    opponentChecks: 0,
+    opponentBestMoves: 0,
+    opponentWorstMoves: 0,
+    applied: [],
+  }
+}
+
+function variantUsesEvent(profile, field) {
+  const type = profile?.variant?.type
+  return (type === 'own-move' && field === 'botMoves') ||
+    (type === 'opponent-check' && field === 'opponentChecks') ||
+    (type === 'opponent-best-move' && field === 'opponentBestMoves') ||
+    (type === 'opponent-worst-move' && field === 'opponentWorstMoves')
+}
+
+function pruneVariantEvents(events, maxPly) {
+  return Object.fromEntries(Object.entries(events || {}).map(([botId, current]) => {
+    const remaining = (current.applied || []).filter((marker) => {
+      const ply = Number(String(marker).split(':').at(-1))
+      return Number.isFinite(ply) && ply <= maxPly
+    })
+    const next = emptyVariantEvents()
+    for (const marker of remaining) {
+      const [field] = marker.split(':')
+      if (Object.hasOwn(next, field)) next[field] += 1
+    }
+    next.applied = remaining
+    return [botId, next]
+  }))
 }
 
 function shouldRunMateSafety(game, profile) {

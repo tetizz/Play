@@ -727,8 +727,8 @@ test('all bots start as White, Black, and Random without exposing account names'
       await page.goto(`/?matrix=${encodeURIComponent(`${botName}-${color}`)}`)
       await page.getByRole('button', { name: new RegExp(botName) }).click()
       await page.getByRole('button', {
-        name: color === 'Random' ? /^\?\s*Random$/ : color,
-        exact: color !== 'Random',
+        name: color,
+        exact: true,
       }).click()
       await page.getByRole('button', { name: 'Play', exact: true }).click()
       await expect(page.locator('.board-surface')).toBeVisible()

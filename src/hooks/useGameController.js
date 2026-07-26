@@ -532,6 +532,12 @@ export function useGameController(defaultBotId) {
       }
       const activeBelt = beltRef.current && automatedProfile.capabilities.beltMode
       let activeVariantEvents = variantEventsRef.current
+      const variantEloAtTurnStart = isIWantCheckmateProfile(automatedProfile)
+        ? runningVariantElo(
+            automatedProfile,
+            activeVariantEvents[automatedProfile.id],
+          )
+        : null
       try {
         activeVariantEvents = await assessVariantOpponentMove(automatedProfile, baseHistory)
       } catch {
@@ -723,7 +729,7 @@ export function useGameController(defaultBotId) {
         }
       }
 
-      const context = moveContext(
+      const baseContext = moveContext(
         beforeGame,
         decision.move,
         decision,
@@ -733,13 +739,36 @@ export function useGameController(defaultBotId) {
       )
       beforeGame.move(decision.move)
       let nextHistory = beforeGame.history()
-      recordVariantEvent(automatedProfile, 'botMoves', nextHistory.length)
+      let nextVariantEvents = recordVariantEvent(
+        automatedProfile,
+        'botMoves',
+        nextHistory.length,
+      )
       if (
         decision.move.captured ||
         decision.move.san.includes('+') ||
         decision.move.san.includes('#')
       ) {
-        recordVariantEvent(automatedProfile, 'botCaptureChecks', nextHistory.length)
+        nextVariantEvents = recordVariantEvent(
+          automatedProfile,
+          'botCaptureChecks',
+          nextHistory.length,
+        )
+      }
+      const variantEloAfterMove = isIWantCheckmateProfile(automatedProfile)
+        ? runningVariantElo(
+            automatedProfile,
+            nextVariantEvents[automatedProfile.id],
+          )
+        : null
+      const context = {
+        ...baseContext,
+        variantElo: variantEloAfterMove,
+        variantEloBefore: variantEloAtTurnStart,
+        variantEloDelta: Number.isFinite(variantEloAfterMove) &&
+          Number.isFinite(variantEloAtTurnStart)
+          ? variantEloAfterMove - variantEloAtTurnStart
+          : 0,
       }
       commitHistory(nextHistory, {
         from: decision.move.from,
@@ -908,7 +937,10 @@ export function useGameController(defaultBotId) {
     beltRef.current = false
     setReview(null)
     setReviewResult(null)
-    setDialogueLog([])
+    const openingDialogue = gameMode === 'bots'
+      ? initialBotDialogueLog(whiteProfile, blackProfile)
+      : []
+    setDialogueLog(openingDialogue)
     variantEventsRef.current = {}
     setVariantEvents({})
     clearTimeout(eloDropTimerRef.current)
@@ -928,7 +960,7 @@ export function useGameController(defaultBotId) {
       beltMode: false,
       lastMove: null,
       premoveQueue: [],
-      dialogueLog: [],
+      dialogueLog: openingDialogue,
       variantEvents: {},
       reviewResult: null,
     })
@@ -1166,6 +1198,19 @@ function emptyVariantEvents() {
     evilAwake: false,
     applied: [],
   }
+}
+
+function initialBotDialogueLog(whiteProfile, blackProfile) {
+  return [whiteProfile, blackProfile].flatMap((speaker, index) => {
+    const text = initialDialogue(speaker)
+    if (!text) return []
+    return [{
+      id: `intro-${speaker.id}-${index}`,
+      botId: speaker.id,
+      text,
+      ply: 0,
+    }]
+  })
 }
 
 function variantUsesEvent(profile, field) {

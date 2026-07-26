@@ -6,6 +6,12 @@ import {
   getIWantCheckmateProfile,
 } from '../src/data/iwantcheckmateProfiles.js'
 import {
+  dialogueAfterBotMove,
+  dialogueForBotBattle,
+  dialogueForGameEnd,
+  initialDialogue,
+} from '../src/data/dialogue.js'
+import {
   guaranteedMateInOneCandidates,
   initialVariantElo,
   resolveIWantCheckmateAvatar,
@@ -48,15 +54,15 @@ function scoredCandidates(count = 18) {
   }))
 }
 
-test('IWantCheckmate exposes distinct silent profiles from the source videos', () => {
+test('IWantCheckmate exposes distinct talking profiles from the source videos', () => {
   assert.equal(IWANTCHECKMATE_VIDEO_PROFILES.length, EXPECTED_NAMES.length)
   assert.deepEqual(
     IWANTCHECKMATE_VIDEO_PROFILES.map((profile) => profile.name),
     EXPECTED_NAMES,
   )
   for (const profile of IWANTCHECKMATE_VIDEO_PROFILES) {
-    assert.equal(profile.dialoguePolicy, 'silent')
-    assert.equal(profile.capabilities.silentDialogue, true)
+    assert.equal(profile.dialoguePolicy, 'iwantcheckmate')
+    assert.equal(profile.capabilities.silentDialogue, false)
     assert.match(profile.source.videoUrl, /^https:\/\/www\.youtube\.com\/watch\?v=/)
     assert.match(profile.avatar.src, /^\.\/assets\/iwantcheckmate\/.+-profile\.png$/)
     assert.ok(profile.intro.length > 20)
@@ -71,6 +77,85 @@ test('IWantCheckmate exposes distinct silent profiles from the source videos', (
   )) {
     assert.equal(profile.strengthPolicy.mateSafety.depth, 20, profile.name)
   }
+})
+
+test('every IWantCheckmate bot has an introduction and situational dialogue', () => {
+  for (const profile of IWANTCHECKMATE_VIDEO_PROFILES) {
+    assert.ok(initialDialogue(profile).length > 20, `${profile.name} introduction`)
+    assert.ok(dialogueAfterBotMove(profile, {
+      move: { piece: 'n', san: 'Nf3' },
+      capturedValue: 0,
+      isCheck: false,
+      isCheckmate: false,
+      isFreePiece: false,
+      opponentBlunder: false,
+      isWinning: false,
+      variantElo: profile.variant.initialElo,
+      variantEloDelta: 0,
+    }).length > 5, `${profile.name} quiet line`)
+    assert.ok(dialogueAfterBotMove(profile, {
+      move: { piece: 'q', san: 'Qh5+' },
+      capturedValue: 0,
+      isCheck: true,
+      isCheckmate: false,
+      isFreePiece: false,
+      opponentBlunder: false,
+      isWinning: false,
+      variantElo: profile.variant.initialElo,
+      variantEloDelta: 0,
+    }).length > 5, `${profile.name} check line`)
+    assert.notEqual(dialogueAfterBotMove(profile, {
+      move: { piece: 'n', san: 'Nf3' },
+      capturedValue: 0,
+      isCheck: false,
+      isCheckmate: false,
+      isFreePiece: false,
+      opponentBlunder: false,
+      isWinning: true,
+      variantElo: profile.variant.initialElo,
+      variantEloDelta: 0,
+    }), 'Good game.', `${profile.name} live winning line`)
+    assert.ok(dialogueForGameEnd(profile, 'Bot wins by checkmate').length > 5)
+  }
+})
+
+test('dynamic video-bot dialogue reports the real Elo change', () => {
+  const pityFish = getIWantCheckmateProfile('iwc-worst-move')
+  const smartin = getIWantCheckmateProfile('iwc-smartin')
+
+  assert.match(dialogueAfterBotMove(pityFish, {
+    variantElo: 3100,
+    variantEloDelta: -500,
+  }), /500/)
+  assert.match(dialogueAfterBotMove(smartin, {
+    variantElo: 350,
+    variantEloDelta: 100,
+  }), /100|350/)
+  assert.ok(dialogueForBotBattle(
+    smartin,
+    {
+      variantElo: 450,
+      variantEloDelta: 100,
+    },
+      pityFish,
+    ).length > 5)
+
+  const rivalryLine = dialogueForBotBattle(
+    pityFish,
+    {
+      variantElo: 3600,
+      variantEloDelta: 0,
+      isCheck: false,
+      isCheckmate: false,
+      isFreePiece: false,
+      opponentBlunder: false,
+      capturedValue: 0,
+      isWinning: false,
+    },
+    smartin,
+  )
+  assert.match(rivalryLine, /Smartin/)
+  assert.doesNotMatch(rivalryLine, /\{opponent\}/)
 })
 
 test('running Elo follows only the source-video trigger', () => {

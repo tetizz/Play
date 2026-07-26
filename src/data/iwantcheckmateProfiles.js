@@ -1,4 +1,4 @@
-const SILENT_DIALOGUE_POLICY = 'silent'
+const VIDEO_DIALOGUE_POLICY = 'iwantcheckmate'
 
 function videoVariant({
   id,
@@ -50,9 +50,9 @@ function videoVariant({
     accounts: Object.freeze({ chesscom: [], lichess: [] }),
     intro: description,
     videoLabel: description,
-    dialoguePolicy: SILENT_DIALOGUE_POLICY,
+    dialoguePolicy: VIDEO_DIALOGUE_POLICY,
     capabilities: Object.freeze({
-      silentDialogue: true,
+      silentDialogue: false,
       videoVariant: true,
       beltMode: false,
       knightSpecialist: false,

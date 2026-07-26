@@ -45,7 +45,7 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('iwc-worst-move').name, 'PityFish')
   assert.equal(getBotProfile('iwc-worst-move').displayRating, 3600)
   assert.equal(getBotProfile('iwc-worst-move').countryCode, 'us')
-  assert.equal(getBotProfile('iwc-worst-move').dialoguePolicy, 'silent')
+  assert.equal(getBotProfile('iwc-worst-move').dialoguePolicy, 'iwantcheckmate')
   assert.equal(getBotProfile('iwc-smartin').name, 'Smartin')
   assert.equal(getBotProfile('iwc-smartin').displayRating, 250)
   assert.equal(

@@ -5,6 +5,7 @@ const BOT_PROFILE_LIST = [
     id: 'mubassar',
     name: 'Mubassar',
     fullName: 'Mubassar',
+    category: 'coach',
     displayRating: 2300,
     title: 'NM',
     country: 'Bangladesh',
@@ -57,6 +58,7 @@ const BOT_PROFILE_LIST = [
     id: 'ayden',
     name: 'Ayden',
     fullName: 'Ayden Spellman',
+    category: 'coach',
     displayRating: 1900,
     country: 'United States',
     countryCode: 'us',
@@ -97,6 +99,7 @@ const BOT_PROFILE_LIST = [
     id: 'akshit',
     name: 'Akshit',
     fullName: 'Akshit Sharma',
+    category: 'coach',
     displayRating: 2007,
     country: 'Nepal',
     countryCode: 'np',
@@ -140,6 +143,7 @@ const BOT_PROFILE_LIST = [
     id: 'trixize',
     name: 'Trixize',
     fullName: 'Trixize',
+    category: 'coach',
     displayRating: 1550,
     country: 'United States',
     countryCode: 'us',
@@ -200,7 +204,7 @@ const BOT_PROFILE_LIST = [
       repertoireTemperature: 0.72,
     },
   },
-  ...IWANTCHECKMATE_VIDEO_PROFILES.map(withIWantCheckmatePresentation),
+  ...IWANTCHECKMATE_VIDEO_PROFILES,
 ]
 
 export const BOT_PROFILES = Object.freeze(BOT_PROFILE_LIST)
@@ -209,7 +213,8 @@ export const DEFAULT_BOT_ID = 'mubassar'
 const styleCache = new Map()
 
 export function getBotProfile(botId) {
-  return BOT_PROFILES.find((profile) => profile.id === botId) || BOT_PROFILES[0]
+  const resolvedId = botId === 'martinfish' ? 'iwc-smartin' : botId
+  return BOT_PROFILES.find((profile) => profile.id === resolvedId) || BOT_PROFILES[0]
 }
 
 export async function loadBotStyleProfile(botId) {
@@ -284,68 +289,4 @@ async function loadStyleProfile(botId) {
     bookKeyType: 'position',
     learnedStyle: null,
   }
-}
-
-function withIWantCheckmatePresentation(profile) {
-  const isMartin = profile.id === 'martinfish'
-  return {
-    ...profile,
-    name: isMartin ? 'Martin' : 'PityFish',
-    fullName: isMartin ? 'Martin' : 'PityFish',
-    title: '',
-    country: 'United States',
-    countryCode: 'us',
-    avatar: {
-      type: 'image',
-      // Profile art is taken from the actual in-game player strips, not video thumbnails.
-      src: `./assets/iwantcheckmate/${isMartin ? 'martin-profile' : 'pityfish-profile'}.png`,
-      alt: `${isMartin ? 'Martin' : 'PityFish'} gameplay avatar`,
-      objectPosition: '50% 50%',
-      scale: 1,
-      transparent: !isMartin,
-    },
-    accounts: {
-      chesscom: [],
-      lichess: [],
-    },
-    intro: profile.source.videoTitle,
-    videoLabel: variantLabel(profile.variant),
-    capabilities: {
-      ...profile.capabilities,
-      beltMode: false,
-      knightSpecialist: false,
-      perfectTheory: false,
-      maximumEngine: true,
-      bishopKnightObjective: false,
-      exactTablebase: false,
-    },
-    strengthPolicy: {
-      engineElo: null,
-      depth: 17,
-      moveTime: 1150,
-      candidates: 8,
-      styleWindowCp: 0,
-      bookWindowCp: 0,
-      bookMinGames: Number.POSITIVE_INFINITY,
-      bookMinRecentWeight: Number.POSITIVE_INFINITY,
-    },
-    repertoireSource: {
-      chesscom: [],
-      lichess: [],
-      recentHalfLifeDays: 180,
-    },
-  }
-}
-
-function variantLabel(variant) {
-  if (variant.type === 'opponent-worst-move') return 'Lose 500 after the worst move'
-  if (variant.type === 'opponent-check') return 'Lose 300 after a check'
-  if (variant.type === 'opponent-best-move') return 'Lose 100 after the best move'
-  if (variant.type === 'own-move' && variant.eloDelta > 0) return 'Gain 100 every move'
-  if (variant.type === 'own-move') return 'Lose 50 every move'
-  if (variant.type === 'random-blunder') return '5% chance to blunder'
-  if (variant.type === 'random-top-n') return 'Random top-three move'
-  if (variant.type === 'target-evaluation') return 'Plays for 0.00'
-  if (variant.type === 'ranked-move') return 'Always second best'
-  return 'Video challenge'
 }

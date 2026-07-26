@@ -63,6 +63,7 @@ export function chooseCoachMove(
   styleProfile = {},
   beltMode = false,
   random = Math.random,
+  variantContext = {},
 ) {
   const policy = calculationProfile(profile, beltMode, game)
   const candidates = normalizeEngineCandidates(game, engineInput)
@@ -84,7 +85,10 @@ export function chooseCoachMove(
     ? selectBishopKnightEnemyCapture(game, playableCandidates)
     : null
   const videoChoice = profile.capabilities.videoVariant
-    ? selectIWantCheckmateCandidate(profile, playableCandidates, random)
+    ? selectIWantCheckmateCandidate(profile, playableCandidates, random, {
+        ...variantContext,
+        game,
+      })
     : null
   const forcedMate = selectFastestMate(playableCandidates)
   if (bishopKnightConversion) {

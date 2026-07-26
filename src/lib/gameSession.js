@@ -63,9 +63,12 @@ export function normalizeVariantEvents(input) {
       if (!events || typeof events !== 'object' || Array.isArray(events)) return []
       return [[botId, {
         botMoves: nonNegativeInteger(events.botMoves),
+        botCaptureChecks: nonNegativeInteger(events.botCaptureChecks),
         opponentChecks: nonNegativeInteger(events.opponentChecks),
         opponentBestMoves: nonNegativeInteger(events.opponentBestMoves),
         opponentWorstMoves: nonNegativeInteger(events.opponentWorstMoves),
+        currentElo: Number.isFinite(events.currentElo) ? Number(events.currentElo) : null,
+        evilAwake: Boolean(events.evilAwake),
         applied: Array.isArray(events.applied)
           ? events.applied.filter((entry) => typeof entry === 'string').slice(-240)
           : [],

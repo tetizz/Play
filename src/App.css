@@ -139,6 +139,23 @@ button {
   padding: clamp(20px, 4vw, 54px);
 }
 
+.setup-page [hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  border: 0 !important;
+  margin: -1px !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
 .setup-header {
   grid-column: 1 / -1;
   display: flex;
@@ -297,18 +314,55 @@ button {
   height: 20px;
 }
 
+.setup-player-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(250px, 320px) minmax(0, 760px);
+  align-items: start;
+  gap: 48px;
+}
+
+.setup-player-panel:focus {
+  outline: none;
+}
+
 .bot-roster {
   display: grid;
   align-content: start;
+  gap: 22px;
+}
+
+.bot-roster-section {
+  min-width: 0;
+  display: grid;
   gap: 10px;
 }
 
-.bot-roster button {
+.bot-roster-section h2 {
+  margin: 0;
+  color: #d8d3c9;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.bot-roster-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 10px;
+}
+
+.bot-roster-grid button {
   position: relative;
   min-width: 0;
-  min-height: 82px;
+  min-height: 118px;
+  height: 100%;
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 31px;
+  grid-template-columns: 72px minmax(0, 1fr) 31px;
   align-items: center;
   gap: 13px;
   padding: 12px;
@@ -326,26 +380,31 @@ button {
     transform 170ms ease;
 }
 
-.bot-roster button:nth-child(2) {
+.bot-roster-grid .avatar-small {
+  width: 72px;
+  height: 72px;
+}
+
+.bot-roster-grid button:nth-child(2) {
   animation-delay: 50ms;
 }
 
-.bot-roster button:nth-child(3) {
+.bot-roster-grid button:nth-child(3) {
   animation-delay: 100ms;
 }
 
-.bot-roster button:nth-child(4) {
+.bot-roster-grid button:nth-child(4) {
   animation-delay: 150ms;
 }
 
-.bot-roster button:hover {
+.bot-roster-grid button:hover {
   border-color: rgba(123, 170, 67, 0.62);
   background: rgba(35, 39, 42, 0.9);
   box-shadow: 0 15px 32px rgba(0, 0, 0, 0.22);
   transform: translateX(3px);
 }
 
-.bot-roster button.selected {
+.bot-roster-grid button.selected {
   border-color: var(--green);
   box-shadow: inset 4px 0 var(--green);
   background: #23272a;
@@ -355,24 +414,27 @@ button {
   animation-iteration-count: 1, infinite;
 }
 
-.bot-roster button > span {
+.bot-roster-grid button > span {
   display: grid;
   min-width: 0;
 }
 
 .bot-roster strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .bot-roster small {
   margin-top: 4px;
   color: var(--muted);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .setup-focus {
   align-self: start;
+  position: sticky;
+  top: 24px;
   display: grid;
   gap: 28px;
   padding: clamp(22px, 4vw, 42px);
@@ -446,6 +508,11 @@ button {
   flex: 0 0 auto;
   border-radius: 8px;
   background: #ddc895;
+}
+
+.setup-actions {
+  display: grid;
+  gap: 18px;
 }
 
 .avatar.avatar-transparent {
@@ -865,6 +932,17 @@ button {
   color: #c8c3b9;
 }
 
+.setup-page :is(
+  a,
+  button,
+  select,
+  [role="tabpanel"]
+):focus-visible {
+  outline: 3px solid #f4cf68;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(15, 18, 19, 0.92);
+}
+
 .elo-rating-wrap {
   position: relative;
   display: inline-flex;
@@ -880,33 +958,48 @@ button {
 .elo-delta {
   position: absolute;
   z-index: 2;
-  top: calc(100% - 1px);
-  left: 50%;
+  top: 0;
+  left: 0;
   display: block;
   min-width: max-content;
   color: #f4f2ed;
   font-weight: 800;
   line-height: 1;
   pointer-events: none;
-  transform: translate3d(-50%, -2px, 0);
+  transform: translate3d(0, 0, 0);
   animation: eloDeltaFallsAway 950ms cubic-bezier(0.2, 0.8, 0.34, 1) forwards;
 }
 
 .elo-delta.gain {
   color: #a7d96b;
+  animation-name: eloDeltaRisesAway;
 }
 
 @keyframes eloDeltaFallsAway {
   0% {
     opacity: 1;
-    transform: translate3d(-50%, -2px, 0);
+    transform: translate3d(0, 0, 0);
   }
   78% {
     opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translate3d(-50%, 24px, 0);
+    transform: translate3d(0, 28px, 0);
+  }
+}
+
+@keyframes eloDeltaRisesAway {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -28px, 0);
   }
 }
 
@@ -2622,8 +2715,14 @@ button {
   }
 
   .play-mode-choice,
+  .setup-player-panel,
   .bot-match-setup {
     grid-column: 1;
+  }
+
+  .setup-player-panel {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .setup-header {
@@ -2644,16 +2743,40 @@ button {
     justify-self: center;
   }
 
-  .bot-roster {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .bot-roster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .bot-roster button {
-    grid-template-columns: 48px minmax(0, 1fr);
+  .bot-roster-grid button {
+    grid-template-columns: 72px minmax(0, 1fr) 31px;
+    align-items: start;
   }
 
   .bot-roster .country-flag {
-    display: none;
+    display: block;
+  }
+
+  .setup-focus {
+    position: static;
+    order: -1;
+  }
+
+  .matchup-heading {
+    order: 0;
+  }
+
+  .bot-match-setup > .primary-play {
+    position: sticky;
+    z-index: 5;
+    top: 8px;
+    order: 1;
+    box-shadow:
+      inset 0 -4px rgba(0, 0, 0, 0.22),
+      0 12px 32px rgba(0, 0, 0, 0.38);
+  }
+
+  .matchup-seats {
+    order: 2;
   }
 
   .game-page,
@@ -2773,17 +2896,35 @@ button {
   }
 
   .bot-roster {
-    display: flex;
-    overflow-x: auto;
+    display: grid;
   }
 
-  .bot-roster button {
-    min-width: 210px;
+  .bot-roster-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+  }
+
+  .bot-roster-grid button {
+    width: 100%;
+    min-width: 0;
   }
 
   .setup-focus {
     gap: 20px;
     padding: 18px;
+  }
+
+  .setup-actions {
+    position: sticky;
+    z-index: 5;
+    bottom: 8px;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(19, 22, 24, 0.96);
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.38);
   }
 
   .play-mode-choice button {
@@ -2794,6 +2935,10 @@ button {
   .bot-match-setup {
     gap: 20px;
     padding: 18px;
+  }
+
+  .bot-match-setup > .primary-play {
+    top: 8px;
   }
 
   .bot-seat {

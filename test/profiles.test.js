@@ -19,7 +19,7 @@ import {
 } from '../src/lib/coachEngine.js'
 
 test('public and video bot profiles expose the requested ratings and capabilities', () => {
-  assert.equal(BOT_PROFILES.length, 13)
+  assert.equal(BOT_PROFILES.length, 20)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 2007)
@@ -46,9 +46,15 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('iwc-worst-move').displayRating, 3600)
   assert.equal(getBotProfile('iwc-worst-move').countryCode, 'us')
   assert.equal(getBotProfile('iwc-worst-move').dialoguePolicy, 'silent')
-  assert.equal(getBotProfile('martinfish').name, 'Martin')
-  assert.equal(getBotProfile('martinfish').displayRating, 250)
-  assert.equal(getBotProfile('martinfish').videoLabel, 'Gain 100 every move')
+  assert.equal(getBotProfile('iwc-smartin').name, 'Smartin')
+  assert.equal(getBotProfile('iwc-smartin').displayRating, 250)
+  assert.equal(
+    getBotProfile('iwc-smartin').videoLabel,
+    'Starts at 250 and gains 100 Elo after every move.',
+  )
+  assert.equal(getBotProfile('iwc-martinfish').name, 'Martinfish')
+  assert.equal(getBotProfile('iwc-hungry-martin').name, 'HungryMartin')
+  assert.equal(getBotProfile('martinfish').id, 'iwc-smartin')
 })
 
 test('each rated bot uses its stated internal strength', () => {

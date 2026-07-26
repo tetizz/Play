@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 test-results
+output/
+__pycache__/
+public/assets/iwantcheckmate/*-check.jpg
+public/assets/iwantcheckmate/*-crop.jpg
+public/assets/iwantcheckmate/*-proof.jpg
 hatch-pet-runs/
 *.local
 

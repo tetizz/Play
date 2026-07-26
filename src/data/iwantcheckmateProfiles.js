@@ -1,22 +1,88 @@
 const SILENT_DIALOGUE_POLICY = 'silent'
 
-function stockfishVariant({
+function videoVariant({
   id,
+  name,
+  rating = null,
+  country = 'United States',
+  countryCode = 'us',
+  category = null,
+  avatar,
+  avatarScale = null,
+  avatarStates = null,
+  description,
   videoId,
   videoTitle,
-  rating = 3600,
-  variant,
+  initialElo = 3600,
+  minElo = 250,
+  maxElo = 3600,
+  trigger = null,
+  eloDelta = 0,
+  movePolicy = { type: 'best' },
+  capabilities = {},
 }) {
+  const resolvedCategory = category
+    || (id === 'iwc-smartin' || id.includes('martin') ? 'martin' : 'stockfish')
+  const defaultAvatar = imageAvatar(
+    name,
+    avatar,
+    avatarScale ?? (resolvedCategory === 'stockfish' ? 1.06 : 1),
+  )
+  const resolvedAvatarStates = avatarStates
+    ? Object.freeze(Object.fromEntries(
+        Object.entries(avatarStates).map(([state, filename]) => [
+          state,
+          imageAvatar(name, filename),
+        ]),
+      ))
+    : null
   return Object.freeze({
     id,
-    name: 'PityFish',
-    fullName: 'PityFish',
+    name,
+    fullName: name,
     displayRating: rating,
-    title: 'IWantCheckmate',
+    title: '',
+    country,
+    countryCode,
+    category: resolvedCategory,
+    avatar: defaultAvatar,
+    avatarStates: resolvedAvatarStates,
+    accounts: Object.freeze({ chesscom: [], lichess: [] }),
+    intro: description,
+    videoLabel: description,
     dialoguePolicy: SILENT_DIALOGUE_POLICY,
     capabilities: Object.freeze({
       silentDialogue: true,
       videoVariant: true,
+      beltMode: false,
+      knightSpecialist: false,
+      perfectTheory: false,
+      maximumEngine: true,
+      bishopKnightObjective: false,
+      exactTablebase: false,
+      ...capabilities,
+    }),
+    strengthPolicy: Object.freeze({
+      engineElo: null,
+      depth: 17,
+      moveTime: 1150,
+      candidates: 16,
+      styleWindowCp: 0,
+      bookWindowCp: 0,
+      bookMinGames: Number.POSITIVE_INFINITY,
+      bookMinRecentWeight: Number.POSITIVE_INFINITY,
+      mateSafety: resolvedCategory === 'martin'
+        ? Object.freeze({
+            depth: 20,
+            moveTime: 900,
+            candidates: 1,
+          })
+        : null,
+    }),
+    repertoireSource: Object.freeze({
+      chesscom: [],
+      lichess: [],
+      recentHalfLifeDays: 180,
     }),
     source: Object.freeze({
       channel: 'IWantCheckmate',
@@ -25,87 +91,207 @@ function stockfishVariant({
       videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
     }),
     variant: Object.freeze({
-      initialElo: rating,
-      minElo: 250,
-      maxElo: 3600,
-      ...variant,
+      initialElo,
+      minElo,
+      maxElo,
+      trigger,
+      eloDelta,
+      movePolicy: Object.freeze(movePolicy),
     }),
   })
 }
 
+function imageAvatar(name, filename, scale = 1) {
+  return Object.freeze({
+    type: 'image',
+    src: `./assets/iwantcheckmate/${filename}`,
+    alt: `${name} in-video profile`,
+    objectPosition: '50% 50%',
+    scale,
+    transparent: true,
+  })
+}
+
 export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-worst-move',
+    name: 'PityFish',
+    rating: 3600,
+    avatar: 'pityfish-profile.png',
+    description: 'Loses 500 Elo when you find the true worst move.',
     videoId: 'SbPYufgaG-I',
     videoTitle: 'Stockfish, But It Loses 500 ELO If I Play the WORST Move',
-    variant: { type: 'opponent-worst-move', eloDelta: -500 },
+    trigger: 'opponent-worst-move',
+    eloDelta: -500,
+    minElo: 100,
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-give-check',
+    name: 'PanicFish',
+    rating: 3600,
+    avatar: 'panicfish-profile.png',
+    avatarScale: 1.2,
+    description: 'Loses 300 Elo whenever you give check.',
     videoId: 'vIvVdaTQi3s',
     videoTitle: 'Stockfish, But It Loses 300 ELO When I Give Check',
-    variant: { type: 'opponent-check', eloDelta: -300 },
+    trigger: 'opponent-check',
+    eloDelta: -300,
+    minElo: 100,
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-best-move',
+    name: 'TiltFish',
+    rating: 3600,
+    avatar: 'tiltfish-profile.png',
+    description: 'Loses 100 Elo whenever you play Stockfish’s best move.',
     videoId: 'U6J7XjR_5Ik',
     videoTitle: 'Stockfish, But It Loses 100 ELO If I Play The BEST Move',
-    variant: { type: 'opponent-best-move', eloDelta: -100 },
+    trigger: 'opponent-best-move',
+    eloDelta: -100,
+    minElo: 100,
   }),
-  Object.freeze({
-    id: 'martinfish',
-    name: 'Martin',
-    fullName: 'Martin',
-    displayRating: 250,
-    title: 'IWantCheckmate',
-    dialoguePolicy: SILENT_DIALOGUE_POLICY,
-    capabilities: Object.freeze({
-      silentDialogue: true,
-      videoVariant: true,
-    }),
-    source: Object.freeze({
-      channel: 'IWantCheckmate',
-      videoId: 'PPvPTwZg0JQ',
-      videoTitle: 'Martin, But He Gains 100 ELO Every Move',
-      videoUrl: 'https://www.youtube.com/watch?v=PPvPTwZg0JQ',
-    }),
-    variant: Object.freeze({
-      type: 'own-move',
-      initialElo: 250,
-      minElo: 250,
-      maxElo: 3600,
-      eloDelta: 100,
-    }),
+  videoVariant({
+    id: 'iwc-smartin',
+    name: 'Smartin',
+    rating: 250,
+    avatar: 'smartin-profile.png',
+    description: 'Starts at 250 and gains 100 Elo after every move.',
+    videoId: 'PPvPTwZg0JQ',
+    videoTitle: 'Martin, But He Gains 100 ELO Every Move',
+    initialElo: 250,
+    trigger: 'own-move',
+    eloDelta: 100,
+    movePolicy: { type: 'rating-strength' },
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-elo-decay',
+    name: 'TiredFish',
+    rating: 3600,
+    avatar: 'tiredfish-profile.png',
+    description: 'Starts at 3600 and loses 50 Elo after every move.',
     videoId: 'Uccowk6xbFc',
     videoTitle: 'Stockfish, But It Loses 50 ELO Every Move',
-    variant: { type: 'own-move', eloDelta: -50 },
+    trigger: 'own-move',
+    eloDelta: -50,
+    minElo: 100,
+    movePolicy: { type: 'rating-strength' },
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-random-blunder',
+    name: 'BlunderFish',
+    avatar: 'blunderfish-profile.png',
+    description: 'Plays full strength, with a 5% chance to make a real blunder.',
     videoId: 'ROkJSsMOfu0',
     videoTitle: 'Stockfish, But 5% Chance of Blundering Every Move',
-    variant: { type: 'random-blunder', chance: 0.05 },
+    movePolicy: { type: 'random-blunder', chance: 0.05, minimumLossCp: 200 },
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-random-top-three',
+    name: 'RandomFish',
+    avatar: 'randomfish-profile.png',
+    description: 'Randomly chooses among Stockfish’s top three moves.',
     videoId: 'qJLOLAKx6Fo',
     videoTitle: 'Stockfish, But It Randomly Picks 1 of 3 Top Moves',
-    variant: { type: 'random-top-n', count: 3 },
+    movePolicy: { type: 'random-top-n', count: 3 },
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-zero-evaluation',
+    name: 'DrawFish',
+    avatar: 'drawfish-profile.png',
+    description: 'Chooses the move that keeps the evaluation closest to 0.00.',
     videoId: 'mUmTeprNjzU',
     videoTitle: 'Stockfish, But It Plays for 0.00 Evaluation',
-    variant: { type: 'target-evaluation', targetCp: 0 },
+    movePolicy: { type: 'target-evaluation', targetCp: 0 },
   }),
-  stockfishVariant({
+  videoVariant({
     id: 'iwc-second-best',
+    name: 'BetaFish',
+    avatar: 'betafish-profile.png',
+    description: 'Always plays Stockfish’s second-best move.',
     videoId: 'TQR5zCSzrqw',
     videoTitle: 'Stockfish, But It Plays the 2nd Best Move...',
-    variant: { type: 'ranked-move', rank: 2 },
+    movePolicy: { type: 'ranked-move', rank: 2 },
+  }),
+  videoVariant({
+    id: 'iwc-hungry-martin',
+    name: 'HungryMartin',
+    rating: 250,
+    avatar: 'hungrymartin-profile.png',
+    description: 'Starts at 250 and gains 1000 Elo after a capture or check.',
+    videoId: '0gnWnkyg6VA',
+    videoTitle: 'Martin, But He Gains 1000 ELO If He Captures or Checks',
+    initialElo: 250,
+    trigger: 'own-capture-or-check',
+    eloDelta: 1000,
+    movePolicy: { type: 'rating-strength' },
+  }),
+  videoVariant({
+    id: 'iwc-worstfish',
+    name: 'WorstFish',
+    country: '',
+    countryCode: '',
+    avatar: 'worstfish-profile.png',
+    description: 'Searches every legal move and deliberately chooses the worst.',
+    videoId: 'SsOtn3iDkv8',
+    videoTitle: 'I Played Against The WORST Chess Bot',
+    movePolicy: { type: 'worst-move', allLegalMoves: true },
+  }),
+  videoVariant({
+    id: 'iwc-martinfish',
+    name: 'Martinfish',
+    rating: 3600,
+    avatar: 'martinfish-profile.png',
+    description: 'Alternates one Stockfish move with one Martin move.',
+    videoId: 'DKicZI66j6k',
+    videoTitle: 'I Combined Stockfish and Martin',
+    movePolicy: { type: 'cycle', stockfishMoves: 1, martinMoves: 1 },
+  }),
+  videoVariant({
+    id: 'iwc-martinfish-2',
+    name: 'Martinfish 2.0',
+    rating: 3600,
+    avatar: 'martinfish-profile.png',
+    description: 'Plays two Stockfish moves, then one Martin move.',
+    videoId: '2L2yE15BdMg',
+    videoTitle: 'Martinfish 2.0',
+    movePolicy: { type: 'cycle', stockfishMoves: 2, martinMoves: 1 },
+  }),
+  videoVariant({
+    id: 'iwc-martinfish-3',
+    name: 'Martinfish 3.0',
+    rating: 3600,
+    avatar: 'martinfish-profile.png',
+    description: 'Plays three Stockfish moves, then one Martin move.',
+    videoId: 'PSSEOUxNTrE',
+    videoTitle: 'Martinfish 3.0',
+    movePolicy: { type: 'cycle', stockfishMoves: 3, martinMoves: 1 },
+  }),
+  videoVariant({
+    id: 'iwc-random-martinfish',
+    name: 'Random Martinfish',
+    rating: 3600,
+    avatar: 'martinfish-profile.png',
+    description: 'Uses Stockfish on 90% of moves and Martin on the other 10%.',
+    videoId: 'Y0LOmrRicgw',
+    videoTitle: 'Martinfish Just Got Worse',
+    movePolicy: { type: 'random-hybrid', stockfishChance: 0.9 },
+  }),
+  videoVariant({
+    id: 'iwc-evil-martin',
+    name: 'Evil Martin',
+    rating: 250,
+    avatar: 'sleepy-martin-profile.png',
+    avatarStates: {
+      sleepy: 'sleepy-martin-profile.png',
+      evil: 'evil-martin-profile.png',
+    },
+    description: 'Sleeps at 250 while safe, then wakes up at 3000 when the position turns against him.',
+    videoId: 'LfzNhUjl3qE',
+    videoTitle: 'Martin Becomes Evil When He Starts Losing',
+    initialElo: 250,
+    maxElo: 3000,
+    movePolicy: { type: 'evil-martin', awakeElo: 3000, sleepyElo: 250 },
+    capabilities: { dynamicAvatar: true },
   }),
 ])
 
@@ -114,7 +300,8 @@ export const IWANTCHECKMATE_VARIANT_IDS = Object.freeze(
 )
 
 export function getIWantCheckmateProfile(profileId) {
-  return IWANTCHECKMATE_VIDEO_PROFILES.find((profile) => profile.id === profileId) || null
+  const resolvedId = profileId === 'martinfish' ? 'iwc-smartin' : profileId
+  return IWANTCHECKMATE_VIDEO_PROFILES.find((profile) => profile.id === resolvedId) || null
 }
 
 export function isIWantCheckmateProfile(profile) {

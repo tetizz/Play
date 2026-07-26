@@ -2,7 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Chess } from 'chess.js'
 import { BOT_PROFILES, getBotProfile, loadBotStyleProfile } from '../data/botProfiles'
 import { isIWantCheckmateProfile } from '../data/iwantcheckmateProfiles'
-import { runningVariantElo, variantEngineElo } from '../lib/iwantcheckmateVariants'
+import {
+  guaranteedMateInOneCandidates,
+  isEvilMartinAwake,
+  isMartinDerivedProfile,
+  resolveIWantCheckmateAvatar,
+  runningVariantElo,
+  variantEngineElo,
+  variantEventField,
+} from '../lib/iwantcheckmateVariants'
 import {
   dialogueAfterBotMove,
   dialogueForBotBattle,
@@ -88,9 +96,27 @@ export function useGameController(defaultBotId) {
   const [variantEvents, setVariantEvents] = useState(() => normalizeVariantEvents(restored?.variantEvents))
   const [eloDropEvent, setEloDropEvent] = useState(null)
 
-  const profile = useMemo(() => getBotProfile(botId), [botId])
-  const whiteProfile = useMemo(() => getBotProfile(whiteBotId), [whiteBotId])
-  const blackProfile = useMemo(() => getBotProfile(blackBotId), [blackBotId])
+  const baseProfile = useMemo(() => getBotProfile(botId), [botId])
+  const baseWhiteProfile = useMemo(() => getBotProfile(whiteBotId), [whiteBotId])
+  const baseBlackProfile = useMemo(() => getBotProfile(blackBotId), [blackBotId])
+  const profile = useMemo(
+    () => resolveIWantCheckmateAvatar(baseProfile, variantEvents[baseProfile.id]),
+    [baseProfile, variantEvents],
+  )
+  const whiteProfile = useMemo(
+    () => resolveIWantCheckmateAvatar(
+      baseWhiteProfile,
+      variantEvents[baseWhiteProfile.id],
+    ),
+    [baseWhiteProfile, variantEvents],
+  )
+  const blackProfile = useMemo(
+    () => resolveIWantCheckmateAvatar(
+      baseBlackProfile,
+      variantEvents[baseBlackProfile.id],
+    ),
+    [baseBlackProfile, variantEvents],
+  )
   const requiredBotIds = useMemo(
     () => gameMode === 'bots' ? [whiteBotId, blackBotId] : [botId],
     [blackBotId, botId, gameMode, whiteBotId],
@@ -252,11 +278,39 @@ export function useGameController(defaultBotId) {
     return next
   }, [])
 
+  const setVariantModeElo = useCallback((targetProfile, rating, awake, ply) => {
+    if (!isIWantCheckmateProfile(targetProfile) || !Number.isFinite(rating)) {
+      return variantEventsRef.current
+    }
+    const current = variantEventsRef.current
+    const previousEvents = current[targetProfile.id] || emptyVariantEvents()
+    if (previousEvents.currentElo === rating && previousEvents.evilAwake === awake) return current
+    const nextEvents = {
+      ...previousEvents,
+      currentElo: rating,
+      evilAwake: awake,
+      applied: [...previousEvents.applied, `mode:${ply}`].slice(-240),
+    }
+    const next = { ...current, [targetProfile.id]: nextEvents }
+    variantEventsRef.current = next
+    setVariantEvents(next)
+    if (Number.isFinite(previousEvents.currentElo) && previousEvents.currentElo !== rating) {
+      setEloDropEvent({
+        id: `${targetProfile.id}:mode:${ply}:${Date.now()}`,
+        botId: targetProfile.id,
+        delta: rating - previousEvents.currentElo,
+      })
+      clearTimeout(eloDropTimerRef.current)
+      eloDropTimerRef.current = setTimeout(() => setEloDropEvent(null), 1020)
+    }
+    return next
+  }, [])
+
   const assessVariantOpponentMove = useCallback(async (targetProfile, baseHistory) => {
     if (!isIWantCheckmateProfile(targetProfile) || !baseHistory.length) {
       return variantEventsRef.current
     }
-    const variantType = targetProfile.variant?.type
+    const variantType = targetProfile.variant?.trigger
     if (!['opponent-check', 'opponent-best-move', 'opponent-worst-move'].includes(variantType)) {
       return variantEventsRef.current
     }
@@ -271,13 +325,16 @@ export function useGameController(defaultBotId) {
     }
 
     const beforeFen = before.fen()
-    const candidates = await variantClientRef.current.bestMoves(beforeFen, {
+    const probePolicy = {
       elo: undefined,
       depth: 14,
       moveTime: 420,
-      count: 8,
-      timeout: 1800,
-    })
+      count: 16,
+      timeout: 2600,
+    }
+    const candidates = variantType === 'opponent-worst-move'
+      ? await analyzeEveryLegalMove(variantClientRef.current, before, probePolicy)
+      : await variantClientRef.current.bestMoves(beforeFen, probePolicy)
     const best = candidates[0]
     if (!best || !Number.isFinite(best.score)) return variantEventsRef.current
     const playedUci = moveToUci(played)
@@ -299,7 +356,10 @@ export function useGameController(defaultBotId) {
         ? recordVariantEvent(targetProfile, 'opponentBestMoves', ply)
         : variantEventsRef.current
     }
-    return best.score - playedLine.score >= 260
+    const worst = [...candidates]
+      .filter((candidate) => Number.isFinite(candidate.score))
+      .sort((a, b) => a.score - b.score)[0]
+    return worst && playedLine.score <= worst.score + 5
       ? recordVariantEvent(targetProfile, 'opponentWorstMoves', ply)
       : variantEventsRef.current
   }, [recordVariantEvent])
@@ -568,20 +628,43 @@ export function useGameController(defaultBotId) {
         const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame, engineEloOverride)
         let candidates
         try {
+          const guaranteedMates = isMartinDerivedProfile(automatedProfile)
+            ? guaranteedMateInOneCandidates(beforeGame)
+            : []
           const mateSafety = shouldRunMateSafety(beforeGame, automatedProfile)
             ? automatedProfile.strengthPolicy.mateSafety
             : null
+          const needsEveryLegalMove =
+            automatedProfile.variant?.movePolicy?.allLegalMoves === true
           const [engineCandidates, mateCandidates] = await Promise.all([
-            gameplayClientRef.current.bestMoves(beforeGame.fen(), enginePolicy),
+            needsEveryLegalMove
+              ? analyzeEveryLegalMove(gameplayClientRef.current, beforeGame, enginePolicy)
+              : gameplayClientRef.current.bestMoves(beforeGame.fen(), enginePolicy),
             mateSafety
               ? mateClientRef.current.bestMoves(beforeGame.fen(), {
                   ...mateSafety,
                   elo: undefined,
-                  count: 1,
+                  count: Math.max(1, guaranteedMates.length),
+                  searchMoves: guaranteedMates.length
+                    ? guaranteedMates.map((candidate) => candidate.uci)
+                    : undefined,
                 })
               : Promise.resolve([]),
           ])
-          candidates = mergeEngineCandidates(engineCandidates || [], mateCandidates || [])
+          candidates = mergeEngineCandidates(
+            engineCandidates || [],
+            [...(mateCandidates || []), ...guaranteedMates],
+          )
+          if (automatedProfile.variant?.movePolicy?.type === 'evil-martin') {
+            const awake = isEvilMartinAwake(automatedProfile, candidates)
+            const modePolicy = automatedProfile.variant.movePolicy
+            activeVariantEvents = setVariantModeElo(
+              automatedProfile,
+              awake ? modePolicy.awakeElo : modePolicy.sleepyElo,
+              awake,
+              baseHistory.length,
+            )
+          }
           const objectiveMoves = automatedProfile.capabilities.bishopKnightObjective
             ? bishopKnightObjectiveUcis(beforeGame)
             : []
@@ -615,6 +698,15 @@ export function useGameController(defaultBotId) {
           automatedProfile,
           styleProfile,
           activeBelt,
+          Math.random,
+          {
+            events: activeVariantEvents[automatedProfile.id] || emptyVariantEvents(),
+            rating: runningVariantElo(
+              automatedProfile,
+              activeVariantEvents[automatedProfile.id],
+            ),
+            evaluation: candidates?.[0]?.score,
+          },
         )
       }
       if (!decision?.move) {
@@ -642,6 +734,13 @@ export function useGameController(defaultBotId) {
       beforeGame.move(decision.move)
       let nextHistory = beforeGame.history()
       recordVariantEvent(automatedProfile, 'botMoves', nextHistory.length)
+      if (
+        decision.move.captured ||
+        decision.move.san.includes('+') ||
+        decision.move.san.includes('#')
+      ) {
+        recordVariantEvent(automatedProfile, 'botCaptureChecks', nextHistory.length)
+      }
       commitHistory(nextHistory, {
         from: decision.move.from,
         to: decision.move.to,
@@ -684,6 +783,7 @@ export function useGameController(defaultBotId) {
     assessVariantOpponentMove,
     recordVariantEvent,
     settleReadyPremove,
+    setVariantModeElo,
     whiteProfile,
   ])
 
@@ -1058,19 +1158,21 @@ function firstDifferentBot(botId) {
 function emptyVariantEvents() {
   return {
     botMoves: 0,
+    botCaptureChecks: 0,
     opponentChecks: 0,
     opponentBestMoves: 0,
     opponentWorstMoves: 0,
+    currentElo: null,
+    evilAwake: false,
     applied: [],
   }
 }
 
 function variantUsesEvent(profile, field) {
-  const type = profile?.variant?.type
-  return (type === 'own-move' && field === 'botMoves') ||
-    (type === 'opponent-check' && field === 'opponentChecks') ||
-    (type === 'opponent-best-move' && field === 'opponentBestMoves') ||
-    (type === 'opponent-worst-move' && field === 'opponentWorstMoves')
+  if (field === 'botMoves' && profile?.variant?.movePolicy?.type === 'cycle') {
+    return true
+  }
+  return variantEventField(profile) === field
 }
 
 function pruneVariantEvents(events, maxPly) {
@@ -1085,12 +1187,46 @@ function pruneVariantEvents(events, maxPly) {
       if (Object.hasOwn(next, field)) next[field] += 1
     }
     next.applied = remaining
+    next.currentElo = Number.isFinite(current.currentElo) ? current.currentElo : null
+    next.evilAwake = Boolean(current.evilAwake)
     return [botId, next]
   }))
 }
 
+async function analyzeEveryLegalMove(client, game, policy) {
+  const legalMoves = game.moves({ verbose: true }).map(moveToUci)
+  if (!legalMoves.length) return []
+  const chunks = []
+  for (let index = 0; index < legalMoves.length; index += 16) {
+    chunks.push(legalMoves.slice(index, index + 16))
+  }
+  const moveTime = Math.max(100, Math.floor(Number(policy.moveTime || 500) / chunks.length))
+  const results = []
+  for (const searchMoves of chunks) {
+    const lines = await client.bestMoves(game.fen(), {
+      ...policy,
+      elo: undefined,
+      depth: Math.min(15, Math.max(10, Number(policy.depth || 12))),
+      moveTime,
+      count: searchMoves.length,
+      searchMoves,
+      timeout: Math.max(2200, moveTime + 1500),
+    })
+    results.push(...(lines || []))
+  }
+  return results
+    .filter((candidate) => candidate?.uci)
+    .sort((a, b) => {
+      if (!Number.isFinite(a.score)) return 1
+      if (!Number.isFinite(b.score)) return -1
+      return b.score - a.score
+    })
+    .map((candidate, index) => ({ ...candidate, rank: index + 1 }))
+}
+
 function shouldRunMateSafety(game, profile) {
   if (!profile?.capabilities?.maximumEngine || !profile.strengthPolicy?.mateSafety) return false
+  if (isMartinDerivedProfile(profile)) return true
   if (game.inCheck()) return true
   const pieces = game.board().flat().filter(Boolean)
   if (pieces.length <= 12) return true

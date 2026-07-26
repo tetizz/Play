@@ -18,6 +18,7 @@ export function Avatar({ profile, size = 'medium' }) {
 }
 
 export function CountryFlag({ code, label }) {
+  if (!code) return null
   return <img className="country-flag" src={`./assets/flags/${code}.svg`} alt={label || code} />
 }
 
@@ -46,6 +47,7 @@ export function PlayerStrip({ profile, player, side = 'top', ratingState = null 
 }
 
 function EloRating({ rating, event = null }) {
+  if (!Number.isFinite(rating)) return null
   return (
     <span className="elo-rating-wrap">
       <span className="elo-rating">{`(${rating})`}</span>

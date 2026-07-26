@@ -230,8 +230,8 @@ test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => 
     'animation-name',
     'botAvatarReact',
   )
-  await expect(conversation.getByText('Trixize', { exact: true })).toBeVisible()
-  await expect(conversation.getByText('Akshit', { exact: true })).toBeVisible()
+  await expect(conversation.getByText('Trixize', { exact: true }).first()).toBeVisible()
+  await expect(conversation.getByText('Akshit', { exact: true }).first()).toBeVisible()
 
   await page.getByRole('button', { name: 'End match', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()

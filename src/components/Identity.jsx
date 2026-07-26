@@ -87,7 +87,10 @@ function CapturedMaterial({ material }) {
   return (
     <div className="captured-material" aria-label={summary}>
       {material.captures.length ? (
-        <span className="captured-pieces" aria-hidden="true">
+        <span
+          className={`captured-pieces captured-pieces-${capturedColor === 'w' ? 'white' : 'black'}`}
+          aria-hidden="true"
+        >
           {captureGroups.map(({ piece, count }) => (
             <span className="captured-piece-group" key={piece}>
               {Array.from({ length: count }, (_, index) => (

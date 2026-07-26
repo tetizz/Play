@@ -970,11 +970,18 @@ button {
   width: 18px;
   height: 18px;
   object-fit: contain;
-  filter: grayscale(1) brightness(2.15) contrast(0.8);
 }
 
 .captured-piece-group img + img {
-  margin-left: -6px;
+  margin-left: -10px;
+}
+
+.captured-pieces-white img {
+  filter: grayscale(1) brightness(1.12) contrast(0.95);
+}
+
+.captured-pieces-black img {
+  filter: none;
 }
 
 .material-advantage {
@@ -3135,7 +3142,7 @@ button {
   }
 
   .captured-piece-group img + img {
-    margin-left: -10px;
+    margin-left: -9px;
   }
 }
 

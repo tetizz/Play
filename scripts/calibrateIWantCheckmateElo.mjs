@@ -55,6 +55,7 @@ export async function main(argv = process.argv.slice(2)) {
       judgeNodesPerMove: options.judgeNodes,
       maximumPlies: options.maxPlies,
       seed: options.seed,
+      freezeRating: options.freezeRating,
       engineProcesses: 3,
       formula:
         'Maximum-likelihood Elo from paired scores against native UCI_Elo anchors, with a profile-likelihood 95% confidence interval.',
@@ -96,6 +97,7 @@ export async function main(argv = process.argv.slice(2)) {
             judgeNodes: options.judgeNodes,
             maxPlies: options.maxPlies,
             seed: pairing.seed,
+            freezeRating: options.freezeRating,
           })
           recordCalibrationGame(row, gameResult)
           if (gameResult.status === 'failed') {
@@ -151,11 +153,14 @@ export async function playGame({
   judgeNodes,
   maxPlies,
   seed,
+  freezeRating = false,
 }) {
   const game = new Chess()
   const events = createVariantEvents()
   const random = seededRandom(seed)
-  const startingElo = resolveProfileRating(profile, events, requestedInitialElo)
+  const startingElo = freezeRating
+    ? requestedInitialElo
+    : resolveProfileRating(profile, events, requestedInitialElo)
   const ratingHistory = []
 
   try {
@@ -173,7 +178,9 @@ export async function playGame({
       let currentElo = null
 
       if (isProfileTurn) {
-        currentElo = resolveProfileRating(profile, events, requestedInitialElo)
+        currentElo = freezeRating
+          ? requestedInitialElo
+          : resolveProfileRating(profile, events, requestedInitialElo)
         ratingHistory.push({
           ply: game.history().length + 1,
           elo: currentElo,
@@ -250,7 +257,9 @@ export async function playGame({
       plies: game.history().length,
       events,
       startingElo,
-      endingElo: resolveProfileRating(profile, events, requestedInitialElo),
+      endingElo: freezeRating
+        ? requestedInitialElo
+        : resolveProfileRating(profile, events, requestedInitialElo),
       ratingHistory,
       pgn: game.pgn(),
     }
@@ -266,7 +275,9 @@ export async function playGame({
       plies: game.history().length,
       events,
       startingElo,
-      endingElo: resolveProfileRating(profile, events, requestedInitialElo),
+      endingElo: freezeRating
+        ? requestedInitialElo
+        : resolveProfileRating(profile, events, requestedInitialElo),
       ratingHistory,
       pgn: game.pgn(),
     }
@@ -281,7 +292,9 @@ export async function playGame({
     plies: game.history().length,
     events,
     startingElo,
-    endingElo: resolveProfileRating(profile, events, requestedInitialElo),
+    endingElo: freezeRating
+      ? requestedInitialElo
+      : resolveProfileRating(profile, events, requestedInitialElo),
     ratingHistory,
     pgn: game.pgn(),
   }
@@ -924,6 +937,7 @@ export function parseArgs(args) {
     timeoutMs: positiveInteger(values.timeoutMs, 15000),
     seed: positiveInteger(values.seed, 20260725),
     rating: values.rating === undefined ? null : Number(values.rating),
+    freezeRating: values['freeze-rating'] === 'true' || values['freeze-rating'] === '',
     output: path.resolve(values.output || 'artifacts/iwantcheckmate-elo-calibration.json'),
   }
 }

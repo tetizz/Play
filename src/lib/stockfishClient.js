@@ -83,10 +83,7 @@ export function createStockfishClient({
     }
     if (!text.startsWith('bestmove')) return
     const bestmove = text.split(/\s+/)[1]
-    const lines = [...active.lines.values()].sort((a, b) => a.rank - b.rank)
-    if (!lines.length && bestmove && bestmove !== '(none)') {
-      lines.push({ uci: bestmove, score: null, mate: null, rank: 1, pv: [bestmove] })
-    }
+    const lines = finalizeSearchLines(active, bestmove)
     settleActive(active.kind === 'best' ? lines[0]?.uci || null : lines)
   }
 
@@ -139,7 +136,9 @@ export function createStockfishClient({
         post('stop')
         request.stopTimeout = setTimeout(() => {
           if (active !== request) return
-          const lines = [...request.lines.values()].sort((a, b) => a.rank - b.rank)
+          const lines = Number.isFinite(request.options.elo)
+            ? []
+            : [...request.lines.values()].sort((a, b) => a.rank - b.rank)
           resetWorker()
           settleActive(request.kind === 'best' ? lines[0]?.uci || null : lines)
         }, Math.max(50, stopGraceMs))
@@ -249,6 +248,31 @@ export function createStockfishClient({
 
 function emptyResult(request) {
   return request?.kind === 'best' ? null : []
+}
+
+function finalizeSearchLines(request, bestmove) {
+  const lines = [...request.lines.values()].sort((a, b) => a.rank - b.rank)
+  const hasBestmove = bestmove && bestmove !== '(none)'
+  if (!hasBestmove) return lines
+
+  if (!Number.isFinite(request.options.elo)) {
+    if (!lines.length) {
+      lines.push({ uci: bestmove, score: null, mate: null, rank: 1, pv: [bestmove] })
+    }
+    return lines
+  }
+
+  const selected = lines.find((line) => line.uci === bestmove) || {
+    uci: bestmove,
+    score: null,
+    mate: null,
+    rank: 1,
+    pv: [bestmove],
+  }
+  return [
+    selected,
+    ...lines.filter((line) => line.uci !== bestmove),
+  ].map((line, index) => ({ ...line, rank: index + 1 }))
 }
 
 function parsePrincipalVariation(text) {

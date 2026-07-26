@@ -179,122 +179,127 @@ const BOT_BATTLE_FALLBACK_LINES = {
   ],
 }
 
-const IWANTCHECKMATE_LINES = {
+export const IWANTCHECKMATE_LINES = {
   'iwc-worst-move': {
-    intro: 'Find the true worst move and I lose 500 Elo. No pressure.',
+    intro: 'Find the worst move on the board and 500 Elo falls out of my pocket.',
     elo: [
-      'You actually found the worst move. That just cost me {delta} Elo.',
-      'Minus {delta} Elo. I cannot believe that move worked.',
+      'That move was hideous. There goes {delta} Elo.',
+      'You found the basement. I just dropped {delta} Elo down the stairs.',
     ],
-    check: ['A check is fine. The truly awful move is what worries me.'],
-    capture: ['That piece was free. Even losing Elo cannot hide that.'],
-    quiet: ['Not bad enough. I am still thinking at {elo}.'],
+    check: ['A check? Cute. I am waiting for something truly dreadful.'],
+    capture: ['Free piece spotted. The pity department is closed.'],
+    winning: ['I keep losing rating and somehow you are losing the game.'],
+    quiet: ['Not ugly enough. My rating survives at {elo}.'],
     battle: [
-      '{opponent}, show me the move that makes the evaluation bar leave the building.',
-      'I am searching for the basement, {opponent}. Stop giving me playable moves.',
+      '{opponent}, show me the move your chess teacher warned you about.',
+      'I brought a shovel, {opponent}. Let us find the bottom together.',
     ],
-    mate: ['I lost Elo, not the mating pattern.'],
-    end: ['The worst move challenge is over. My rating needs a minute.'],
+    mate: ['I lost Elo, not my ability to finish this.'],
+    end: ['Challenge over. Somebody help me look for my rating.'],
   },
   'iwc-give-check': {
-    intro: 'Please do not check me. Every check costs me 300 Elo.',
+    intro: 'Every time you check me, 300 Elo runs away screaming.',
     elo: [
-      'A check? Great. There goes {delta} Elo.',
-      'I heard the word check and forgot {delta} Elo immediately.',
+      'Check? My rating just fell through the floor by {delta}.',
+      'The king heard check. My brain misplaced {delta} Elo.',
     ],
-    check: ['I can give checks. Receiving them is the problem.'],
-    capture: ['Panic later. Free piece now.'],
-    quiet: ['No check? Good. I can still remember how the pieces move.'],
+    check: ['I can give checks. Receiving them is a personal crisis.'],
+    capture: ['Panic later. Snack now.'],
+    winning: ['I am winning, but one check could make this very silly.'],
+    quiet: ['No check? Wonderful. I remain vaguely qualified.'],
     battle: [
-      '{opponent}, put the checks away. My rating is held together with tape.',
-      'Every quiet move is a tiny vacation, {opponent}.',
+      '{opponent}, please keep your checks in their original packaging.',
+      'A quiet move! Thank you for the vacation, {opponent}.',
     ],
-    mate: ['No panic left. That is mate.'],
-    end: ['I survived the checks. Mostly.'],
+    mate: ['Panic complete. Checkmate delivered.'],
+    end: ['I survived the checks. My rating would like a blanket.'],
   },
   'iwc-best-move': {
-    intro: 'Every best move you find costs me 100 Elo. Try not to be too accurate.',
+    intro: 'Every best move you find steals 100 Elo from me. Please be inaccurate.',
     elo: [
-      'Best move detected. Minus {delta} Elo. I am completely fine.',
-      'You found the engine move. There goes another {delta}.',
+      'Best move. Rude. I am {delta} Elo lighter now.',
+      'Too precise. Hand over another {delta} Elo.',
     ],
-    check: ['A check and maybe the best move too? That is just rude.'],
-    capture: ['The best move can wait. I saw a free piece.'],
-    quiet: ['Was that really best? My rating hopes not.'],
+    check: ['A check too? You are taking this personally.'],
+    capture: ['Your piece wandered into my lunch break.'],
+    winning: ['You keep finding good moves and I keep winning anyway. Awkward.'],
+    quiet: ['Was that really your best? My rating hopes not.'],
     battle: [
-      '{opponent}, please explore the rich world of second-best moves.',
-      'Your accuracy is personally attacking my rating, {opponent}.',
+      '{opponent}, second-best has charm. Please consider it.',
+      'Your good decisions are expensive, {opponent}.',
     ],
-    mate: ['That ending was best for me.'],
-    end: ['The engine can stop judging both of us now.'],
+    mate: ['That was the best ending for me.'],
+    end: ['Good game. My missing Elo will be sending you an invoice.'],
   },
   'iwc-smartin': {
-    intro: 'I start at 250. Every move makes me 100 Elo smarter.',
+    intro: 'I start at 250 and gain 100 Elo every move. Please stall responsibly.',
     elo: [
-      'Another move, another {delta} Elo. I am up to {elo}.',
-      'I can feel the rating kicking in. {elo} and climbing.',
+      'Another move, another {delta} Elo. I have {elo} thoughts now.',
+      'I felt my brain grow. {elo} and climbing.',
     ],
-    check: ['Check. I learned that one a few hundred Elo ago.'],
-    capture: ['At {elo}, I am apparently allowed to take free pieces.'],
-    quiet: ['Give me a few more moves. I am still downloading chess.'],
+    check: ['Check. I learned that a few moves ago.'],
+    capture: ['At {elo}, I have discovered free pieces.'],
+    winning: ['This was much harder back when I had 250 Elo.'],
+    quiet: ['Give me a few more moves. I am still installing chess.'],
     battle: [
-      '{opponent}, keep stalling. I become a grandmaster appliance eventually.',
-      'I have {elo} Elo and several new thoughts, {opponent}.',
+      '{opponent}, keep stalling. I become alarmingly competent eventually.',
+      'I have {elo} Elo and several fresh thoughts, {opponent}.',
     ],
-    mate: ['I learned checkmate just in time.'],
-    end: ['Look how much I learned in one game.'],
+    mate: ['I learned checkmate just in time. Convenient.'],
+    end: ['Look how much I learned. I deserve a tiny diploma.'],
   },
   'iwc-elo-decay': {
-    intro: 'I start at 3600 and lose 50 Elo every move. Let us finish quickly.',
+    intro: 'I start at 3600 and lose 50 Elo every move. Please admire me quickly.',
     elo: [
-      'Minus {delta}. I knew this position a second ago.',
-      'Another {delta} Elo gone. Thinking is exhausting.',
+      'Minus {delta}. I understood chess a second ago.',
+      'Another {delta} Elo gone. Existing is exhausting.',
     ],
     check: ['Check. I still remember that much.'],
-    capture: ['I may be tired, but that piece was awake and hanging.'],
-    quiet: ['At {elo}, this position is starting to look blurry.'],
+    capture: ['I may be tired, but your piece was sleeping harder.'],
+    winning: ['Please resign before I forget why I am winning.'],
+    quiet: ['At {elo}, the horses are starting to look suspicious.'],
     battle: [
-      '{opponent}, hurry. My opening knowledge is evaporating.',
-      'I had a brilliant idea at 3600. I cannot remember it now.',
+      '{opponent}, hurry. My chess knowledge is leaving without me.',
+      'I had a beautiful idea five moves ago. It is gone now, {opponent}.',
     ],
     mate: ['Finally. I can sleep now.'],
     end: ['Game over. Wake me up when my Elo comes back.'],
   },
   'iwc-random-blunder': {
-    intro: 'Ninety-five percent Stockfish. Five percent terrible idea.',
-    check: ['That check came from the responsible ninety-five percent.'],
+    intro: 'Ninety-five percent genius. Five percent shopping cart with one bad wheel.',
+    check: ['That check came from my responsible ninety-five percent.'],
     capture: ['The piece was free. Even my bad five percent saw it.'],
     winning: ['The five percent has not shown up yet.'],
-    quiet: ['Was that Stockfish or the five percent? You will find out.'],
+    quiet: ['Was that genius or chaos? You will find out soon.'],
     battle: [
-      '{opponent}, I have consulted the engine and one extremely bad impulse.',
+      '{opponent}, I consulted my brain and one extremely bad impulse.',
       'Ninety-five percent calculation. Five percent banana peel.',
     ],
     mate: ['No blunder this time. Checkmate.'],
     end: ['The five percent did not save you.'],
   },
   'iwc-random-top-three': {
-    intro: 'I roll between Stockfish’s top three moves. The dice are ready.',
-    check: ['The engine dice landed on check.'],
+    intro: 'I roll a die between my top three moves. Surely nothing odd will happen.',
+    check: ['The dice landed on check.'],
     capture: ['The dice said take it.'],
     winning: ['All three choices look unpleasant for you.'],
     quiet: ['One, two, or three. I am not telling you which one won.'],
     battle: [
-      'The engine gave me three doors, {opponent}. I kicked one open.',
+      'I had three doors, {opponent}. I kicked one open.',
       'My move selection has the confidence of a dice roll.',
     ],
     mate: ['The dice have spoken. Checkmate.'],
     end: ['Random choice, very real result.'],
   },
   'iwc-zero-evaluation': {
-    intro: 'I only want 0.00. I offer draw in advance.',
-    check: ['That check was meant to make the position more equal. Somehow.'],
-    capture: ['Equal material is easier when I take yours.'],
-    winning: ['This is too winning. I need to calm the evaluation down.'],
+    intro: 'I only want 0.00. I have already filled out the draw paperwork.',
+    check: ['That check was meant to make things peaceful. Somehow.'],
+    capture: ['Peace is easier when I am holding your pieces.'],
+    winning: ['This is far too exciting. I ordered complete equality.'],
     quiet: ['I offer draw. Again.'],
     battle: [
-      '{opponent}, could we please return this evaluation to factory settings?',
-      'I ordered 0.00 and received whatever this position is.',
+      '{opponent}, could we return this game to a polite 0.00?',
+      'I ordered a draw and received whatever this is, {opponent}.',
     ],
     mate: ['That is extremely far from 0.00.'],
     end: ['I asked for a draw. Nobody listens to the fish.'],
@@ -313,7 +318,7 @@ const IWANTCHECKMATE_LINES = {
     end: ['Silver medal move selection, gold medal result.'],
   },
   'iwc-hungry-martin': {
-    intro: 'I start at 250, but every capture or check feeds me 1000 Elo.',
+    intro: 'I start at 250, but every capture or check feeds me 1000 Elo. Delicious.',
     elo: [
       'That tasted like {delta} Elo. I am at {elo} now.',
       'Capture, check, rating snack. Plus {delta}.',
@@ -329,66 +334,66 @@ const IWANTCHECKMATE_LINES = {
     end: ['That game was filling.'],
   },
   'iwc-worstfish': {
-    intro: 'I search every legal move and deliberately choose the worst one.',
+    intro: 'I inspect every legal move and proudly choose the absolute worst.',
     check: ['If this is check, imagine how bad the other moves were.'],
     capture: ['Taking that was somehow the worst idea available.'],
     winning: ['I am winning despite my best efforts.'],
     quiet: ['I found the bottom of the move list and kept digging.'],
     battle: [
-      '{opponent}, I have discovered a move the engine tried to hide from humanity.',
-      'The evaluation bar saw my move and filed a complaint.',
+      '{opponent}, I found a move that should have remained undiscovered.',
+      'My last move has been asked to leave the chess club.',
     ],
     mate: ['You lost to the worst move. That is impressive.'],
     end: ['The worst move won. Chess is strange.'],
   },
   'iwc-martinfish': {
-    intro: 'One Stockfish move, one Martin move. What could go wrong?',
-    check: ['Stockfish found the check. Martin is taking credit.'],
+    intro: 'One genius move, one Martin move. The steering wheel is shared.',
+    check: ['The clever half found check. Martin is taking credit.'],
     capture: ['One side of my brain saw that piece.'],
-    winning: ['Stockfish is carrying. Martin is enjoying the view.'],
+    winning: ['The clever half is carrying. Martin is enjoying the view.'],
     quiet: ['Half calculation, half adventure.'],
     battle: [
       '{opponent}, one of my two brains knows what is happening.',
-      'Stockfish has the wheel. Martin has the map upside down.',
+      'The genius has the wheel. Martin has the map upside down.',
     ],
-    mate: ['Stockfish set it up. Martin definitely meant it.'],
-    end: ['Teamwork between 3600 and 250.'],
+    mate: ['The clever half set it up. Martin definitely meant it.'],
+    end: ['Two brains entered. Somehow one victory left.'],
   },
   'iwc-martinfish-2': {
-    intro: 'Two Stockfish moves, then one Martin move. Slightly less chaos.',
+    intro: 'Two genius moves, then one Martin move. Slightly less chaos.',
     check: ['Two parts calculation, one part surprise.'],
-    capture: ['That looked like one of the Stockfish turns.'],
+    capture: ['That looked like one of the sensible turns.'],
     winning: ['Martin gets one move soon. Do not relax.'],
     quiet: ['The third move is where the plot changes.'],
     battle: [
       '{opponent}, I am competent in groups of two.',
-      'Two engine moves paid for the next Martin move.',
+      'Two sensible moves paid for the next Martin move.',
     ],
     mate: ['The ratio worked. Checkmate.'],
     end: ['Two good ideas were enough to cover one Martin idea.'],
   },
   'iwc-martinfish-3': {
-    intro: 'Three Stockfish moves, then Martin gets the controls.',
+    intro: 'Three genius moves, then Martin gets the controls.',
     check: ['Three moves of preparation for one move of mystery.'],
-    capture: ['Stockfish built it. Martin found the capture button.'],
+    capture: ['The clever half built it. Martin found the capture button.'],
     winning: ['The three-to-one ratio is doing its job.'],
     quiet: ['Martin’s turn is always closer than it looks.'],
     battle: [
-      '{opponent}, the engine gets three sentences and Martin gets the punchline.',
+      '{opponent}, the genius gets three sentences and Martin gets the punchline.',
       'Three precise moves. Then we release the Martin.',
     ],
-    mate: ['Three parts engine, one part Martin, one checkmate.'],
-    end: ['The engine-to-Martin ratio survived.'],
+    mate: ['Three parts genius, one part Martin, one checkmate.'],
+    end: ['The genius-to-Martin ratio survived.'],
   },
   'iwc-random-martinfish': {
-    intro: 'Ninety percent Stockfish, ten percent Martin. Guess who moved.',
-    check: ['Probably Stockfish. Probably.'],
+    intro: 'Ninety percent genius, ten percent Martin. Guess who moved.',
+    check: ['Probably the genius. Probably.'],
     capture: ['That looked suspiciously competent.'],
     winning: ['The ten percent has not ruined it yet.'],
     quiet: ['Was that the ninety or the ten?'],
     battle: [
       '{opponent}, you are one random number away from a completely different game.',
-      'The engine is driving, but Martin keeps touching the radio.',
+      'The genius is driving, but Martin keeps touching the radio.',
     ],
     mate: ['The ninety percent closed the game.'],
     end: ['The random switch stayed mostly cooperative.'],
@@ -413,8 +418,14 @@ const IWANTCHECKMATE_LINES = {
   },
 }
 
+const IWANTCHECKMATE_DIALOGUE_ALIASES = {
+  'iwc-martinfish-80-20': 'iwc-random-martinfish',
+  'iwc-martinfish-95-5': 'iwc-random-martinfish',
+  'iwc-evil-martin-2': 'iwc-evil-martin',
+}
+
 function iwantcheckmateDialogue(profile, context) {
-  const lines = IWANTCHECKMATE_LINES[profile.id]
+  const lines = iwantcheckmateLines(profile)
   if (!lines) return ''
   const values = {
     delta: Math.abs(Math.round(context.variantEloDelta || 0)),
@@ -491,21 +502,25 @@ export function dialogueAfterBotMove(profile, context) {
 
 export function dialogueForBotBattle(profile, context, opponentProfile = null) {
   if (profile.dialoguePolicy === 'silent') return ''
+  const opponentName = opponentProfile?.name || 'opponent'
   const direct = dialogueAfterBotMove(profile, {
     ...context,
-    opponentName: opponentProfile?.name || 'opponent',
+    opponentName,
   })
-  if (direct) return direct
+  if (direct) {
+    return profile.dialoguePolicy === 'iwantcheckmate'
+      ? addressOpponent(direct, opponentName)
+      : direct
+  }
   const policy = profile.dialoguePolicy || profile.id || 'mubassar'
   const lines = BOT_BATTLE_FALLBACK_LINES[policy] || BOT_BATTLE_FALLBACK_LINES.mubassar
-  const opponentName = opponentProfile?.name || 'opponent'
   return pick(lines).replaceAll('{opponent}', opponentName)
 }
 
 export function initialDialogue(profile) {
   if (profile.dialoguePolicy === 'silent') return ''
   if (profile.dialoguePolicy === 'iwantcheckmate') {
-    return IWANTCHECKMATE_LINES[profile.id]?.intro || ''
+    return iwantcheckmateLines(profile)?.intro || ''
   }
   if (profile.id === 'mubassar') return 'Prepare for belt.'
   return ''
@@ -514,7 +529,7 @@ export function initialDialogue(profile) {
 export function dialogueForGameEnd(profile, result) {
   if (profile.dialoguePolicy === 'silent') return ''
   if (profile.dialoguePolicy === 'iwantcheckmate') {
-    return pick(asLines(IWANTCHECKMATE_LINES[profile.id]?.end))
+    return pick(asLines(iwantcheckmateLines(profile)?.end))
   }
   if (profile.dialoguePolicy === 'trixize') return result.includes('checkmate') ? 'Good game.' : ''
   if (profile.dialoguePolicy === 'akshit') {
@@ -541,4 +556,14 @@ function fillTemplate(line, values) {
     (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
     line,
   )
+}
+
+function iwantcheckmateLines(profile) {
+  const dialogueId = IWANTCHECKMATE_DIALOGUE_ALIASES[profile.id] || profile.id
+  return IWANTCHECKMATE_LINES[dialogueId]
+}
+
+function addressOpponent(line, opponentName) {
+  if (!line || !opponentName || line.includes(opponentName)) return line
+  return `${opponentName}, ${line}`
 }

@@ -52,6 +52,66 @@ test('Stockfish waits for readyok and returns sanitized final principal variatio
   client.destroy()
 })
 
+test('Stockfish limited strength honors the weakened bestmove instead of MultiPV rank one', async () => {
+  const worker = new FakeStockfishWorker()
+  const client = createStockfishClient({
+    workerFactory: () => worker,
+    readyTimeoutMs: 200,
+  })
+
+  const result = client.bestMoves('8/8/8/8/8/8/8/K6k w - - 0 1', {
+    count: 2,
+    depth: 8,
+    moveTime: 100,
+    elo: 2200,
+  })
+
+  await nextTurn()
+  worker.emit('readyok')
+  await nextTurn()
+  worker.emit('info depth 8 multipv 1 score cp 35 pv a1a2 h1g1')
+  worker.emit('info depth 8 multipv 2 score cp 20 pv a1b1 h1g1')
+  worker.emit('bestmove a1b1')
+
+  assert.deepEqual(await result, [
+    { uci: 'a1b1', score: 20, mate: null, rank: 1, pv: ['a1b1', 'h1g1'] },
+    { uci: 'a1a2', score: 35, mate: null, rank: 2, pv: ['a1a2', 'h1g1'] },
+  ])
+  assert.equal(
+    worker.commands.includes('setoption name UCI_LimitStrength value true'),
+    true,
+  )
+  assert.equal(worker.commands.includes('setoption name UCI_Elo value 2200'), true)
+  client.destroy()
+})
+
+test('Stockfish limited strength never substitutes a full-strength line when bestmove is missing', async () => {
+  const worker = new FakeStockfishWorker()
+  const client = createStockfishClient({
+    workerFactory: () => worker,
+    readyTimeoutMs: 200,
+    stopGraceMs: 5,
+  })
+
+  const result = client.bestMoves('8/8/8/8/8/8/8/K6k w - - 0 1', {
+    count: 2,
+    depth: 8,
+    moveTime: 40,
+    timeout: 5,
+    elo: 3000,
+  })
+
+  await nextTurn()
+  worker.emit('readyok')
+  await nextTurn()
+  worker.emit('info depth 8 multipv 1 score cp 35 pv a1a2 h1g1')
+  worker.emit('info depth 8 multipv 2 score cp 20 pv a1b1 h1g1')
+
+  assert.deepEqual(await result, [])
+  assert.equal(worker.commands.includes('setoption name UCI_Elo value 3000'), true)
+  client.destroy()
+})
+
 test('Stockfish serializes requests enqueued before worker readiness', async () => {
   const worker = new FakeStockfishWorker()
   const client = createStockfishClient({

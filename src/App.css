@@ -19,7 +19,7 @@ button {
 .bad-manners-page {
   position: relative;
   isolation: isolate;
-  overflow-x: hidden;
+  overflow-x: clip;
   min-height: 100svh;
   color: #f6f3ec;
   background:

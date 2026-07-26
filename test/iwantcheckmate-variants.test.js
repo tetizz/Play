@@ -37,7 +37,10 @@ const EXPECTED_NAMES = [
   'Martinfish 2.0',
   'Martinfish 3.0',
   'Random Martinfish',
+  'Martinfish 80/20',
+  'Martinfish 95/5',
   'Evil Martin',
+  'Evil Martin 2.0',
 ]
 
 function sequenceRandom(values) {
@@ -81,7 +84,13 @@ test('IWantCheckmate exposes distinct talking profiles from the source videos', 
 
 test('every IWantCheckmate bot has an introduction and situational dialogue', () => {
   for (const profile of IWANTCHECKMATE_VIDEO_PROFILES) {
-    assert.ok(initialDialogue(profile).length > 20, `${profile.name} introduction`)
+    const scriptedIntroduction = initialDialogue(profile)
+    assert.ok(
+      (scriptedIntroduction || profile.intro).length > 20,
+      `${profile.name} introduction`,
+    )
+    if (!scriptedIntroduction) continue
+
     assert.ok(dialogueAfterBotMove(profile, {
       move: { piece: 'n', san: 'Nf3' },
       capturedValue: 0,
@@ -489,6 +498,53 @@ test('Random Martinfish preserves its verified 90/10 mode split', () => {
   ).rank > 1)
 })
 
+test('random Martinfish profiles preserve their verified video ratios and sources', () => {
+  const cases = [
+    ['iwc-random-martinfish', 'Y0LOmrRicgw', 0.9],
+    ['iwc-martinfish-80-20', 'ew6NU1Z_G4k', 0.8],
+    ['iwc-martinfish-95-5', 'MwXcULBxA_s', 0.95],
+  ]
+  const candidates = scoredCandidates()
+
+  for (const [id, videoId, stockfishChance] of cases) {
+    const profile = getIWantCheckmateProfile(id)
+    assert.equal(profile.source.videoId, videoId)
+    assert.equal(profile.variant.movePolicy.stockfishChance, stockfishChance)
+    assert.equal(profile.displayRating, null)
+    assert.equal(runningVariantElo(profile), null)
+    assert.equal(selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => stockfishChance - 0.000001,
+      { events: { botMoves: 8 } },
+    ).rank, 1)
+    assert.ok(selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      sequenceRandom([stockfishChance, 0.99, 0.5]),
+      { events: { botMoves: 8 } },
+    ).rank > 1)
+  }
+})
+
+test('all Martinfish hybrids omit a fixed display and running Elo', () => {
+  const hybridIds = [
+    'iwc-martinfish',
+    'iwc-martinfish-2',
+    'iwc-martinfish-3',
+    'iwc-random-martinfish',
+    'iwc-martinfish-80-20',
+    'iwc-martinfish-95-5',
+  ]
+
+  for (const id of hybridIds) {
+    const profile = getIWantCheckmateProfile(id)
+    assert.equal(profile.displayRating, null, id)
+    assert.equal(runningVariantElo(profile), null, id)
+    assert.equal(variantEngineElo(profile), undefined, id)
+  }
+})
+
 test('Martin mate safety finds mating moves omitted from ordinary MultiPV for both colors', () => {
   const black = new Chess()
   for (const move of ['f3', 'e5', 'g4']) black.move(move)
@@ -580,24 +636,39 @@ test('Martin remains a 250-style weak bot after mate safety filters the move poo
   assert.notEqual(selected.rank, 1)
 })
 
-test('Evil Martin wakes only when the bot side is losing', () => {
-  const profile = getIWantCheckmateProfile('iwc-evil-martin')
-  const equal = [
+test('Evil Martin versions use their verified permanent wake thresholds', () => {
+  const candidates = [
     { uci: 'a2a4', score: 20, rank: 1 },
-    { uci: 'b2b4', score: -500, rank: 2 },
+    { uci: 'b2b4', score: -700, rank: 2 },
   ]
-  const losing = [
-    { uci: 'a2a4', score: -120, rank: 1 },
-    { uci: 'b2b4', score: -500, rank: 2 },
+  const cases = [
+    ['iwc-evil-martin', -600],
+    ['iwc-evil-martin-2', -500],
   ]
-  assert.equal(
-    selectIWantCheckmateCandidate(profile, equal, () => 0.5, { evaluation: 20 }).rank,
-    2,
-  )
-  assert.equal(
-    selectIWantCheckmateCandidate(profile, losing, () => 0.5, { evaluation: -120 }).rank,
-    1,
-  )
+
+  for (const [id, threshold] of cases) {
+    const profile = getIWantCheckmateProfile(id)
+    assert.equal(profile.variant.movePolicy.wakeThresholdCp, threshold)
+    assert.equal(profile.variant.movePolicy.permanentWake, true)
+    assert.ok(selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0.5,
+      { evaluation: threshold + 1, events: { evilAwake: false } },
+    ).rank > 1)
+    assert.equal(selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0.5,
+      { evaluation: threshold, events: { evilAwake: false } },
+    ).rank, 1)
+    assert.equal(selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0.5,
+      { evaluation: 200, events: { evilAwake: true } },
+    ).rank, 1)
+  }
 })
 
 test('Evil Martin exposes the Sleepy and Evil portraits from its awake state', () => {

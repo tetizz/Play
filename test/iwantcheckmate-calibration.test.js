@@ -155,6 +155,47 @@ test('a dynamic trigger changes the Elo used by the next move in an actual game'
   assert.equal(result.ratingHistory[0].elo, 1320)
 })
 
+test('fixed-rating calibration measures one Elo without applying a video trigger', async () => {
+  const profileCalls = []
+  const engines = {
+    profile: {
+      newGame: async () => {},
+      analyze: async (_position, options) => {
+        profileCalls.push(options)
+        return [{ uci: 'e2e4', score: 0, rank: 1 }]
+      },
+    },
+    anchor: {
+      newGame: async () => {},
+      analyze: async () => [{ uci: 'e7e5', score: 0, rank: 1 }],
+    },
+    judge: {
+      newGame: async () => {},
+      analyze: async () => [],
+    },
+  }
+  const result = await playGame({
+    engines,
+    profile: getIWantCheckmateProfile('iwc-smartin'),
+    profileColor: 'w',
+    requestedInitialElo: 2200,
+    anchorElo: 2200,
+    opening: [],
+    nodes: 200,
+    judgeNodes: 200,
+    maxPlies: 2,
+    seed: 19,
+    freezeRating: true,
+  })
+
+  assert.equal(result.status, 'unfinished')
+  assert.equal(result.events.botMoves, 1)
+  assert.equal(result.startingElo, 2200)
+  assert.equal(result.endingElo, 2200)
+  assert.equal(result.ratingHistory[0].elo, 2200)
+  assert.equal(profileCalls[0].elo, 2200)
+})
+
 test('sub-1320 games request full candidates for the app weak-move selector', async () => {
   const profileCalls = []
   const engines = {

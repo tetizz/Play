@@ -150,7 +150,7 @@ export function selectIWantCheckmateCandidate(
       : selectCalibratedWeakMove(sorted, MARTIN_ELO, random, context)
   }
   if (policy.type === 'evil-martin') {
-    const isAwake = Number(context.evaluation ?? candidateScore(sorted[0])) < -80
+    const isAwake = isEvilMartinAwake(profile, sorted, context)
     return isAwake
       ? sorted[0]
       : selectCalibratedWeakMove(
@@ -250,10 +250,20 @@ export function isMartinDerivedProfile(profile) {
   return isMartinDerived(profile, profile?.variant?.movePolicy)
 }
 
-export function isEvilMartinAwake(profile, candidates) {
-  if (profile?.variant?.movePolicy?.type !== 'evil-martin') return false
+export function isEvilMartinAwake(profile, candidates, context = {}) {
+  const policy = profile?.variant?.movePolicy
+  if (policy?.type !== 'evil-martin') return false
+  const events = context?.events || context
+  if (policy.permanentWake !== false && events?.evilAwake === true) return true
+
   const sorted = normalizeCandidates(candidates)
-  return Number(candidateScore(sorted[0])) < -80
+  const threshold = Number.isFinite(policy.wakeThresholdCp)
+    ? Number(policy.wakeThresholdCp)
+    : -600
+  const evaluation = Number.isFinite(context?.evaluation)
+    ? Number(context.evaluation)
+    : candidateScore(sorted[0])
+  return Number.isFinite(evaluation) && evaluation <= threshold
 }
 
 export function resolveIWantCheckmateAvatar(profile, events = {}) {

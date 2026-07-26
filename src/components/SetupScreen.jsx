@@ -11,35 +11,25 @@ const choices = [
   { id: 'black', image: './assets/black-king.png', label: 'Black' },
 ]
 
-const MARTIN_BOT_IDS = new Set([
-  'iwc-smartin',
-  'iwc-hungry-martin',
-  'iwc-martinfish',
-  'iwc-martinfish-2',
-  'iwc-martinfish-3',
-  'iwc-random-martinfish',
-  'iwc-evil-martin',
-])
-
-const ROSTER_SECTIONS = [
+const ROSTER_SECTION_DEFINITIONS = [
   {
     id: 'coach',
     label: 'Coach Bots',
-    bots: BOT_PROFILES.filter((bot) => !bot.capabilities?.videoVariant),
   },
   {
     id: 'stockfish',
     label: 'Stockfish Bots',
-    bots: BOT_PROFILES.filter(
-      (bot) => bot.capabilities?.videoVariant && !MARTIN_BOT_IDS.has(bot.id),
-    ),
   },
   {
     id: 'martin',
     label: 'Martin Bots',
-    bots: BOT_PROFILES.filter((bot) => MARTIN_BOT_IDS.has(bot.id)),
   },
 ]
+
+const ROSTER_SECTIONS = ROSTER_SECTION_DEFINITIONS.map((section) => ({
+  ...section,
+  bots: BOT_PROFILES.filter((bot) => bot.category === section.id),
+}))
 
 export function SetupScreen({
   profile,
@@ -240,8 +230,7 @@ function BotRoster({ selectedId, onSelect }) {
                 <span>
                   <strong>{bot.fullName}</strong>
                   <small>
-                    {bot.videoLabel ||
-                      `${bot.title ? `${bot.title} ` : ''}${ratingLabel(bot.displayRating)}`}
+                    {profileRosterLabel(bot)}
                   </small>
                 </span>
                 <CountryFlag code={bot.countryCode} label={bot.country} />
@@ -264,7 +253,7 @@ function BotPortrait({ profile }) {
           <h1>{profile.fullName}</h1>
           {Number.isFinite(profile.displayRating)
             ? <span>{ratingLabel(profile.displayRating)}</span>
-            : null}
+            : <span>{profileRuleLabel(profile)}</span>}
           <CountryFlag code={profile.countryCode} label={profile.country} />
         </div>
         <p>{profile.intro}</p>
@@ -283,7 +272,7 @@ function BotSeat({ color, profile, value, onChange }) {
         <h2>{profile.fullName}</h2>
         {Number.isFinite(profile.displayRating)
           ? <span>{ratingLabel(profile.displayRating)}</span>
-          : null}
+          : <span>{profileRuleLabel(profile)}</span>}
         <CountryFlag code={profile.countryCode} label={profile.country} />
       </div>
       <p>{profile.intro}</p>
@@ -296,7 +285,7 @@ function BotSeat({ color, profile, value, onChange }) {
         >
           {BOT_PROFILES.map((bot) => (
             <option key={bot.id} value={bot.id}>
-              {bot.fullName}{Number.isFinite(bot.displayRating) ? ` ${ratingLabel(bot.displayRating)}` : ''}
+              {bot.fullName} {profileSelectionLabel(bot)}
             </option>
           ))}
         </select>
@@ -307,4 +296,19 @@ function BotSeat({ color, profile, value, onChange }) {
 
 function ratingLabel(rating) {
   return Number.isFinite(rating) ? `(${rating})` : ''
+}
+
+function profileRuleLabel(profile) {
+  return profile.videoLabel || profile.intro || 'Variable strength'
+}
+
+function profileRosterLabel(profile) {
+  if (profile.capabilities?.videoVariant) return profileRuleLabel(profile)
+  return `${profile.title ? `${profile.title} ` : ''}${ratingLabel(profile.displayRating)}`
+}
+
+function profileSelectionLabel(profile) {
+  return Number.isFinite(profile.displayRating)
+    ? ratingLabel(profile.displayRating)
+    : `- ${profileRuleLabel(profile)}`
 }

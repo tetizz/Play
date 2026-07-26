@@ -258,7 +258,7 @@ export function useGameController(defaultBotId) {
     const nextEvents = {
       ...previousEvents,
       [field]: previousEvents[field] + 1,
-      applied: [...previousEvents.applied, marker].slice(-240),
+      applied: appendVariantMarker(previousEvents.applied, marker),
     }
     const next = { ...current, [targetProfile.id]: nextEvents }
     const before = runningVariantElo(targetProfile, previousEvents)
@@ -289,7 +289,10 @@ export function useGameController(defaultBotId) {
       ...previousEvents,
       currentElo: rating,
       evilAwake: awake,
-      applied: [...previousEvents.applied, `mode:${ply}`].slice(-240),
+      applied: appendVariantMarker(
+        previousEvents.applied,
+        `mode:${ply}:${rating}:${awake ? 1 : 0}`,
+      ),
     }
     const next = { ...current, [targetProfile.id]: nextEvents }
     variantEventsRef.current = next
@@ -351,16 +354,12 @@ export function useGameController(defaultBotId) {
       }
     }
     if (!playedLine || !Number.isFinite(playedLine.score)) return variantEventsRef.current
-    if (variantType === 'opponent-best-move') {
-      return playedLine.rank === 1 || best.score - playedLine.score <= 5
-        ? recordVariantEvent(targetProfile, 'opponentBestMoves', ply)
-        : variantEventsRef.current
-    }
-    const worst = [...candidates]
-      .filter((candidate) => Number.isFinite(candidate.score))
-      .sort((a, b) => a.score - b.score)[0]
-    return worst && playedLine.score <= worst.score + 5
-      ? recordVariantEvent(targetProfile, 'opponentWorstMoves', ply)
+    return isExactVariantTrigger(variantType, playedUci, candidates)
+      ? recordVariantEvent(
+          targetProfile,
+          variantType === 'opponent-best-move' ? 'opponentBestMoves' : 'opponentWorstMoves',
+          ply,
+        )
       : variantEventsRef.current
   }, [recordVariantEvent])
 
@@ -633,6 +632,7 @@ export function useGameController(defaultBotId) {
       if (!decision) {
         const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame, engineEloOverride)
         let candidates
+        let engineSearchFailed = false
         try {
           const guaranteedMates = isMartinDerivedProfile(automatedProfile)
             ? guaranteedMateInOneCandidates(beforeGame)
@@ -640,12 +640,15 @@ export function useGameController(defaultBotId) {
           const mateSafety = shouldRunMateSafety(beforeGame, automatedProfile)
             ? automatedProfile.strengthPolicy.mateSafety
             : null
-          const needsEveryLegalMove =
-            automatedProfile.variant?.movePolicy?.allLegalMoves === true
+          const needsEveryLegalMove = requiresEveryLegalMove(automatedProfile)
           const [engineCandidates, mateCandidates] = await Promise.all([
-            needsEveryLegalMove
-              ? analyzeEveryLegalMove(gameplayClientRef.current, beforeGame, enginePolicy)
-              : gameplayClientRef.current.bestMoves(beforeGame.fen(), enginePolicy),
+            analyzeCandidatesWithRetry(
+              gameplayClientRef.current,
+              variantClientRef.current,
+              beforeGame,
+              enginePolicy,
+              needsEveryLegalMove,
+            ),
             mateSafety
               ? mateClientRef.current.bestMoves(beforeGame.fen(), {
                   ...mateSafety,
@@ -654,7 +657,7 @@ export function useGameController(defaultBotId) {
                   searchMoves: guaranteedMates.length
                     ? guaranteedMates.map((candidate) => candidate.uci)
                     : undefined,
-                })
+                }).catch(() => [])
               : Promise.resolve([]),
           ])
           candidates = mergeEngineCandidates(
@@ -662,12 +665,15 @@ export function useGameController(defaultBotId) {
             [...(mateCandidates || []), ...guaranteedMates],
           )
           if (automatedProfile.variant?.movePolicy?.type === 'evil-martin') {
-            const awake = isEvilMartinAwake(automatedProfile, candidates)
-            const modePolicy = automatedProfile.variant.movePolicy
+            const mode = resolveEvilMartinMode(
+              automatedProfile,
+              candidates,
+              activeVariantEvents[automatedProfile.id] || emptyVariantEvents(),
+            )
             activeVariantEvents = setVariantModeElo(
               automatedProfile,
-              awake ? modePolicy.awakeElo : modePolicy.sleepyElo,
-              awake,
+              mode.rating,
+              mode.awake,
               baseHistory.length,
             )
           }
@@ -695,8 +701,13 @@ export function useGameController(defaultBotId) {
           }
         } catch {
           candidates = []
+          engineSearchFailed = true
         }
         if (generationRef.current !== token) return
+        if (engineSearchFailed && isIWantCheckmateProfile(automatedProfile)) {
+          scheduleBotTurnRef.current?.(baseHistory, 650, activeHumanColor)
+          return
+        }
 
         decision = chooseCoachMove(
           beforeGame,
@@ -716,6 +727,10 @@ export function useGameController(defaultBotId) {
         )
       }
       if (!decision?.move) {
+        if (isIWantCheckmateProfile(automatedProfile)) {
+          scheduleBotTurnRef.current?.(baseHistory, 650, activeHumanColor)
+          return
+        }
         const fallbackMove = beforeGame.moves({ verbose: true })[0]
         if (!fallbackMove) {
           finishGame(beforeGame, beforeGame.history(), automatedProfile)
@@ -1220,22 +1235,103 @@ function variantUsesEvent(profile, field) {
   return variantEventField(profile) === field
 }
 
-function pruneVariantEvents(events, maxPly) {
+export function pruneVariantEvents(events, maxPly) {
   return Object.fromEntries(Object.entries(events || {}).map(([botId, current]) => {
     const remaining = (current.applied || []).filter((marker) => {
-      const ply = Number(String(marker).split(':').at(-1))
+      const ply = variantMarkerPly(marker)
       return Number.isFinite(ply) && ply <= maxPly
     })
     const next = emptyVariantEvents()
     for (const marker of remaining) {
       const [field] = marker.split(':')
-      if (Object.hasOwn(next, field)) next[field] += 1
+      if (field === 'mode') {
+        const mode = parseVariantModeMarker(marker)
+        if (mode) {
+          next.currentElo = mode.rating
+          next.evilAwake = mode.awake
+        }
+      } else if (Object.hasOwn(next, field)) {
+        next[field] += 1
+      }
     }
     next.applied = remaining
-    next.currentElo = Number.isFinite(current.currentElo) ? current.currentElo : null
-    next.evilAwake = Boolean(current.evilAwake)
+    const hasLegacyMode = remaining.some((marker) =>
+      String(marker).startsWith('mode:') && !parseVariantModeMarker(marker))
+    if (hasLegacyMode && next.currentElo === null) {
+      next.currentElo = Number.isFinite(current.currentElo) ? current.currentElo : null
+      next.evilAwake = Boolean(current.evilAwake)
+    }
     return [botId, next]
   }))
+}
+
+export function isExactVariantTrigger(variantType, playedUci, candidates) {
+  const finite = (candidates || []).filter((candidate) =>
+    candidate?.uci && Number.isFinite(candidate.score))
+  if (!finite.length || !playedUci) return false
+  if (variantType === 'opponent-best-move') {
+    const best = [...finite].sort((a, b) => {
+      const rankDifference = Number(a.rank || Infinity) - Number(b.rank || Infinity)
+      return rankDifference || b.score - a.score
+    })[0]
+    return best?.uci === playedUci
+  }
+  if (variantType !== 'opponent-worst-move') return false
+  const worstScore = Math.min(...finite.map((candidate) => candidate.score))
+  return finite.some((candidate) =>
+    candidate.uci === playedUci && candidate.score === worstScore)
+}
+
+export function requiresEveryLegalMove(profile) {
+  const policy = profile?.variant?.movePolicy
+  return policy?.allLegalMoves === true ||
+    policy?.type === 'target-evaluation' ||
+    policy?.type === 'random-blunder'
+}
+
+export function resolveEvilMartinMode(profile, candidates, events = {}) {
+  const policy = profile?.variant?.movePolicy
+  const awake = Boolean(events.evilAwake) || isEvilMartinAwake(profile, candidates, {
+    events,
+    evaluation: candidates?.[0]?.score,
+  })
+  return {
+    awake,
+    rating: awake ? policy?.awakeElo : policy?.sleepyElo,
+  }
+}
+
+function appendVariantMarker(applied, marker) {
+  const markers = [...(applied || []), marker]
+  if (markers.length <= 240) return markers
+  const modeMarkers = markers.filter((candidate) => String(candidate).startsWith('mode:'))
+  const eventMarkers = markers
+    .filter((candidate) => !String(candidate).startsWith('mode:'))
+    .slice(-Math.max(0, 240 - modeMarkers.length))
+  const retained = new Set([...modeMarkers, ...eventMarkers])
+  return markers.filter((candidate) => retained.has(candidate))
+}
+
+function variantMarkerPly(marker) {
+  const parts = String(marker).split(':')
+  return Number(parts[0] === 'mode' && parts.length >= 4 ? parts[1] : parts.at(-1))
+}
+
+function parseVariantModeMarker(marker) {
+  const [field, ply, rating, awake] = String(marker).split(':')
+  if (
+    field !== 'mode' ||
+    !Number.isFinite(Number(ply)) ||
+    !Number.isFinite(Number(rating)) ||
+    !['0', '1'].includes(awake)
+  ) {
+    return null
+  }
+  return {
+    ply: Number(ply),
+    rating: Number(rating),
+    awake: awake === '1',
+  }
 }
 
 async function analyzeEveryLegalMove(client, game, policy) {
@@ -1267,6 +1363,38 @@ async function analyzeEveryLegalMove(client, game, policy) {
       return b.score - a.score
     })
     .map((candidate, index) => ({ ...candidate, rank: index + 1 }))
+}
+
+export async function analyzeCandidatesWithRetry(
+  primaryClient,
+  retryClient,
+  game,
+  policy,
+  exhaustive,
+) {
+  const clients = [primaryClient, retryClient].filter(Boolean)
+  let lastError = null
+  for (let index = 0; index < clients.length; index += 1) {
+    const client = clients[index]
+    const attemptPolicy = index === 0
+      ? policy
+      : {
+          ...policy,
+          depth: Math.max(10, Math.min(16, Number(policy.depth || 12))),
+          moveTime: Math.max(350, Number(policy.moveTime || 500)),
+          timeout: Math.max(3000, Number(policy.timeout || 0)),
+        }
+    try {
+      const candidates = exhaustive
+        ? await analyzeEveryLegalMove(client, game, attemptPolicy)
+        : await client.bestMoves(game.fen(), attemptPolicy)
+      if (candidates?.length) return candidates
+      lastError = new Error('Stockfish returned no candidate moves')
+    } catch (error) {
+      lastError = error
+    }
+  }
+  throw lastError || new Error('No Stockfish client is available')
 }
 
 function shouldRunMateSafety(game, profile) {

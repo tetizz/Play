@@ -19,7 +19,7 @@ import {
 } from '../src/lib/coachEngine.js'
 
 test('public and video bot profiles expose the requested ratings and capabilities', () => {
-  assert.equal(BOT_PROFILES.length, 20)
+  assert.equal(BOT_PROFILES.length, 23)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 2007)
@@ -53,6 +53,17 @@ test('public and video bot profiles expose the requested ratings and capabilitie
     'Starts at 250 and gains 100 Elo after every move.',
   )
   assert.equal(getBotProfile('iwc-martinfish').name, 'Martinfish')
+  assert.equal(getBotProfile('iwc-martinfish').displayRating, null)
+  assert.equal(getBotProfile('iwc-martinfish-80-20').source.videoId, 'ew6NU1Z_G4k')
+  assert.equal(getBotProfile('iwc-martinfish-95-5').source.videoId, 'MwXcULBxA_s')
+  assert.equal(
+    getBotProfile('iwc-evil-martin').variant.movePolicy.wakeThresholdCp,
+    -600,
+  )
+  assert.equal(
+    getBotProfile('iwc-evil-martin-2').variant.movePolicy.wakeThresholdCp,
+    -500,
+  )
   assert.equal(getBotProfile('iwc-hungry-martin').name, 'HungryMartin')
   assert.equal(getBotProfile('martinfish').id, 'iwc-smartin')
 })

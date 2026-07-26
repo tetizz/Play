@@ -68,6 +68,15 @@ function CapturedMaterial({ material }) {
     q: 'queen',
   }
   const capturedColor = material.color === 'white' ? 'w' : 'b'
+  const captureGroups = material.captures.reduce((groups, piece) => {
+    const currentGroup = groups.at(-1)
+    if (currentGroup?.piece === piece) {
+      currentGroup.count += 1
+    } else {
+      groups.push({ piece, count: 1 })
+    }
+    return groups
+  }, [])
   const summary = [
     material.captures.length
       ? `Captured ${material.captures.map((piece) => captureNames[piece]).join(', ')}`
@@ -79,12 +88,16 @@ function CapturedMaterial({ material }) {
     <div className="captured-material" aria-label={summary}>
       {material.captures.length ? (
         <span className="captured-pieces" aria-hidden="true">
-          {material.captures.map((piece, index) => (
-            <img
-              src={`./assets/pieces/kaneo/${capturedColor}${piece.toUpperCase()}.svg`}
-              alt=""
-              key={`${piece}-${index}`}
-            />
+          {captureGroups.map(({ piece, count }) => (
+            <span className="captured-piece-group" key={piece}>
+              {Array.from({ length: count }, (_, index) => (
+                <img
+                  src={`./assets/pieces/kaneo/${capturedColor}${piece.toUpperCase()}.svg`}
+                  alt=""
+                  key={`${piece}-${index}`}
+                />
+              ))}
+            </span>
           ))}
         </span>
       ) : null}

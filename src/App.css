@@ -955,16 +955,26 @@ button {
   max-width: 240px;
   display: flex;
   align-items: center;
+  gap: 4px;
   overflow: hidden;
   padding-right: 3px;
 }
 
-.captured-pieces img {
+.captured-piece-group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.captured-piece-group img {
   width: 18px;
   height: 18px;
-  margin-right: -3px;
   object-fit: contain;
   filter: grayscale(1) brightness(2.15) contrast(0.8);
+}
+
+.captured-piece-group img + img {
+  margin-left: -6px;
 }
 
 .material-advantage {
@@ -3119,10 +3129,13 @@ button {
     max-width: 158px;
   }
 
-  .captured-pieces img {
+  .captured-piece-group img {
     width: 16px;
     height: 16px;
-    margin-right: -6px;
+  }
+
+  .captured-piece-group img + img {
+    margin-left: -10px;
   }
 }
 

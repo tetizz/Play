@@ -2749,7 +2749,7 @@ button {
 
   .bot-roster-grid button {
     grid-template-columns: 72px minmax(0, 1fr) 31px;
-    align-items: start;
+    align-items: center;
   }
 
   .bot-roster .country-flag {

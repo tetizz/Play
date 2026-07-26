@@ -26,7 +26,7 @@ function videoVariant({
   const defaultAvatar = imageAvatar(
     name,
     avatar,
-    avatarScale ?? (resolvedCategory === 'stockfish' ? 1.06 : 1),
+    avatarScale ?? 1,
   )
   const resolvedAvatarStates = avatarStates
     ? Object.freeze(Object.fromEntries(
@@ -130,7 +130,6 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     name: 'PanicFish',
     rating: 3600,
     avatar: 'panicfish-profile.png',
-    avatarScale: 1.2,
     description: 'Loses 300 Elo whenever you give check.',
     videoId: 'vIvVdaTQi3s',
     videoTitle: 'Stockfish, But It Loses 300 ELO When I Give Check',
@@ -217,6 +216,7 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     name: 'HungryMartin',
     rating: 250,
     avatar: 'hungrymartin-profile.png',
+    avatarScale: 1.14,
     description: 'Starts at 250 and gains 1000 Elo after a capture or check.',
     videoId: '0gnWnkyg6VA',
     videoTitle: 'Martin, But He Gains 1000 ELO If He Captures or Checks',

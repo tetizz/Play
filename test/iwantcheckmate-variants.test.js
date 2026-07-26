@@ -180,9 +180,46 @@ test('running Elo follows only the source-video trigger', () => {
   assert.equal(variantEngineElo(worst), undefined)
   assert.equal(variantEngineElo(worst, { opponentWorstMoves: 1 }), 3100)
   assert.equal(variantEngineElo(smartin), undefined)
-  assert.equal(variantEngineElo(smartin, { botMoves: 32 }), 3190)
-  assert.equal(variantEngineElo(smartin, { botMoves: 33 }), 3190)
+  assert.equal(variantEngineElo(smartin, { botMoves: 32 }), undefined)
+  assert.equal(variantEngineElo(smartin, { botMoves: 33 }), undefined)
   assert.equal(variantEngineElo(smartin, { botMoves: 34 }), undefined)
+})
+
+test('ratings above native UCI Elo use a monotonic near-best selector', () => {
+  const profile = getIWantCheckmateProfile('iwc-elo-decay')
+  const candidates = [
+    { uci: 'a2a4', score: 100, rank: 1 },
+    { uci: 'b2b4', score: 60, rank: 2 },
+    { uci: 'c2c4', score: -80, rank: 3 },
+  ]
+
+  assert.equal(
+    selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0.99,
+      { rating: 3200 },
+    ).uci,
+    'b2b4',
+  )
+  assert.equal(
+    selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0.99,
+      { rating: 3550 },
+    ).uci,
+    'a2a4',
+  )
+  assert.equal(
+    selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0,
+      { rating: 3200 },
+    ).uci,
+    'a2a4',
+  )
 })
 
 test('dynamic Elo continuously changes playing strength from 100 to full Stockfish', () => {

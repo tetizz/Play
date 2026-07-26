@@ -42,10 +42,14 @@ export function runningVariantElo(profile, events = {}) {
 
 export function variantEngineElo(profile, events = {}) {
   const rating = runningVariantElo(profile, events)
-  if (!Number.isFinite(rating) || rating >= 3600 || rating < MIN_UCI_ELO) {
+  if (
+    !Number.isFinite(rating) ||
+    rating > MAX_UCI_ELO ||
+    rating < MIN_UCI_ELO
+  ) {
     return undefined
   }
-  return clamp(rating, MIN_UCI_ELO, MAX_UCI_ELO)
+  return rating
 }
 
 export function selectIWantCheckmateCandidate(
@@ -84,6 +88,14 @@ export function selectIWantCheckmateCandidate(
     Number(profile?.variant?.eloDelta) < 0
   if (fadingBelowUciRange) {
     return selectCalibratedWeakMove(sorted, rating, random, context)
+  }
+  const dynamicHighRating =
+    Number.isFinite(rating) &&
+    rating > MAX_UCI_ELO &&
+    rating < 3600 &&
+    Number(profile?.variant?.eloDelta || 0) !== 0
+  if (dynamicHighRating) {
+    return selectCalibratedHighRatingMove(sorted, rating, random)
   }
 
   if (policy.type === 'ranked-move') {
@@ -313,6 +325,34 @@ function selectCalibratedWeakMove(candidates, rating, random, context = {}) {
     ? Math.floor(safeRandom(random) * (jitterSpan * 2 + 1)) - jitterSpan
     : 0
   return candidates[clamp(targetIndex + jitter, 0, candidates.length - 1)]
+}
+
+function selectCalibratedHighRatingMove(candidates, rating, random) {
+  const best = candidates[0]
+  if (!best || candidates.length === 1) return best || null
+
+  const strength = clamp(
+    (Number(rating) - MAX_UCI_ELO) / (3600 - MAX_UCI_ELO),
+    0,
+    1,
+  )
+  const bestScore = candidateScore(best)
+  if (!Number.isFinite(bestScore)) return best
+
+  const maximumLoss = interpolate(55, 0, strength ** 1.1)
+  const alternatives = candidates.slice(1).filter((candidate) => {
+    const score = candidateScore(candidate)
+    return Number.isFinite(score) && bestScore - score <= maximumLoss
+  })
+  if (!alternatives.length) return best
+
+  const bestMoveChance = interpolate(0.78, 1, strength)
+  if (safeRandom(random) < bestMoveChance) return best
+
+  return alternatives
+    .sort((a, b) =>
+      candidateScore(b) - candidateScore(a) || a.rank - b.rank,
+    )[0]
 }
 
 function selectOpeningMemoryMove(candidates, strength, botMoves, random) {

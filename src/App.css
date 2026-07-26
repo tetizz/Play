@@ -922,6 +922,13 @@ button {
   font-size: 19px;
 }
 
+.player-details {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+}
+
 .player-name strong {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -930,6 +937,39 @@ button {
 
 .player-name span {
   color: #c8c3b9;
+}
+
+.captured-material {
+  min-width: 0;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #c8c3b9;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.captured-pieces {
+  min-width: 0;
+  max-width: 240px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-right: 3px;
+}
+
+.captured-pieces img {
+  width: 18px;
+  height: 18px;
+  margin-right: -3px;
+  object-fit: contain;
+  filter: grayscale(1) brightness(2.15) contrast(0.8);
+}
+
+.material-advantage {
+  color: #c8c3b9;
+  font-variant-numeric: tabular-nums;
 }
 
 .setup-page :is(
@@ -3069,6 +3109,20 @@ button {
     min-height: 54px;
     gap: 6px;
     font-size: 13px;
+  }
+
+  .captured-material {
+    gap: 5px;
+  }
+
+  .captured-pieces {
+    max-width: 158px;
+  }
+
+  .captured-pieces img {
+    width: 16px;
+    height: 16px;
+    margin-right: -6px;
   }
 }
 

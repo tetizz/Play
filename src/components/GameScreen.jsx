@@ -1,5 +1,7 @@
+import { useMemo } from 'react'
 import { Flag, Home, RotateCcw, X } from 'lucide-react'
 import { getBotProfile } from '../data/botProfiles'
+import { materialDisplayFromHistory } from '../lib/materialDisplay'
 import { Avatar, PlayerStrip } from './Identity'
 import { BoardSurface } from './BoardSurface'
 import { MoveList } from './MoveList'
@@ -42,6 +44,15 @@ export function GameScreen({ controller }) {
   const botMatch = gameMode === 'bots'
   const topProfile = botMatch ? blackProfile : profile
   const topProfileColor = botMatch ? 'black' : humanColor === 'white' ? 'black' : 'white'
+  const bottomProfileColor = botMatch ? 'white' : humanColor
+  const materialDisplay = useMemo(
+    () => materialDisplayFromHistory(history, viewPly),
+    [history, viewPly],
+  )
+  const materialFor = (color) => ({
+    ...materialDisplay[color],
+    color: color === 'white' ? 'black' : 'white',
+  })
   const activeBot = game.turn() === 'w' ? whiteProfile : blackProfile
   const status = turnState === 'game-over'
     ? 'Game over'
@@ -56,6 +67,7 @@ export function GameScreen({ controller }) {
           profile={topProfile}
           side="top"
           ratingState={ratingFor?.(topProfile, topProfileColor)}
+          material={materialFor(topProfileColor)}
         />
         <div className="board-stage">
           <BoardSurface
@@ -83,8 +95,15 @@ export function GameScreen({ controller }) {
           ) : null}
         </div>
         {botMatch
-          ? <PlayerStrip profile={whiteProfile} side="bottom" ratingState={ratingFor?.(whiteProfile, 'white')} />
-          : <PlayerStrip player={player} side="bottom" />}
+          ? (
+              <PlayerStrip
+                profile={whiteProfile}
+                side="bottom"
+                ratingState={ratingFor?.(whiteProfile, 'white')}
+                material={materialFor(bottomProfileColor)}
+              />
+            )
+          : <PlayerStrip player={player} side="bottom" material={materialFor(bottomProfileColor)} />}
       </section>
       <aside className="game-sidebar">
         {botMatch ? (

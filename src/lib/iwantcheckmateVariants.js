@@ -7,6 +7,7 @@ const MARTIN_POLICY_TYPES = new Set([
   'cycle',
   'random-hybrid',
   'evil-martin',
+  'capture-toggle',
 ])
 
 export function initialVariantElo(profile) {
@@ -18,6 +19,7 @@ export function variantEventField(profile) {
   const trigger = profile?.variant?.trigger
   if (trigger === 'own-move') return 'botMoves'
   if (trigger === 'own-capture-or-check') return 'botCaptureChecks'
+  if (trigger === 'own-capture') return 'botCaptures'
   if (trigger === 'opponent-check') return 'opponentChecks'
   if (trigger === 'opponent-best-move') return 'opponentBestMoves'
   if (trigger === 'opponent-worst-move') return 'opponentWorstMoves'
@@ -27,9 +29,16 @@ export function variantEventField(profile) {
 export function runningVariantElo(profile, events = {}) {
   const initial = initialVariantElo(profile)
   if (!Number.isFinite(initial)) return null
-  if (Number.isFinite(events?.currentElo)) return Number(events.currentElo)
 
   const variant = profile?.variant || {}
+  const policy = variant.movePolicy || {}
+  if (policy.type === 'capture-toggle') {
+    return whole(events.botCaptures) % 2 === 0
+      ? Number(policy.stockfishElo ?? initial)
+      : Number(policy.martinElo ?? variant.minElo ?? MARTIN_ELO)
+  }
+  if (Number.isFinite(events?.currentElo)) return Number(events.currentElo)
+
   const field = variantEventField(profile)
   const count = field ? whole(events[field]) : 0
   const unclamped = initial + Number(variant.eloDelta || 0) * count
@@ -141,6 +150,16 @@ export function selectIWantCheckmateCandidate(
   }
   if (policy.type === 'martin') {
     return selectCalibratedWeakMove(sorted, MARTIN_ELO, random, context)
+  }
+  if (policy.type === 'capture-toggle') {
+    return Number(rating) <= Number(policy.martinElo ?? MARTIN_ELO)
+      ? selectCalibratedWeakMove(
+          sorted,
+          Number(policy.martinElo ?? MARTIN_ELO),
+          random,
+          context,
+        )
+      : sorted[0]
   }
   if (policy.type === 'cycle') {
     const stockfishMoves = Math.max(1, whole(policy.stockfishMoves))
@@ -274,6 +293,24 @@ export function isEvilMartinAwake(profile, candidates, context = {}) {
 }
 
 export function resolveIWantCheckmateAvatar(profile, events = {}) {
+  if (
+    profile?.variant?.movePolicy?.type === 'capture-toggle' &&
+    profile.avatarStates
+  ) {
+    const policy = profile.variant.movePolicy
+    const rating = runningVariantElo(profile, events)
+    const avatarState = rating <= Number(policy.martinElo ?? MARTIN_ELO)
+      ? 'martin'
+      : 'stockfish'
+    const identity = profile.identityStates?.[avatarState] || {}
+    return Object.freeze({
+      ...profile,
+      ...identity,
+      fullName: identity.name || profile.fullName,
+      avatar: profile.avatarStates[avatarState] || profile.avatar,
+      avatarState,
+    })
+  }
   if (
     profile?.variant?.movePolicy?.type !== 'evil-martin' ||
     !profile.avatarStates

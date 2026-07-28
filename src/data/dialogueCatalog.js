@@ -707,6 +707,32 @@ const geometricFish = voice(
   ],
 )
 
+const captureToggle = voice(
+  {
+    intro: 'One capture passes the board to Martin, and the next capture brings the golden fish back.',
+    opening: 'The first bite decides who gets the next turn.',
+    quiet: 'No capture yet. The beard is waiting just offstage.',
+    capture: 'That bite just changed who is holding the mouse.',
+    freePiece: 'Free material is also a very dramatic handoff.',
+    check: 'The king heard the warning before the costume change.',
+    checkmate: 'Mate arrived before anyone could switch seats again.',
+    winning: 'The position is winning, even if the beard gets a turn.',
+    losing: 'This would be a convenient moment for the golden fish to return.',
+    great: 'That move kept both personalities out of trouble.',
+    brilliant: 'That was sharp enough to confuse both halves of the act.',
+    comeback: 'The board changed hands, and so did the game.',
+    gameWin: 'Two personalities, one result.',
+    gameLoss: 'The final handoff came one capture too late.',
+    gameDraw: 'Neither half of the act found the last bite.',
+    battle: '{opponent} is playing against a rotating cast.',
+  },
+  [
+    'Watch the next capture.',
+    'Someone else may be moving next.',
+    'The beard is never far away.',
+  ],
+)
+
 export const DIALOGUE_EVENTS = EVENTS
 
 export const DIALOGUE_CATALOG = Object.freeze({
@@ -724,6 +750,7 @@ export const DIALOGUE_CATALOG = Object.freeze({
   'iwc-zero-evaluation': drawFish,
   'iwc-second-best': betaFish,
   'iwc-hungry-martin': hungryMartin,
+  'iwc-capture-toggle': captureToggle,
   'iwc-worstfish': worstFish,
   'iwc-martinfish': martinFish,
   'iwc-martinfish-2': martinFishTwo,

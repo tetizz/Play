@@ -10,6 +10,7 @@ function videoVariant({
   avatar,
   avatarScale = null,
   avatarStates = null,
+  identityStates = null,
   description,
   videoId,
   videoTitle,
@@ -28,11 +29,19 @@ function videoVariant({
     avatar,
     avatarScale ?? 1,
   )
+  const resolvedIdentityStates = identityStates
+    ? Object.freeze(Object.fromEntries(
+        Object.entries(identityStates).map(([state, identity]) => [
+          state,
+          Object.freeze({ ...identity }),
+        ]),
+      ))
+    : null
   const resolvedAvatarStates = avatarStates
     ? Object.freeze(Object.fromEntries(
         Object.entries(avatarStates).map(([state, filename]) => [
           state,
-          imageAvatar(name, filename),
+          imageAvatar(resolvedIdentityStates?.[state]?.name || name, filename),
         ]),
       ))
     : null
@@ -47,6 +56,7 @@ function videoVariant({
     category: resolvedCategory,
     avatar: defaultAvatar,
     avatarStates: resolvedAvatarStates,
+    identityStates: resolvedIdentityStates,
     accounts: Object.freeze({ chesscom: [], lichess: [] }),
     intro: description,
     videoLabel: description,
@@ -235,6 +245,44 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     trigger: 'own-capture-or-check',
     eloDelta: 1000,
     movePolicy: { type: 'rating-strength' },
+  }),
+  videoVariant({
+    id: 'iwc-capture-toggle',
+    name: 'Stockfish',
+    rating: 3600,
+    category: 'stockfish',
+    avatar: 'capture-toggle-stockfish-profile.jpeg',
+    avatarStates: {
+      stockfish: 'capture-toggle-stockfish-profile.jpeg',
+      martin: 'martin-profile.png',
+    },
+    identityStates: {
+      stockfish: {
+        name: 'Stockfish',
+        displayRating: 3600,
+        country: 'United States',
+        countryCode: 'us',
+      },
+      martin: {
+        name: 'Martin',
+        displayRating: 250,
+        country: 'Bulgaria',
+        countryCode: 'bg',
+      },
+    },
+    description: 'Starts as Stockfish at 3600. Each capture it makes hands the next move to Martin at 250, then back again.',
+    videoId: 'Q6sj5N3oQjI',
+    videoTitle: 'Stockfish, But It Alternates 250 ELO to 3600 ELO Every Capture',
+    initialElo: 3600,
+    minElo: 250,
+    maxElo: 3600,
+    trigger: 'own-capture',
+    movePolicy: {
+      type: 'capture-toggle',
+      stockfishElo: 3600,
+      martinElo: 250,
+    },
+    capabilities: { dynamicAvatar: true },
   }),
   videoVariant({
     id: 'iwc-worstfish',

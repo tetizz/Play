@@ -132,6 +132,12 @@ function specialMoveDialogue(profile, context) {
     return 'This is far too exciting. I ordered 0.00 equality.'
   }
 
+  if (profile.id === 'iwc-capture-toggle' && context.variantEloDelta) {
+    return context.variantEloDelta < 0
+      ? 'The beard has the board now.'
+      : 'One more bite, and the sharp moves are back.'
+  }
+
   if (profile.capabilities?.videoVariant && context.variantEloDelta) {
     const delta = Math.abs(Math.round(context.variantEloDelta))
     const elo = Math.round(context.variantElo || profile.variant?.initialElo || 250)

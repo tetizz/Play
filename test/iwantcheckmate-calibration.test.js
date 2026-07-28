@@ -81,6 +81,7 @@ test('dynamic trigger events change the running profile rating', () => {
   const bestProfile = getIWantCheckmateProfile('iwc-best-move')
   const worstProfile = getIWantCheckmateProfile('iwc-worst-move')
   const hungryProfile = getIWantCheckmateProfile('iwc-hungry-martin')
+  const captureToggleProfile = getIWantCheckmateProfile('iwc-capture-toggle')
 
   recordOpponentMoveEvents(
     events,
@@ -112,6 +113,16 @@ test('dynamic trigger events change the running profile rating', () => {
   assert.equal(events.botMoves, 1)
   assert.equal(events.botCaptureChecks, 1)
   assert.equal(resolveProfileRating(hungryProfile, events), 1250)
+  assert.equal(events.botCaptures, 1)
+  assert.equal(resolveProfileRating(captureToggleProfile, events), 250)
+
+  recordOwnMoveEvents(events, { san: 'Nc3' })
+  assert.equal(events.botCaptures, 1)
+  assert.equal(resolveProfileRating(captureToggleProfile, events), 250)
+
+  recordOwnMoveEvents(events, { san: 'Nxe4', captured: 'p' })
+  assert.equal(events.botCaptures, 2)
+  assert.equal(resolveProfileRating(captureToggleProfile, events), 3600)
 })
 
 test('a dynamic trigger changes the Elo used by the next move in an actual game', async () => {

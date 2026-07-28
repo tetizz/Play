@@ -771,6 +771,13 @@ export function useGameController(defaultBotId) {
           nextHistory.length,
         )
       }
+      if (decision.move.captured) {
+        nextVariantEvents = recordVariantEvent(
+          automatedProfile,
+          'botCaptures',
+          nextHistory.length,
+        )
+      }
       const variantEloAfterMove = isIWantCheckmateProfile(automatedProfile)
         ? runningVariantElo(
             automatedProfile,
@@ -1209,6 +1216,7 @@ function emptyVariantEvents() {
   return {
     botMoves: 0,
     botCaptureChecks: 0,
+    botCaptures: 0,
     opponentChecks: 0,
     opponentBestMoves: 0,
     opponentWorstMoves: 0,

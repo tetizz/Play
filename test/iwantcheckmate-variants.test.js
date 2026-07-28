@@ -33,6 +33,7 @@ const EXPECTED_NAMES = [
   'DrawFish',
   'BetaFish',
   'HungryMartin',
+  'Stockfish',
   'WorstFish',
   'Martinfish',
   'Martinfish 2.0',
@@ -192,6 +193,7 @@ test('running Elo follows only the source-video trigger', () => {
   const smartin = getIWantCheckmateProfile('iwc-smartin')
   const decay = getIWantCheckmateProfile('iwc-elo-decay')
   const hungry = getIWantCheckmateProfile('iwc-hungry-martin')
+  const captureToggle = getIWantCheckmateProfile('iwc-capture-toggle')
 
   assert.equal(initialVariantElo(worst), 3600)
   assert.equal(initialVariantElo(getIWantCheckmateProfile('iwc-random-top-three')), 3600)
@@ -202,8 +204,17 @@ test('running Elo follows only the source-video trigger', () => {
   assert.equal(runningVariantElo(smartin, { botMoves: 4 }), 650)
   assert.equal(runningVariantElo(decay, { botMoves: 100 }), 100)
   assert.equal(runningVariantElo(hungry, { botCaptureChecks: 2 }), 2250)
+  assert.equal(runningVariantElo(captureToggle, { botCaptures: 0 }), 3600)
+  assert.equal(runningVariantElo(captureToggle, { botCaptures: 1 }), 250)
+  assert.equal(runningVariantElo(captureToggle, { botCaptures: 2 }), 3600)
+  assert.equal(runningVariantElo(captureToggle, {
+    botCaptures: 0,
+    botCaptureChecks: 99,
+    opponentChecks: 99,
+  }), 3600)
   assert.equal(runningVariantElo(check, { botMoves: 99 }), 3600)
   assert.equal(variantEventField(hungry), 'botCaptureChecks')
+  assert.equal(variantEventField(captureToggle), 'botCaptures')
   assert.equal(variantEngineElo(worst), undefined)
   assert.equal(variantEngineElo(worst, { opponentWorstMoves: 1 }), 3100)
   assert.equal(variantEngineElo(smartin), undefined)
@@ -301,6 +312,7 @@ test('each dynamic variant reads only its declared trigger counter', () => {
     ['iwc-smartin', 'botMoves', 350],
     ['iwc-elo-decay', 'botMoves', 3550],
     ['iwc-hungry-martin', 'botCaptureChecks', 1250],
+    ['iwc-capture-toggle', 'botCaptures', 250],
   ]
 
   for (const [id, field, expected] of cases) {
@@ -308,6 +320,7 @@ test('each dynamic variant reads only its declared trigger counter', () => {
     const events = {
       botMoves: 0,
       botCaptureChecks: 0,
+      botCaptures: 0,
       opponentChecks: 0,
       opponentBestMoves: 0,
       opponentWorstMoves: 0,
@@ -319,6 +332,7 @@ test('each dynamic variant reads only its declared trigger counter', () => {
       runningVariantElo(profile, {
         botMoves: field === 'botMoves' ? 0 : 99,
         botCaptureChecks: field === 'botCaptureChecks' ? 0 : 99,
+        botCaptures: field === 'botCaptures' ? 0 : 99,
         opponentChecks: field === 'opponentChecks' ? 0 : 99,
         opponentBestMoves: field === 'opponentBestMoves' ? 0 : 99,
         opponentWorstMoves: field === 'opponentWorstMoves' ? 0 : 99,
@@ -700,4 +714,42 @@ test('Evil Martin exposes the Sleepy and Evil portraits from its awake state', (
   assert.equal(sleepy.avatar, profile.avatarStates.sleepy)
   assert.equal(evil.avatarState, 'evil')
   assert.equal(evil.avatar, profile.avatarStates.evil)
+})
+
+test('capture toggle changes identity and strength only after its own captures', () => {
+  const profile = getIWantCheckmateProfile('iwc-capture-toggle')
+  const candidates = scoredCandidates()
+  const stockfish = resolveIWantCheckmateAvatar(profile, { botCaptures: 0 })
+  const martin = resolveIWantCheckmateAvatar(profile, { botCaptures: 1 })
+  const stockfishAgain = resolveIWantCheckmateAvatar(profile, { botCaptures: 2 })
+
+  assert.equal(profile.source.videoId, 'Q6sj5N3oQjI')
+  assert.equal(stockfish.name, 'Stockfish')
+  assert.equal(stockfish.displayRating, 3600)
+  assert.equal(stockfish.countryCode, 'us')
+  assert.equal(stockfish.avatarState, 'stockfish')
+  assert.ok(stockfish.avatar.src.endsWith('capture-toggle-stockfish-profile.jpeg'))
+  assert.equal(martin.name, 'Martin')
+  assert.equal(martin.displayRating, 250)
+  assert.equal(martin.countryCode, 'bg')
+  assert.equal(martin.avatarState, 'martin')
+  assert.ok(martin.avatar.src.endsWith('martin-profile.png'))
+  assert.equal(stockfishAgain.name, 'Stockfish')
+  assert.equal(
+    selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      () => 0.99,
+      { rating: 3600, events: { botCaptures: 0, botMoves: 8 } },
+    ).rank,
+    1,
+  )
+  assert.ok(
+    selectIWantCheckmateCandidate(
+      profile,
+      candidates,
+      sequenceRandom([0.99, 0.5]),
+      { rating: 250, events: { botCaptures: 1, botMoves: 8 } },
+    ).rank > 1,
+  )
 })

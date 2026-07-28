@@ -389,6 +389,7 @@ export function createVariantEvents() {
   return {
     botMoves: 0,
     botCaptureChecks: 0,
+    botCaptures: 0,
     opponentChecks: 0,
     opponentBestMoves: 0,
     opponentWorstMoves: 0,
@@ -397,6 +398,7 @@ export function createVariantEvents() {
 
 export function recordOwnMoveEvents(events, move) {
   events.botMoves += 1
+  if (move.captured) events.botCaptures += 1
   if (move.captured || move.san.includes('+') || move.san.includes('#')) {
     events.botCaptureChecks += 1
   }

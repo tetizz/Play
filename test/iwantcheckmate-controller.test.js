@@ -125,6 +125,7 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
     evil: {
       botMoves: 2,
       botCaptureChecks: 0,
+      botCaptures: 2,
       opponentChecks: 0,
       opponentBestMoves: 0,
       opponentWorstMoves: 0,
@@ -133,7 +134,9 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
       applied: [
         'mode:0:250:0',
         'botMoves:1',
+        'botCaptures:2',
         'mode:4:3000:1',
+        'botCaptures:4',
         'botMoves:5',
       ],
     },
@@ -143,9 +146,11 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
   assert.equal(beforeWake.currentElo, 250)
   assert.equal(beforeWake.evilAwake, false)
   assert.equal(beforeWake.botMoves, 1)
+  assert.equal(beforeWake.botCaptures, 1)
 
   const afterWake = pruneVariantEvents(events, 4).evil
   assert.equal(afterWake.currentElo, 3000)
   assert.equal(afterWake.evilAwake, true)
   assert.equal(afterWake.botMoves, 1)
+  assert.equal(afterWake.botCaptures, 2)
 })

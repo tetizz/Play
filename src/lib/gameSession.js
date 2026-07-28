@@ -64,6 +64,7 @@ export function normalizeVariantEvents(input) {
       return [[botId, {
         botMoves: nonNegativeInteger(events.botMoves),
         botCaptureChecks: nonNegativeInteger(events.botCaptureChecks),
+        botCaptures: nonNegativeInteger(events.botCaptures),
         opponentChecks: nonNegativeInteger(events.opponentChecks),
         opponentBestMoves: nonNegativeInteger(events.opponentBestMoves),
         opponentWorstMoves: nonNegativeInteger(events.opponentWorstMoves),

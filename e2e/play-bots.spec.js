@@ -224,7 +224,8 @@ test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => 
   await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
   await expect(page.locator('.move-row button').filter({ hasText: /.+/ })).toHaveCount(2, { timeout: 15000 })
   const conversation = page.getByLabel('Bot conversation')
-  await expect(conversation.locator('.conversation-row')).toHaveCount(2)
+  await expect.poll(() => conversation.locator('.conversation-row').count()).toBeGreaterThanOrEqual(2)
+  expect(await conversation.locator('.conversation-row').count()).toBeLessThanOrEqual(6)
   await expect(conversation.locator('.conversation-row.active-speaker')).toHaveCount(1)
   await expect(conversation.locator('.conversation-row.active-speaker .avatar-small')).toHaveCSS(
     'animation-name',

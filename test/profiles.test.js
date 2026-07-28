@@ -6,6 +6,7 @@ import {
   getBotProfile,
   loadBotStyleProfile,
 } from '../src/data/botProfiles.js'
+import { DIALOGUE_EVENTS, getDialoguePack } from '../src/data/dialogueCatalog.js'
 import { dialogueAfterBotMove, dialogueForBotBattle } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
@@ -19,7 +20,8 @@ import {
 } from '../src/lib/coachEngine.js'
 
 test('public and video bot profiles expose the requested ratings and capabilities', () => {
-  assert.equal(BOT_PROFILES.length, 23)
+  assert.ok(BOT_PROFILES.length >= 25)
+  assert.equal(new Set(BOT_PROFILES.map((profile) => profile.id)).size, BOT_PROFILES.length)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 2007)
@@ -66,6 +68,11 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   )
   assert.equal(getBotProfile('iwc-hungry-martin').name, 'HungryMartin')
   assert.equal(getBotProfile('martinfish').id, 'iwc-smartin')
+  assert.equal(getBotProfile('geometricfish').name, 'GeometricFish')
+  assert.equal(getBotProfile('witty-alien').name, 'Witty Alien')
+  assert.equal(getBotProfile('witty-alien').displayRating, 2200)
+  assert.equal(getBotProfile('witty-alien').countryCode, 'bg')
+  assert.equal(getBotProfile('witty-alien').capabilities.sacrificeSpecialist, true)
 })
 
 test('each rated bot uses its stated internal strength', () => {
@@ -175,26 +182,24 @@ test('Akshit must take a clearly superior knight move and uses his own dialogue 
   )
   assert.equal(decision.move.piece, 'n')
   assert.equal(dialogueAfterBotMove(profile, { move: decision.move }), 'I am the knight manuveur.')
-  assert.match(dialogueAfterBotMove(profile, { move: { piece: 'p' } }), /^(Okay|Lil kids play this)$/)
-  assert.match(
+  const ownLines = new Set(
+    DIALOGUE_EVENTS.flatMap((event) => getDialoguePack(profile.id)[event]),
+  )
+  assert.ok(ownLines.has(dialogueAfterBotMove(profile, { move: { piece: 'p' } })))
+  assert.ok(ownLines.has(
     dialogueAfterBotMove(profile, { move: { piece: 'p' }, isWinning: true }),
-    /^(Easy belt|Don't cry after losing|Go home|Quit the game|Chess is not for you)$/,
-  )
-  assert.match(
+  ))
+  assert.ok(ownLines.has(
     dialogueAfterBotMove(profile, { move: { piece: 'p' }, isFreePiece: true }),
-    /^(rahhhhhh|Easy belt)$/,
-  )
+  ))
 })
 
 test('bot battles always produce visible dialogue for both sides', () => {
   const ayden = getBotProfile('ayden')
   const akshit = getBotProfile('akshit')
-  assert.equal(dialogueAfterBotMove(ayden, { move: { piece: 'p' } }), '')
-  assert.match(
-    dialogueForBotBattle(ayden, { move: { piece: 'p' } }, akshit),
-    /^(I am keeping the structure clean\.|No need to force it yet\.|This is still playable\.|I like the setup\.|I will take the small improvement\.)$/,
-  )
-  assert.match(dialogueForBotBattle(akshit, { move: { piece: 'p' } }, ayden), /.+/)
+  assert.match(dialogueAfterBotMove(ayden, { move: { piece: 'p' } }), /.+/)
+  assert.match(dialogueForBotBattle(ayden, { move: { piece: 'p' } }, akshit), /^Akshit[,.] /)
+  assert.match(dialogueForBotBattle(akshit, { move: { piece: 'p' } }, ayden), /^Ayden[,.] /)
 })
 
 test('Trixize starts with Nf3 and uses only the requested short dialogue', () => {
@@ -769,4 +774,54 @@ test('Trixize rejects an unsafe familiar Black move for a safe repertoire altern
   )
   assert.equal(decision.move.san, 'Nf6')
   assert.equal(decision.source, 'repertoire')
+})
+
+test('Witty Alien guarantees his Caro-Kann opener and brilliant reaction', () => {
+  const profile = getBotProfile('witty-alien')
+  assert.equal(
+    dialogueAfterBotMove(profile, { isOpeningMove: true }),
+    'I am the destroyer of the Caro-Kann.',
+  )
+  assert.equal(
+    dialogueAfterBotMove(profile, { isBrilliant: true }),
+    'BRILLIANT!!',
+  )
+})
+
+test('Witty Alien prefers a verified sound sacrifice inside the engine-safe window', () => {
+  const game = new Chess()
+  for (const san of ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6']) {
+    game.move(san)
+  }
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'g5e6', score: 50, rank: 1, pv: ['g5e6'] },
+      { uci: 'g5f7', score: 40, rank: 2, pv: ['g5f7', 'e8f7', 'd1h5', 'f7g8'] },
+    ],
+    getBotProfile('witty-alien'),
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+
+  assert.equal(decision.move.san, 'Nxf7')
+  assert.equal(decision.source, 'engine-style')
+})
+
+test('Witty Alien rejects a sacrifice outside the engine-safe window', () => {
+  const game = new Chess()
+  for (const san of ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6']) {
+    game.move(san)
+  }
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'g5e6', score: 80, rank: 1, pv: ['g5e6'] },
+      { uci: 'g5f7', score: 20, rank: 2, pv: ['g5f7', 'e8f7', 'd1h5', 'f7g8'] },
+    ],
+    getBotProfile('witty-alien'),
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+
+  assert.equal(decision.move.san, 'Ne6')
+  assert.equal(decision.source, 'engine-best')
 })

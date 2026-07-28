@@ -204,6 +204,54 @@ const BOT_PROFILE_LIST = [
       repertoireTemperature: 0.72,
     },
   },
+  {
+    id: 'witty-alien',
+    name: 'Witty Alien',
+    fullName: 'Witty Alien',
+    category: 'coach',
+    displayRating: 2200,
+    title: 'CM',
+    country: 'Bulgaria',
+    countryCode: 'bg',
+    avatar: {
+      type: 'image',
+      src: './assets/witty-alien-avatar.png',
+      alt: 'Witty Alien avatar',
+      objectPosition: '50% 50%',
+      scale: 1,
+    },
+    accounts: {
+      chesscom: ['witty_alien'],
+      lichess: [],
+    },
+    goal: 'Aggressive practical chess built from a complete public game history.',
+    intro: 'Witty Alien lives for gambits, sacrifices, and attacks that refuse to stay quiet.',
+    dialoguePolicy: 'witty-alien',
+    capabilities: {
+      beltMode: false,
+      knightSpecialist: false,
+      perfectTheory: false,
+      sacrificeSpecialist: true,
+      weightedRepertoire: true,
+    },
+    strengthPolicy: {
+      engineElo: 2200,
+      depth: 11,
+      moveTime: 1000,
+      candidates: 7,
+      styleWindowCp: 20,
+      bookWindowCp: 32,
+      bookMinGames: 4,
+      bookMinRecentWeight: 0.5,
+    },
+    repertoireSource: {
+      chesscom: ['witty_alien'],
+      lichess: [],
+      recentHalfLifeDays: 180,
+      archiveWindow: 'all',
+      repertoireTemperature: 0.82,
+    },
+  },
   ...IWANTCHECKMATE_VIDEO_PROFILES,
 ]
 
@@ -280,6 +328,23 @@ async function loadStyleProfile(botId) {
       bookMaxPlies: 40,
       bookKeyType: 'position',
       learnedStyle: styleModule.GENERATED_TRIXIZE_STYLE_PROFILE,
+    }
+  }
+
+  if (botId === 'witty-alien') {
+    const [bookModule, styleModule] = await Promise.all([
+      import('./generatedRecentWittyAlienRepertoireBook.js').catch(() => ({
+        GENERATED_RECENT_WITTY_ALIEN_REPERTOIRE_BOOK: {},
+      })),
+      import('./generatedWittyAlienStyleProfile.js').catch(() => ({
+        GENERATED_WITTY_ALIEN_STYLE_PROFILE: null,
+      })),
+    ])
+    return {
+      openingBook: bookModule.GENERATED_RECENT_WITTY_ALIEN_REPERTOIRE_BOOK || {},
+      bookMaxPlies: 32,
+      bookKeyType: 'position',
+      learnedStyle: styleModule.GENERATED_WITTY_ALIEN_STYLE_PROFILE,
     }
   }
 

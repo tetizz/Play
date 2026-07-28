@@ -16,6 +16,7 @@ import {
   dialogueForBotBattle,
   dialogueForGameEnd,
   initialDialogue,
+  resetDialogueHistory,
 } from '../data/dialogue'
 import {
   bishopKnightObjectiveUcis,
@@ -934,6 +935,7 @@ export function useGameController(defaultBotId) {
   function startGame() {
     if (!styleProfilesReady) return
     cancelWork()
+    resetDialogueHistory()
     const nextColor = gameMode === 'bots'
       ? 'white'
       : colorChoice === 'random'
@@ -985,6 +987,7 @@ export function useGameController(defaultBotId) {
 
   function returnToSetup() {
     cancelWork()
+    resetDialogueHistory()
     clearSession()
     setPhase('setup')
     setHistory([])

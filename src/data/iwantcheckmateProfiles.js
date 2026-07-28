@@ -185,6 +185,17 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     movePolicy: { type: 'random-blunder', chance: 0.05, minimumLossCp: 200 },
   }),
   videoVariant({
+    id: 'geometricfish',
+    name: 'GeometricFish',
+    rating: 3600,
+    category: 'stockfish',
+    avatar: 'geometricfish-profile.jpeg',
+    description: 'Chooses among its strongest ideas in a geometric pattern.',
+    videoId: 'Y0zYxMYDDWQ',
+    videoTitle: 'Stockfish, But It Plays nth Best Move Where P(n) = (1/2)^n',
+    movePolicy: { type: 'geometric-ranked', count: 6, firstWeight: 0.5 },
+  }),
+  videoVariant({
     id: 'iwc-random-top-three',
     name: 'RandomFish',
     avatar: 'randomfish-profile.png',

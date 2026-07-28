@@ -52,6 +52,21 @@ const PROFILES = {
       { site: 'chess.com', username: 'trixize1234' },
     ],
   },
+  'witty-alien': {
+    label: 'Witty Alien',
+    bookFile: 'generatedRecentWittyAlienRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_WITTY_ALIEN_REPERTOIRE_BOOK',
+    styleFile: 'generatedWittyAlienStyleProfile.js',
+    styleExport: 'GENERATED_WITTY_ALIEN_STYLE_PROFILE',
+    chessComArchiveMonths: null,
+    maxBookPlies: 32,
+    maxMovesPerPosition: 12,
+    minRecentWeight: 0.01,
+    maxBookPositions: 20000,
+    accounts: [
+      { site: 'chess.com', username: 'witty_alien' },
+    ],
+  },
 }
 
 const requestedProfile = process.argv.includes('--profile')
@@ -99,17 +114,31 @@ const styleAccumulator = {
 for (const account of ACCOUNTS) {
   try {
     const games = account.site === 'chess.com'
-      ? await fetchChessComGames(account.username)
+      ? fetchChessComGames(account.username)
       : await fetchLichessGames(account.username)
     let acceptedGames = 0
-    for (const gameRecord of games) {
-      const parsedGame = parsePlayerGame(account.username, gameRecord)
-      if (!parsedGame) continue
-      acceptedGames += 1
-      addGameToBook(parsedGame)
-      addGameToStyle(account.site, parsedGame)
+    let skippedGames = 0
+    for await (const gameRecord of games) {
+      try {
+        const parsedGame = parsePlayerGame(account.username, gameRecord)
+        if (!parsedGame) {
+          skippedGames += 1
+          continue
+        }
+        addGameToBook(parsedGame)
+        addGameToStyle(account.site, parsedGame)
+        acceptedGames += 1
+      } catch (error) {
+        skippedGames += 1
+        if (skippedGames <= 3) {
+          console.warn(`Skipping one ${account.site}:${account.username} game: ${error.message}`)
+        }
+      }
     }
-    sourceStats.push(`${account.site}:${account.username}=${acceptedGames}`)
+    sourceStats.push(
+      `${account.site}:${account.username}=${acceptedGames}`
+      + (skippedGames ? `(${skippedGames} skipped)` : ''),
+    )
   } catch (error) {
     sourceStats.push(`${account.site}:${account.username}=0(error)`)
     console.warn(`Skipping ${account.site}:${account.username}: ${error.message}`)
@@ -158,6 +187,7 @@ function parsePlayerGame(accountUsername, gameRecord) {
 
   const headers = chess.header()
   if (headers.Variant && headers.Variant.toLowerCase() !== 'standard') return null
+  if (headers.FEN || headers.SetUp === '1') return null
   const white = normalizeUsername(headers.White)
   const black = normalizeUsername(headers.Black)
   const account = normalizeUsername(accountUsername)
@@ -490,24 +520,26 @@ function round(value) {
   return Number((Number(value) || 0).toFixed(3))
 }
 
-async function fetchChessComGames(username) {
+async function* fetchChessComGames(username) {
   const archives = await fetchJson(`https://api.chess.com/pub/player/${username}/games/archives`)
   const availableArchives = archives.archives || []
   const selectedArchives = CHESSCOM_ARCHIVE_MONTHS == null
     ? availableArchives
     : availableArchives.slice(-CHESSCOM_ARCHIVE_MONTHS)
-  const games = []
-  const monthlyArchives = await Promise.all(selectedArchives.map((archiveUrl) => fetchJson(archiveUrl)))
-  for (const archive of monthlyArchives) {
+
+  for (let index = 0; index < selectedArchives.length; index += 1) {
+    const archive = await fetchJson(selectedArchives[index])
     for (const game of archive.games || []) {
       if (game.rules !== 'chess' || !game.pgn) continue
-      games.push({
+      yield {
         pgn: game.pgn,
         playedAt: game.end_time ? new Date(game.end_time * 1000) : null,
-      })
+      }
+    }
+    if ((index + 1) % 10 === 0 || index === selectedArchives.length - 1) {
+      console.log(`Loaded ${index + 1}/${selectedArchives.length} Chess.com archives for ${username}`)
     }
   }
-  return games
 }
 
 function chessComWindowLabel() {
@@ -538,12 +570,37 @@ async function fetchLichessGames(username) {
   }))
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url, {
-    headers: { 'User-Agent': 'play-bots-repertoire/2.0' },
-  })
-  if (!response.ok) throw new Error(`${url}: ${response.status}`)
-  return response.json()
+async function fetchJson(url, attempts = 5) {
+  let lastError = null
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Accept: 'application/json',
+          'Accept-Encoding': 'gzip, br',
+          'User-Agent': 'PlayBotsRepertoireBuilder/3.0 (https://github.com/tetizz/Play)',
+        },
+        signal: AbortSignal.timeout(30000),
+      })
+      if (response.ok) return response.json()
+
+      const retryable = response.status === 429 || response.status >= 500
+      if (!retryable || attempt === attempts) {
+        throw new Error(`${url}: ${response.status}`)
+      }
+      const retryAfter = Number(response.headers.get('retry-after'))
+      await wait(Number.isFinite(retryAfter) ? retryAfter * 1000 : attempt * 1000)
+    } catch (error) {
+      lastError = error
+      if (attempt === attempts) break
+      await wait(attempt * 1000)
+    }
+  }
+  throw lastError || new Error(`${url}: request failed`)
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
 function splitPgnGames(pgnText) {

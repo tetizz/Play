@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js'
-import { classifyMove } from './bookupClassifications.js'
+import { classifyMove, verifySacrifice } from './bookupClassifications.js'
 import { selectIWantCheckmateCandidate } from './iwantcheckmateVariants.js'
 
 const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 }
@@ -239,14 +239,24 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
 
   return {
     move,
+    score: decision.score,
+    rank: decision.rank,
     beltMode,
     beltActivated,
     capturedValue,
     isOpeningMove: beforeGame.history().length <= 1,
+    phase: beforeGame.history().length < 20
+      ? 'opening'
+      : afterGame.board().flat().filter(Boolean).length <= 12
+        ? 'endgame'
+        : 'middlegame',
+    isCastle: move.flags?.includes('k') || move.flags?.includes('q'),
+    isPromotion: Boolean(move.promotion),
     isFreePiece: Boolean(move.captured) && !replyCapturesMovedPiece,
     isCheck: afterGame.inCheck(),
     isCheckmate: afterGame.isCheckmate(),
     isWinning: typeof decision.score === 'number' && decision.score >= 500,
+    isLosing: typeof decision.score === 'number' && decision.score <= -350,
     isGreatMove: decision.rank === 1 && (
       move.san.includes('+') ||
       Boolean(move.captured) ||
@@ -409,6 +419,23 @@ function selectEngineMove(game, candidates, profile, styleProfile, policy, rando
       return rankWeight * knightBoost
     })
     return weightedChoice(nearBest, weights, random)
+  }
+
+  if (profile.capabilities.sacrificeSpecialist && nearBest.length > 1) {
+    const soundSacrifices = nearBest.filter((candidate) =>
+      verifySacrifice(
+        cloneGame(game),
+        candidate.move,
+        Array.isArray(candidate.pv) ? candidate.pv : [],
+      ),
+    )
+    if (soundSacrifices.length) {
+      return [...soundSacrifices].sort((a, b) => {
+        const styleDiff = learnedStyleScore(game, b.move, styleProfile)
+          - learnedStyleScore(game, a.move, styleProfile)
+        return styleDiff || a.rank - b.rank
+      })[0]
+    }
   }
 
   return [...nearBest].sort((a, b) => {

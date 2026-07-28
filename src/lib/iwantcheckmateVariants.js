@@ -107,6 +107,13 @@ export function selectIWantCheckmateCandidate(
       random,
     )
   }
+  if (policy.type === 'geometric-ranked') {
+    return geometricRankChoice(
+      sorted.slice(0, Math.max(1, Number(policy.count || 6))),
+      Number(policy.firstWeight || 0.5),
+      random,
+    )
+  }
   if (policy.type === 'random-blunder') {
     if (safeRandom(random) >= Number(policy.chance || 0)) return sorted[0]
     const bestScore = candidateScore(sorted[0])
@@ -425,6 +432,30 @@ function isMartinDerived(profile, policy) {
 function randomChoice(options, random) {
   if (!options.length) return null
   return options[Math.min(options.length - 1, Math.floor(safeRandom(random) * options.length))]
+}
+
+function geometricRankChoice(options, firstWeight, random) {
+  if (!options.length) return null
+  if (options.length === 1) return options[0]
+
+  const leadingWeight = clamp(firstWeight, 0.01, 0.99)
+  const weights = options.map((_, index) =>
+    index === options.length - 1
+      ? 0
+      : leadingWeight * ((1 - leadingWeight) ** index),
+  )
+  weights[weights.length - 1] = Math.max(
+    0,
+    1 - weights.reduce((total, weight) => total + weight, 0),
+  )
+
+  const roll = safeRandom(random)
+  let cumulative = 0
+  for (let index = 0; index < options.length; index += 1) {
+    cumulative += weights[index]
+    if (roll < cumulative) return options[index]
+  }
+  return options.at(-1)
 }
 
 function weightedRandomChoice(options, weights, random) {

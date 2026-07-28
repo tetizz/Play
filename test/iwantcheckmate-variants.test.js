@@ -28,6 +28,7 @@ const EXPECTED_NAMES = [
   'Smartin',
   'TiredFish',
   'BlunderFish',
+  'GeometricFish',
   'RandomFish',
   'DrawFish',
   'BetaFish',
@@ -67,7 +68,7 @@ test('IWantCheckmate exposes distinct talking profiles from the source videos', 
     assert.equal(profile.dialoguePolicy, 'iwantcheckmate')
     assert.equal(profile.capabilities.silentDialogue, false)
     assert.match(profile.source.videoUrl, /^https:\/\/www\.youtube\.com\/watch\?v=/)
-    assert.match(profile.avatar.src, /^\.\/assets\/iwantcheckmate\/.+-profile\.png$/)
+    assert.match(profile.avatar.src, /^\.\/assets\/iwantcheckmate\/.+-profile\.(?:png|jpeg)$/)
     assert.ok(profile.intro.length > 20)
     assert.equal(profile.intro, profile.videoLabel)
   }
@@ -75,11 +76,28 @@ test('IWantCheckmate exposes distinct talking profiles from the source videos', 
   assert.equal(getIWantCheckmateProfile('martinfish').id, 'iwc-smartin')
   assert.equal(getIWantCheckmateProfile('iwc-worstfish').countryCode, '')
   assert.equal(getIWantCheckmateProfile('iwc-exploding-martin'), null)
+  assert.equal(getIWantCheckmateProfile('geometricfish').displayRating, 3600)
   for (const profile of IWANTCHECKMATE_VIDEO_PROFILES.filter(
     (candidate) => candidate.category === 'martin',
   )) {
     assert.equal(profile.strengthPolicy.mateSafety.depth, 20, profile.name)
   }
+})
+
+test('GeometricFish follows the source geometric rank distribution boundaries', () => {
+  const candidates = Array.from({ length: 6 }, (_, index) => ({
+    uci: `move-${index + 1}`,
+    score: 100 - index,
+    rank: index + 1,
+  }))
+  const profile = getIWantCheckmateProfile('geometricfish')
+
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0).rank, 1)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.499999).rank, 1)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.5).rank, 2)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.75).rank, 3)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.875).rank, 4)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.999999).rank, 6)
 })
 
 test('every IWantCheckmate bot has an introduction and situational dialogue', () => {

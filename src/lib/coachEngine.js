@@ -278,15 +278,12 @@ export function moveContext(beforeGame, move, decision, beltMode, beltActivated 
 }
 
 function findBookMove(game, styleProfile, profile, engineCandidates, policy, random) {
+  const forcedOpening = findForcedOpeningMove(game, profile, engineCandidates)
+  if (forcedOpening) return forcedOpening
+
   const openingBook = styleProfile.openingBook || {}
   const maxPlies = styleProfile.bookMaxPlies || 0
   if (game.history().length > maxPlies) return null
-
-  const forcedFirstMove = profile.repertoireSource.forceWhiteFirstMove
-  if (game.history().length === 0 && forcedFirstMove) {
-    const forced = game.moves({ verbose: true }).find((move) => cleanSan(move.san) === forcedFirstMove)
-    if (forced) return candidateMetadata(forced, engineCandidates)
-  }
 
   const historyKey = game.history().join(' ')
   const positionBookKey = positionKey(game)
@@ -357,6 +354,32 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy, ran
     )[0]
   }
   return weightedChoice(playable, null, random)
+}
+
+function findForcedOpeningMove(game, profile, engineCandidates) {
+  if (game.turn() !== 'w') return null
+
+  const source = profile.repertoireSource || {}
+  const history = game.history().map(cleanSan)
+  const requestedMoves = []
+
+  if (history.length === 0 && source.forceWhiteFirstMove) {
+    requestedMoves.push(source.forceWhiteFirstMove)
+  }
+
+  for (const line of source.forcedWhiteLines || []) {
+    if (!Array.isArray(line) || history.length >= line.length) continue
+    const followsLine = history.every((move, index) => cleanSan(line[index]) === move)
+    if (followsLine) requestedMoves.push(line[history.length])
+  }
+
+  if (!requestedMoves.length) return null
+  const legal = new Map(game.moves({ verbose: true }).map((move) => [cleanSan(move.san), move]))
+  for (const san of requestedMoves) {
+    const forced = legal.get(cleanSan(san))
+    if (forced) return candidateMetadata(forced, engineCandidates)
+  }
+  return null
 }
 
 function preferredBookOptions(options) {

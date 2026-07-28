@@ -746,6 +746,31 @@ test('Trixize opens with Nf3 and delivers the requested opening line', async ({ 
   await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
 })
 
+test('Witty Alien forces e4 and enters the Alien Gambit against the Caro-Kann', async ({ page }) => {
+  test.setTimeout(70000)
+
+  await page.getByRole('button', { name: /Witty Alien/ }).click()
+  await page.getByRole('button', { name: 'Black', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  const playAndWait = async (from, to, expectedSan) => {
+    await page.locator(`[data-square="${from}"]`).click()
+    await page.locator(`[data-square="${to}"]`).click()
+    await expect(page.getByRole('button', { name: expectedSan, exact: true })).toBeVisible({
+      timeout: 15000,
+    })
+  }
+
+  await expect(page.getByRole('button', { name: 'e4', exact: true })).toBeVisible({
+    timeout: 15000,
+  })
+  await playAndWait('c7', 'c6', 'd4')
+  await playAndWait('d7', 'd5', 'Nd2')
+  await playAndWait('d5', 'e4', 'Nxe4')
+  await playAndWait('g8', 'f6', 'Ng5')
+  await playAndWait('h7', 'h6', 'Nxf7')
+})
+
 test('Trixize always enters the requested Nf3 d5 theory branch', async ({ page }) => {
   test.setTimeout(50000)
 

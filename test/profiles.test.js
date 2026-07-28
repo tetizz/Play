@@ -70,7 +70,7 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('martinfish').id, 'iwc-smartin')
   assert.equal(getBotProfile('geometricfish').name, 'GeometricFish')
   assert.equal(getBotProfile('witty-alien').name, 'Witty Alien')
-  assert.equal(getBotProfile('witty-alien').displayRating, 2200)
+  assert.equal(getBotProfile('witty-alien').displayRating, 2400)
   assert.equal(getBotProfile('witty-alien').countryCode, 'bg')
   assert.equal(getBotProfile('witty-alien').capabilities.sacrificeSpecialist, true)
 })
@@ -79,9 +79,11 @@ test('each rated bot uses its stated internal strength', () => {
   const mubassar = getBotProfile('mubassar').strengthPolicy.engineElo
   const ayden = getBotProfile('ayden').strengthPolicy.engineElo
   const akshit = getBotProfile('akshit').strengthPolicy.engineElo
+  const witty = getBotProfile('witty-alien').strengthPolicy.engineElo
   assert.equal(mubassar, getBotProfile('mubassar').displayRating)
   assert.equal(ayden, getBotProfile('ayden').displayRating)
   assert.equal(akshit, getBotProfile('akshit').displayRating)
+  assert.equal(witty, getBotProfile('witty-alien').displayRating)
   assert.ok(mubassar > akshit)
   assert.ok(akshit > ayden)
 })
@@ -776,8 +778,19 @@ test('Trixize rejects an unsafe familiar Black move for a safe repertoire altern
   assert.equal(decision.source, 'repertoire')
 })
 
-test('Witty Alien guarantees his Caro-Kann opener and brilliant reaction', () => {
+test('Witty Alien forces e4 and keeps his signature reactions', () => {
   const profile = getBotProfile('witty-alien')
+  const game = new Chess()
+  const decision = chooseCoachMove(
+    game,
+    [
+      { uci: 'd2d4', score: 100, rank: 1 },
+      { uci: 'e2e4', score: -100, rank: 2 },
+    ],
+    profile,
+    { openingBook: {}, bookMaxPlies: 0 },
+  )
+  assert.equal(decision.move.san, 'e4')
   assert.equal(
     dialogueAfterBotMove(profile, { isOpeningMove: true }),
     'I am the destroyer of the Caro-Kann.',
@@ -788,10 +801,68 @@ test('Witty Alien guarantees his Caro-Kann opener and brilliant reaction', () =>
   )
 })
 
+test('Witty Alien forces his Alien and Martian Gambit theory', () => {
+  const profile = getBotProfile('witty-alien')
+  const forcedLines = [
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6', 'Nxf7', 'Kxf7', 'Nf3', 'c5', 'Ne5+'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6', 'Nxf7', 'Kxf7', 'Nf3', 'Bf5', 'Ne5+'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6', 'Nxf7', 'Kxf7', 'Nf3', 'e6', 'Bc4'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'Nf6', 'e5'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'e6', 'Ngf3'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'g6', 'h4'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nd7', 'Ng5'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'h6', 'Qe2'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'e6', 'Nf3'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'e6', 'N1f3'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'Bf5', 'N1f3'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Bf5', 'Ng5', 'Bg6', 'N1f3', 'h6', 'Ne6', 'fxe6', 'Ne5', 'Bf5', 'g4'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Bf5', 'Ng5', 'Bg6', 'N1f3', 'h6', 'Ne6', 'fxe6', 'Ne5', 'Bh7', 'Bc4'],
+    ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Bf5', 'Ng5', 'Bg6', 'N1f3', 'h6', 'Ne6', 'fxe6', 'Ne5', 'Bf7', 'Bc4'],
+  ]
+  const clean = (san) => String(san).replace(/[+#?!]+/g, '')
+  const uci = (move) => `${move.from}${move.to}${move.promotion || ''}`
+
+  for (const line of forcedLines) {
+    const game = new Chess()
+    for (const san of line) {
+      if (game.turn() === 'b') {
+        game.move(san)
+        continue
+      }
+
+      const legal = game.moves({ verbose: true })
+      const target = legal.find((move) => clean(move.san) === clean(san))
+      const alternative = legal.find((move) => clean(move.san) !== clean(san))
+      assert.ok(target, `${san} should be legal after ${game.history().join(' ')}`)
+      const decision = chooseCoachMove(
+        game,
+        [
+          { uci: uci(alternative), score: 200, rank: 1 },
+          { uci: uci(target), score: -300, rank: 2 },
+        ],
+        profile,
+        { openingBook: {}, bookMaxPlies: 0 },
+      )
+      assert.equal(clean(decision.move.san), clean(san))
+      assert.equal(decision.source, 'repertoire')
+      game.move(decision.move.san)
+    }
+  }
+})
+
 test('Witty Alien prefers a verified sound sacrifice inside the engine-safe window', () => {
   const game = new Chess()
   for (const san of ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6']) {
     game.move(san)
+  }
+  const witty = getBotProfile('witty-alien')
+  const profileWithoutForcedTheory = {
+    ...witty,
+    repertoireSource: {
+      ...witty.repertoireSource,
+      forceWhiteFirstMove: null,
+      forcedWhiteLines: [],
+    },
   }
   const decision = chooseCoachMove(
     game,
@@ -799,7 +870,7 @@ test('Witty Alien prefers a verified sound sacrifice inside the engine-safe wind
       { uci: 'g5e6', score: 50, rank: 1, pv: ['g5e6'] },
       { uci: 'g5f7', score: 40, rank: 2, pv: ['g5f7', 'e8f7', 'd1h5', 'f7g8'] },
     ],
-    getBotProfile('witty-alien'),
+    profileWithoutForcedTheory,
     { openingBook: {}, bookMaxPlies: 0 },
   )
 
@@ -812,13 +883,22 @@ test('Witty Alien rejects a sacrifice outside the engine-safe window', () => {
   for (const san of ['e4', 'c6', 'd4', 'd5', 'Nd2', 'dxe4', 'Nxe4', 'Nf6', 'Ng5', 'h6']) {
     game.move(san)
   }
+  const witty = getBotProfile('witty-alien')
+  const profileWithoutForcedTheory = {
+    ...witty,
+    repertoireSource: {
+      ...witty.repertoireSource,
+      forceWhiteFirstMove: null,
+      forcedWhiteLines: [],
+    },
+  }
   const decision = chooseCoachMove(
     game,
     [
       { uci: 'g5e6', score: 80, rank: 1, pv: ['g5e6'] },
       { uci: 'g5f7', score: 20, rank: 2, pv: ['g5f7', 'e8f7', 'd1h5', 'f7g8'] },
     ],
-    getBotProfile('witty-alien'),
+    profileWithoutForcedTheory,
     { openingBook: {}, bookMaxPlies: 0 },
   )
 

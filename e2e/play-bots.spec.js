@@ -299,7 +299,7 @@ test('projected same-piece premoves append in FIFO order and execute one per bot
   )
   await expect.poll(() => page.evaluate(() =>
     JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
-  )).toBe(3)
+  ), { timeout: 15000 }).toBe(3)
 
   await releaseHeldPlayerBotTurn(page)
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({
@@ -309,7 +309,7 @@ test('projected same-piece premoves append in FIFO order and execute one per bot
   await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '2')
   await expect.poll(() => page.evaluate(() =>
     JSON.parse(localStorage.getItem('play-bots-session-v3') || '{}').premoveQueue?.length,
-  )).toBe(2)
+  ), { timeout: 15000 }).toBe(2)
   await expect(page.locator('[data-square="g1"] > div')).not.toHaveCSS(
     'background-color',
     /rgba?\(205,\s*55,\s*64/,

@@ -79,6 +79,7 @@ test('dynamic trigger events change the running profile rating', () => {
   const events = createVariantEvents()
   const checkProfile = getIWantCheckmateProfile('iwc-give-check')
   const bestProfile = getIWantCheckmateProfile('iwc-best-move')
+  const tonyProfile = getIWantCheckmateProfile('iwc-tony-gains')
   const worstProfile = getIWantCheckmateProfile('iwc-worst-move')
   const hungryProfile = getIWantCheckmateProfile('iwc-hungry-martin')
   const captureToggleProfile = getIWantCheckmateProfile('iwc-capture-toggle')
@@ -94,6 +95,7 @@ test('dynamic trigger events change the running profile rating', () => {
   )
   assert.equal(events.opponentChecks, 1)
   assert.equal(events.opponentBestMoves, 1)
+  assert.equal(events.opponentNonBestMoves, 0)
   assert.equal(resolveProfileRating(checkProfile, events), 3300)
   assert.equal(resolveProfileRating(bestProfile, events), 3500)
 
@@ -107,7 +109,9 @@ test('dynamic trigger events change the running profile rating', () => {
     ],
   )
   assert.equal(events.opponentWorstMoves, 1)
+  assert.equal(events.opponentNonBestMoves, 1)
   assert.equal(resolveProfileRating(worstProfile, events), 3100)
+  assert.equal(resolveProfileRating(tonyProfile, events), 450)
 
   recordOwnMoveEvents(events, { san: 'Bxh7+', captured: 'p' })
   assert.equal(events.botMoves, 1)

@@ -315,7 +315,12 @@ export function useGameController(defaultBotId) {
       return variantEventsRef.current
     }
     const variantType = targetProfile.variant?.trigger
-    if (!['opponent-check', 'opponent-best-move', 'opponent-worst-move'].includes(variantType)) {
+    if (![
+      'opponent-check',
+      'opponent-best-move',
+      'opponent-non-best-move',
+      'opponent-worst-move',
+    ].includes(variantType)) {
       return variantEventsRef.current
     }
     const before = gameFromHistory(baseHistory.slice(0, -1))
@@ -355,12 +360,13 @@ export function useGameController(defaultBotId) {
       }
     }
     if (!playedLine || !Number.isFinite(playedLine.score)) return variantEventsRef.current
+    const eventField = variantType === 'opponent-best-move'
+      ? 'opponentBestMoves'
+      : variantType === 'opponent-non-best-move'
+        ? 'opponentNonBestMoves'
+        : 'opponentWorstMoves'
     return isExactVariantTrigger(variantType, playedUci, candidates)
-      ? recordVariantEvent(
-          targetProfile,
-          variantType === 'opponent-best-move' ? 'opponentBestMoves' : 'opponentWorstMoves',
-          ply,
-        )
+      ? recordVariantEvent(targetProfile, eventField, ply)
       : variantEventsRef.current
   }, [recordVariantEvent])
 
@@ -1219,6 +1225,7 @@ function emptyVariantEvents() {
     botCaptures: 0,
     opponentChecks: 0,
     opponentBestMoves: 0,
+    opponentNonBestMoves: 0,
     opponentWorstMoves: 0,
     currentElo: null,
     evilAwake: false,
@@ -1278,12 +1285,18 @@ export function isExactVariantTrigger(variantType, playedUci, candidates) {
   const finite = (candidates || []).filter((candidate) =>
     candidate?.uci && Number.isFinite(candidate.score))
   if (!finite.length || !playedUci) return false
-  if (variantType === 'opponent-best-move') {
+  if ([
+    'opponent-best-move',
+    'opponent-non-best-move',
+  ].includes(variantType)) {
     const best = [...finite].sort((a, b) => {
       const rankDifference = Number(a.rank || Infinity) - Number(b.rank || Infinity)
       return rankDifference || b.score - a.score
     })[0]
-    return best?.uci === playedUci
+    if (!best) return false
+    return variantType === 'opponent-best-move'
+      ? best.uci === playedUci
+      : best.uci !== playedUci
   }
   if (variantType !== 'opponent-worst-move') return false
   const worstScore = Math.min(...finite.map((candidate) => candidate.score))

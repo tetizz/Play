@@ -59,6 +59,29 @@ test('public and video bot profiles expose the requested ratings and capabilitie
     getBotProfile('iwc-smartin').videoLabel,
     'Starts at 250 and gains 100 Elo after every move.',
   )
+  assert.equal(getBotProfile('iwc-tony-gains').name, 'Tony')
+  assert.equal(getBotProfile('iwc-tony-gains').displayRating, 250)
+  assert.equal(getBotProfile('iwc-tony-gains').category, 'martin')
+  assert.equal(getBotProfile('iwc-tony-gains').source.videoId, 'nx6jkHl2k_Y')
+  assert.equal(
+    getBotProfile('iwc-tony-gains').source.videoTitle,
+    'Martin, But He Gains 200 ELO If I DON\'T Make the Best Move',
+  )
+  assert.equal(getBotProfile('iwc-tony-gains').variant.eloDelta, 200)
+  assert.equal(getBotProfile('iwc-tony-gains').variant.maxElo, 3600)
+  assert.equal(getBotProfile('iwc-tony-gains').variant.movePolicy.type, 'rating-strength')
+  assert.equal(
+    getBotProfile('iwc-tony-gains').variant.movePolicy.ruleStatus,
+    'implemented-unverified',
+  )
+  assert.deepEqual(
+    getBotProfile('iwc-tony-gains').variant.movePolicy.unverifiedAssumptions,
+    [
+      '3600-elo-cap',
+      'equal-score-rank-two-counts-as-non-best',
+      'depth-14-rank-one-without-evaluation-tolerance',
+    ],
+  )
   assert.equal(getBotProfile('iwc-martinfish').name, 'Martinfish')
   assert.equal(getBotProfile('iwc-martinfish').displayRating, null)
   assert.equal(getBotProfile('iwc-martinfish-80-20').source.videoId, 'ew6NU1Z_G4k')

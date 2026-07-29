@@ -19,7 +19,7 @@ test.after(async () => {
   await vite.close()
 })
 
-test('best and worst triggers require the exact calibrated move', () => {
+test('best, non-best, and worst triggers require the exact calibrated move', () => {
   const candidates = [
     { uci: 'e2e4', rank: 1, score: 30 },
     { uci: 'd2d4', rank: 2, score: 28 },
@@ -29,6 +29,22 @@ test('best and worst triggers require the exact calibrated move', () => {
 
   assert.equal(isExactVariantTrigger('opponent-best-move', 'e2e4', candidates), true)
   assert.equal(isExactVariantTrigger('opponent-best-move', 'd2d4', candidates), false)
+  assert.equal(isExactVariantTrigger('opponent-non-best-move', 'e2e4', candidates), false)
+  assert.equal(isExactVariantTrigger('opponent-non-best-move', 'd2d4', candidates), true)
+  assert.equal(isExactVariantTrigger(
+    'opponent-non-best-move',
+    'd2d4',
+    [
+      { uci: 'e2e4', rank: 1, score: 30 },
+      { uci: 'd2d4', rank: 2, score: 30 },
+    ],
+  ), true)
+  assert.equal(isExactVariantTrigger('opponent-non-best-move', 'd2d4', []), false)
+  assert.equal(isExactVariantTrigger(
+    'opponent-non-best-move',
+    'd2d4',
+    [{ uci: 'e2e4', rank: 1 }],
+  ), false)
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'a2a3', candidates), true)
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'h2h3', candidates), true)
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'd2d4', candidates), false)
@@ -130,13 +146,16 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
       botCaptures: 2,
       opponentChecks: 0,
       opponentBestMoves: 0,
+      opponentNonBestMoves: 2,
       opponentWorstMoves: 0,
       currentElo: 3000,
       evilAwake: true,
       applied: [
         'mode:0:250:0',
+        'opponentNonBestMoves:1',
         'botMoves:1',
         'botCaptures:2',
+        'opponentNonBestMoves:3',
         'mode:4:3000:1',
         'botCaptures:4',
         'botMoves:5',
@@ -149,12 +168,14 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
   assert.equal(beforeWake.evilAwake, false)
   assert.equal(beforeWake.botMoves, 1)
   assert.equal(beforeWake.botCaptures, 1)
+  assert.equal(beforeWake.opponentNonBestMoves, 1)
 
   const afterWake = pruneVariantEvents(events, 4).evil
   assert.equal(afterWake.currentElo, 3000)
   assert.equal(afterWake.evilAwake, true)
   assert.equal(afterWake.botMoves, 1)
   assert.equal(afterWake.botCaptures, 2)
+  assert.equal(afterWake.opponentNonBestMoves, 2)
 })
 
 test('capture toggle tracks move phase and capture state independently', () => {
@@ -168,4 +189,18 @@ test('capture toggle tracks move phase and capture state independently', () => {
   assert.equal(variantUsesEvent(profile, 'botMoves'), true)
   assert.equal(variantUsesEvent(profile, 'botCaptures'), true)
   assert.equal(variantUsesEvent(profile, 'botCaptureChecks'), false)
+})
+
+test('Tony records only the non-best opponent counter', () => {
+  const profile = {
+    variant: {
+      trigger: 'opponent-non-best-move',
+      movePolicy: { type: 'rating-strength' },
+    },
+  }
+
+  assert.equal(variantUsesEvent(profile, 'botMoves'), true)
+  assert.equal(variantUsesEvent(profile, 'opponentNonBestMoves'), true)
+  assert.equal(variantUsesEvent(profile, 'opponentBestMoves'), false)
+  assert.equal(variantUsesEvent(profile, 'opponentWorstMoves'), false)
 })

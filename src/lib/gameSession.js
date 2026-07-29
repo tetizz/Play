@@ -67,6 +67,7 @@ export function normalizeVariantEvents(input) {
         botCaptures: nonNegativeInteger(events.botCaptures),
         opponentChecks: nonNegativeInteger(events.opponentChecks),
         opponentBestMoves: nonNegativeInteger(events.opponentBestMoves),
+        opponentNonBestMoves: nonNegativeInteger(events.opponentNonBestMoves),
         opponentWorstMoves: nonNegativeInteger(events.opponentWorstMoves),
         currentElo: Number.isFinite(events.currentElo) ? Number(events.currentElo) : null,
         evilAwake: Boolean(events.evilAwake),

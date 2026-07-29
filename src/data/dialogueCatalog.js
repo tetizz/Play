@@ -260,6 +260,32 @@ const smartin = voice(
   ],
 )
 
+const tony = voice(
+  {
+    intro: 'Tony arrives at 250 with a notebook full of second chances.',
+    opening: 'The first few squares decide how quickly this gets serious.',
+    quiet: 'Another quiet choice, another little step upward.',
+    capture: 'That piece is gone, and the number beside my name keeps climbing.',
+    freePiece: 'You left that loose, so I am adding it to the collection.',
+    check: 'Your king just heard the confidence level rise.',
+    checkmate: 'The ladder ends here, right beside your king.',
+    winning: 'The board gets sharper every time you miss the clean route.',
+    losing: 'I started low for a reason; there is room to grow.',
+    great: 'That move slowed the climb and earned my respect.',
+    brilliant: 'You found the one path that keeps me honest.',
+    comeback: 'A few missed chances were all I needed to return.',
+    gameWin: 'The small number did not stay small for long.',
+    gameLoss: 'You kept finding the clean path. Well played.',
+    gameDraw: 'We climbed all that way and met in the middle.',
+    battle: '{opponent} gets one clean chance before I grow stronger.',
+  },
+  [
+    'Watch the number.',
+    'One choice changes the next move.',
+    'I am learning quickly.',
+  ],
+)
+
 const tiredFish = voice(
   {
     intro: 'TiredFish is awake enough to find the board.',
@@ -744,6 +770,7 @@ export const DIALOGUE_CATALOG = Object.freeze({
   'iwc-give-check': panicFish,
   'iwc-best-move': tiltFish,
   'iwc-smartin': smartin,
+  'iwc-tony-gains': tony,
   'iwc-elo-decay': tiredFish,
   'iwc-random-blunder': blunderFish,
   'iwc-random-top-three': randomFish,

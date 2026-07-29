@@ -22,6 +22,7 @@ export function variantEventField(profile) {
   if (trigger === 'own-capture') return 'botCaptures'
   if (trigger === 'opponent-check') return 'opponentChecks'
   if (trigger === 'opponent-best-move') return 'opponentBestMoves'
+  if (trigger === 'opponent-non-best-move') return 'opponentNonBestMoves'
   if (trigger === 'opponent-worst-move') return 'opponentWorstMoves'
   return null
 }

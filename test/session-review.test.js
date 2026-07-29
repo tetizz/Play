@@ -566,6 +566,36 @@ test('session restoration preserves capture-toggle move and capture counters', (
   }
 })
 
+test('session restoration preserves Tony non-best counters and markers', () => {
+  const previousLocalStorage = globalThis.localStorage
+  globalThis.localStorage = {
+    getItem() {
+      return JSON.stringify({
+        phase: 'game',
+        history: ['e4', 'e5', 'Nf3'],
+        botId: 'iwc-tony-gains',
+        variantEvents: {
+          'iwc-tony-gains': {
+            opponentNonBestMoves: 2,
+            applied: ['opponentNonBestMoves:1', 'opponentNonBestMoves:3'],
+          },
+        },
+      })
+    },
+  }
+  try {
+    const restored = loadSession()
+    assert.equal(restored.variantEvents['iwc-tony-gains'].opponentNonBestMoves, 2)
+    assert.deepEqual(
+      restored.variantEvents['iwc-tony-gains'].applied,
+      ['opponentNonBestMoves:1', 'opponentNonBestMoves:3'],
+    )
+  } finally {
+    if (previousLocalStorage) globalThis.localStorage = previousLocalStorage
+    else delete globalThis.localStorage
+  }
+})
+
 test('session persistence failures do not crash gameplay', () => {
   const previousLocalStorage = globalThis.localStorage
   globalThis.localStorage = {

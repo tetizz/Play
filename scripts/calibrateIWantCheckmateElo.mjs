@@ -198,7 +198,11 @@ export async function playGame({
         })
       } else {
         const opponentTrigger = profile.variant?.trigger
-        const needsOpponentJudgement = ['opponent-best-move', 'opponent-worst-move']
+        const needsOpponentJudgement = [
+          'opponent-best-move',
+          'opponent-non-best-move',
+          'opponent-worst-move',
+        ]
           .includes(opponentTrigger)
         const legalCount = game.moves().length
         const analyses = [
@@ -392,6 +396,7 @@ export function createVariantEvents() {
     botCaptures: 0,
     opponentChecks: 0,
     opponentBestMoves: 0,
+    opponentNonBestMoves: 0,
     opponentWorstMoves: 0,
   }
 }
@@ -410,6 +415,7 @@ export function recordOpponentMoveEvents(events, move, uci, candidates = []) {
   const ranked = [...candidates].filter((candidate) => candidate?.uci)
     .sort((a, b) => Number(a.rank || 1) - Number(b.rank || 1))
   if (ranked[0]?.uci === uci) events.opponentBestMoves += 1
+  if (ranked[0]?.uci && ranked[0].uci !== uci) events.opponentNonBestMoves += 1
   const finite = ranked.filter((candidate) => Number.isFinite(candidate.score))
   const worstScore = finite.length
     ? Math.min(...finite.map((candidate) => candidate.score))

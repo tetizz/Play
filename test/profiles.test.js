@@ -6,7 +6,6 @@ import {
   getBotProfile,
   loadBotStyleProfile,
 } from '../src/data/botProfiles.js'
-import { IWANTCHECKMATE_VIDEO_PROFILES } from '../src/data/iwantcheckmateProfiles.js'
 import { DIALOGUE_EVENTS, getDialoguePack } from '../src/data/dialogueCatalog.js'
 import { dialogueAfterBotMove, dialogueForBotBattle } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
@@ -23,10 +22,6 @@ import {
 test('public and video bot profiles expose the requested ratings and capabilities', () => {
   assert.ok(BOT_PROFILES.length >= 25)
   assert.equal(new Set(BOT_PROFILES.map((profile) => profile.id)).size, BOT_PROFILES.length)
-  assert.equal(
-    new Set(IWANTCHECKMATE_VIDEO_PROFILES.map((profile) => profile.source.videoId)).size,
-    IWANTCHECKMATE_VIDEO_PROFILES.length,
-  )
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 2007)

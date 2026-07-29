@@ -118,11 +118,8 @@ export function selectIWantCheckmateCandidate(
     )
   }
   if (policy.type === 'geometric-ranked') {
-    const options = policy.allLegalMoves
-      ? sorted
-      : sorted.slice(0, Math.max(1, Number(policy.count || 6)))
     return geometricRankChoice(
-      options,
+      sorted.slice(0, Math.max(1, Number(policy.count || 6))),
       Number(policy.firstWeight || 0.5),
       random,
     )

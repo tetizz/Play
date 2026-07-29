@@ -87,7 +87,7 @@ test('IWantCheckmate exposes distinct talking profiles from the source videos', 
 })
 
 test('GeometricFish follows the source geometric rank distribution boundaries', () => {
-  const candidates = Array.from({ length: 8 }, (_, index) => ({
+  const candidates = Array.from({ length: 6 }, (_, index) => ({
     uci: `move-${index + 1}`,
     score: 100 - index,
     rank: index + 1,
@@ -99,9 +99,7 @@ test('GeometricFish follows the source geometric rank distribution boundaries', 
   assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.5).rank, 2)
   assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.75).rank, 3)
   assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.875).rank, 4)
-  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.984375).rank, 7)
-  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.9921875).rank, 8)
-  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.999999).rank, 8)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.999999).rank, 6)
 })
 
 test('every IWantCheckmate bot has an introduction and situational dialogue', () => {
@@ -743,7 +741,7 @@ test('capture toggle changes identity and strength only after its own captures',
   assert.equal(stockfish.displayRating, 3600)
   assert.equal(stockfish.countryCode, 'us')
   assert.equal(stockfish.avatarState, 'stockfish')
-  assert.ok(stockfish.avatar.src.endsWith('capture-toggle-stockfish-profile.svg'))
+  assert.ok(stockfish.avatar.src.endsWith('capture-toggle-stockfish-profile.png'))
   assert.equal(martin.name, 'Martin')
   assert.equal(martin.displayRating, 250)
   assert.equal(martin.countryCode, 'bg')

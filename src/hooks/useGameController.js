@@ -1247,7 +1247,15 @@ function initialBotDialogueLog(whiteProfile, blackProfile) {
 }
 
 export function variantUsesEvent(profile, field) {
-  if (field === 'botMoves') return true
+  if (
+    field === 'botMoves' &&
+    (
+      profile?.variant?.movePolicy?.type === 'cycle' ||
+      profile?.variant?.trigger === 'opponent-non-best-move'
+    )
+  ) {
+    return true
+  }
   return variantEventField(profile) === field
 }
 

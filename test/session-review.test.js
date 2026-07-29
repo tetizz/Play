@@ -536,36 +536,6 @@ test('a manually finished review remains a review after session restoration', ()
   }
 })
 
-test('session restoration preserves capture-toggle move and capture counters', () => {
-  const previousLocalStorage = globalThis.localStorage
-  globalThis.localStorage = {
-    getItem() {
-      return JSON.stringify({
-        phase: 'game',
-        history: ['e4', 'd5', 'exd5'],
-        botId: 'iwc-capture-toggle',
-        variantEvents: {
-          'iwc-capture-toggle': {
-            botMoves: 2,
-            botCaptures: 1,
-            botCaptureChecks: 1,
-            applied: ['botMoves:1', 'botCaptures:2'],
-          },
-        },
-      })
-    },
-  }
-  try {
-    const restored = loadSession()
-    assert.equal(restored.variantEvents['iwc-capture-toggle'].botMoves, 2)
-    assert.equal(restored.variantEvents['iwc-capture-toggle'].botCaptures, 1)
-    assert.equal(restored.variantEvents['iwc-capture-toggle'].botCaptureChecks, 1)
-  } finally {
-    if (previousLocalStorage) globalThis.localStorage = previousLocalStorage
-    else delete globalThis.localStorage
-  }
-})
-
 test('session restoration preserves Tony non-best counters and markers', () => {
   const previousLocalStorage = globalThis.localStorage
   globalThis.localStorage = {

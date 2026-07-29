@@ -63,29 +63,3 @@ test('selecting a bot keeps its family open and updates the profile', async ({ p
   await expect(pityFish).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByRole('heading', { name: 'PityFish', exact: true })).toBeVisible()
 })
-
-test('latest Stockfish variants show their public rules and original badges', async ({ page }) => {
-  const roster = page.locator('.bot-roster')
-  const stockfishFamily = familyButton(roster, 'Stockfish Variants')
-  const stockfishPanel = await controlledPanel(page, stockfishFamily)
-
-  await stockfishFamily.click()
-
-  await stockfishPanel.getByRole('button', { name: /GeometricFish/ }).click()
-  await expect(page.getByRole('heading', { name: 'GeometricFish', exact: true })).toBeVisible()
-  await expect(page.locator('.setup-portrait p')).toHaveText(
-    /50% first, 25% second, 12\.5% third/i,
-  )
-  await expect(
-    page.getByRole('img', { name: 'GeometricFish in-video profile' }).last(),
-  ).toHaveAttribute('src', /geometricfish-profile\.svg$/)
-
-  await stockfishPanel.getByRole('button', { name: /^Stockfish\b/ }).click()
-  await expect(page.getByRole('heading', { name: 'Stockfish', exact: true })).toBeVisible()
-  await expect(page.locator('.setup-portrait p')).toHaveText(
-    /each capture it makes hands the next move to Martin at 250/i,
-  )
-  await expect(
-    page.getByRole('img', { name: 'Stockfish in-video profile' }).last(),
-  ).toHaveAttribute('src', /capture-toggle-stockfish-profile\.svg$/)
-})

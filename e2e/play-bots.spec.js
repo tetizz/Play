@@ -724,8 +724,13 @@ test('all bots start as White, Black, and Random without exposing account names'
   test.setTimeout(120000)
   for (const botName of ['Mubassar', 'Ayden Spellman', 'Akshit Sharma', 'Trixize']) {
     for (const color of ['White', 'Black', 'Random']) {
-      await page.evaluate(() => localStorage.clear())
       await page.goto(`/?matrix=${encodeURIComponent(`${botName}-${color}`)}`)
+      await page.evaluate(() => localStorage.clear())
+      await page.reload()
+      const playerBots = page.getByRole('button', { name: 'Player Bots', exact: true })
+      if (await playerBots.getAttribute('aria-expanded') !== 'true') {
+        await playerBots.click()
+      }
       await page.getByRole('button', { name: new RegExp(botName) }).click()
       await page.getByRole('button', {
         name: color,

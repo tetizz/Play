@@ -1,5 +1,5 @@
-import { useId, useRef } from 'react'
-import { Bot, Home, Swords, UserRound } from 'lucide-react'
+import { useId, useRef, useState } from 'react'
+import { Bot, ChevronDown, Home, Swords, UserRound } from 'lucide-react'
 import { BOT_PROFILES } from '../data/botProfiles'
 import { Avatar, CountryFlag } from './Identity'
 
@@ -14,15 +14,15 @@ const choices = [
 const ROSTER_SECTION_DEFINITIONS = [
   {
     id: 'coach',
-    label: 'Coach Bots',
+    label: 'Player Bots',
   },
   {
     id: 'stockfish',
-    label: 'Stockfish Bots',
+    label: 'Stockfish Variants',
   },
   {
     id: 'martin',
-    label: 'Martin Bots',
+    label: 'Martin Variants',
   },
 ]
 
@@ -207,38 +207,83 @@ export function SetupScreen({
 }
 
 function BotRoster({ selectedId, onSelect }) {
+  const rosterIdPrefix = useId()
+  const selectedSectionId = ROSTER_SECTIONS.find((section) => (
+    section.bots.some((bot) => bot.id === selectedId)
+  ))?.id ?? ROSTER_SECTIONS[0]?.id
+  const [expandedSectionId, setExpandedSectionId] = useState(selectedSectionId)
+
   return (
     <section className="bot-roster" aria-labelledby="bot-roster-heading">
       <h1 id="bot-roster-heading" className="visually-hidden">Choose a bot</h1>
-      {ROSTER_SECTIONS.map((section) => (
-        <section
-          className="bot-roster-section"
-          aria-labelledby={`bot-roster-${section.id}`}
-          key={section.id}
-        >
-          <h2 id={`bot-roster-${section.id}`}>{section.label}</h2>
-          <div className="bot-roster-grid">
-            {section.bots.map((bot) => (
+      <p className="visually-hidden" aria-live="polite">
+        {BOT_PROFILES.find((bot) => bot.id === selectedId)?.fullName} selected
+      </p>
+      {ROSTER_SECTIONS.map((section) => {
+        const isExpanded = expandedSectionId === section.id
+        const triggerId = `${rosterIdPrefix}-${section.id}-trigger`
+        const panelId = `${rosterIdPrefix}-${section.id}-panel`
+        const representative = section.bots[0]
+
+        return (
+          <section
+            className={`bot-family bot-family-${section.id} ${isExpanded ? 'expanded' : ''}`}
+            key={section.id}
+          >
+            <h2 className="bot-family-heading">
               <button
                 type="button"
-                key={bot.id}
-                aria-pressed={bot.id === selectedId}
-                className={bot.id === selectedId ? 'selected' : ''}
-                onClick={() => onSelect(bot.id)}
+                id={triggerId}
+                className="bot-family-trigger"
+                aria-expanded={isExpanded}
+                aria-controls={panelId}
+                aria-label={section.label}
+                onClick={() => {
+                  setExpandedSectionId((current) => (
+                    current === section.id ? null : section.id
+                  ))
+                }}
               >
-                <Avatar profile={bot} size="small" />
-                <span>
-                  <strong>{bot.fullName}</strong>
-                  <small>
-                    {profileRosterLabel(bot)}
-                  </small>
+                <span className="bot-family-avatar" aria-hidden="true">
+                  <Avatar profile={representative} size="small" />
                 </span>
-                <CountryFlag code={bot.countryCode} label={bot.country} />
+                <span className="bot-family-title">{section.label}</span>
+                <span className="bot-family-count" aria-hidden="true">
+                  {section.bots.length} {section.bots.length === 1 ? 'bot' : 'bots'}
+                </span>
+                <ChevronDown className="bot-family-chevron" aria-hidden="true" />
               </button>
-            ))}
-          </div>
-        </section>
-      ))}
+            </h2>
+            <div
+              id={panelId}
+              className="bot-family-panel"
+              role="region"
+              aria-labelledby={triggerId}
+              hidden={!isExpanded}
+            >
+              <ul className="bot-family-gallery">
+                {section.bots.map((bot) => (
+                  <li key={bot.id}>
+                    <button
+                      type="button"
+                      aria-label={`${bot.fullName} ${profileRosterLabel(bot)}`}
+                      aria-pressed={bot.id === selectedId}
+                      className={`bot-family-option ${bot.id === selectedId ? 'selected' : ''}`}
+                      onClick={() => onSelect(bot.id)}
+                    >
+                      <span className="bot-family-option-avatar" aria-hidden="true">
+                        <Avatar profile={bot} size="small" />
+                      </span>
+                      <strong>{bot.fullName}</strong>
+                      <small>{profileRosterLabel(bot)}</small>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )
+      })}
     </section>
   )
 }
@@ -283,10 +328,14 @@ function BotSeat({ color, profile, value, onChange }) {
           value={value}
           onChange={(event) => onChange(event.target.value)}
         >
-          {BOT_PROFILES.map((bot) => (
-            <option key={bot.id} value={bot.id}>
-              {bot.fullName} {profileSelectionLabel(bot)}
-            </option>
+          {ROSTER_SECTIONS.map((section) => (
+            <optgroup key={section.id} label={section.label}>
+              {section.bots.map((bot) => (
+                <option key={bot.id} value={bot.id}>
+                  {bot.fullName} {profileSelectionLabel(bot)}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </label>

@@ -251,9 +251,9 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     name: 'Stockfish',
     rating: 3600,
     category: 'stockfish',
-    avatar: 'capture-toggle-stockfish-profile.jpeg',
+    avatar: 'capture-toggle-stockfish-profile.png',
     avatarStates: {
-      stockfish: 'capture-toggle-stockfish-profile.jpeg',
+      stockfish: 'capture-toggle-stockfish-profile.png',
       martin: 'martin-profile.png',
     },
     identityStates: {

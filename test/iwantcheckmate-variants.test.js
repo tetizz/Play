@@ -728,7 +728,7 @@ test('capture toggle changes identity and strength only after its own captures',
   assert.equal(stockfish.displayRating, 3600)
   assert.equal(stockfish.countryCode, 'us')
   assert.equal(stockfish.avatarState, 'stockfish')
-  assert.ok(stockfish.avatar.src.endsWith('capture-toggle-stockfish-profile.jpeg'))
+  assert.ok(stockfish.avatar.src.endsWith('capture-toggle-stockfish-profile.png'))
   assert.equal(martin.name, 'Martin')
   assert.equal(martin.displayRating, 250)
   assert.equal(martin.countryCode, 'bg')

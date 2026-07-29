@@ -199,11 +199,15 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     name: 'GeometricFish',
     rating: 3600,
     category: 'stockfish',
-    avatar: 'geometricfish-profile.jpeg',
-    description: 'Chooses among its strongest ideas in a geometric pattern.',
+    avatar: 'geometricfish-profile.svg',
+    description: 'Chooses Stockfish’s nth-best legal move with probability (1/2)^n: 50% first, 25% second, 12.5% third, and so on.',
     videoId: 'Y0zYxMYDDWQ',
     videoTitle: 'Stockfish, But It Plays nth Best Move Where P(n) = (1/2)^n',
-    movePolicy: { type: 'geometric-ranked', count: 6, firstWeight: 0.5 },
+    movePolicy: {
+      type: 'geometric-ranked',
+      firstWeight: 0.5,
+      allLegalMoves: true,
+    },
   }),
   videoVariant({
     id: 'iwc-random-top-three',
@@ -251,9 +255,9 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     name: 'Stockfish',
     rating: 3600,
     category: 'stockfish',
-    avatar: 'capture-toggle-stockfish-profile.png',
+    avatar: 'capture-toggle-stockfish-profile.svg',
     avatarStates: {
-      stockfish: 'capture-toggle-stockfish-profile.png',
+      stockfish: 'capture-toggle-stockfish-profile.svg',
       martin: 'martin-profile.png',
     },
     identityStates: {

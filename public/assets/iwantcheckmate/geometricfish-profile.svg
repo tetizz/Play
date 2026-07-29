@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title description">
+  <title id="title">GeometricFish</title>
+  <desc id="description">An original gold fish badge with descending one-half, one-quarter, and one-eighth probabilities.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171423"/>
+      <stop offset="1" stop-color="#40305d"/>
+    </linearGradient>
+    <linearGradient id="fish" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a6"/>
+      <stop offset=".45" stop-color="#e5b83f"/>
+      <stop offset="1" stop-color="#9a6517"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="190" fill="url(#background)"/>
+  <path d="M724 493c-70-141-222-220-371-165-79 29-144 91-182 165 38 74 103 136 182 165 149 55 301-24 371-165Z" fill="url(#fish)"/>
+  <path d="m702 493 154-142-15 142 15 142-154-142Z" fill="#c98a25"/>
+  <path d="M245 493c31-52 76-93 131-117-30 37-47 77-47 117s17 80 47 117c-55-24-100-65-131-117Z" fill="#fff4bd" opacity=".65"/>
+  <circle cx="438" cy="431" r="36" fill="#191525"/>
+  <circle cx="426" cy="420" r="10" fill="#fff"/>
+  <path d="M491 336c48-49 109-71 181-66-43 28-74 65-93 111" fill="none" stroke="#f5d878" stroke-width="30" stroke-linecap="round"/>
+  <g font-family="Segoe UI, Arial, sans-serif" font-weight="800" text-anchor="middle">
+    <rect x="105" y="735" width="244" height="112" rx="56" fill="#f4cf61"/>
+    <text x="227" y="810" font-size="64" fill="#251d34">1/2</text>
+    <rect x="390" y="765" width="220" height="96" rx="48" fill="#d7a43d"/>
+    <text x="500" y="831" font-size="54" fill="#251d34">1/4</text>
+    <rect x="651" y="792" width="190" height="82" rx="41" fill="#ac7626"/>
+    <text x="746" y="850" font-size="45" fill="#fff8dd">1/8</text>
+  </g>
+</svg>

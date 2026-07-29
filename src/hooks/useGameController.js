@@ -1239,10 +1239,8 @@ function initialBotDialogueLog(whiteProfile, blackProfile) {
   })
 }
 
-function variantUsesEvent(profile, field) {
-  if (field === 'botMoves' && profile?.variant?.movePolicy?.type === 'cycle') {
-    return true
-  }
+export function variantUsesEvent(profile, field) {
+  if (field === 'botMoves') return true
   return variantEventField(profile) === field
 }
 

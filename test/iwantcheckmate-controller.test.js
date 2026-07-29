@@ -12,6 +12,7 @@ const {
   pruneVariantEvents,
   requiresEveryLegalMove,
   resolveEvilMartinMode,
+  variantUsesEvent,
 } = await vite.ssrLoadModule('/src/hooks/useGameController.js')
 
 test.after(async () => {
@@ -33,13 +34,14 @@ test('best and worst triggers require the exact calibrated move', () => {
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'd2d4', candidates), false)
 })
 
-test('DrawFish and BlunderFish request exhaustive legal-move analysis', () => {
+test('DrawFish, BlunderFish, and exhaustive ranked bots request every legal move', () => {
   const profile = (type, allLegalMoves = false) => ({
     variant: { movePolicy: { type, allLegalMoves } },
   })
 
   assert.equal(requiresEveryLegalMove(profile('target-evaluation')), true)
   assert.equal(requiresEveryLegalMove(profile('random-blunder')), true)
+  assert.equal(requiresEveryLegalMove(profile('geometric-ranked', true)), true)
   assert.equal(requiresEveryLegalMove(profile('worst-move', true)), true)
   assert.equal(requiresEveryLegalMove(profile('best')), false)
 })
@@ -153,4 +155,17 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
   assert.equal(afterWake.evilAwake, true)
   assert.equal(afterWake.botMoves, 1)
   assert.equal(afterWake.botCaptures, 2)
+})
+
+test('capture toggle tracks move phase and capture state independently', () => {
+  const profile = {
+    variant: {
+      trigger: 'own-capture',
+      movePolicy: { type: 'capture-toggle' },
+    },
+  }
+
+  assert.equal(variantUsesEvent(profile, 'botMoves'), true)
+  assert.equal(variantUsesEvent(profile, 'botCaptures'), true)
+  assert.equal(variantUsesEvent(profile, 'botCaptureChecks'), false)
 })

@@ -72,7 +72,7 @@ const BOT_PROFILE_LIST = [
       chesscom: ['AA01001'],
     },
     goal: 'A recent-game version of Ayden with practical, low-noise feedback.',
-    intro: 'Ayden loves the french defense',
+    intro: 'Ayden loves the French Defense and keeps his comments focused on the position.',
     dialoguePolicy: 'ayden',
     capabilities: {
       beltMode: false,
@@ -115,7 +115,7 @@ const BOT_PROFILE_LIST = [
       lichess: [],
     },
     goal: 'A knight-focused tactical bot built from public games.',
-    intro: 'Akshit is the Knight maneuver loves to move his knight',
+    intro: 'Akshit is the Knight Manuveur. If a knight can move, he will find a reason to move it.',
     dialoguePolicy: 'akshit',
     capabilities: {
       beltMode: false,
@@ -159,7 +159,7 @@ const BOT_PROFILE_LIST = [
       lichess: [],
     },
     goal: 'A maximum-strength theory bot built from Trixize’s current repertoire.',
-    intro: 'Adriano plays the kings indian ie the best opening',
+    intro: 'Adriano plays the King\'s Indian, which he will happily tell you is the best opening.',
     dialoguePolicy: 'trixize',
     capabilities: {
       beltMode: false,
@@ -202,6 +202,91 @@ const BOT_PROFILE_LIST = [
       recentHalfLifeDays: 180,
       forceWhiteFirstMove: 'Nf3',
       repertoireTemperature: 0.72,
+    },
+  },
+  {
+    id: 'brian',
+    name: 'Brian',
+    fullName: 'Brian Arthur',
+    category: 'coach',
+    displayRating: 2400,
+    country: 'United States',
+    countryCode: 'us',
+    avatar: {
+      type: 'image',
+      src: './assets/brian-avatar.svg',
+      alt: 'Original Brian chess portrait',
+      objectPosition: '50% 50%',
+      scale: 1,
+    },
+    accounts: { chesscom: ['Bdot'], lichess: ['BrianART'] },
+    goal: 'Fast, tactical chess shaped by Brian’s public games.',
+    intro: 'Brian brings speed, tactics, and years of tournament coaching experience.',
+    dialoguePolicy: 'silent',
+    capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
+    strengthPolicy: {
+      engineElo: 2400, depth: 13, moveTime: 1200, candidates: 7,
+      styleWindowCp: 16, bookWindowCp: 28, bookMinGames: 6, bookMinRecentWeight: 0.9,
+    },
+    repertoireSource: {
+      chesscom: ['Bdot'], lichess: ['BrianART'], recentHalfLifeDays: 180,
+    },
+  },
+  {
+    id: 'kirk',
+    name: 'Kirk',
+    fullName: 'Kirk',
+    category: 'coach',
+    displayRating: 1900,
+    country: 'United States',
+    countryCode: 'us',
+    avatar: {
+      type: 'image',
+      src: './assets/kirk-avatar.svg',
+      alt: 'Original Kirk chess portrait',
+      objectPosition: '50% 50%',
+      scale: 1,
+    },
+    accounts: { chesscom: ['Mrlovechess432'], lichess: ['Coachkirk432'] },
+    goal: 'Practical speed-chess choices learned from Kirk’s public games.',
+    intro: 'Kirk keeps the position practical and the clock pressure high.',
+    dialoguePolicy: 'silent',
+    capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
+    strengthPolicy: {
+      engineElo: 1900, depth: 10, moveTime: 850, candidates: 5,
+      styleWindowCp: 26, bookWindowCp: 38, bookMinGames: 5, bookMinRecentWeight: 0.8,
+    },
+    repertoireSource: {
+      chesscom: ['Mrlovechess432'], lichess: ['Coachkirk432'], recentHalfLifeDays: 180,
+    },
+  },
+  {
+    id: 'alexander',
+    name: 'Alexander',
+    fullName: 'Alexander',
+    category: 'coach',
+    displayRating: 2706,
+    title: 'GM',
+    country: 'United States',
+    countryCode: 'us',
+    avatar: {
+      type: 'image',
+      src: './assets/alexander-avatar.svg',
+      alt: 'Original Alexander grandmaster portrait',
+      objectPosition: '50% 50%',
+      scale: 1,
+    },
+    accounts: { chesscom: ['AlexanderL'], lichess: [] },
+    goal: 'Grandmaster-level play informed by Alexander’s broad public game record.',
+    intro: 'Alexander brings grandmaster calculation and a deep competitive repertoire.',
+    dialoguePolicy: 'silent',
+    capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
+    strengthPolicy: {
+      engineElo: 2700, depth: 15, moveTime: 1500, candidates: 8,
+      styleWindowCp: 10, bookWindowCp: 20, bookMinGames: 6, bookMinRecentWeight: 0.75,
+    },
+    repertoireSource: {
+      chesscom: ['AlexanderL'], lichess: [], recentHalfLifeDays: 180, archiveWindow: 'all',
     },
   },
   {
@@ -335,6 +420,40 @@ async function loadStyleProfile(botId) {
       bookMaxPlies: 20,
       bookKeyType: 'position',
       learnedStyle: styleModule.GENERATED_AKSHIT_STYLE_PROFILE,
+    }
+  }
+
+  if (['brian', 'kirk', 'alexander'].includes(botId)) {
+    const modules = {
+      brian: [
+        () => import('./generatedRecentBrianRepertoireBook.js'),
+        () => import('./generatedBrianStyleProfile.js'),
+        'GENERATED_RECENT_BRIAN_REPERTOIRE_BOOK',
+        'GENERATED_BRIAN_STYLE_PROFILE',
+      ],
+      kirk: [
+        () => import('./generatedRecentKirkRepertoireBook.js'),
+        () => import('./generatedKirkStyleProfile.js'),
+        'GENERATED_RECENT_KIRK_REPERTOIRE_BOOK',
+        'GENERATED_KIRK_STYLE_PROFILE',
+      ],
+      alexander: [
+        () => import('./generatedRecentAlexanderRepertoireBook.js'),
+        () => import('./generatedAlexanderStyleProfile.js'),
+        'GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK',
+        'GENERATED_ALEXANDER_STYLE_PROFILE',
+      ],
+    }
+    const [loadBook, loadStyle, bookExport, styleExport] = modules[botId]
+    const [bookModule, styleModule] = await Promise.all([
+      loadBook().catch(() => ({})),
+      loadStyle().catch(() => ({})),
+    ])
+    return {
+      openingBook: bookModule[bookExport] || {},
+      bookMaxPlies: botId === 'alexander' ? 32 : 24,
+      bookKeyType: 'position',
+      learnedStyle: styleModule[styleExport] || null,
     }
   }
 

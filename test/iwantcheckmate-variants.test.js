@@ -26,7 +26,7 @@ const EXPECTED_NAMES = [
   'PanicFish',
   'TiltFish',
   'Smartin',
-  'Tony',
+  'Martin',
   'TiredFish',
   'BlunderFish',
   'GeometricFish',
@@ -102,72 +102,38 @@ test('GeometricFish follows the source geometric rank distribution boundaries', 
   assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.999999).rank, 6)
 })
 
-test('every IWantCheckmate bot has an introduction and situational dialogue', () => {
+test('every IWantCheckmate bot keeps its copy dormant at runtime', () => {
   for (const profile of IWANTCHECKMATE_VIDEO_PROFILES) {
-    const scriptedIntroduction = initialDialogue(profile)
-    assert.ok(
-      (scriptedIntroduction || profile.intro).length > 20,
-      `${profile.name} introduction`,
-    )
-    if (!scriptedIntroduction) continue
-
-    assert.ok(dialogueAfterBotMove(profile, {
+    assert.equal(initialDialogue(profile), '')
+    assert.equal(dialogueAfterBotMove(profile, {
       move: { piece: 'n', san: 'Nf3' },
-      capturedValue: 0,
-      isCheck: false,
-      isCheckmate: false,
-      isFreePiece: false,
-      opponentBlunder: false,
-      isWinning: false,
       variantElo: profile.variant.initialElo,
       variantEloDelta: 0,
-    }).length > 5, `${profile.name} quiet line`)
-    assert.ok(dialogueAfterBotMove(profile, {
-      move: { piece: 'q', san: 'Qh5+' },
-      capturedValue: 0,
-      isCheck: true,
-      isCheckmate: false,
-      isFreePiece: false,
-      opponentBlunder: false,
-      isWinning: false,
-      variantElo: profile.variant.initialElo,
-      variantEloDelta: 0,
-    }).length > 5, `${profile.name} check line`)
-    assert.notEqual(dialogueAfterBotMove(profile, {
-      move: { piece: 'n', san: 'Nf3' },
-      capturedValue: 0,
-      isCheck: false,
-      isCheckmate: false,
-      isFreePiece: false,
-      opponentBlunder: false,
-      isWinning: true,
-      variantElo: profile.variant.initialElo,
-      variantEloDelta: 0,
-    }), 'Good game.', `${profile.name} live winning line`)
-    assert.ok(dialogueForGameEnd(profile, 'Bot wins by checkmate').length > 5)
+    }), '')
+    assert.equal(dialogueForGameEnd(profile, 'Bot wins by checkmate'), '')
   }
 })
 
-test('dynamic video-bot dialogue reports the real Elo change', () => {
+test('dynamic video-bot rating changes do not trigger visible dialogue', () => {
   const pityFish = getIWantCheckmateProfile('iwc-worst-move')
   const smartin = getIWantCheckmateProfile('iwc-smartin')
 
-  assert.match(dialogueAfterBotMove(pityFish, {
+  assert.equal(dialogueAfterBotMove(pityFish, {
     variantElo: 3100,
     variantEloDelta: -500,
-  }), /500/)
-  assert.match(dialogueAfterBotMove(smartin, {
+  }), '')
+  assert.equal(dialogueAfterBotMove(smartin, {
     variantElo: 350,
     variantEloDelta: 100,
-  }), /100|350/)
-  assert.ok(dialogueForBotBattle(
+  }), '')
+  assert.equal(dialogueForBotBattle(
     smartin,
     {
       variantElo: 450,
       variantEloDelta: 100,
     },
       pityFish,
-    ).length > 5)
+    ), '')
 
   const rivalryLine = dialogueForBotBattle(
     pityFish,
@@ -183,7 +149,7 @@ test('dynamic video-bot dialogue reports the real Elo change', () => {
     },
     smartin,
   )
-  assert.match(rivalryLine, /Smartin/)
+  assert.equal(rivalryLine, '')
   assert.doesNotMatch(rivalryLine, /\{opponent\}/)
 })
 
@@ -192,7 +158,7 @@ test('running Elo follows only the source-video trigger', () => {
   const check = getIWantCheckmateProfile('iwc-give-check')
   const best = getIWantCheckmateProfile('iwc-best-move')
   const smartin = getIWantCheckmateProfile('iwc-smartin')
-  const tony = getIWantCheckmateProfile('iwc-tony-gains')
+  const bestMoveMartin = getIWantCheckmateProfile('iwc-best-move-martin')
   const decay = getIWantCheckmateProfile('iwc-elo-decay')
   const hungry = getIWantCheckmateProfile('iwc-hungry-martin')
   const captureToggle = getIWantCheckmateProfile('iwc-capture-toggle')
@@ -204,11 +170,11 @@ test('running Elo follows only the source-video trigger', () => {
   assert.equal(runningVariantElo(check, { opponentChecks: 3 }), 2700)
   assert.equal(runningVariantElo(best, { opponentBestMoves: 5 }), 3100)
   assert.equal(runningVariantElo(smartin, { botMoves: 4 }), 650)
-  assert.equal(runningVariantElo(tony), 250)
-  assert.equal(runningVariantElo(tony, { opponentNonBestMoves: 1 }), 450)
-  assert.equal(runningVariantElo(tony, { opponentNonBestMoves: 16 }), 3450)
-  assert.equal(runningVariantElo(tony, { opponentNonBestMoves: 17 }), 3600)
-  assert.equal(runningVariantElo(tony, { opponentNonBestMoves: 99 }), 3600)
+  assert.equal(runningVariantElo(bestMoveMartin), 250)
+  assert.equal(runningVariantElo(bestMoveMartin, { opponentNonBestMoves: 1 }), 450)
+  assert.equal(runningVariantElo(bestMoveMartin, { opponentNonBestMoves: 16 }), 3450)
+  assert.equal(runningVariantElo(bestMoveMartin, { opponentNonBestMoves: 17 }), 3600)
+  assert.equal(runningVariantElo(bestMoveMartin, { opponentNonBestMoves: 99 }), 3600)
   assert.equal(runningVariantElo(decay, { botMoves: 100 }), 100)
   assert.equal(runningVariantElo(hungry, { botCaptureChecks: 2 }), 2250)
   assert.equal(runningVariantElo(captureToggle, { botCaptures: 0 }), 3600)
@@ -222,15 +188,15 @@ test('running Elo follows only the source-video trigger', () => {
   assert.equal(runningVariantElo(check, { botMoves: 99 }), 3600)
   assert.equal(variantEventField(hungry), 'botCaptureChecks')
   assert.equal(variantEventField(captureToggle), 'botCaptures')
-  assert.equal(variantEventField(tony), 'opponentNonBestMoves')
+  assert.equal(variantEventField(bestMoveMartin), 'opponentNonBestMoves')
   assert.equal(variantEngineElo(worst), undefined)
   assert.equal(variantEngineElo(worst, { opponentWorstMoves: 1 }), 3100)
   assert.equal(variantEngineElo(smartin), undefined)
   assert.equal(variantEngineElo(smartin, { botMoves: 32 }), undefined)
   assert.equal(variantEngineElo(smartin, { botMoves: 33 }), undefined)
   assert.equal(variantEngineElo(smartin, { botMoves: 34 }), undefined)
-  assert.equal(variantEngineElo(tony), undefined)
-  assert.equal(variantEngineElo(tony, { opponentNonBestMoves: 6 }), 1450)
+  assert.equal(variantEngineElo(bestMoveMartin), undefined)
+  assert.equal(variantEngineElo(bestMoveMartin, { opponentNonBestMoves: 6 }), 1450)
 })
 
 test('ratings above native UCI Elo use a monotonic near-best selector', () => {
@@ -320,7 +286,7 @@ test('each dynamic variant reads only its declared trigger counter', () => {
     ['iwc-give-check', 'opponentChecks', 3300],
     ['iwc-best-move', 'opponentBestMoves', 3500],
     ['iwc-smartin', 'botMoves', 350],
-    ['iwc-tony-gains', 'opponentNonBestMoves', 450],
+    ['iwc-best-move-martin', 'opponentNonBestMoves', 450],
     ['iwc-elo-decay', 'botMoves', 3550],
     ['iwc-hungry-martin', 'botCaptureChecks', 1250],
     ['iwc-capture-toggle', 'botCaptures', 250],

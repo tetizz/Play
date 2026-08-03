@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Flag, Home, RotateCcw, X } from 'lucide-react'
 import { getBotProfile } from '../data/botProfiles'
+import { DIALOGUE_RUNTIME_ENABLED } from '../data/dialogue'
 import { materialDisplayFromHistory } from '../lib/materialDisplay'
 import { Avatar, PlayerStrip } from './Identity'
 import { BoardSurface } from './BoardSurface'
@@ -106,13 +107,13 @@ export function GameScreen({ controller }) {
           : <PlayerStrip player={player} side="bottom" material={materialFor(bottomProfileColor)} />}
       </section>
       <aside className="game-sidebar">
-        {botMatch ? (
+        {DIALOGUE_RUNTIME_ENABLED && botMatch ? (
           <BotConversation
             entries={dialogueLog}
             whiteProfile={whiteProfile}
             blackProfile={blackProfile}
           />
-        ) : profile.dialoguePolicy !== 'silent' ? (
+        ) : DIALOGUE_RUNTIME_ENABLED && profile.dialoguePolicy !== 'silent' ? (
           <div
             className={`dialogue-row ${message ? 'bot-speaking' : ''}`}
             key={`${profile.id}-${speechEventId}`}

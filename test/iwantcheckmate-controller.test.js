@@ -176,7 +176,7 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
   assert.equal(afterWake.botCaptures, 2)
   assert.equal(afterWake.opponentNonBestMoves, 2)
 })
-test('Tony records only the non-best opponent counter', () => {
+test('best-move Martin records only the non-best opponent counter', () => {
   const profile = {
     variant: {
       trigger: 'opponent-non-best-move',

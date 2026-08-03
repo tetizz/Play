@@ -37,6 +37,43 @@ const PROFILES = {
       { site: 'chess.com', username: 'knightmanuveur_12' },
     ],
   },
+  brian: {
+    label: 'Brian',
+    bookFile: 'generatedRecentBrianRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_BRIAN_REPERTOIRE_BOOK',
+    styleFile: 'generatedBrianStyleProfile.js',
+    styleExport: 'GENERATED_BRIAN_STYLE_PROFILE',
+    accounts: [
+      { site: 'chess.com', username: 'Bdot' },
+      { site: 'lichess', username: 'BrianART' },
+    ],
+  },
+  kirk: {
+    label: 'Kirk',
+    bookFile: 'generatedRecentKirkRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_KIRK_REPERTOIRE_BOOK',
+    styleFile: 'generatedKirkStyleProfile.js',
+    styleExport: 'GENERATED_KIRK_STYLE_PROFILE',
+    accounts: [
+      { site: 'chess.com', username: 'Mrlovechess432' },
+      { site: 'lichess', username: 'Coachkirk432' },
+    ],
+  },
+  alexander: {
+    label: 'Alexander',
+    bookFile: 'generatedRecentAlexanderRepertoireBook.js',
+    bookExport: 'GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK',
+    styleFile: 'generatedAlexanderStyleProfile.js',
+    styleExport: 'GENERATED_ALEXANDER_STYLE_PROFILE',
+    chessComArchiveMonths: null,
+    maxBookPlies: 32,
+    maxMovesPerPosition: 12,
+    minRecentWeight: 0.01,
+    maxBookPositions: 20000,
+    accounts: [
+      { site: 'chess.com', username: 'AlexanderL' },
+    ],
+  },
   trixize: {
     label: 'Trixize',
     bookFile: 'generatedRecentTrixizeRepertoireBook.js',

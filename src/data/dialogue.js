@@ -1,5 +1,8 @@
 import { DIALOGUE_CATALOG, getDialoguePack } from './dialogueCatalog.js'
 
+// Dialogue is retained as dormant content, but no bot speech reaches the UI.
+export const DIALOGUE_RUNTIME_ENABLED = false
+
 export const IWANTCHECKMATE_LINES = Object.freeze(
   Object.fromEntries(
     Object.entries(DIALOGUE_CATALOG).filter(([profileId]) =>
@@ -207,7 +210,7 @@ function shuffle(lines) {
 }
 
 function canSpeak(profile) {
-  return Boolean(profile && profile.dialoguePolicy !== 'silent')
+  return Boolean(DIALOGUE_RUNTIME_ENABLED && profile && profile.dialoguePolicy !== 'silent')
 }
 
 function addressOpponent(line, opponentName) {

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Original Alexander grandmaster portrait">
+  <rect width="256" height="256" rx="34" fill="#202b35"/><circle cx="128" cy="90" r="53" fill="#d9a076"/>
+  <path d="M72 90c2-46 24-69 57-69 36 0 59 25 57 70-18-14-37-21-58-21-20 0-39 7-56 20z" fill="#49362e"/>
+  <path d="M48 245c5-68 35-102 80-102s75 34 80 102z" fill="#6b2335"/><circle cx="108" cy="91" r="6" fill="#171717"/><circle cx="150" cy="91" r="6" fill="#171717"/>
+  <path d="M106 118c14 10 29 10 44 0" fill="none" stroke="#784c3d" stroke-width="7" stroke-linecap="round"/>
+  <rect x="80" y="174" width="96" height="46" rx="8" fill="#b51f36"/><text x="128" y="207" fill="white" font-family="Arial,sans-serif" font-size="29" font-weight="700" text-anchor="middle">GM</text>
+</svg>

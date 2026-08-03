@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Original Kirk chess portrait">
+  <rect width="256" height="256" rx="34" fill="#3b2f53"/><circle cx="128" cy="91" r="53" fill="#b87952"/>
+  <path d="M71 91c2-47 25-70 58-70 37 0 60 26 57 73-17-19-37-28-59-28-20 0-39 8-56 25z" fill="#282126"/>
+  <path d="M47 245c6-68 36-102 81-102s75 34 81 102z" fill="#d95d39"/><circle cx="108" cy="91" r="6" fill="#171717"/><circle cx="150" cy="91" r="6" fill="#171717"/>
+  <path d="M105 118c15 11 31 11 46 0" fill="none" stroke="#62372d" stroke-width="7" stroke-linecap="round"/>
+  <path d="M100 177h56v47h-56z" fill="#f4e7d3"/><path d="M110 213h36l-6-21h-24zM119 184a9 9 0 1 1 18 0 9 9 0 0 1-18 0z" fill="#3b2f53"/>
+</svg>

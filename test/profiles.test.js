@@ -6,7 +6,6 @@ import {
   getBotProfile,
   loadBotStyleProfile,
 } from '../src/data/botProfiles.js'
-import { DIALOGUE_EVENTS, getDialoguePack } from '../src/data/dialogueCatalog.js'
 import { dialogueAfterBotMove, dialogueForBotBattle } from '../src/data/dialogue.js'
 import { TRIXIZE_OPENING_BOOK } from '../src/data/trixizeOpeningBook.js'
 import {
@@ -39,10 +38,10 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 8)
   assert.equal(getBotProfile('trixize').capabilities.maximumEngine, true)
   assert.equal(getBotProfile('trixize').capabilities.exactTablebase, true)
-  assert.equal(getBotProfile('ayden').intro, 'Ayden loves the french defense')
+  assert.equal(getBotProfile('ayden').intro, 'Ayden loves the French Defense and keeps his comments focused on the position.')
   assert.equal(
     getBotProfile('akshit').intro,
-    'Akshit is the Knight maneuver loves to move his knight',
+    'Akshit is the Knight Manuveur. If a knight can move, he will find a reason to move it.',
   )
   assert.equal(getBotProfile('iwc-worst-move').name, 'PityFish')
   assert.equal(getBotProfile('iwc-worst-move').displayRating, 3600)
@@ -54,23 +53,23 @@ test('public and video bot profiles expose the requested ratings and capabilitie
     getBotProfile('iwc-smartin').videoLabel,
     'Starts at 250 and gains 100 Elo after every move.',
   )
-  assert.equal(getBotProfile('iwc-tony-gains').name, 'Tony')
-  assert.equal(getBotProfile('iwc-tony-gains').displayRating, 250)
-  assert.equal(getBotProfile('iwc-tony-gains').category, 'martin')
-  assert.equal(getBotProfile('iwc-tony-gains').source.videoId, 'nx6jkHl2k_Y')
+  assert.equal(getBotProfile('iwc-best-move-martin').name, 'Martin')
+  assert.equal(getBotProfile('iwc-best-move-martin').displayRating, 250)
+  assert.equal(getBotProfile('iwc-best-move-martin').category, 'martin')
+  assert.equal(getBotProfile('iwc-best-move-martin').source.videoId, 'nx6jkHl2k_Y')
   assert.equal(
-    getBotProfile('iwc-tony-gains').source.videoTitle,
+    getBotProfile('iwc-best-move-martin').source.videoTitle,
     'Martin, But He Gains 200 ELO If I DON\'T Make the Best Move',
   )
-  assert.equal(getBotProfile('iwc-tony-gains').variant.eloDelta, 200)
-  assert.equal(getBotProfile('iwc-tony-gains').variant.maxElo, 3600)
-  assert.equal(getBotProfile('iwc-tony-gains').variant.movePolicy.type, 'rating-strength')
+  assert.equal(getBotProfile('iwc-best-move-martin').variant.eloDelta, 200)
+  assert.equal(getBotProfile('iwc-best-move-martin').variant.maxElo, 3600)
+  assert.equal(getBotProfile('iwc-best-move-martin').variant.movePolicy.type, 'rating-strength')
   assert.equal(
-    getBotProfile('iwc-tony-gains').variant.movePolicy.ruleStatus,
+    getBotProfile('iwc-best-move-martin').variant.movePolicy.ruleStatus,
     'implemented-unverified',
   )
   assert.deepEqual(
-    getBotProfile('iwc-tony-gains').variant.movePolicy.unverifiedAssumptions,
+    getBotProfile('iwc-best-move-martin').variant.movePolicy.unverifiedAssumptions,
     [
       '3600-elo-cap',
       'equal-score-rank-two-counts-as-non-best',
@@ -193,7 +192,7 @@ test('belt mode is isolated to Mubassar', () => {
   assert.equal(shouldActivateBeltMode(getBotProfile('akshit'), history, 'white'), false)
 })
 
-test('Akshit must take a clearly superior knight move and uses his own dialogue set', () => {
+test('Akshit must take a clearly superior knight move while dialogue is disabled', () => {
   const game = new Chess()
   const profile = getBotProfile('akshit')
   const decision = chooseCoachMove(
@@ -206,31 +205,21 @@ test('Akshit must take a clearly superior knight move and uses his own dialogue 
     { openingBook: {}, bookMaxPlies: 0 },
   )
   assert.equal(decision.move.piece, 'n')
-  assert.equal(dialogueAfterBotMove(profile, { move: decision.move }), 'I am the knight manuveur.')
-  const ownLines = new Set(
-    DIALOGUE_EVENTS.flatMap((event) => getDialoguePack(profile.id)[event]),
-  )
-  assert.ok(ownLines.has(dialogueAfterBotMove(profile, { move: { piece: 'p' } })))
-  assert.ok(ownLines.has(
-    dialogueAfterBotMove(profile, { move: { piece: 'p' }, isWinning: true }),
-  ))
-  assert.ok(ownLines.has(
-    dialogueAfterBotMove(profile, { move: { piece: 'p' }, isFreePiece: true }),
-  ))
+  assert.equal(dialogueAfterBotMove(profile, { move: decision.move }), '')
 })
 
-test('bot battles always produce visible dialogue for both sides', () => {
+test('bot battles do not produce visible dialogue', () => {
   const ayden = getBotProfile('ayden')
   const akshit = getBotProfile('akshit')
-  assert.match(dialogueAfterBotMove(ayden, { move: { piece: 'p' } }), /.+/)
-  assert.match(dialogueForBotBattle(ayden, { move: { piece: 'p' } }, akshit), /^Akshit[,.] /)
-  assert.match(dialogueForBotBattle(akshit, { move: { piece: 'p' } }, ayden), /^Ayden[,.] /)
+  assert.equal(dialogueAfterBotMove(ayden, { move: { piece: 'p' } }), '')
+  assert.equal(dialogueForBotBattle(ayden, { move: { piece: 'p' } }, akshit), '')
+  assert.equal(dialogueForBotBattle(akshit, { move: { piece: 'p' } }, ayden), '')
 })
 
-test('Trixize starts with Nf3 and uses only the requested short dialogue', () => {
+test('Trixize starts with Nf3 while dialogue is disabled', () => {
   const game = new Chess()
   const profile = getBotProfile('trixize')
-  assert.equal(profile.intro, 'Adriano plays the kings indian ie the best opening')
+  assert.equal(profile.intro, "Adriano plays the King's Indian, which he will happily tell you is the best opening.")
   const decision = chooseCoachMove(
     game,
     [
@@ -241,15 +230,12 @@ test('Trixize starts with Nf3 and uses only the requested short dialogue', () =>
     { openingBook: {}, bookMaxPlies: 0 },
   )
   assert.equal(decision.move.san, 'Nf3')
-  assert.equal(dialogueAfterBotMove(profile, { isTrixizeFirstMove: true }), '1. Nf3 is the starting move.')
-  assert.equal(dialogueAfterBotMove(profile, { isTheoryBest: true }), 'Best move. Too much theory.')
-  assert.equal(dialogueAfterBotMove(profile, { isFreePiece: true }), 'Oops.')
-  assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), 'Rahh!')
-  assert.equal(dialogueAfterBotMove(profile, { opponentHungQueen: true }), 'Where did your queen go?')
-  assert.equal(
-    dialogueAfterBotMove(profile, { isBishopKnightObjective: true }),
-    "I'm going to checkmate you with a bishop and knight.",
-  )
+  assert.equal(dialogueAfterBotMove(profile, { isTrixizeFirstMove: true }), '')
+  assert.equal(dialogueAfterBotMove(profile, { isTheoryBest: true }), '')
+  assert.equal(dialogueAfterBotMove(profile, { isFreePiece: true }), '')
+  assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), '')
+  assert.equal(dialogueAfterBotMove(profile, { opponentHungQueen: true }), '')
+  assert.equal(dialogueAfterBotMove(profile, { isBishopKnightObjective: true }), '')
 })
 
 test('Trixize uses unlimited Stockfish strength and deeper conversion searches', () => {
@@ -290,7 +276,7 @@ test('Trixize can underpromote into a bishop and knight mating objective', () =>
 
   const context = moveContext(game, decision.move, decision, false, false, profile)
   assert.equal(context.isBishopKnightObjective, true)
-  assert.equal(dialogueAfterBotMove(profile, context), "I'm going to checkmate you with a bishop and knight.")
+  assert.equal(dialogueAfterBotMove(profile, context), '')
 
   const after = new Chess(game.fen())
   after.move(decision.move)
@@ -603,7 +589,7 @@ test('Trixize notices a genuinely hung queen', () => {
   const decision = { move: capture, source: 'engine-best', rank: 1, score: 900 }
   const context = moveContext(game, capture, decision, false, false, getBotProfile('trixize'))
   assert.equal(context.opponentHungQueen, true)
-  assert.equal(dialogueAfterBotMove(getBotProfile('trixize'), context), 'Where did your queen go?')
+  assert.equal(dialogueAfterBotMove(getBotProfile('trixize'), context), '')
 })
 
 test('Trixize follows the full position repertoire after the forced Nf3 start', () => {
@@ -801,7 +787,7 @@ test('Trixize rejects an unsafe familiar Black move for a safe repertoire altern
   assert.equal(decision.source, 'repertoire')
 })
 
-test('Witty Alien forces e4 and keeps his signature reactions', () => {
+test('Witty Alien forces e4 while dialogue is disabled', () => {
   const profile = getBotProfile('witty-alien')
   const game = new Chess()
   const decision = chooseCoachMove(
@@ -814,14 +800,8 @@ test('Witty Alien forces e4 and keeps his signature reactions', () => {
     { openingBook: {}, bookMaxPlies: 0 },
   )
   assert.equal(decision.move.san, 'e4')
-  assert.equal(
-    dialogueAfterBotMove(profile, { isOpeningMove: true }),
-    'I am the destroyer of the Caro-Kann.',
-  )
-  assert.equal(
-    dialogueAfterBotMove(profile, { isBrilliant: true }),
-    'BRILLIANT!!',
-  )
+  assert.equal(dialogueAfterBotMove(profile, { isOpeningMove: true }), '')
+  assert.equal(dialogueAfterBotMove(profile, { isBrilliant: true }), '')
 })
 
 test('Witty Alien forces his Alien and Martian Gambit theory', () => {

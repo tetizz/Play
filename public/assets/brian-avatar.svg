@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Original Brian chess portrait">
+  <rect width="256" height="256" rx="34" fill="#17324d"/><circle cx="128" cy="92" r="54" fill="#9b623f"/>
+  <path d="M72 91c2-48 25-70 58-70 38 0 61 26 57 75-20-17-39-25-58-25-22 0-41 7-57 20z" fill="#1b1715"/>
+  <path d="M48 245c4-69 35-103 80-103s76 34 80 103z" fill="#2a9d8f"/><circle cx="108" cy="91" r="6" fill="#171717"/><circle cx="150" cy="91" r="6" fill="#171717"/>
+  <path d="M104 118c16 12 33 12 49 0" fill="none" stroke="#532f26" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="128" cy="194" r="25" fill="#ffd166"/><path d="M115 208h26l-5-16h-16zM121 187a7 7 0 1 1 14 0 7 7 0 0 1-14 0z" fill="#17324d"/>
+</svg>

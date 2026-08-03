@@ -536,16 +536,16 @@ test('a manually finished review remains a review after session restoration', ()
   }
 })
 
-test('session restoration preserves Tony non-best counters and markers', () => {
+test('session restoration preserves best-move Martin counters and markers', () => {
   const previousLocalStorage = globalThis.localStorage
   globalThis.localStorage = {
     getItem() {
       return JSON.stringify({
         phase: 'game',
         history: ['e4', 'e5', 'Nf3'],
-        botId: 'iwc-tony-gains',
+        botId: 'iwc-best-move-martin',
         variantEvents: {
-          'iwc-tony-gains': {
+          'iwc-best-move-martin': {
             opponentNonBestMoves: 2,
             applied: ['opponentNonBestMoves:1', 'opponentNonBestMoves:3'],
           },
@@ -555,9 +555,9 @@ test('session restoration preserves Tony non-best counters and markers', () => {
   }
   try {
     const restored = loadSession()
-    assert.equal(restored.variantEvents['iwc-tony-gains'].opponentNonBestMoves, 2)
+    assert.equal(restored.variantEvents['iwc-best-move-martin'].opponentNonBestMoves, 2)
     assert.deepEqual(
-      restored.variantEvents['iwc-tony-gains'].applied,
+      restored.variantEvents['iwc-best-move-martin'].applied,
       ['opponentNonBestMoves:1', 'opponentNonBestMoves:3'],
     )
   } finally {

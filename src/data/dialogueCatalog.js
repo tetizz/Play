@@ -260,9 +260,9 @@ const smartin = voice(
   ],
 )
 
-const tony = voice(
+const bestMoveMartin = voice(
   {
-    intro: 'Tony arrives at 250 with a notebook full of second chances.',
+    intro: 'Martin arrives at 250 with a notebook full of second chances.',
     opening: 'The first few squares decide how quickly this gets serious.',
     quiet: 'Another quiet choice, another little step upward.',
     capture: 'That piece is gone, and the number beside my name keeps climbing.',
@@ -770,7 +770,7 @@ export const DIALOGUE_CATALOG = Object.freeze({
   'iwc-give-check': panicFish,
   'iwc-best-move': tiltFish,
   'iwc-smartin': smartin,
-  'iwc-tony-gains': tony,
+  'iwc-best-move-martin': bestMoveMartin,
   'iwc-elo-decay': tiredFish,
   'iwc-random-blunder': blunderFish,
   'iwc-random-top-three': randomFish,

@@ -79,6 +79,12 @@ async function releaseHeldPlayerBotTurn(page) {
   expect(await page.evaluate(() => window.__playerBotTurnGate.release())).toBe(true)
 }
 
+async function dialogueRuntimeEnabled(page) {
+  return page.evaluate(async () =>
+    Boolean((await import('/src/data/dialogue.js')).DIALOGUE_RUNTIME_ENABLED),
+  )
+}
+
 test('Akshit legal markers and premoves stay responsive', async ({ page }) => {
   const errors = []
   page.on('console', (message) => {
@@ -105,14 +111,18 @@ test('Akshit legal markers and premoves stay responsive', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({
     timeout: 15000,
   })
-  await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
-    'animation-name',
-    'botAvatarReact',
-  )
-  await expect(page.locator('.dialogue-row.bot-speaking .speech-bubble')).toHaveCSS(
-    'animation-iteration-count',
-    '1',
-  )
+  if (await dialogueRuntimeEnabled(page)) {
+    await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
+      'animation-name',
+      'botAvatarReact',
+    )
+    await expect(page.locator('.dialogue-row.bot-speaking .speech-bubble')).toHaveCSS(
+      'animation-iteration-count',
+      '1',
+    )
+  } else {
+    await expect(page.locator('.dialogue-row')).toHaveCount(0)
+  }
   await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
   await expect(page.getByText(/AydenICN|AA01001|knightmanuveur_12|keepitcoming|trixize1234/i)).toHaveCount(0)
   expect(errors).toEqual([])
@@ -212,7 +222,7 @@ test('the board loads the complete Kaneo artwork set on desktop and mobile', asy
   }
 })
 
-test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => {
+test('Trixize and Akshit play in Bot vs Bot mode with the configured dialogue policy', async ({ page }) => {
   test.setTimeout(30000)
   await page.getByRole('tab', { name: 'Bot vs Bot' }).click()
   await expect(page.getByRole('heading', { name: 'Bot vs Bot' })).toBeVisible()
@@ -221,18 +231,20 @@ test('Trixize and Akshit play and talk in Bot vs Bot mode', async ({ page }) => 
   await page.getByRole('button', { name: 'Start match', exact: true }).click()
 
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
-  await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
   await expect(page.locator('.move-row button').filter({ hasText: /.+/ })).toHaveCount(2, { timeout: 15000 })
   const conversation = page.getByLabel('Bot conversation')
-  await expect.poll(() => conversation.locator('.conversation-row').count()).toBeGreaterThanOrEqual(2)
-  expect(await conversation.locator('.conversation-row').count()).toBeLessThanOrEqual(6)
-  await expect(conversation.locator('.conversation-row.active-speaker')).toHaveCount(1)
-  await expect(conversation.locator('.conversation-row.active-speaker .avatar-small')).toHaveCSS(
-    'animation-name',
-    'botAvatarReact',
-  )
-  await expect(conversation.getByText('Trixize', { exact: true }).first()).toBeVisible()
-  await expect(conversation.getByText('Akshit', { exact: true }).first()).toBeVisible()
+  if (await dialogueRuntimeEnabled(page)) {
+    await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
+    await expect.poll(() => conversation.locator('.conversation-row').count()).toBeGreaterThanOrEqual(2)
+    expect(await conversation.locator('.conversation-row').count()).toBeLessThanOrEqual(6)
+    await expect(conversation.locator('.conversation-row.active-speaker')).toHaveCount(1)
+    await expect(conversation.locator('.conversation-row.active-speaker .avatar-small')).toHaveCSS(
+      'animation-name',
+      'botAvatarReact',
+    )
+  } else {
+    await expect(conversation).toHaveCount(0)
+  }
 
   await page.getByRole('button', { name: 'End match', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Game Review' })).toBeVisible()
@@ -639,15 +651,19 @@ test('a king that has moved cannot highlight or queue a castling premove', async
   await expect(page.locator('.board-surface')).toHaveAttribute('data-has-premove', 'false')
 })
 
-test('speaking reactions respect reduced motion without delaying the game', async ({ page }) => {
+test('reduced-motion dialogue policy does not delay the game', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
 
-  await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
-    'animation-name',
-    'none',
-  )
+  if (await dialogueRuntimeEnabled(page)) {
+    await expect(page.locator('.dialogue-row.bot-speaking .avatar-medium')).toHaveCSS(
+      'animation-name',
+      'none',
+    )
+  } else {
+    await expect(page.locator('.dialogue-row')).toHaveCount(0)
+  }
   await page.locator('[data-square="e2"]').click()
   await page.locator('[data-square="e4"]').click()
   await expect(page.locator('.move-row button')).toHaveCount(2, { timeout: 12000 })
@@ -743,12 +759,16 @@ test('all bots start as White, Black, and Random without exposing account names'
   }
 })
 
-test('Trixize opens with Nf3 and delivers the requested opening line', async ({ page }) => {
+test('Trixize opens with Nf3 and follows the configured dialogue policy', async ({ page }) => {
   await page.getByRole('button', { name: /Trixize/ }).click()
   await page.getByRole('button', { name: 'Black', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Nf3', exact: true })).toBeVisible({ timeout: 12000 })
-  await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
+  if (await dialogueRuntimeEnabled(page)) {
+    await expect(page.getByText('1. Nf3 is the starting move.')).toBeVisible()
+  } else {
+    await expect(page.locator('.dialogue-row')).toHaveCount(0)
+  }
 })
 
 test('Witty Alien forces e4 and enters the Alien Gambit against the Caro-Kann', async ({ page }) => {

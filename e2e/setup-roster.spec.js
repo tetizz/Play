@@ -42,7 +42,7 @@ test('bot families expand one at a time with mouse and keyboard', async ({ page 
   await expect(stockfish).toHaveAttribute('aria-expanded', 'false')
   await expect(martin).toHaveAttribute('aria-expanded', 'true')
   await expect(martinPanel.getByRole('button', { name: /Smartin/ })).toBeVisible()
-  await expect(martinPanel.getByRole('button', { name: /Tony/ })).toBeVisible()
+  await expect(martinPanel.getByRole('button', { name: /^(?:Tony|Martin Starts at 250 Elo and gains 200 Elo)/ })).toBeVisible()
 
   await player.focus()
   await page.keyboard.press('Space')

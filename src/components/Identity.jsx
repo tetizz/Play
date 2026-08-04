@@ -113,16 +113,23 @@ function CapturedMaterial({ material }) {
 
 function EloRating({ rating, event = null }) {
   if (!Number.isFinite(rating)) return null
+  const deltaLabel = event?.delta > 0
+    ? `+${event.delta}`
+    : event?.delta < 0
+      ? `${event.delta}`
+      : 'No change'
+  const eventLabel = event?.reason ? `${deltaLabel} - ${event.reason}` : deltaLabel
+  const eventTone = event?.delta > 0 ? 'gain' : event?.delta < 0 ? 'loss' : 'steady'
   return (
     <span className="elo-rating-wrap">
       <span className="elo-rating">{`(${rating})`}</span>
       {event ? (
         <span
-          className={`elo-delta ${event.delta > 0 ? 'gain' : 'loss'}`}
+          className={`elo-delta ${eventTone}`}
           key={event.id}
-          aria-label={`${event.delta > 0 ? 'Gained' : 'Lost'} ${Math.abs(event.delta)} Elo`}
+          aria-label={eventLabel}
         >
-          {event.delta > 0 ? '+' : ''}{event.delta}
+          {eventLabel}
         </span>
       ) : null}
     </span>

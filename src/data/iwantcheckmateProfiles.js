@@ -190,13 +190,10 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     eloDelta: 200,
     movePolicy: {
       type: 'rating-strength',
-      bestMoveContract: 'exact-rank-1',
-      ruleStatus: 'implemented-unverified',
-      unverifiedAssumptions: [
-        '3600-elo-cap',
-        'equal-score-rank-two-counts-as-non-best',
-        'depth-14-rank-one-without-evaluation-tolerance',
-      ],
+      bestMoveContract: 'centipawn-tolerance',
+      bestMoveToleranceCp: 20,
+      ruleStatus: 'implemented',
+      unverifiedAssumptions: ['3600-elo-cap'],
     },
   }),
   videoVariant({

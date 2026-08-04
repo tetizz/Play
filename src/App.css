@@ -1108,17 +1108,30 @@ button {
   top: 0;
   left: 0;
   display: block;
-  min-width: max-content;
+  max-width: min(72vw, 360px);
+  padding: 4px 6px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 4px;
+  background: rgb(9 11 12 / 92%);
   color: #f4f2ed;
+  font-size: 0.72rem;
   font-weight: 800;
-  line-height: 1;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   pointer-events: none;
   transform: translate3d(0, 0, 0);
-  animation: eloDeltaFallsAway 950ms cubic-bezier(0.2, 0.8, 0.34, 1) forwards;
+  animation: eloDeltaFallsAway 2100ms cubic-bezier(0.2, 0.8, 0.34, 1) forwards;
 }
 
 .elo-delta.gain {
   color: #a7d96b;
+  animation-name: eloDeltaRisesAway;
+}
+
+.elo-delta.steady {
+  color: #edc75d;
   animation-name: eloDeltaRisesAway;
 }
 
@@ -1152,7 +1165,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .elo-delta {
-    animation-duration: 1ms;
+    animation: none;
   }
 }
 

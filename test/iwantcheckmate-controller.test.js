@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
 
 const vite = await createServer({
@@ -8,18 +10,20 @@ const vite = await createServer({
 })
 const {
   analyzeCandidatesWithRetry,
+  assessVariantMove,
   isExactVariantTrigger,
   pruneVariantEvents,
   requiresEveryLegalMove,
   resolveEvilMartinMode,
   variantUsesEvent,
 } = await vite.ssrLoadModule('/src/hooks/useGameController.js')
+const { PlayerStrip } = await vite.ssrLoadModule('/src/components/Identity.jsx')
 
 test.after(async () => {
   await vite.close()
 })
 
-test('best, non-best, and worst triggers require the exact calibrated move', () => {
+test('best and worst triggers keep their exact calibrated move contract', () => {
   const candidates = [
     { uci: 'e2e4', rank: 1, score: 30 },
     { uci: 'd2d4', rank: 2, score: 28 },
@@ -31,14 +35,6 @@ test('best, non-best, and worst triggers require the exact calibrated move', () 
   assert.equal(isExactVariantTrigger('opponent-best-move', 'd2d4', candidates), false)
   assert.equal(isExactVariantTrigger('opponent-non-best-move', 'e2e4', candidates), false)
   assert.equal(isExactVariantTrigger('opponent-non-best-move', 'd2d4', candidates), true)
-  assert.equal(isExactVariantTrigger(
-    'opponent-non-best-move',
-    'd2d4',
-    [
-      { uci: 'e2e4', rank: 1, score: 30 },
-      { uci: 'd2d4', rank: 2, score: 30 },
-    ],
-  ), true)
   assert.equal(isExactVariantTrigger('opponent-non-best-move', 'd2d4', []), false)
   assert.equal(isExactVariantTrigger(
     'opponent-non-best-move',
@@ -48,6 +44,72 @@ test('best, non-best, and worst triggers require the exact calibrated move', () 
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'a2a3', candidates), true)
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'h2h3', candidates), true)
   assert.equal(isExactVariantTrigger('opponent-worst-move', 'd2d4', candidates), false)
+})
+
+test('Martin gains Elo only when the played move loses more than 20 centipawns', () => {
+  const candidateSet = (playedScore) => [
+    { uci: 'e2e4', rank: 1, score: 30 },
+    { uci: 'd2d4', rank: 2, score: playedScore },
+  ]
+  const assess = (playedScore) => assessVariantMove(
+    'opponent-non-best-move',
+    'd2d4',
+    candidateSet(playedScore),
+    { toleranceCp: 20 },
+  )
+
+  assert.equal(assess(30).triggered, false)
+  assert.equal(assess(28).triggered, false)
+  assert.equal(assess(10).triggered, false)
+  assert.equal(assess(9).triggered, true)
+  assert.equal(assess(9).lossCp, 21)
+  assert.match(assess(9).reason, /21 cp below best/)
+  assert.deepEqual(
+    assessVariantMove(
+      'opponent-non-best-move',
+      'd2d4',
+      [{ uci: 'e2e4', rank: 1, score: 30 }],
+      { toleranceCp: 20 },
+    ),
+    { triggered: false, lossCp: null, reason: 'move check unavailable' },
+  )
+})
+
+test('Martin rating feedback explains both gains and tolerated moves', () => {
+  const profile = {
+    id: 'iwc-best-move-martin',
+    name: 'Martin',
+    displayRating: 250,
+    country: '',
+    countryCode: '',
+    title: '',
+    avatar: { type: 'initials', value: 'M' },
+  }
+  const gained = renderToStaticMarkup(createElement(PlayerStrip, {
+    profile,
+    ratingState: {
+      rating: 450,
+      event: {
+        id: 'gain',
+        delta: 200,
+        reason: '35 cp below best (20 cp limit)',
+      },
+    },
+  }))
+  const unchanged = renderToStaticMarkup(createElement(PlayerStrip, {
+    profile,
+    ratingState: {
+      rating: 450,
+      event: {
+        id: 'steady',
+        delta: 0,
+        reason: 'within 20 cp of best',
+      },
+    },
+  }))
+
+  assert.match(gained, /\+200 - 35 cp below best \(20 cp limit\)/)
+  assert.match(unchanged, /No change - within 20 cp of best/)
 })
 
 test('DrawFish and BlunderFish request exhaustive legal-move analysis', () => {

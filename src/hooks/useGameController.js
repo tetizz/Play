@@ -247,7 +247,18 @@ export function useGameController(defaultBotId) {
     setPremoveQueue(nextQueue)
   }, [])
 
-  const recordVariantEvent = useCallback((targetProfile, field, ply) => {
+  const showEloEvent = useCallback((targetProfile, marker, delta, reason = '') => {
+    setEloDropEvent({
+      id: `${targetProfile.id}:${marker}:${Date.now()}`,
+      botId: targetProfile.id,
+      delta,
+      reason,
+    })
+    clearTimeout(eloDropTimerRef.current)
+    eloDropTimerRef.current = setTimeout(() => setEloDropEvent(null), 2200)
+  }, [])
+
+  const recordVariantEvent = useCallback((targetProfile, field, ply, reason = '') => {
     if (!isIWantCheckmateProfile(targetProfile) || !variantUsesEvent(targetProfile, field)) {
       return variantEventsRef.current
     }
@@ -267,17 +278,10 @@ export function useGameController(defaultBotId) {
     variantEventsRef.current = next
     setVariantEvents(next)
     if (after !== before) {
-      const event = {
-        id: `${targetProfile.id}:${marker}:${Date.now()}`,
-        botId: targetProfile.id,
-        delta: after - before,
-      }
-      setEloDropEvent(event)
-      clearTimeout(eloDropTimerRef.current)
-      eloDropTimerRef.current = setTimeout(() => setEloDropEvent(null), 1020)
+      showEloEvent(targetProfile, marker, after - before, reason)
     }
     return next
-  }, [])
+  }, [showEloEvent])
 
   const setVariantModeElo = useCallback((targetProfile, rating, awake, ply) => {
     if (!isIWantCheckmateProfile(targetProfile) || !Number.isFinite(rating)) {
@@ -299,16 +303,14 @@ export function useGameController(defaultBotId) {
     variantEventsRef.current = next
     setVariantEvents(next)
     if (Number.isFinite(previousEvents.currentElo) && previousEvents.currentElo !== rating) {
-      setEloDropEvent({
-        id: `${targetProfile.id}:mode:${ply}:${Date.now()}`,
-        botId: targetProfile.id,
-        delta: rating - previousEvents.currentElo,
-      })
-      clearTimeout(eloDropTimerRef.current)
-      eloDropTimerRef.current = setTimeout(() => setEloDropEvent(null), 1020)
+      showEloEvent(
+        targetProfile,
+        `mode:${ply}`,
+        rating - previousEvents.currentElo,
+      )
     }
     return next
-  }, [])
+  }, [showEloEvent])
 
   const assessVariantOpponentMove = useCallback(async (targetProfile, baseHistory) => {
     if (!isIWantCheckmateProfile(targetProfile) || !baseHistory.length) {
@@ -345,7 +347,12 @@ export function useGameController(defaultBotId) {
       ? await analyzeEveryLegalMove(variantClientRef.current, before, probePolicy)
       : await variantClientRef.current.bestMoves(beforeFen, probePolicy)
     const best = candidates[0]
-    if (!best || !Number.isFinite(best.score)) return variantEventsRef.current
+    if (!best || !Number.isFinite(best.score)) {
+      if (variantType === 'opponent-non-best-move') {
+        showEloEvent(targetProfile, `assessment:${ply}`, 0, 'move check unavailable')
+      }
+      return variantEventsRef.current
+    }
     const playedUci = moveToUci(played)
     let playedLine = candidates.find((candidate) => candidate.uci === playedUci) || null
     if (!playedLine) {
@@ -359,16 +366,31 @@ export function useGameController(defaultBotId) {
         playedLine = { uci: playedUci, score: -replyScore, rank: 99 }
       }
     }
-    if (!playedLine || !Number.isFinite(playedLine.score)) return variantEventsRef.current
+    if (!playedLine || !Number.isFinite(playedLine.score)) {
+      if (variantType === 'opponent-non-best-move') {
+        showEloEvent(targetProfile, `assessment:${ply}`, 0, 'move check unavailable')
+      }
+      return variantEventsRef.current
+    }
     const eventField = variantType === 'opponent-best-move'
       ? 'opponentBestMoves'
       : variantType === 'opponent-non-best-move'
         ? 'opponentNonBestMoves'
         : 'opponentWorstMoves'
-    return isExactVariantTrigger(variantType, playedUci, candidates)
-      ? recordVariantEvent(targetProfile, eventField, ply)
-      : variantEventsRef.current
-  }, [recordVariantEvent])
+    const assessmentCandidates = candidates.some((candidate) => candidate.uci === playedUci)
+      ? candidates
+      : [...candidates, playedLine]
+    const assessment = assessVariantMove(variantType, playedUci, assessmentCandidates, {
+      toleranceCp: targetProfile.variant?.movePolicy?.bestMoveToleranceCp,
+    })
+    if (assessment.triggered) {
+      return recordVariantEvent(targetProfile, eventField, ply, assessment.reason)
+    }
+    if (variantType === 'opponent-non-best-move') {
+      showEloEvent(targetProfile, `assessment:${ply}`, 0, assessment.reason)
+    }
+    return variantEventsRef.current
+  }, [recordVariantEvent, showEloEvent])
 
   const ratingFor = useCallback((targetProfile) => {
     if (!isIWantCheckmateProfile(targetProfile)) {
@@ -1289,27 +1311,61 @@ export function pruneVariantEvents(events, maxPly) {
   }))
 }
 
-export function isExactVariantTrigger(variantType, playedUci, candidates) {
+export function assessVariantMove(variantType, playedUci, candidates, options = {}) {
   const finite = (candidates || []).filter((candidate) =>
     candidate?.uci && Number.isFinite(candidate.score))
-  if (!finite.length || !playedUci) return false
+  const unavailable = {
+    triggered: false,
+    lossCp: null,
+    reason: 'move check unavailable',
+  }
+  if (!finite.length || !playedUci) return unavailable
   if ([
     'opponent-best-move',
     'opponent-non-best-move',
   ].includes(variantType)) {
     const best = [...finite].sort((a, b) => {
-      const rankDifference = Number(a.rank || Infinity) - Number(b.rank || Infinity)
+      const aRank = Number.isFinite(Number(a.rank)) ? Number(a.rank) : Infinity
+      const bRank = Number.isFinite(Number(b.rank)) ? Number(b.rank) : Infinity
+      const rankDifference = aRank - bRank
       return rankDifference || b.score - a.score
     })[0]
-    if (!best) return false
-    return variantType === 'opponent-best-move'
-      ? best.uci === playedUci
-      : best.uci !== playedUci
+    const played = finite.find((candidate) => candidate.uci === playedUci)
+    if (!best || !played) return unavailable
+    if (variantType === 'opponent-best-move') {
+      const triggered = best.uci === playedUci
+      return {
+        triggered,
+        lossCp: Math.max(0, best.score - played.score),
+        reason: triggered ? 'best move' : 'not the top engine move',
+      }
+    }
+    const toleranceCp = Math.max(0, Number(options.toleranceCp) || 0)
+    const lossCp = Math.max(0, best.score - played.score)
+    const triggered = lossCp > toleranceCp
+    return {
+      triggered,
+      lossCp,
+      reason: triggered
+        ? `${Math.round(lossCp)} cp below best (${toleranceCp} cp limit)`
+        : lossCp === 0
+          ? 'best move'
+          : `within ${toleranceCp} cp of best`,
+    }
   }
-  if (variantType !== 'opponent-worst-move') return false
+  if (variantType !== 'opponent-worst-move') return unavailable
   const worstScore = Math.min(...finite.map((candidate) => candidate.score))
-  return finite.some((candidate) =>
+  const triggered = finite.some((candidate) =>
     candidate.uci === playedUci && candidate.score === worstScore)
+  return {
+    triggered,
+    lossCp: null,
+    reason: triggered ? 'worst engine move' : 'not the worst engine move',
+  }
+}
+
+export function isExactVariantTrigger(variantType, playedUci, candidates, options = {}) {
+  return assessVariantMove(variantType, playedUci, candidates, options).triggered
 }
 
 export function requiresEveryLegalMove(profile) {

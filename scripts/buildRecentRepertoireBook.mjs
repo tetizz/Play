@@ -60,7 +60,7 @@ const PROFILES = {
     ],
   },
   alexander: {
-    label: 'Alexander',
+    label: 'Aleksandr Lenderman',
     bookFile: 'generatedRecentAlexanderRepertoireBook.js',
     bookExport: 'GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK',
     styleFile: 'generatedAlexanderStyleProfile.js',
@@ -72,6 +72,7 @@ const PROFILES = {
     maxBookPositions: 20000,
     accounts: [
       { site: 'chess.com', username: 'AlexanderL' },
+      { site: 'lichess', username: 'AlexLenderman' },
     ],
   },
   trixize: {

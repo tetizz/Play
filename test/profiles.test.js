@@ -25,6 +25,20 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('ayden').displayRating, 1900)
   assert.equal(getBotProfile('akshit').displayRating, 2007)
   assert.equal(getBotProfile('trixize').displayRating, 1550)
+  assert.equal(getBotProfile('kirk').displayRating, 1700)
+  assert.equal(getBotProfile('kirk').strengthPolicy.engineElo, 1700)
+  assert.deepEqual(getBotProfile('kirk').accounts, {
+    chesscom: ['Mrlovechess432'],
+    lichess: ['Coachkirk432'],
+  })
+  assert.equal(getBotProfile('alexander').fullName, 'Aleksandr Lenderman')
+  assert.equal(getBotProfile('alexander').title, 'GM')
+  assert.equal(getBotProfile('alexander').displayRating, 2700)
+  assert.equal(getBotProfile('alexander').strengthPolicy.engineElo, 2700)
+  assert.deepEqual(getBotProfile('alexander').accounts, {
+    chesscom: ['AlexanderL'],
+    lichess: ['AlexLenderman'],
+  })
   assert.equal(getBotProfile('mubassar').capabilities.beltMode, true)
   assert.equal(getBotProfile('ayden').capabilities.beltMode, false)
   assert.equal(getBotProfile('akshit').capabilities.knightSpecialist, true)
@@ -65,16 +79,14 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('iwc-best-move-martin').variant.maxElo, 3600)
   assert.equal(getBotProfile('iwc-best-move-martin').variant.movePolicy.type, 'rating-strength')
   assert.equal(
-    getBotProfile('iwc-best-move-martin').variant.movePolicy.ruleStatus,
-    'implemented-unverified',
+    getBotProfile('iwc-best-move-martin').variant.movePolicy.bestMoveContract,
+    'centipawn-tolerance',
   )
+  assert.equal(getBotProfile('iwc-best-move-martin').variant.movePolicy.bestMoveToleranceCp, 20)
+  assert.equal(getBotProfile('iwc-best-move-martin').variant.movePolicy.ruleStatus, 'implemented')
   assert.deepEqual(
     getBotProfile('iwc-best-move-martin').variant.movePolicy.unverifiedAssumptions,
-    [
-      '3600-elo-cap',
-      'equal-score-rank-two-counts-as-non-best',
-      'depth-14-rank-one-without-evaluation-tolerance',
-    ],
+    ['3600-elo-cap'],
   )
   assert.equal(getBotProfile('iwc-martinfish').name, 'Martinfish')
   assert.equal(getBotProfile('iwc-martinfish').displayRating, null)

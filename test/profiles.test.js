@@ -31,6 +31,7 @@ test('public and video bot profiles expose the requested ratings and capabilitie
     chesscom: ['Mrlovechess432'],
     lichess: ['Coachkirk432'],
   })
+  assert.equal(getBotProfile('kirk').intro, '')
   assert.equal(getBotProfile('alexander').fullName, 'Aleksandr Lenderman')
   assert.equal(getBotProfile('alexander').title, 'GM')
   assert.equal(getBotProfile('alexander').displayRating, 2700)

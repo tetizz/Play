@@ -301,7 +301,7 @@ function BotPortrait({ profile }) {
             : <span>{profileRuleLabel(profile)}</span>}
           <CountryFlag code={profile.countryCode} label={profile.country} />
         </div>
-        <p>{profile.intro}</p>
+        {profile.intro ? <p>{profile.intro}</p> : null}
       </div>
     </div>
   )
@@ -320,7 +320,7 @@ function BotSeat({ color, profile, value, onChange }) {
           : <span>{profileRuleLabel(profile)}</span>}
         <CountryFlag code={profile.countryCode} label={profile.country} />
       </div>
-      <p>{profile.intro}</p>
+      {profile.intro ? <p>{profile.intro}</p> : null}
       <label>
         <span>Choose {color}</span>
         <select

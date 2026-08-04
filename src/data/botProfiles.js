@@ -249,7 +249,7 @@ const BOT_PROFILE_LIST = [
     },
     accounts: { chesscom: ['Mrlovechess432'], lichess: ['Coachkirk432'] },
     goal: 'Practical chess shaped by Kirk’s verified public games on both platforms.',
-    intro: 'Kirk’s repertoire combines his public Chess.com and Lichess games.',
+    intro: '',
     dialoguePolicy: 'silent',
     capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
     strengthPolicy: {

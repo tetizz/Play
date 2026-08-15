@@ -28,18 +28,23 @@ test.after(async () => {
 
 test('the latest public roster adds six variants and never adds Tony', () => {
   const expected = [
-    ['iwc-clockfish', 'ClockFish', '0rlkE-CYRoc'],
-    ['iwc-mirrorfish', 'MirrorFish', 'eCC-U9w9RvQ'],
-    ['iwc-zebrafish', 'ZebraFish', 'oJu13RUrGl4'],
-    ['iwc-simpfish', 'SimpFish', 'My1sUnkiNfU'],
-    ['iwc-checkfish', 'CheckFish', 'tNgzqWiYDFk'],
-    ['iwc-scaredfish', 'ScaredFish', null],
+    ['iwc-clockfish', 'ClockFish', '0rlkE-CYRoc', 'clockfish-profile.jpeg'],
+    ['iwc-mirrorfish', 'MirrorFish', 'eCC-U9w9RvQ', 'mirrorfish-profile.jpeg'],
+    ['iwc-zebrafish', 'ZebraFish', 'oJu13RUrGl4', 'zebrafish-profile.jpeg'],
+    ['iwc-simpfish', 'SimpFish', 'My1sUnkiNfU', 'simpfish-profile.jpeg'],
+    ['iwc-checkfish', 'CheckFish', 'tNgzqWiYDFk', 'checkfish-profile.jpeg'],
+    ['iwc-scaredfish', 'ScaredFish', null, 'scaredfish-profile.jpeg'],
   ]
 
-  for (const [id, name, videoId] of expected) {
+  for (const [id, name, videoId, portrait] of expected) {
     const profile = getIWantCheckmateProfile(id)
     assert.equal(profile.name, name)
     assert.equal(profile.source.videoId, videoId)
+    assert.equal(profile.avatar.src, `./assets/iwantcheckmate/${portrait}`)
+    assert.equal(
+      profile.source.portraitSourceUrl,
+      `https://iwantcheckmate.com/bot-images/${portrait.replace('-profile', '')}`,
+    )
   }
   for (const profile of IWANTCHECKMATE_VIDEO_PROFILES) {
     assert.equal(`${profile.id} ${profile.name}`.toLowerCase().includes('tony'), false)

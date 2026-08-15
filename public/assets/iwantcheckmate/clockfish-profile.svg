@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="clockfish-title clockfish-desc">
+  <title id="clockfish-title">ClockFish</title>
+  <desc id="clockfish-desc">An original golden fish racing across a blue clock face.</desc>
+  <defs>
+    <linearGradient id="clock-body" x1="48" y1="72" x2="202" y2="181" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE083"/>
+      <stop offset="0.55" stop-color="#F2A93B"/>
+      <stop offset="1" stop-color="#C96528"/>
+    </linearGradient>
+    <linearGradient id="clock-fin" x1="30" y1="85" x2="80" y2="181" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFCB57"/>
+      <stop offset="1" stop-color="#E1762B"/>
+    </linearGradient>
+    <filter id="clock-shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#10263F" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <g fill="none" stroke="#4FC3F7" stroke-linecap="round">
+    <circle cx="148" cy="127" r="91" stroke-width="10" opacity="0.18"/>
+    <circle cx="148" cy="127" r="76" stroke-width="3" opacity="0.72"/>
+    <path d="M148 51v12M148 191v12M72 127h12M212 127h12M94 73l9 9M193 172l9 9M94 181l9-9M193 82l9-9" stroke-width="5" opacity="0.92"/>
+    <path d="M148 127V82M148 127l34 20" stroke="#EAF9FF" stroke-width="7"/>
+    <circle cx="148" cy="127" r="7" fill="#EAF9FF" stroke="none"/>
+  </g>
+  <g filter="url(#clock-shadow)" stroke="#25354C" stroke-linejoin="round">
+    <path d="M57 128 20 85l8 45-8 43 39-31Z" fill="url(#clock-fin)" stroke-width="5"/>
+    <path d="M49 132C67 80 116 65 171 82c35 11 55 39 47 65-10 33-53 49-102 41-37-6-61-25-67-56Z" fill="url(#clock-body)" stroke-width="6"/>
+    <path d="M111 177c9-25 29-35 51-26-7 24-25 38-51 26Z" fill="#DE782E" stroke-width="4"/>
+    <path d="M81 91c15-16 33-22 52-18-10 19-26 28-52 18Z" fill="#FFD66D" stroke-width="4"/>
+    <path d="M198 143c10 2 18 0 23-5" fill="none" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="184" cy="113" r="17" fill="#FFF7D2" stroke-width="5"/>
+    <circle cx="188" cy="113" r="8" fill="#162237" stroke="none"/>
+    <circle cx="191" cy="109" r="3" fill="#FFF" stroke="none"/>
+    <path d="M211 130c8 0 14-4 17-9-1 10-7 17-16 18" fill="#F7E4C8" stroke-width="4"/>
+  </g>
+  <path d="M54 59H23M48 72H14M49 187H23" fill="none" stroke="#EAF9FF" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+</svg>

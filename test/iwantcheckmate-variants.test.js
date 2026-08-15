@@ -30,6 +30,12 @@ const EXPECTED_NAMES = [
   'TiredFish',
   'BlunderFish',
   'GeometricFish',
+  'ClockFish',
+  'MirrorFish',
+  'ZebraFish',
+  'SimpFish',
+  'CheckFish',
+  'ScaredFish',
   'RandomFish',
   'DrawFish',
   'BetaFish',
@@ -60,7 +66,7 @@ function scoredCandidates(count = 18) {
   }))
 }
 
-test('IWantCheckmate exposes distinct talking profiles from the source videos', () => {
+test('IWantCheckmate exposes distinct profiles from the public source roster', () => {
   assert.equal(IWANTCHECKMATE_VIDEO_PROFILES.length, EXPECTED_NAMES.length)
   assert.deepEqual(
     IWANTCHECKMATE_VIDEO_PROFILES.map((profile) => profile.name),
@@ -69,7 +75,7 @@ test('IWantCheckmate exposes distinct talking profiles from the source videos', 
   for (const profile of IWANTCHECKMATE_VIDEO_PROFILES) {
     assert.equal(profile.dialoguePolicy, 'iwantcheckmate')
     assert.equal(profile.capabilities.silentDialogue, false)
-    assert.match(profile.source.videoUrl, /^https:\/\/www\.youtube\.com\/watch\?v=/)
+    assert.match(profile.source.videoUrl, /^https:\/\/(?:www\.youtube\.com\/watch\?v=|iwantcheckmate\.com\/)/)
     assert.match(profile.avatar.src, /^\.\/assets\/iwantcheckmate\/.+-profile\.(?:png|jpeg|svg)$/)
     assert.ok(profile.intro.length > 20)
     assert.equal(profile.intro, profile.videoLabel)

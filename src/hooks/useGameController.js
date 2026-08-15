@@ -312,17 +312,82 @@ export function useGameController(defaultBotId) {
     return next
   }, [showEloEvent])
 
+  const setTimedVariantElo = useCallback((targetProfile, ply, options = {}) => {
+    const policy = targetProfile?.variant?.movePolicy
+    if (!isIWantCheckmateProfile(targetProfile) || policy?.type !== 'time-ramp-strength') {
+      return variantEventsRef.current
+    }
+
+    const current = variantEventsRef.current
+    const previousEvents = current[targetProfile.id] || emptyVariantEvents()
+    const now = Date.now()
+    const startElo = Number(policy.startElo ?? targetProfile.variant?.initialElo ?? 100)
+    const endElo = Number(policy.endElo ?? targetProfile.variant?.maxElo ?? 3600)
+    const durationMs = Math.max(1, Number(policy.durationMs || 5000))
+    const reset = options.reset === true
+    const startedAt = reset || !Number.isFinite(previousEvents.clockStartedAt)
+      ? now
+      : previousEvents.clockStartedAt
+    const progress = reset ? 0 : Math.min(1, Math.max(0, (now - startedAt) / durationMs))
+    const rating = Math.round(startElo + (endElo - startElo) * progress)
+    const marker = `clock:${ply}:${rating}:${startedAt}`
+    const nextEvents = {
+      ...previousEvents,
+      currentElo: rating,
+      clockStartedAt: startedAt,
+      applied: appendVariantMarker(previousEvents.applied, marker),
+    }
+    const next = { ...current, [targetProfile.id]: nextEvents }
+    variantEventsRef.current = next
+    setVariantEvents(next)
+
+    if (
+      options.announce !== false &&
+      Number.isFinite(previousEvents.currentElo) &&
+      previousEvents.currentElo !== rating
+    ) {
+      showEloEvent(
+        targetProfile,
+        marker,
+        rating - previousEvents.currentElo,
+        `${((now - startedAt) / 1000).toFixed(1)} seconds elapsed`,
+      )
+    }
+    return next
+  }, [showEloEvent])
+
+  const setVariantOpponentRank = useCallback((targetProfile, rank, ply) => {
+    if (!isIWantCheckmateProfile(targetProfile) || !Number.isFinite(rank)) {
+      return variantEventsRef.current
+    }
+    const normalizedRank = Math.max(1, Math.floor(rank))
+    const marker = `opponentRank:${ply}:${normalizedRank}`
+    const current = variantEventsRef.current
+    const previousEvents = current[targetProfile.id] || emptyVariantEvents()
+    if (previousEvents.applied.includes(marker)) return current
+    const nextEvents = {
+      ...previousEvents,
+      lastOpponentMoveRank: normalizedRank,
+      applied: appendVariantMarker(previousEvents.applied, marker),
+    }
+    const next = { ...current, [targetProfile.id]: nextEvents }
+    variantEventsRef.current = next
+    setVariantEvents(next)
+    return next
+  }, [])
+
   const assessVariantOpponentMove = useCallback(async (targetProfile, baseHistory) => {
     if (!isIWantCheckmateProfile(targetProfile) || !baseHistory.length) {
       return variantEventsRef.current
     }
     const variantType = targetProfile.variant?.trigger
+    const mirrorsOpponentRank = targetProfile.variant?.movePolicy?.type === 'mirror-rank'
     if (![
       'opponent-check',
       'opponent-best-move',
       'opponent-non-best-move',
       'opponent-worst-move',
-    ].includes(variantType)) {
+    ].includes(variantType) && !mirrorsOpponentRank) {
       return variantEventsRef.current
     }
     const before = gameFromHistory(baseHistory.slice(0, -1))
@@ -372,6 +437,10 @@ export function useGameController(defaultBotId) {
       }
       return variantEventsRef.current
     }
+    if (mirrorsOpponentRank) {
+      const rank = Number.isFinite(playedLine.rank) ? Number(playedLine.rank) : 99
+      return setVariantOpponentRank(targetProfile, rank, ply)
+    }
     const eventField = variantType === 'opponent-best-move'
       ? 'opponentBestMoves'
       : variantType === 'opponent-non-best-move'
@@ -390,7 +459,7 @@ export function useGameController(defaultBotId) {
       showEloEvent(targetProfile, `assessment:${ply}`, 0, assessment.reason)
     }
     return variantEventsRef.current
-  }, [recordVariantEvent, showEloEvent])
+  }, [recordVariantEvent, setVariantOpponentRank, showEloEvent])
 
   const ratingFor = useCallback((targetProfile) => {
     if (!isIWantCheckmateProfile(targetProfile)) {
@@ -560,6 +629,12 @@ export function useGameController(defaultBotId) {
       }
       const activeBelt = beltRef.current && automatedProfile.capabilities.beltMode
       let activeVariantEvents = variantEventsRef.current
+      if (automatedProfile.variant?.movePolicy?.type === 'time-ramp-strength') {
+        activeVariantEvents = setTimedVariantElo(
+          automatedProfile,
+          baseHistory.length,
+        )
+      }
       const variantEloAtTurnStart = isIWantCheckmateProfile(automatedProfile)
         ? runningVariantElo(
             automatedProfile,
@@ -806,6 +881,13 @@ export function useGameController(defaultBotId) {
           nextHistory.length,
         )
       }
+      if (automatedProfile.variant?.movePolicy?.type === 'time-ramp-strength') {
+        nextVariantEvents = setTimedVariantElo(
+          automatedProfile,
+          nextHistory.length,
+          { reset: true, announce: false },
+        )
+      }
       const variantEloAfterMove = isIWantCheckmateProfile(automatedProfile)
         ? runningVariantElo(
             automatedProfile,
@@ -864,6 +946,7 @@ export function useGameController(defaultBotId) {
     recordVariantEvent,
     settleReadyPremove,
     setVariantModeElo,
+    setTimedVariantElo,
     whiteProfile,
   ])
 
@@ -993,8 +1076,11 @@ export function useGameController(defaultBotId) {
       ? initialBotDialogueLog(whiteProfile, blackProfile)
       : []
     setDialogueLog(openingDialogue)
-    variantEventsRef.current = {}
-    setVariantEvents({})
+    const initialVariantEvents = initializeTimedVariantEvents(
+      gameMode === 'bots' ? [whiteProfile, blackProfile] : [profile],
+    )
+    variantEventsRef.current = initialVariantEvents
+    setVariantEvents(initialVariantEvents)
     clearTimeout(eloDropTimerRef.current)
     setEloDropEvent(null)
     setPhase('game')
@@ -1013,7 +1099,7 @@ export function useGameController(defaultBotId) {
       lastMove: null,
       premoveQueue: [],
       dialogueLog: openingDialogue,
-      variantEvents: {},
+      variantEvents: initialVariantEvents,
       reviewResult: null,
     })
     if (gameMode === 'bots' || nextColor === 'black') scheduleBotTurn([], 300, nextColor)
@@ -1249,6 +1335,8 @@ function emptyVariantEvents() {
     opponentBestMoves: 0,
     opponentNonBestMoves: 0,
     opponentWorstMoves: 0,
+    lastOpponentMoveRank: null,
+    clockStartedAt: null,
     currentElo: null,
     evilAwake: false,
     applied: [],
@@ -1273,6 +1361,7 @@ export function variantUsesEvent(profile, field) {
     field === 'botMoves' &&
     (
       profile?.variant?.movePolicy?.type === 'cycle' ||
+      profile?.variant?.movePolicy?.type === 'alternating-square' ||
       profile?.variant?.trigger === 'opponent-non-best-move'
     )
   ) {
@@ -1296,6 +1385,15 @@ export function pruneVariantEvents(events, maxPly) {
           next.currentElo = mode.rating
           next.evilAwake = mode.awake
         }
+      } else if (field === 'clock') {
+        const clock = parseVariantClockMarker(marker)
+        if (clock) {
+          next.currentElo = clock.rating
+          next.clockStartedAt = clock.startedAt
+        }
+      } else if (field === 'opponentRank') {
+        const opponentRank = parseVariantOpponentRankMarker(marker)
+        if (opponentRank) next.lastOpponentMoveRank = opponentRank.rank
       } else if (Object.hasOwn(next, field)) {
         next[field] += 1
       }
@@ -1400,7 +1498,11 @@ function appendVariantMarker(applied, marker) {
 
 function variantMarkerPly(marker) {
   const parts = String(marker).split(':')
-  return Number(parts[0] === 'mode' && parts.length >= 4 ? parts[1] : parts.at(-1))
+  return Number(
+    ['mode', 'clock', 'opponentRank'].includes(parts[0]) && parts.length >= 3
+      ? parts[1]
+      : parts.at(-1),
+  )
 }
 
 function parseVariantModeMarker(marker) {
@@ -1418,6 +1520,50 @@ function parseVariantModeMarker(marker) {
     rating: Number(rating),
     awake: awake === '1',
   }
+}
+
+function parseVariantClockMarker(marker) {
+  const [field, ply, rating, startedAt] = String(marker).split(':')
+  if (
+    field !== 'clock' ||
+    !Number.isFinite(Number(ply)) ||
+    !Number.isFinite(Number(rating)) ||
+    !Number.isFinite(Number(startedAt))
+  ) {
+    return null
+  }
+  return {
+    ply: Number(ply),
+    rating: Number(rating),
+    startedAt: Number(startedAt),
+  }
+}
+
+function parseVariantOpponentRankMarker(marker) {
+  const [field, ply, rank] = String(marker).split(':')
+  if (
+    field !== 'opponentRank' ||
+    !Number.isFinite(Number(ply)) ||
+    !Number.isFinite(Number(rank))
+  ) {
+    return null
+  }
+  return { ply: Number(ply), rank: Math.max(1, Math.floor(Number(rank))) }
+}
+
+function initializeTimedVariantEvents(profiles, now = Date.now()) {
+  return Object.fromEntries((profiles || []).flatMap((targetProfile) => {
+    const policy = targetProfile?.variant?.movePolicy
+    if (policy?.type !== 'time-ramp-strength') return []
+    const rating = Number(policy.startElo ?? targetProfile.variant?.initialElo ?? 100)
+    const events = {
+      ...emptyVariantEvents(),
+      currentElo: rating,
+      clockStartedAt: now,
+      applied: [`clock:0:${rating}:${now}`],
+    }
+    return [[targetProfile.id, events]]
+  }))
 }
 
 async function analyzeEveryLegalMove(client, game, policy) {

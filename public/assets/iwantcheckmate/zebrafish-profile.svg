@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="zebrafish-title zebrafish-desc">
+  <title id="zebrafish-title">ZebraFish</title>
+  <desc id="zebrafish-desc">An original striped fish crossing alternating light and dark squares.</desc>
+  <defs>
+    <linearGradient id="zebra-body" x1="45" y1="75" x2="214" y2="181" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF4C8"/>
+      <stop offset="0.55" stop-color="#D9E2E5"/>
+      <stop offset="1" stop-color="#95A7AF"/>
+    </linearGradient>
+    <clipPath id="zebra-clip">
+      <path d="M48 131C63 80 112 65 171 82c35 10 55 37 48 64-9 34-53 50-103 42-39-6-63-25-68-57Z"/>
+    </clipPath>
+    <filter id="zebra-shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#151C25" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+  <g transform="rotate(-9 128 128)" opacity="0.3">
+    <rect x="41" y="41" width="58" height="58" rx="8" fill="#F3E8C5"/>
+    <rect x="99" y="41" width="58" height="58" rx="8" fill="#26313B"/>
+    <rect x="157" y="41" width="58" height="58" rx="8" fill="#F3E8C5"/>
+    <rect x="41" y="99" width="58" height="58" rx="8" fill="#26313B"/>
+    <rect x="99" y="99" width="58" height="58" rx="8" fill="#F3E8C5"/>
+    <rect x="157" y="99" width="58" height="58" rx="8" fill="#26313B"/>
+    <rect x="41" y="157" width="58" height="58" rx="8" fill="#F3E8C5"/>
+    <rect x="99" y="157" width="58" height="58" rx="8" fill="#26313B"/>
+    <rect x="157" y="157" width="58" height="58" rx="8" fill="#F3E8C5"/>
+  </g>
+  <g filter="url(#zebra-shadow)" stroke="#17222F" stroke-linejoin="round">
+    <path d="M57 128 19 87l8 43-7 43 40-31Z" fill="#F4F0DE" stroke-width="6"/>
+    <path d="M48 131C63 80 112 65 171 82c35 10 55 37 48 64-9 34-53 50-103 42-39-6-63-25-68-57Z" fill="url(#zebra-body)" stroke-width="6"/>
+    <g clip-path="url(#zebra-clip)" fill="#18232C" stroke="none">
+      <path d="m76 64 22 3-18 125-23-4Z"/>
+      <path d="m119 66 20 5-15 125-22-3Z"/>
+      <path d="m161 75 19 7-11 111-23 2Z"/>
+      <path d="m197 89 18 15-4 70-23 12Z"/>
+    </g>
+    <path d="M109 178c10-25 31-34 51-23-8 23-27 35-51 23Z" fill="#697D86" stroke-width="4"/>
+    <circle cx="184" cy="112" r="17" fill="#FFF9E7" stroke-width="5"/>
+    <circle cx="188" cy="112" r="8" fill="#111B26" stroke="none"/>
+    <circle cx="191" cy="108" r="3" fill="#FFF" stroke="none"/>
+    <path d="M211 132c8 0 14-4 17-9-1 10-7 17-16 18" fill="#FFF5DA" stroke-width="4"/>
+  </g>
+  <path d="M68 52h37M151 207h39" stroke="#F8E16C" stroke-width="8" stroke-linecap="round"/>
+</svg>

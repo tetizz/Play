@@ -66,3 +66,29 @@ test('selecting a bot keeps its family open and updates the profile', async ({ p
   await expect(pityFish).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByRole('heading', { name: 'PityFish', exact: true })).toBeVisible()
 })
+
+test('the latest variants render, exclude Tony, and ClockFish plays a real turn', async ({ page }) => {
+  const roster = page.locator('.bot-roster')
+  const stockfish = familyButton(roster, 'Stockfish Variants')
+  const stockfishPanel = await controlledPanel(page, stockfish)
+  const names = ['ClockFish', 'MirrorFish', 'ZebraFish', 'SimpFish', 'CheckFish', 'ScaredFish']
+
+  await stockfish.click()
+  for (const name of names) {
+    const option = stockfishPanel.getByRole('button', { name: new RegExp(`^${name} `) })
+    await expect(option).toBeVisible()
+    const portrait = option.locator('img')
+    await expect(portrait).toBeVisible()
+    await expect.poll(() => portrait.evaluate((image) => image.complete && image.naturalWidth > 0))
+      .toBe(true)
+  }
+  await expect(roster.getByRole('button', { name: /Tony/i })).toHaveCount(0)
+
+  await stockfishPanel.getByRole('button', { name: /^ClockFish / }).click()
+  await page.getByRole('button', { name: 'Black', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+
+  await expect(page.getByRole('heading', { name: 'Moves', exact: true })).toBeVisible()
+  await expect(page.locator('.move-row button').first()).toBeVisible({ timeout: 30000 })
+  await expect(page.locator('.player-strip').filter({ hasText: 'ClockFish' })).toContainText('(100)')
+})

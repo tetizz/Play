@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="simpfish-title simpfish-desc">
+  <title id="simpfish-title">SimpFish</title>
+  <desc id="simpfish-desc">An original rose-colored fish locked onto a chess queen target.</desc>
+  <defs>
+    <linearGradient id="simp-body" x1="44" y1="79" x2="215" y2="182" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD88B"/>
+      <stop offset="0.48" stop-color="#F47F88"/>
+      <stop offset="1" stop-color="#B93C68"/>
+    </linearGradient>
+    <linearGradient id="simp-queen" x1="44" y1="42" x2="95" y2="103" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF2B2"/>
+      <stop offset="1" stop-color="#E8A73D"/>
+    </linearGradient>
+    <filter id="simp-shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#4A1737" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <g fill="none" stroke="#FF7AA8" opacity="0.62">
+    <circle cx="69" cy="75" r="43" stroke-width="4"/>
+    <circle cx="69" cy="75" r="33" stroke-width="2" stroke-dasharray="5 7"/>
+    <path d="M69 24v14M69 112v14M18 75h14M106 75h14" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g filter="url(#simp-shadow)" stroke="#3B2940" stroke-linejoin="round">
+    <path d="M58 130 20 89l8 43-7 43 40-31Z" fill="#E65E7C" stroke-width="6"/>
+    <path d="M49 132C64 81 113 66 172 83c35 10 55 37 48 64-9 34-53 50-103 42-39-6-63-25-68-57Z" fill="url(#simp-body)" stroke-width="6"/>
+    <path d="M110 179c9-25 29-34 51-24-8 24-27 36-51 24Z" fill="#B93C68" stroke-width="4"/>
+    <path d="M198 144c10 2 18 0 23-5" fill="none" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="184" cy="113" r="18" fill="#FFF3DB" stroke-width="5"/>
+    <path d="M176 111c0-5 6-7 9-2 4-5 10-2 10 3 0 6-10 12-10 12s-9-7-9-13Z" fill="#EC3E74" stroke="none"/>
+    <path d="M211 131c8 0 14-4 17-9-1 10-7 17-16 18" fill="#FFE7DE" stroke-width="4"/>
+  </g>
+  <g filter="url(#simp-shadow)" fill="url(#simp-queen)" stroke="#3B2940" stroke-linejoin="round" stroke-width="4">
+    <path d="m48 84-7-32 16 12 12-21 12 21 16-12-7 32Z"/>
+    <path d="M46 84h46l6 15H40Z"/>
+    <circle cx="41" cy="50" r="5"/>
+    <circle cx="69" cy="40" r="5"/>
+    <circle cx="97" cy="50" r="5"/>
+  </g>
+  <path d="m119 52 7 8 10-15M140 69l7 8 10-15" fill="none" stroke="#FF8BB2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

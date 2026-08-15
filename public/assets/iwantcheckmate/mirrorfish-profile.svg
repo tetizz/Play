@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="mirrorfish-title mirrorfish-desc">
+  <title id="mirrorfish-title">MirrorFish</title>
+  <desc id="mirrorfish-desc">Two original fish reflected across a polished mirror.</desc>
+  <defs>
+    <linearGradient id="mirror-gold" x1="25" y1="81" x2="120" y2="177" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE8A0"/>
+      <stop offset="0.58" stop-color="#E9A13D"/>
+      <stop offset="1" stop-color="#B95D2E"/>
+    </linearGradient>
+    <linearGradient id="mirror-silver" x1="231" y1="81" x2="136" y2="177" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF8FF"/>
+      <stop offset="0.55" stop-color="#8FC7DB"/>
+      <stop offset="1" stop-color="#397A9E"/>
+    </linearGradient>
+    <linearGradient id="mirror-pane" x1="128" y1="34" x2="128" y2="221" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7F6FF" stop-opacity="0.15"/>
+      <stop offset="0.5" stop-color="#E9FCFF" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#76C5DF" stop-opacity="0.18"/>
+    </linearGradient>
+    <filter id="mirror-shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#112333" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <path d="M123 25h10l8 16v174l-8 16h-10l-8-16V41Z" fill="url(#mirror-pane)" stroke="#BDEEFF" stroke-width="3"/>
+  <g filter="url(#mirror-shadow)" stroke="#26384A" stroke-linejoin="round">
+    <path d="M38 129 11 96l5 34-5 33 29-24Z" fill="#E59036" stroke-width="4"/>
+    <path d="M34 131c12-38 45-53 77-39 16 7 23 24 18 39-7 22-33 35-61 30-21-3-31-14-34-30Z" fill="url(#mirror-gold)" stroke-width="5"/>
+    <path d="M73 155c5-16 17-22 32-15-5 15-16 22-32 15Z" fill="#CB6A2E" stroke-width="3"/>
+    <circle cx="105" cy="115" r="11" fill="#FFF5CE" stroke-width="4"/>
+    <circle cx="108" cy="115" r="5" fill="#18283A" stroke="none"/>
+    <path d="M124 133c5 0 9-2 12-6" fill="none" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g filter="url(#mirror-shadow)" stroke="#26384A" stroke-linejoin="round">
+    <path d="m218 129 27-33-5 34 5 33-29-24Z" fill="#579DBA" stroke-width="4"/>
+    <path d="M222 131c-12-38-45-53-77-39-16 7-23 24-18 39 7 22 33 35 61 30 21-3 31-14 34-30Z" fill="url(#mirror-silver)" stroke-width="5"/>
+    <path d="M183 155c-5-16-17-22-32-15 5 15 16 22 32 15Z" fill="#397A9E" stroke-width="3"/>
+    <circle cx="151" cy="115" r="11" fill="#F2FCFF" stroke-width="4"/>
+    <circle cx="148" cy="115" r="5" fill="#18283A" stroke="none"/>
+    <path d="M132 133c-5 0-9-2-12-6" fill="none" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <path d="M126 50h4M126 68h4M126 186h4M126 204h4" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+</svg>

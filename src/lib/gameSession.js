@@ -69,6 +69,12 @@ export function normalizeVariantEvents(input) {
         opponentBestMoves: nonNegativeInteger(events.opponentBestMoves),
         opponentNonBestMoves: nonNegativeInteger(events.opponentNonBestMoves),
         opponentWorstMoves: nonNegativeInteger(events.opponentWorstMoves),
+        lastOpponentMoveRank: Number.isFinite(events.lastOpponentMoveRank)
+          ? Math.max(1, Math.floor(Number(events.lastOpponentMoveRank)))
+          : null,
+        clockStartedAt: Number.isFinite(events.clockStartedAt)
+          ? Number(events.clockStartedAt)
+          : null,
         currentElo: Number.isFinite(events.currentElo) ? Number(events.currentElo) : null,
         evilAwake: Boolean(events.evilAwake),
         applied: Array.isArray(events.applied)

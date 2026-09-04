@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { Flag, Home, RotateCcw, X } from 'lucide-react'
 import { getBotProfile } from '../data/botProfiles'
 import { DIALOGUE_RUNTIME_ENABLED } from '../data/dialogue'
 import { materialDisplayFromHistory } from '../lib/materialDisplay'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 import { Avatar, PlayerStrip } from './Identity'
 import { BoardSurface } from './BoardSurface'
 import { MoveList } from './MoveList'
@@ -133,7 +134,10 @@ export function GameScreen({ controller }) {
           onForward={() => setViewPly((ply) => Math.min(history.length, ply + 1))}
         />
         <div className="game-status">
-          <span>{status}</span>
+          <span className="turn-status" role="status" aria-live="polite" aria-atomic="true">
+            <span className={`turn-indicator ${turnState}`} aria-hidden="true" />
+            {status}
+          </span>
           {!botMatch && premoveQueue.length ? (
             <span className="premove-status" aria-live="polite">
               {premoveQueue.length} {premoveQueue.length === 1 ? 'premove' : 'premoves'} queued
@@ -203,6 +207,8 @@ function BotConversation({ entries, whiteProfile, blackProfile }) {
 }
 
 function PromotionPicker({ color, onSelect, onCancel }) {
+  const dialogRef = useRef(null)
+  useDialogFocus(dialogRef, onCancel)
   const pieces = color === 'b'
     ? [
         { key: 'q', symbol: '♛', label: 'Queen' },
@@ -217,10 +223,16 @@ function PromotionPicker({ color, onSelect, onCancel }) {
         { key: 'n', symbol: '♘', label: 'Knight' },
       ]
   return (
-    <div className="promotion-backdrop" role="dialog" aria-modal="true" aria-label="Promote pawn">
-      <div className="promotion-picker">
+    <div className="promotion-backdrop" role="presentation">
+      <div
+        ref={dialogRef}
+        className="promotion-picker"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="promotion-title"
+      >
         <div className="promotion-heading">
-          <strong>Promote pawn</strong>
+          <strong id="promotion-title">Promote pawn</strong>
           <button type="button" onClick={onCancel} aria-label="Cancel promotion"><X /></button>
         </div>
         <div className="promotion-options">
@@ -231,6 +243,7 @@ function PromotionPicker({ color, onSelect, onCancel }) {
               onClick={() => onSelect(piece.key)}
               aria-label={`Promote to ${piece.label}`}
               title={piece.label}
+              data-dialog-initial={piece.key === 'q' ? 'true' : undefined}
             >
               <span>{piece.symbol}</span>
             </button>

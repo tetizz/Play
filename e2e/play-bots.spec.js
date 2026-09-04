@@ -148,6 +148,7 @@ test('setup and game board fit desktop and mobile without horizontal overflow', 
     { width: 1280, height: 720 },
     { width: 768, height: 1024 },
     { width: 390, height: 844 },
+    { width: 320, height: 720 },
   ]) {
     await page.setViewportSize(viewport)
     await page.reload()
@@ -164,6 +165,7 @@ test('setup and game board fit desktop and mobile without horizontal overflow', 
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
+    { width: 320, height: 720 },
   ]) {
     await page.setViewportSize(viewport)
     const layout = await page.locator('.board-surface').evaluate((board) => {
@@ -237,12 +239,26 @@ test('promotion picker supports underpromotion to a knight', async ({ page }) =>
     }))
   })
   await page.reload()
-  await page.locator('[data-square="b7"]').click()
-  await page.locator('[data-square="a8"]').click()
+  const source = page.locator('[data-square="b7"]')
+  const destination = page.locator('[data-square="a8"]')
+  await source.focus()
+  await source.press('Enter')
+  await destination.focus()
+  await destination.press('Enter')
   await expect(page.getByRole('dialog', { name: 'Promote pawn' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Promote to Queen' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Promote to Queen' })).toBeFocused()
   await expect(page.getByRole('button', { name: 'Promote to Rook' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Promote to Bishop' })).toBeVisible()
+  await page.getByRole('button', { name: 'Cancel promotion' }).focus()
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.getByRole('button', { name: 'Promote to Knight' })).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog', { name: 'Promote pawn' })).toHaveCount(0)
+  await expect(destination).toBeFocused()
+
+  await source.press('Enter')
+  await destination.focus()
+  await destination.press('Enter')
   await page.getByRole('button', { name: 'Promote to Knight' }).click()
   await expect(page.getByRole('button', { name: 'bxa8=N', exact: true })).toBeVisible()
 })
@@ -686,10 +702,22 @@ test('completed reviews expose a selectable PGN and copy it without downloading'
   await expect(page.getByRole('heading', { name: 'Move classifications' })).toBeVisible({
     timeout: 10000,
   })
-  await page.getByRole('button', { name: 'Share PGN', exact: true }).click()
+  const shareButton = page.getByRole('button', { name: 'Share PGN', exact: true })
+  await shareButton.focus()
+  await shareButton.click()
   const pgnField = page.getByRole('textbox', { name: 'PGN text' })
   await expect(pgnField).toBeVisible()
+  await expect(pgnField).toBeFocused()
   await expect(pgnField).toHaveValue(/\[White "player"\]/)
+  await page.getByRole('button', { name: 'Close PGN' }).focus()
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.getByRole('button', { name: 'Copy PGN', exact: true })).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog', { name: 'Copy PGN' })).toHaveCount(0)
+  await expect(shareButton).toBeFocused()
+
+  await shareButton.click()
+  await expect(pgnField).toBeFocused()
   await page.getByRole('button', { name: 'Copy PGN', exact: true }).click()
   await expect(page.getByText('PGN copied', { exact: true })).toBeVisible()
 
@@ -909,7 +937,18 @@ test('Fool’s Mate highlights the checked king and completes review promptly', 
   await expect(page.locator('.classification-row').filter({ hasText: 'Best' })).toContainText('1')
   await expect(page.getByRole('heading', { name: 'Game performance' })).toBeVisible()
   await page.getByRole('button', { name: 'Black Best: 1. Go to first occurrence.' }).click()
-  await expect(page.getByRole('tab', { name: 'Review moves' })).toHaveAttribute('aria-selected', 'true')
+  const summaryTab = page.getByRole('tab', { name: 'Summary' })
+  const movesTab = page.getByRole('tab', { name: 'Review moves' })
+  await expect(movesTab).toHaveAttribute('aria-selected', 'true')
+  const movesPanelId = await movesTab.getAttribute('aria-controls')
+  await expect(page.locator(`[id="${movesPanelId}"]`)).toHaveAttribute('aria-labelledby', await movesTab.getAttribute('id'))
+  await movesTab.focus()
+  await page.keyboard.press('ArrowLeft')
+  await expect(summaryTab).toBeFocused()
+  await expect(summaryTab).toHaveAttribute('aria-selected', 'true')
+  await page.keyboard.press('ArrowRight')
+  await expect(movesTab).toBeFocused()
+  await expect(movesTab).toHaveAttribute('aria-selected', 'true')
   await expect(page.locator('.move-explanation')).toContainText('Qh4#')
   const reviewScrollTop = await page.evaluate(() => document.querySelector('.review-scroll')?.scrollTop)
   expect(reviewScrollTop).toBe(0)

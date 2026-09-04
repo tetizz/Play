@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight, Copy, RotateCcw, Share2, X } from 'lucide-react'
 import { BoardSurface } from './BoardSurface'
 import { Avatar, PlayerStrip } from './Identity'
 import { MoveList } from './MoveList'
 import { buildSmoothPath, evaluationBarDisplay } from '../lib/evaluationGraph'
 import { buildGamePgn } from '../lib/pgnExport'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 export function ReviewWorkspace({ controller }) {
   const {
@@ -26,8 +27,15 @@ export function ReviewWorkspace({ controller }) {
   const [activeTab, setActiveTab] = useState('summary')
   const [shareStatus, setShareStatus] = useState('')
   const [sharedPgn, setSharedPgn] = useState('')
+  const reviewTabIdPrefix = useId()
   const reviewScrollRef = useRef(null)
+  const reviewTabsRef = useRef({})
+  const pgnDialogRef = useRef(null)
   const pgnTextRef = useRef(null)
+  const summaryTabId = `${reviewTabIdPrefix}-summary-tab`
+  const movesTabId = `${reviewTabIdPrefix}-moves-tab`
+  const summaryPanelId = `${reviewTabIdPrefix}-summary-panel`
+  const movesPanelId = `${reviewTabIdPrefix}-moves-panel`
   const selected = reviewPly > 0
     ? review?.moments?.find((moment) => moment.ply === reviewPly) || null
     : null
@@ -37,9 +45,40 @@ export function ReviewWorkspace({ controller }) {
     : 0
   const displayedResult = review?.result || reviewResult
 
+  useDialogFocus(pgnDialogRef, () => setSharedPgn(''), Boolean(sharedPgn))
+
   useEffect(() => {
     reviewScrollRef.current?.scrollTo({ top: 0 })
   }, [activeTab])
+
+  useEffect(() => {
+    if (!sharedPgn) return undefined
+    const frame = window.requestAnimationFrame(() => pgnTextRef.current?.select())
+    return () => window.cancelAnimationFrame(frame)
+  }, [sharedPgn])
+
+  const selectReviewTab = (nextTab, focus = false) => {
+    setActiveTab(nextTab)
+    if (focus) reviewTabsRef.current[nextTab]?.focus()
+  }
+
+  const handleReviewTabKeyDown = (event) => {
+    const order = ['summary', 'moves']
+    const currentIndex = order.indexOf(activeTab)
+    let nextTab = null
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextTab = order[(currentIndex + 1) % order.length]
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextTab = order[(currentIndex - 1 + order.length) % order.length]
+    } else if (event.key === 'Home') {
+      nextTab = order[0]
+    } else if (event.key === 'End') {
+      nextTab = order.at(-1)
+    }
+    if (!nextTab) return
+    event.preventDefault()
+    selectReviewTab(nextTab, true)
+  }
 
   const selectClassification = (side, key) => {
     const moveSide = side === 'white' ? 'w' : 'b'
@@ -64,10 +103,6 @@ export function ReviewWorkspace({ controller }) {
     })
     setSharedPgn(pgn)
     setShareStatus('')
-    requestAnimationFrame(() => {
-      pgnTextRef.current?.focus()
-      pgnTextRef.current?.select()
-    })
   }
 
   const copyPgn = async () => {
@@ -146,9 +181,17 @@ export function ReviewWorkspace({ controller }) {
         </div>
 
         {!review ? (
-          <section className="review-progress">
+          <section className="review-progress" role="status" aria-live="polite" aria-atomic="true">
             <strong>{progress}%</strong>
-            <div><span style={{ width: `${progress}%` }} /></div>
+            <div
+              role="progressbar"
+              aria-label="Game review progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={progress}
+            >
+              <span style={{ width: `${progress}%` }} />
+            </div>
             <p>
               Reviewing move {Math.min(reviewProgress.completed + 1, reviewProgress.total || 1)}
               {' '}of {reviewProgress.total || history.length}
@@ -160,24 +203,41 @@ export function ReviewWorkspace({ controller }) {
               <button
                 type="button"
                 role="tab"
+                id={summaryTabId}
+                aria-controls={summaryPanelId}
                 aria-selected={activeTab === 'summary'}
+                tabIndex={activeTab === 'summary' ? 0 : -1}
+                ref={(element) => { reviewTabsRef.current.summary = element }}
                 className={activeTab === 'summary' ? 'active' : ''}
-                onClick={() => setActiveTab('summary')}
+                onClick={() => selectReviewTab('summary')}
+                onKeyDown={handleReviewTabKeyDown}
               >
                 Summary
               </button>
               <button
                 type="button"
                 role="tab"
+                id={movesTabId}
+                aria-controls={movesPanelId}
                 aria-selected={activeTab === 'moves'}
+                tabIndex={activeTab === 'moves' ? 0 : -1}
+                ref={(element) => { reviewTabsRef.current.moves = element }}
                 className={activeTab === 'moves' ? 'active' : ''}
-                onClick={() => setActiveTab('moves')}
+                onClick={() => selectReviewTab('moves')}
+                onKeyDown={handleReviewTabKeyDown}
               >
                 Review moves
               </button>
             </div>
 
-            <div className="review-scroll" ref={reviewScrollRef}>
+            <div
+              className="review-scroll"
+              ref={reviewScrollRef}
+              role="tabpanel"
+              id={activeTab === 'summary' ? summaryPanelId : movesPanelId}
+              aria-labelledby={activeTab === 'summary' ? summaryTabId : movesTabId}
+              tabIndex={0}
+            >
               {activeTab === 'summary' ? (
                 <ReviewSummary
                   review={review}
@@ -229,6 +289,7 @@ export function ReviewWorkspace({ controller }) {
           }}
         >
           <section
+            ref={pgnDialogRef}
             className="pgn-share-dialog"
             role="dialog"
             aria-modal="true"
@@ -256,6 +317,7 @@ export function ReviewWorkspace({ controller }) {
               readOnly
               aria-label="PGN text"
               spellCheck="false"
+              data-dialog-initial="true"
             />
             <footer>
               <span className="pgn-copy-status" aria-live="polite">{shareStatus}</span>

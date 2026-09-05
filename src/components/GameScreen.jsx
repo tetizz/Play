@@ -134,8 +134,7 @@ export function GameScreen({ controller }) {
           onForward={() => setViewPly((ply) => Math.min(history.length, ply + 1))}
         />
         <div className="game-status">
-          <span className="turn-status" role="status" aria-live="polite" aria-atomic="true">
-            <span className={`turn-indicator ${turnState}`} aria-hidden="true" />
+          <span role="status" aria-live="polite" aria-atomic="true">
             {status}
           </span>
           {!botMatch && premoveQueue.length ? (

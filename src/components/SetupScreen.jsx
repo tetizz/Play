@@ -1,23 +1,9 @@
-import { useEffect, useId, useRef, useState } from 'react'
-import {
-  Bot,
-  CheckCircle2,
-  ChevronDown,
-  Clock3,
-  Home,
-  LoaderCircle,
-  Search,
-  Star,
-  Swords,
-  UserRound,
-  X,
-} from 'lucide-react'
+import { useId, useRef, useState } from 'react'
+import { Bot, ChevronDown, Home, Swords, UserRound } from 'lucide-react'
 import { BOT_PROFILES } from '../data/botProfiles'
 import { Avatar, CountryFlag } from './Identity'
 
 const HOME_URL = 'https://tetizz.github.io/Home/'
-const ROSTER_PREFERENCES_KEY = 'play-bots-roster-v1'
-const MAX_RECENT_BOTS = 6
 
 const choices = [
   { id: 'white', image: './assets/white-king.png', label: 'White' },
@@ -62,41 +48,10 @@ export function SetupScreen({
 }) {
   const tabIdPrefix = useId()
   const modeTabsRef = useRef({})
-  const [rosterPreferences, setRosterPreferences] = useState(readRosterPreferences)
   const playerTabId = `${tabIdPrefix}-player-tab`
   const botsTabId = `${tabIdPrefix}-bots-tab`
   const playerPanelId = `${tabIdPrefix}-player-panel`
   const botsPanelId = `${tabIdPrefix}-bots-panel`
-
-  useEffect(() => {
-    writeRosterPreferences(rosterPreferences)
-  }, [rosterPreferences])
-
-  function rememberBot(botId) {
-    setRosterPreferences((current) => ({
-      ...current,
-      recent: [botId, ...current.recent.filter((id) => id !== botId)].slice(0, MAX_RECENT_BOTS),
-    }))
-  }
-
-  function handleBotSelect(botId) {
-    rememberBot(botId)
-    selectBot(botId)
-  }
-
-  function handleMatchBotSelect(side, botId) {
-    rememberBot(botId)
-    selectMatchBot(side, botId)
-  }
-
-  function toggleFavorite(botId) {
-    setRosterPreferences((current) => ({
-      ...current,
-      favorites: current.favorites.includes(botId)
-        ? current.favorites.filter((id) => id !== botId)
-        : [...current.favorites, botId],
-    }))
-  }
 
   function selectGameMode(nextMode) {
     setGameMode(nextMode)
@@ -126,12 +81,8 @@ export function SetupScreen({
   return (
     <main className="setup-page">
       <header className="setup-header">
-        <div className="brand-lockup">
-          <div className="app-brand"><Bot /> <span>Play Bots</span></div>
-          <p>Pick a personality. Set the board. Play real chess.</p>
-        </div>
+        <div className="app-brand"><Bot /> <span>Play Bots</span></div>
         <div className="setup-header-actions">
-          <span className="roster-total"><strong>{BOT_PROFILES.length}</strong> opponents</span>
           <a className="home-nav-button" href={HOME_URL} aria-label="Open tetizz chess projects home">
             <Home />
             <span>Home</span>
@@ -175,24 +126,16 @@ export function SetupScreen({
 
       <section
         className="setup-player-panel"
+        aria-busy={!styleProfilesReady}
         role="tabpanel"
         id={playerPanelId}
         aria-labelledby={playerTabId}
         tabIndex={0}
-        aria-busy={!styleProfilesReady}
         hidden={gameMode !== 'player'}
       >
-        <BotRoster
-          selectedId={profile.id}
-          onSelect={handleBotSelect}
-          preferences={rosterPreferences}
-        />
+        <BotRoster selectedId={profile.id} onSelect={selectBot} />
         <section className="setup-focus">
-          <BotPortrait
-            profile={profile}
-            favorite={rosterPreferences.favorites.includes(profile.id)}
-            onToggleFavorite={() => toggleFavorite(profile.id)}
-          />
+          <BotPortrait profile={profile} />
           <div className="setup-actions">
             <div className="color-choice" aria-label="Choose your color">
               {choices.map((choice) => (
@@ -210,26 +153,28 @@ export function SetupScreen({
                 </button>
               ))}
             </div>
-            <ProfileReadiness ready={styleProfilesReady} profiles={[profile]} id="player-profile-readiness" />
             <button
               type="button"
               className="primary-play"
+              aria-describedby="player-profile-readiness"
               onClick={startGame}
               disabled={!styleProfilesReady}
-              aria-describedby="player-profile-readiness"
             >
               Play
             </button>
+            <span id="player-profile-readiness" className="visually-hidden" role="status" aria-live="polite">
+              {styleProfilesReady ? `Profile loaded for ${profile.name}.` : 'Preparing opponent'}
+            </span>
           </div>
         </section>
       </section>
       <section
         className="bot-match-setup"
+        aria-busy={!styleProfilesReady}
         role="tabpanel"
         id={botsPanelId}
         aria-labelledby={botsTabId}
         tabIndex={0}
-        aria-busy={!styleProfilesReady}
         hidden={gameMode !== 'bots'}
       >
         <div className="matchup-heading">
@@ -244,27 +189,21 @@ export function SetupScreen({
             color="White"
             profile={whiteProfile}
             value={whiteBotId}
-            onChange={(id) => handleMatchBotSelect('white', id)}
+            onChange={(id) => selectMatchBot('white', id)}
           />
           <span className="versus-mark">VS</span>
           <BotSeat
             color="Black"
             profile={blackProfile}
             value={blackBotId}
-            onChange={(id) => handleMatchBotSelect('black', id)}
+            onChange={(id) => selectMatchBot('black', id)}
           />
         </div>
-        <ProfileReadiness
-          ready={styleProfilesReady}
-          profiles={[whiteProfile, blackProfile]}
-          id="match-profile-readiness"
-        />
         <button
           type="button"
           className="primary-play"
           onClick={startGame}
           disabled={!styleProfilesReady}
-          aria-describedby="match-profile-readiness"
         >
           Start match
         </button>
@@ -273,39 +212,12 @@ export function SetupScreen({
   )
 }
 
-function BotRoster({ selectedId, onSelect, preferences }) {
+function BotRoster({ selectedId, onSelect }) {
   const rosterIdPrefix = useId()
-  const searchId = `${rosterIdPrefix}-search`
   const selectedSectionId = ROSTER_SECTIONS.find((section) => (
     section.bots.some((bot) => bot.id === selectedId)
   ))?.id ?? ROSTER_SECTIONS[0]?.id
   const [expandedSectionId, setExpandedSectionId] = useState(selectedSectionId)
-  const [collapsedFilterSections, setCollapsedFilterSections] = useState([])
-  const [query, setQuery] = useState('')
-  const [view, setView] = useState('all')
-  const normalizedQuery = query.trim().toLocaleLowerCase()
-  const activeIds = view === 'favorites'
-    ? preferences.favorites
-    : view === 'recent'
-      ? preferences.recent
-      : null
-  const visibleSections = ROSTER_SECTIONS.map((section) => ({
-    ...section,
-    bots: section.bots.filter((bot) => {
-      if (activeIds && !activeIds.includes(bot.id)) return false
-      if (!normalizedQuery) return true
-      return [
-        bot.fullName,
-        bot.name,
-        bot.goal,
-        bot.intro,
-        section.label,
-        profileRosterLabel(bot),
-      ].filter(Boolean).join(' ').toLocaleLowerCase().includes(normalizedQuery)
-    }),
-  })).filter((section) => section.bots.length)
-  const filterActive = Boolean(normalizedQuery || view !== 'all')
-  const visibleBotCount = visibleSections.reduce((total, section) => total + section.bots.length, 0)
 
   return (
     <section className="bot-roster" aria-labelledby="bot-roster-heading">
@@ -313,59 +225,8 @@ function BotRoster({ selectedId, onSelect, preferences }) {
       <p className="visually-hidden" aria-live="polite">
         {BOT_PROFILES.find((bot) => bot.id === selectedId)?.fullName} selected
       </p>
-      <div className="roster-tools">
-        <label className="roster-search" htmlFor={searchId}>
-          <Search aria-hidden="true" />
-          <span className="visually-hidden">Search opponents</span>
-          <input
-            id={searchId}
-            type="search"
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value)
-              setCollapsedFilterSections([])
-            }}
-            placeholder={`Search ${BOT_PROFILES.length} opponents`}
-            autoComplete="off"
-          />
-          {query ? (
-            <button
-              type="button"
-              onClick={() => {
-                setQuery('')
-                setCollapsedFilterSections([])
-              }}
-              aria-label="Clear opponent search"
-            >
-              <X aria-hidden="true" />
-            </button>
-          ) : null}
-        </label>
-        <div className="roster-views" role="group" aria-label="Filter opponents">
-          <button type="button" aria-pressed={view === 'all'} onClick={() => { setView('all'); setCollapsedFilterSections([]) }}>
-            All <span>{BOT_PROFILES.length}</span>
-          </button>
-          <button
-            type="button"
-            aria-pressed={view === 'favorites'}
-            onClick={() => { setView('favorites'); setCollapsedFilterSections([]) }}
-          >
-            <Star aria-hidden="true" /> Favorites <span>{preferences.favorites.length}</span>
-          </button>
-          <button type="button" aria-pressed={view === 'recent'} onClick={() => { setView('recent'); setCollapsedFilterSections([]) }}>
-            <Clock3 aria-hidden="true" /> Recent <span>{preferences.recent.length}</span>
-          </button>
-        </div>
-        <p className="roster-result-count" aria-live="polite">
-          {filterActive
-            ? `${visibleBotCount} ${visibleBotCount === 1 ? 'opponent' : 'opponents'} shown`
-            : 'Choose a family, then an opponent.'}
-        </p>
-      </div>
-      {visibleSections.map((section) => {
-        const isExpanded = filterActive
-          ? !collapsedFilterSections.includes(section.id)
-          : expandedSectionId === section.id
+      {ROSTER_SECTIONS.map((section) => {
+        const isExpanded = expandedSectionId === section.id
         const triggerId = `${rosterIdPrefix}-${section.id}-trigger`
         const panelId = `${rosterIdPrefix}-${section.id}-panel`
         const representative = section.bots[0]
@@ -384,17 +245,9 @@ function BotRoster({ selectedId, onSelect, preferences }) {
                 aria-controls={panelId}
                 aria-label={section.label}
                 onClick={() => {
-                  if (filterActive) {
-                    setCollapsedFilterSections((current) => (
-                      current.includes(section.id)
-                        ? current.filter((id) => id !== section.id)
-                        : [...current, section.id]
-                    ))
-                  } else {
-                    setExpandedSectionId((current) => (
-                      current === section.id ? null : section.id
-                    ))
-                  }
+                  setExpandedSectionId((current) => (
+                    current === section.id ? null : section.id
+                  ))
                 }}
               >
                 <span className="bot-family-avatar" aria-hidden="true">
@@ -422,19 +275,13 @@ function BotRoster({ selectedId, onSelect, preferences }) {
                       aria-label={`${bot.fullName} ${profileRosterLabel(bot)}`}
                       aria-pressed={bot.id === selectedId}
                       className={`bot-family-option ${bot.id === selectedId ? 'selected' : ''}`}
-                      onClick={() => {
-                        setExpandedSectionId(bot.category)
-                        onSelect(bot.id)
-                      }}
+                      onClick={() => onSelect(bot.id)}
                     >
                       <span className="bot-family-option-avatar" aria-hidden="true">
                         <Avatar profile={bot} size="small" />
                       </span>
                       <strong>{bot.fullName}</strong>
                       <small>{profileRosterLabel(bot)}</small>
-                      {preferences.favorites.includes(bot.id)
-                        ? <Star className="favorite-marker" aria-hidden="true" />
-                        : null}
                     </button>
                   </li>
                 ))}
@@ -443,19 +290,11 @@ function BotRoster({ selectedId, onSelect, preferences }) {
           </section>
         )
       })}
-      {!visibleBotCount ? (
-        <div className="roster-empty" role="status">
-          <Search aria-hidden="true" />
-          <strong>No opponents found</strong>
-          <p>{view === 'favorites' ? 'Favorite a bot from its profile to keep it here.' : 'Try another name, rating, or family.'}</p>
-          <button type="button" onClick={() => { setQuery(''); setView('all'); setCollapsedFilterSections([]) }}>Show every bot</button>
-        </div>
-      ) : null}
     </section>
   )
 }
 
-function BotPortrait({ profile, favorite, onToggleFavorite }) {
+function BotPortrait({ profile }) {
   return (
     <div className="setup-portrait">
       <Avatar profile={profile} size="large" />
@@ -469,40 +308,7 @@ function BotPortrait({ profile, favorite, onToggleFavorite }) {
           <CountryFlag code={profile.countryCode} label={profile.country} />
         </div>
         {profile.intro ? <p>{profile.intro}</p> : null}
-        <button
-          type="button"
-          className="favorite-bot"
-          aria-pressed={favorite}
-          onClick={onToggleFavorite}
-        >
-          <Star aria-hidden="true" /> {favorite ? 'Favorited' : 'Favorite bot'}
-        </button>
       </div>
-    </div>
-  )
-}
-
-function ProfileReadiness({ ready, profiles, id }) {
-  const names = profiles.map((profile) => profile.name).join(' and ')
-  return (
-    <div
-      id={id}
-      className={`profile-readiness ${ready ? 'ready' : 'loading'}`}
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      {ready
-        ? <CheckCircle2 aria-hidden="true" />
-        : <LoaderCircle className="readiness-spinner" aria-hidden="true" />}
-      <span>
-        <strong>{ready ? 'Ready to play' : 'Preparing opponent'}</strong>
-        <small>
-          {ready
-            ? `${profiles.length > 1 ? 'Profiles' : 'Profile'} loaded for ${names}.`
-            : `Loading ${names}'s style and opening book.`}
-        </small>
-      </span>
     </div>
   )
 }
@@ -560,32 +366,4 @@ function profileSelectionLabel(profile) {
   return Number.isFinite(profile.displayRating)
     ? ratingLabel(profile.displayRating)
     : `- ${profileRuleLabel(profile)}`
-}
-
-function readRosterPreferences() {
-  if (typeof localStorage === 'undefined') return { favorites: [], recent: [] }
-  try {
-    const stored = JSON.parse(localStorage.getItem(ROSTER_PREFERENCES_KEY) || '{}')
-    const available = new Set(BOT_PROFILES.map((profile) => profile.id))
-    return {
-      favorites: uniqueKnownIds(stored.favorites, available),
-      recent: uniqueKnownIds(stored.recent, available).slice(0, MAX_RECENT_BOTS),
-    }
-  } catch {
-    return { favorites: [], recent: [] }
-  }
-}
-
-function writeRosterPreferences(preferences) {
-  if (typeof localStorage === 'undefined') return
-  try {
-    localStorage.setItem(ROSTER_PREFERENCES_KEY, JSON.stringify(preferences))
-  } catch {
-    // The roster still works when storage is unavailable or full.
-  }
-}
-
-function uniqueKnownIds(value, available) {
-  if (!Array.isArray(value)) return []
-  return [...new Set(value.filter((id) => typeof id === 'string' && available.has(id)))]
 }

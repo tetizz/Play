@@ -400,16 +400,12 @@ test('a three-move queue plays through three alternating Trixize replies', async
 
 test('multiple projected premoves remain usable on a mobile board', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.addInitScript(() => {
-    const nativeSetTimeout = window.setTimeout.bind(window)
-    window.setTimeout = (handler, delay, ...args) =>
-      nativeSetTimeout(handler, delay === 850 ? 3500 : delay, ...args)
-  })
-  await page.reload()
+  await holdFirstPlayerBotTurn(page)
   await page.getByRole('button', { name: 'White', exact: true }).click()
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.locator('[data-square="e2"]').click()
   await page.locator('[data-square="e4"]').click()
+  await waitForHeldPlayerBotTurn(page)
   for (const [from, to] of [['g1', 'f3'], ['f3', 'g5'], ['g5', 'h7']]) {
     await page.locator(`[data-square="${from}"]`).click()
     await page.locator(`[data-square="${to}"]`).click()
@@ -435,6 +431,8 @@ test('multiple projected premoves remain usable on a mobile board', async ({ pag
 
   await page.getByRole('button', { name: 'Clear all 3 queued premoves' }).click()
   await expect(page.locator('.board-surface')).toHaveAttribute('data-premove-count', '0')
+  await releaseHeldPlayerBotTurn(page)
+  await expect(page.locator('.move-row button')).toHaveCount(2, { timeout: 15000 })
 })
 
 test('a deep repeated-square queue keeps badges and labels compact on mobile', async ({ page }) => {

@@ -9,15 +9,35 @@ export function createTablebaseClient({
   fetchImpl = globalThis.fetch,
   endpoint = TABLEBASE_ENDPOINT,
   timeoutMs = 2400,
+  maxCacheSize = 256,
 } = {}) {
   const cache = new Map()
+  const pending = new Map()
   const controllers = new Set()
+  const cacheLimit = Number.isFinite(maxCacheSize)
+    ? Math.max(0, Math.floor(maxCacheSize))
+    : 256
   let generation = 0
 
   async function probe(fen) {
     if (!isTablebaseEligible(fen) || typeof fetchImpl !== 'function') return null
-    if (cache.has(fen)) return cache.get(fen)
+    if (cache.has(fen)) {
+      const payload = cache.get(fen)
+      cache.delete(fen)
+      cache.set(fen, payload)
+      return payload
+    }
+    if (pending.has(fen)) return pending.get(fen)
 
+    const request = fetchProbe(fen).finally(() => {
+      // A cancelled request must not remove a newer generation's same-FEN probe.
+      if (pending.get(fen) === request) pending.delete(fen)
+    })
+    pending.set(fen, request)
+    return request
+  }
+
+  async function fetchProbe(fen) {
     const requestGeneration = generation
     const controller = new AbortController()
     controllers.add(controller)
@@ -34,7 +54,10 @@ export function createTablebaseClient({
       if (!response.ok || requestGeneration !== generation) return null
       const payload = await response.json()
       if (requestGeneration !== generation) return null
-      cache.set(fen, payload)
+      if (cacheLimit > 0) {
+        cache.set(fen, payload)
+        while (cache.size > cacheLimit) cache.delete(cache.keys().next().value)
+      }
       return payload
     } catch {
       return null
@@ -48,12 +71,16 @@ export function createTablebaseClient({
     generation += 1
     controllers.forEach((controller) => controller.abort())
     controllers.clear()
+    pending.clear()
   }
 
   return {
     probe,
     cancelAll,
-    destroy: cancelAll,
+    destroy() {
+      cancelAll()
+      cache.clear()
+    },
   }
 }
 

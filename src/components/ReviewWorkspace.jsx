@@ -291,6 +291,7 @@ export function ReviewWorkspace({ controller }) {
           <section
             ref={pgnDialogRef}
             className="pgn-share-dialog"
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby="pgn-share-title"

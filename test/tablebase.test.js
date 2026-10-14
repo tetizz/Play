@@ -125,3 +125,75 @@ test('the tablebase client caches successful probes and can be cancelled safely'
   assert.equal(calls, 1)
   client.cancelAll()
 })
+
+test('concurrent exact-FEN probes share one call without merging halfmove clocks', async () => {
+  let calls = 0
+  let release
+  const gate = new Promise((resolve) => { release = resolve })
+  const payload = { category: 'draw', moves: [] }
+  const client = createTablebaseClient({
+    fetchImpl: async () => {
+      calls += 1
+      await gate
+      return { ok: true, json: async () => payload }
+    },
+  })
+  const fen = '7k/P7/8/8/8/8/8/6BK w - - 0 1'
+  const first = client.probe(fen)
+  const second = client.probe(fen)
+  const differentClock = client.probe(fen.replace(' 0 1', ' 1 1'))
+  assert.equal(calls, 2)
+  release()
+  assert.deepEqual(await Promise.all([first, second, differentClock]), [payload, payload, payload])
+  client.destroy()
+})
+
+test('cancelled generations neither reuse pending work nor overwrite newer results', async () => {
+  const requests = []
+  const client = createTablebaseClient({
+    fetchImpl: () => new Promise((resolve) => { requests.push(resolve) }),
+  })
+  const fen = '7k/P7/8/8/8/8/8/6BK w - - 0 1'
+  const old = client.probe(fen)
+  client.cancelAll()
+  const fresh = client.probe(fen)
+  assert.equal(requests.length, 2)
+  requests[0]({ ok: true, json: async () => ({ category: 'old' }) })
+  assert.equal(await old, null)
+  const joined = client.probe(fen)
+  assert.equal(requests.length, 2)
+  const payload = { category: 'new', moves: [] }
+  requests[1]({ ok: true, json: async () => payload })
+  assert.deepEqual(await Promise.all([fresh, joined]), [payload, payload])
+  assert.equal(await client.probe(fen), payload)
+  client.destroy()
+})
+
+test('successful cache evicts the least recently used FEN and failures remain retryable', async () => {
+  const calls = []
+  let fail = false
+  const client = createTablebaseClient({
+    maxCacheSize: 2,
+    fetchImpl: async (url) => {
+      calls.push(new URL(url).searchParams.get('fen'))
+      return { ok: !fail, json: async () => ({ category: 'draw', moves: [] }) }
+    },
+  })
+  const fen = '7k/P7/8/8/8/8/8/6BK w - - 0 1'
+  const second = fen.replace(' 0 1', ' 1 1')
+  const third = fen.replace(' 0 1', ' 2 1')
+  await client.probe(fen)
+  await client.probe(second)
+  await client.probe(fen)
+  await client.probe(third)
+  await client.probe(fen)
+  assert.equal(calls.length, 3)
+  await client.probe(second)
+  assert.equal(calls.length, 4)
+  fail = true
+  assert.equal(await client.probe(third), null)
+  fail = false
+  assert.notEqual(await client.probe(third), null)
+  assert.equal(calls.length, 6)
+  client.destroy()
+})

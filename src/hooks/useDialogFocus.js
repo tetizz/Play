@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { handleDialogKey } from '../lib/dialogFocus'
 
 export function useDialogFocus(dialogRef, onClose, enabled = true) {
   const closeRef = useRef(onClose)
@@ -19,15 +20,9 @@ export function useDialogFocus(dialogRef, onClose, enabled = true) {
         initial?.focus({ preventScroll: true })
       })
     })
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        closeRef.current?.()
-        return
-      }
-      if (event.key !== 'Tab') return
-      trapTabKey(event, dialogRef.current)
-    }
+    const onKeyDown = (event) => handleDialogKey(
+      event, dialogRef.current, () => closeRef.current?.(), document.activeElement,
+    )
     document.addEventListener('keydown', onKeyDown)
     return () => {
       window.cancelAnimationFrame(frame)
@@ -38,24 +33,6 @@ export function useDialogFocus(dialogRef, onClose, enabled = true) {
       }
     }
   }, [dialogRef, enabled])
-}
-
-function trapTabKey(event, dialog) {
-  const focusable = focusableElements(dialog)
-  if (!focusable.length) {
-    event.preventDefault()
-    dialog?.focus({ preventScroll: true })
-    return
-  }
-  const first = focusable[0]
-  const last = focusable.at(-1)
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault()
-    last.focus()
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault()
-    first.focus()
-  }
 }
 
 function focusableElements(container) {

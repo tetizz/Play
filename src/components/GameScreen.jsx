@@ -22,6 +22,8 @@ export function GameScreen({ controller }) {
     humanColor,
     boardOrientation,
     turnState,
+    analysisError,
+    retryAnalysis,
     message,
     speechEventId,
     dialogueLog,
@@ -56,11 +58,11 @@ export function GameScreen({ controller }) {
     color: color === 'white' ? 'black' : 'white',
   })
   const activeBot = game.turn() === 'w' ? whiteProfile : blackProfile
-  const status = turnState === 'game-over'
+  const status = analysisError || (turnState === 'game-over'
     ? 'Game over'
     : botMatch
       ? `${activeBot.name} is thinking`
-      : turnState === 'human' ? 'Your move' : `${profile.name} is thinking`
+      : turnState === 'human' ? 'Your move' : `${profile.name} is thinking`)
 
   return (
     <main className={`game-page ${botMatch ? 'bot-match-page' : ''}`}>
@@ -162,6 +164,11 @@ export function GameScreen({ controller }) {
           <button type="button" onClick={undo} disabled={!history.length}>
             <RotateCcw /><span>Undo</span>
           </button>
+          {analysisError ? (
+            <button type="button" onClick={retryAnalysis}>
+              <RotateCcw /><span>Retry analysis</span>
+            </button>
+          ) : null}
         </div>
       </aside>
     </main>

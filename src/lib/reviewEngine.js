@@ -689,12 +689,17 @@ function uciLineToSan(fen, line) {
   const game = new Chess(fen)
   const sans = []
   for (const uci of line) {
-    const move = game.moves({ verbose: true }).find((candidate) =>
-      sameUci(toUci(candidate), uci),
-    )
-    if (!move) break
+    const coordinate = String(uci || '')
+    if (!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(coordinate)) break
+    let move
+    try {
+      move = game.move({ from: coordinate.slice(0, 2), to: coordinate.slice(2, 4), promotion: coordinate[4] })
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith('Invalid move: ')) break
+      throw error
+    }
+    if (!sameUci(toUci(move), uci)) break
     sans.push(move.san)
-    game.move(move)
   }
   return sans
 }

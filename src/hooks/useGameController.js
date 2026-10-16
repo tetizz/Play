@@ -34,6 +34,8 @@ import {
 } from '../lib/badMannersClient'
 import { buildFallbackFinalReview, reviewGameWithStockfish } from '../lib/reviewEngine'
 import { createStockfishClient } from '../lib/stockfishClient'
+import { analyzeEveryLegalMove, analyzeCandidatesWithRetry, assertCandidateOperation, CandidateAnalysisError, requestCandidateMoves, requestCandidateScore } from '../lib/candidateAnalysis'
+export { analyzeCandidatesWithRetry } from '../lib/candidateAnalysis'
 import {
   createTablebaseClient,
   isExactWinningMove,
@@ -75,6 +77,7 @@ export function useGameController(defaultBotId) {
   const [humanColor, setHumanColor] = useState(restored?.humanColor || 'white')
   const [history, setHistory] = useState(restored?.history || [])
   const [turnState, setTurnState] = useState('human')
+  const [analysisError, setAnalysisError] = useState('')
   const [message, setMessage] = useState(() =>
     initialDialogue(getBotProfile(restored?.botId || defaultBotId)),
   )
@@ -129,6 +132,7 @@ export function useGameController(defaultBotId) {
   const premoveQueueRef = useRef(premoveQueue)
   const beltRef = useRef(beltMode)
   const generationRef = useRef(0)
+  const candidateAbortRef = useRef(null)
   const timerRef = useRef(null)
   const initializedRef = useRef(false)
   const gameplayClientRef = useRef(null)
@@ -229,6 +233,9 @@ export function useGameController(defaultBotId) {
 
   const cancelWork = useCallback(() => {
     generationRef.current += 1
+    candidateAbortRef.current?.abort()
+    candidateAbortRef.current = null
+    setAnalysisError('')
     clearTimeout(timerRef.current)
     timerRef.current = null
     gameplayClientRef.current?.cancelAll()
@@ -376,7 +383,7 @@ export function useGameController(defaultBotId) {
     return next
   }, [])
 
-  const assessVariantOpponentMove = useCallback(async (targetProfile, baseHistory) => {
+  const assessVariantOpponentMove = useCallback(async (targetProfile, baseHistory, operation = {}) => {
     if (!isIWantCheckmateProfile(targetProfile) || !baseHistory.length) {
       return variantEventsRef.current
     }
@@ -409,8 +416,9 @@ export function useGameController(defaultBotId) {
       timeout: 2600,
     }
     const candidates = variantType === 'opponent-worst-move'
-      ? await analyzeEveryLegalMove(variantClientRef.current, before, probePolicy)
-      : await variantClientRef.current.bestMoves(beforeFen, probePolicy)
+      ? await analyzeEveryLegalMove(variantClientRef.current, before, probePolicy, operation)
+      : await requestCandidateMoves(variantClientRef.current, beforeFen, probePolicy, operation)
+    assertCandidateOperation(operation)
     const best = candidates[0]
     if (!best || !Number.isFinite(best.score)) {
       if (variantType === 'opponent-non-best-move') {
@@ -422,11 +430,12 @@ export function useGameController(defaultBotId) {
     let playedLine = candidates.find((candidate) => candidate.uci === playedUci) || null
     if (!playedLine) {
       const after = gameFromHistory(baseHistory)
-      const replyScore = await variantClientRef.current.evaluateFen(after.fen(), {
+      const replyScore = await requestCandidateScore(variantClientRef.current, after.fen(), {
         depth: 14,
         moveTime: 420,
         timeout: 1800,
-      })
+      }, operation)
+      assertCandidateOperation(operation)
       if (Number.isFinite(replyScore)) {
         playedLine = { uci: playedUci, score: -replyScore, rank: 99 }
       }
@@ -591,6 +600,10 @@ export function useGameController(defaultBotId) {
 
   const scheduleBotTurn = useCallback((baseHistory, delay = null, humanColorOverride = null) => {
     const token = ++generationRef.current
+    candidateAbortRef.current?.abort()
+    const candidateController = new AbortController()
+    candidateAbortRef.current = candidateController
+    setAnalysisError('')
     clearTimeout(timerRef.current)
     gameplayClientRef.current?.cancelAll()
     setTurnState('bot-delay')
@@ -621,6 +634,13 @@ export function useGameController(defaultBotId) {
         ? side === 'w' ? 'black' : 'white'
         : activeHumanColor
       setTurnState('bot-analysis')
+      // One turn-owned absolute bound includes cold worker readiness and any
+      // opponent assessment; chunks and retry clients share its remaining time.
+      const candidateOperation = {
+        signal: candidateController.signal,
+        deadlineMs: Date.now() + 30000,
+        isCancelled: () => generationRef.current !== token,
+      }
       const beltActivated = !beltRef.current &&
         shouldActivateBeltMode(automatedProfile, beforeGame.history(), opponentColor)
       if (beltActivated) {
@@ -642,8 +662,15 @@ export function useGameController(defaultBotId) {
           )
         : null
       try {
-        activeVariantEvents = await assessVariantOpponentMove(automatedProfile, baseHistory)
-      } catch {
+        activeVariantEvents = await assessVariantOpponentMove(automatedProfile, baseHistory, candidateOperation)
+      } catch (error) {
+        if (error instanceof CandidateAnalysisError) {
+          if (generationRef.current === token) {
+            setAnalysisError('Analysis did not finish. Retry this turn.')
+            setTurnState('bot-error')
+          }
+          return
+        }
         // Retain the current persisted Elo when a one-off trigger probe is unavailable.
       }
       if (generationRef.current !== token) return
@@ -752,16 +779,20 @@ export function useGameController(defaultBotId) {
               beforeGame,
               enginePolicy,
               needsEveryLegalMove,
+              candidateOperation,
             ),
             mateSafety
-              ? mateClientRef.current.bestMoves(beforeGame.fen(), {
+              ? requestCandidateMoves(mateClientRef.current, beforeGame.fen(), {
                   ...mateSafety,
                   elo: undefined,
                   count: Math.max(1, guaranteedMates.length),
                   searchMoves: guaranteedMates.length
                     ? guaranteedMates.map((candidate) => candidate.uci)
                     : undefined,
-                }).catch(() => [])
+                }, candidateOperation).catch((error) => {
+                  if (error instanceof CandidateAnalysisError) throw error
+                  return []
+                })
               : Promise.resolve([]),
           ])
           candidates = mergeEngineCandidates(
@@ -785,7 +816,8 @@ export function useGameController(defaultBotId) {
             ? bishopKnightObjectiveUcis(beforeGame)
             : []
           if (objectiveMoves.length) {
-            const objectiveCandidates = await gameplayClientRef.current.bestMoves(
+            const objectiveCandidates = await requestCandidateMoves(
+              gameplayClientRef.current,
               beforeGame.fen(),
               {
                 ...enginePolicy,
@@ -794,16 +826,27 @@ export function useGameController(defaultBotId) {
                 count: Math.min(16, objectiveMoves.length),
                 searchMoves: objectiveMoves,
               },
+              candidateOperation,
             ) || []
             const verifiedObjectiveCandidates = await verifyObjectiveCandidates(
               beforeGame,
               objectiveCandidates,
               gameplayClientRef.current,
               enginePolicy,
+              candidateOperation,
             )
             candidates = mergeEngineCandidates(candidates, verifiedObjectiveCandidates)
           }
-        } catch {
+          assertCandidateOperation(candidateOperation)
+        } catch (error) {
+          if (error instanceof CandidateAnalysisError) {
+            if (generationRef.current === token) {
+              mateClientRef.current?.cancelAll()
+              setAnalysisError('Analysis did not finish. Retry this turn.')
+              setTurnState('bot-error')
+            }
+            return
+          }
           candidates = []
           engineSearchFailed = true
         }
@@ -1256,6 +1299,10 @@ export function useGameController(defaultBotId) {
     runReview(history, result)
   }
 
+  const retryAnalysis = () => {
+    if (phase === 'game' && analysisError) scheduleBotTurnRef.current?.(historyRef.current, 0)
+  }
+
   return {
     phase,
     gameMode,
@@ -1273,6 +1320,8 @@ export function useGameController(defaultBotId) {
     history,
     game,
     turnState,
+    analysisError,
+    retryAnalysis,
     message,
     speechEventId,
     dialogueLog,
@@ -1566,69 +1615,6 @@ function initializeTimedVariantEvents(profiles, now = Date.now()) {
   }))
 }
 
-async function analyzeEveryLegalMove(client, game, policy) {
-  const legalMoves = game.moves({ verbose: true }).map(moveToUci)
-  if (!legalMoves.length) return []
-  const chunks = []
-  for (let index = 0; index < legalMoves.length; index += 16) {
-    chunks.push(legalMoves.slice(index, index + 16))
-  }
-  const moveTime = Math.max(100, Math.floor(Number(policy.moveTime || 500) / chunks.length))
-  const results = []
-  for (const searchMoves of chunks) {
-    const lines = await client.bestMoves(game.fen(), {
-      ...policy,
-      elo: undefined,
-      depth: Math.min(15, Math.max(10, Number(policy.depth || 12))),
-      moveTime,
-      count: searchMoves.length,
-      searchMoves,
-      timeout: Math.max(2200, moveTime + 1500),
-    })
-    results.push(...(lines || []))
-  }
-  return results
-    .filter((candidate) => candidate?.uci)
-    .sort((a, b) => {
-      if (!Number.isFinite(a.score)) return 1
-      if (!Number.isFinite(b.score)) return -1
-      return b.score - a.score
-    })
-    .map((candidate, index) => ({ ...candidate, rank: index + 1 }))
-}
-
-export async function analyzeCandidatesWithRetry(
-  primaryClient,
-  retryClient,
-  game,
-  policy,
-  exhaustive,
-) {
-  const clients = [primaryClient, retryClient].filter(Boolean)
-  let lastError = null
-  for (let index = 0; index < clients.length; index += 1) {
-    const client = clients[index]
-    const attemptPolicy = index === 0
-      ? policy
-      : {
-          ...policy,
-          depth: Math.max(10, Math.min(16, Number(policy.depth || 12))),
-          moveTime: Math.max(350, Number(policy.moveTime || 500)),
-          timeout: Math.max(3000, Number(policy.timeout || 0)),
-        }
-    try {
-      const candidates = exhaustive
-        ? await analyzeEveryLegalMove(client, game, attemptPolicy)
-        : await client.bestMoves(game.fen(), attemptPolicy)
-      if (candidates?.length) return candidates
-      lastError = new Error('Stockfish returned no candidate moves')
-    } catch (error) {
-      lastError = error
-    }
-  }
-  throw lastError || new Error('No Stockfish client is available')
-}
-
 function shouldRunMateSafety(game, profile) {
   if (!profile?.capabilities?.maximumEngine || !profile.strengthPolicy?.mateSafety) return false
   if (isMartinDerivedProfile(profile)) return true
@@ -1676,7 +1662,7 @@ function mergeEngineCandidates(primary, objective) {
     .map((candidate, index) => ({ ...candidate, rank: index + 1 }))
 }
 
-async function verifyObjectiveCandidates(beforeGame, candidates, client, policy) {
+export async function verifyObjectiveCandidates(beforeGame, candidates, client, policy, operation = {}) {
   const legalMoves = new Map(
     beforeGame.moves({ verbose: true }).map((move) => [moveToUci(move), move]),
   )
@@ -1691,12 +1677,12 @@ async function verifyObjectiveCandidates(beforeGame, candidates, client, policy)
     const scores = []
     let objectiveVerified = targetGames.length > 0
     for (const targetGame of targetGames) {
-      const proof = await client.bestMoves(targetGame.fen(), {
+      const proof = await requestCandidateMoves(client, targetGame.fen(), {
         depth: Math.max(20, policy.depth || 0),
         moveTime: Math.max(2200, policy.moveTime || 0),
         count: 1,
         elo: undefined,
-      }) || []
+      }, operation) || []
       const score = scoreForColor(proof[0], targetGame.turn(), move.color)
       scores.push(score)
       if (!Number.isFinite(score) || score < 650) {

@@ -547,7 +547,10 @@ export function useGameController(defaultBotId) {
     setTurnState('game-over')
     const result = gameResult(finishedGame, gameMode, whiteProfile, blackProfile)
     const speaker = lastSpeaker || profile
-    const line = dialogueForGameEnd(speaker, result)
+    const playerWon = gameMode === 'player' &&
+      finishedGame.isCheckmate() &&
+      finishedGame.turn() !== (humanColor === 'white' ? 'w' : 'b')
+    const line = dialogueForGameEnd(speaker, playerWon ? 'Player wins by checkmate' : result)
     if (gameMode === 'bots') appendDialogue(speaker, line, nextHistory.length)
     else if (line) {
       setMessage(line)
@@ -558,6 +561,7 @@ export function useGameController(defaultBotId) {
     appendDialogue,
     blackProfile,
     gameMode,
+    humanColor,
     profile,
     runReview,
     updatePremoveQueue,
@@ -1354,7 +1358,7 @@ function gameResult(game, gameMode, whiteProfile, blackProfile) {
     const winner = game.turn() === 'w' ? blackProfile : whiteProfile
     return gameMode === 'bots'
       ? `${winner.name} wins by checkmate`
-      : game.turn() === 'w' ? 'Black wins by checkmate' : 'Player wins by checkmate'
+      : game.turn() === 'w' ? 'Black wins by checkmate' : 'White wins by checkmate'
   }
   if (isAutomaticDraw(game)) return 'Draw'
   return 'Game over'

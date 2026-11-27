@@ -1,9 +1,10 @@
-const ENGINE_FILE = 'stockfish/stockfish-18-lite-single.js'
+const ENGINE_FILE = 'stockfish/stockfish-19-worker.js?variant=lite'
+export const STOCKFISH_ELO_RANGE = Object.freeze({ min: 1320, max: 3190 })
 
 export function createStockfishClient({
-  workerFactory = (url) => new Worker(url),
+  workerFactory = (url, options) => new Worker(url, options),
   engineUrl = null,
-  readyTimeoutMs = 1800,
+  readyTimeoutMs = 15000,
   stopGraceMs = 500,
 } = {}) {
   let worker = null
@@ -13,6 +14,7 @@ export function createStockfishClient({
   let active = null
   let generation = 0
   let requestId = 0
+  let eloRange = STOCKFISH_ELO_RANGE
   const queue = []
   const listeners = new Set()
 
@@ -23,7 +25,7 @@ export function createStockfishClient({
   function ensureWorker() {
     if (worker) return worker
     const baseUrl = import.meta.env?.BASE_URL || './'
-    worker = workerFactory(engineUrl || `${baseUrl}${ENGINE_FILE}`)
+    worker = workerFactory(engineUrl || `${baseUrl}${ENGINE_FILE}`, { type: 'module' })
     worker.onmessage = ({ data }) => handleMessage(String(data))
     worker.onerror = (error) => {
       rejectReady(error instanceof Error ? error : new Error('Stockfish worker failed'))
@@ -69,6 +71,11 @@ export function createStockfishClient({
   }
 
   function handleMessage(text) {
+    const eloOption = text.match(/^option name UCI_Elo type spin .*\bmin (\d+) max (\d+)$/)
+    if (eloOption) {
+      eloRange = { min: Number(eloOption[1]), max: Number(eloOption[2]) }
+      return
+    }
     if (text === 'readyok') {
       readyState?.resolve()
       emit('Stockfish ready')
@@ -102,6 +109,7 @@ export function createStockfishClient({
     worker?.terminate()
     worker = null
     readyPromise = null
+    eloRange = STOCKFISH_ELO_RANGE
   }
 
   async function runNext() {
@@ -128,7 +136,10 @@ export function createStockfishClient({
       const candidateCount = Math.max(1, Math.min(16, request.options.count || 1))
       const limitStrength = Number.isFinite(request.options.elo)
       post(`setoption name UCI_LimitStrength value ${limitStrength ? 'true' : 'false'}`)
-      if (limitStrength) post(`setoption name UCI_Elo value ${request.options.elo}`)
+      if (limitStrength) {
+        const elo = Math.max(eloRange.min, Math.min(eloRange.max, Math.round(request.options.elo)))
+        post(`setoption name UCI_Elo value ${elo}`)
+      }
       post(`setoption name MultiPV value ${candidateCount}`)
       post(`position fen ${request.fen}`)
       emit(request.label)

@@ -7,6 +7,7 @@ import {
   getIWantCheckmateProfile,
 } from '../src/data/iwantcheckmateProfiles.js'
 import {
+  imaginaryPawnQueenFen,
   runningVariantElo,
   selectIWantCheckmateCandidate,
   variantEngineElo,
@@ -124,7 +125,7 @@ test('SimpFish takes an available queen before following ordinary engine rank', 
   const game = new Chess('7k/8/8/8/8/8/3Q4/3r3K b - - 0 1')
   const candidates = [
     { uci: 'd1a1', score: 500, rank: 1, move: game.moves({ verbose: true }).find((move) => move.lan === 'd1a1') },
-    { uci: 'd1d2', score: 300, rank: 2, move: game.moves({ verbose: true }).find((move) => move.lan === 'd1d2') },
+    { uci: 'd1d2', score: 440, rank: 2, move: game.moves({ verbose: true }).find((move) => move.lan === 'd1d2') },
   ]
   assert.equal(candidates[1].move.captured, 'q')
   assert.equal(selectIWantCheckmateCandidate(
@@ -135,7 +136,7 @@ test('SimpFish takes an available queen before following ordinary engine rank', 
   ).uci, 'd1d2')
 })
 
-test('ScaredFish values an enemy pawn like a queen', () => {
+test('ScaredFish follows the legal move ranked best on its imaginary queen board', () => {
   const profile = getIWantCheckmateProfile('iwc-scaredfish')
   const game = new Chess('7k/8/8/8/8/3p4/4P3/7K w - - 0 1')
   const legal = game.moves({ verbose: true })
@@ -148,7 +149,7 @@ test('ScaredFish values an enemy pawn like a queen', () => {
     profile,
     candidates,
     Math.random,
-    { game },
+    { game, pawnQueenCandidates: [{ uci: 'e2d3', rank: 1 }] },
   ).uci, 'e2d3')
 })
 
@@ -168,4 +169,81 @@ test('MirrorFish and ClockFish state survives reload and undo reconstruction', (
   assert.equal(rewound.mirror.lastOpponentMoveRank, 4)
   assert.equal(rewound.mirror.currentElo, 100)
   assert.equal(rewound.mirror.clockStartedAt, 1234)
+})
+
+function candidatesFor(game, ucis) {
+  const legalMoves = game.moves({ verbose: true })
+  return ucis.map((uci, index) => {
+    const move = legalMoves.find((entry) => entry.lan === uci)
+    assert.ok(move, `${uci} must be legal in the fixture`)
+    return { uci, move, rank: index + 1, score: 600 - index * 30 }
+  })
+}
+
+test('ClockFish starts from zero and describes the stepwise five-second ramp', () => {
+  const profile = getIWantCheckmateProfile('iwc-clockfish')
+  assert.equal(runningVariantElo(profile), 0)
+  assert.equal(profile.variant.movePolicy.ratingStep, 100)
+  assert.equal(profile.variant.movePolicy.durationMs, 5000)
+})
+
+test('ScaredFish changes only opponent pawns into queens for either color', () => {
+  const white = new Chess('4k3/1p6/8/8/8/8/P7/4K3 w - - 0 1')
+  assert.equal(imaginaryPawnQueenFen(white), '4k3/1q6/8/8/8/8/P7/4K3 w - - 0 1')
+  const black = new Chess('4k3/1p6/8/8/8/8/P7/4K3 b - - 0 1')
+  assert.equal(imaginaryPawnQueenFen(black), '4k3/1p6/8/8/8/8/Q7/4K3 b - - 0 1')
+  const enPassant = new Chess('4k3/8/8/8/3pP3/8/8/4K3 b - e3 0 1')
+  assert.equal(imaginaryPawnQueenFen(enPassant).split(' ')[3], '-')
+})
+
+test('ScaredFish rejects imaginary moves that are illegal on the real board', () => {
+  const game = new Chess('7k/8/8/8/8/3p4/4P3/7K w - - 0 1')
+  const candidates = candidatesFor(game, ['h1g1', 'e2d3'])
+  const profile = getIWantCheckmateProfile('iwc-scaredfish')
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, Math.random, {
+    game,
+    pawnQueenCandidates: [{ uci: 'h1h8', rank: 1 }, { uci: 'e2d3', rank: 2 }],
+  }).uci, 'e2d3')
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, Math.random, {
+    game, pawnQueenCandidates: [{ uci: 'h1h8', rank: 1 }],
+  }).uci, 'h1g1')
+})
+
+test('SimpFish passes up immediate mate until the opponent queen is gone', () => {
+  const game = new Chess('q6k/5Q2/6K1/8/8/8/8/8 w - - 0 1')
+  const candidates = candidatesFor(game, ['f7g7', 'f7e7'])
+  assert.match(candidates[0].move.san, /#$/)
+  const chosen = selectIWantCheckmateCandidate(
+    getIWantCheckmateProfile('iwc-simpfish'), candidates, Math.random, { game },
+  )
+  assert.equal(chosen.uci, 'f7e7')
+})
+
+test('SimpFish declines a queen capture that throws away a larger advantage', () => {
+  const game = new Chess('7k/8/8/8/8/8/3Q4/3r3K b - - 0 1')
+  const candidates = candidatesFor(game, ['d1a1', 'd1d2'])
+  candidates[1].score = candidates[0].score - 200
+  assert.equal(selectIWantCheckmateCandidate(
+    getIWantCheckmateProfile('iwc-simpfish'), candidates, Math.random, { game },
+  ).uci, 'd1a1')
+})
+
+test('TortureFish postpones mate while any opponent material remains', () => {
+  const profile = getIWantCheckmateProfile('iwc-torturefish')
+  assert.equal(profile.avatar.type, 'placeholder')
+  const game = new Chess('q6k/5Q2/6K1/8/8/8/8/8 w - - 0 1')
+  const candidates = candidatesFor(game, ['f7g7', 'f7e7'])
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, Math.random, { game }).uci, 'f7e7')
+  const bareKing = new Chess('7k/5Q2/6K1/8/8/8/8/8 w - - 0 1')
+  const finishers = candidatesFor(bareKing, ['f7g7', 'f7e7'])
+  assert.equal(selectIWantCheckmateCandidate(profile, finishers, Math.random, { game: bareKing }).uci, 'f7g7')
+})
+
+test('GeometricFish can reach legal ranks beyond the former six-move limit', () => {
+  const candidates = Array.from({ length: 20 }, (_, index) => ({
+    uci: `move-${index + 1}`, score: -index, rank: index + 1,
+  }))
+  const profile = getIWantCheckmateProfile('geometricfish')
+  assert.equal(profile.variant.movePolicy.allLegalMoves, true)
+  assert.equal(selectIWantCheckmateCandidate(profile, candidates, () => 0.992).rank, 7)
 })

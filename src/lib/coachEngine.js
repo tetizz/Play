@@ -90,7 +90,11 @@ export function chooseCoachMove(
         game,
       })
     : null
-  const forcedMate = selectFastestMate(playableCandidates)
+  const forcedMate = selectFastestMate(
+    Number.isFinite(policy.elo)
+      ? playableCandidates.filter((candidate) => candidate.mate === 1)
+      : playableCandidates,
+  )
   if (bishopKnightConversion) {
     return {
       move: bishopKnightConversion.move,
@@ -296,6 +300,10 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy, ran
   if (!Array.isArray(options) || !options.length) return null
 
   const legal = new Map(game.moves({ verbose: true }).map((move) => [cleanSan(move.san), move]))
+  const bestScore = engineCandidates.reduce(
+    (best, candidate) => Math.max(best, candidate.score ?? -Infinity),
+    -Infinity,
+  )
   const playable = []
   for (const option of options) {
     const san = typeof option === 'string' ? option : option.san
@@ -313,9 +321,9 @@ function findBookMove(game, styleProfile, profile, engineCandidates, policy, ran
     if (engineCandidates.length && !engineMatch) continue
     if (
       engineMatch &&
-      Number.isFinite(engineCandidates[0].score) &&
+      Number.isFinite(bestScore) &&
       Number.isFinite(engineMatch.score) &&
-      engineCandidates[0].score - engineMatch.score > policy.bookWindowCp
+      bestScore - engineMatch.score > policy.bookWindowCp
     ) {
       continue
     }
@@ -432,7 +440,7 @@ function selectEngineMove(game, candidates, profile, styleProfile, policy, rando
   const nearBest = candidates.filter((candidate) => {
     if (candidate.rank === 1) return true
     if (!Number.isFinite(top.score) || !Number.isFinite(candidate.score)) return false
-    return top.score - candidate.score <= policy.styleWindowCp
+    return Math.abs(top.score - candidate.score) <= policy.styleWindowCp
   })
 
   if (profile.id === 'akshit' && nearBest.length > 1) {

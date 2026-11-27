@@ -22,11 +22,13 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.ok(BOT_PROFILES.length >= 25)
   assert.equal(new Set(BOT_PROFILES.map((profile) => profile.id)).size, BOT_PROFILES.length)
   assert.equal(getBotProfile('mubassar').displayRating, 2300)
-  assert.equal(getBotProfile('ayden').displayRating, 1900)
+  assert.equal(getBotProfile('ayden').displayRating, 1950)
   assert.equal(getBotProfile('akshit').displayRating, 2007)
-  assert.equal(getBotProfile('trixize').displayRating, 1550)
-  assert.equal(getBotProfile('kirk').displayRating, 1700)
-  assert.equal(getBotProfile('kirk').strengthPolicy.engineElo, 1700)
+  assert.deepEqual(getBotProfile('akshit').accounts.chesscom, ['knightmaneuver_12'])
+  assert.equal(getBotProfile('trixize').displayRating, null)
+  assert.equal(getBotProfile('trixize').strengthLabel, 'Full strength')
+  assert.equal(getBotProfile('kirk').displayRating, 1850)
+  assert.equal(getBotProfile('kirk').strengthPolicy.engineElo, 1850)
   assert.deepEqual(getBotProfile('kirk').accounts, {
     chesscom: ['Mrlovechess432'],
     lichess: ['Coachkirk432'],
@@ -34,8 +36,8 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('kirk').intro, '')
   assert.equal(getBotProfile('alexander').fullName, 'Aleksandr Lenderman')
   assert.equal(getBotProfile('alexander').title, 'GM')
-  assert.equal(getBotProfile('alexander').displayRating, 2700)
-  assert.equal(getBotProfile('alexander').strengthPolicy.engineElo, 2700)
+  assert.equal(getBotProfile('alexander').displayRating, 2600)
+  assert.equal(getBotProfile('alexander').strengthPolicy.engineElo, 2600)
   assert.deepEqual(getBotProfile('alexander').accounts, {
     chesscom: ['AlexanderL'],
     lichess: ['AlexLenderman'],
@@ -48,7 +50,7 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('trixize').strengthPolicy.engineElo, null)
   assert.equal(getBotProfile('mubassar').strengthPolicy.engineElo, 2300)
   assert.equal(getBotProfile('mubassar').strengthPolicy.belt.engineElo, 2700)
-  assert.equal(getBotProfile('ayden').strengthPolicy.engineElo, 1900)
+  assert.equal(getBotProfile('ayden').strengthPolicy.engineElo, 1950)
   assert.equal(getBotProfile('akshit').strengthPolicy.engineElo, 2007)
   assert.equal(getBotProfile('trixize').strengthPolicy.candidates, 8)
   assert.equal(getBotProfile('trixize').capabilities.maximumEngine, true)
@@ -56,7 +58,7 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('ayden').intro, 'Ayden loves the French Defense and keeps his comments focused on the position.')
   assert.equal(
     getBotProfile('akshit').intro,
-    'Akshit is the Knight Manuveur. If a knight can move, he will find a reason to move it.',
+    'If a knight can move, Akshit will find a reason to move it.',
   )
   assert.equal(getBotProfile('iwc-worst-move').name, 'PityFish')
   assert.equal(getBotProfile('iwc-worst-move').displayRating, 3600)
@@ -105,22 +107,26 @@ test('public and video bot profiles expose the requested ratings and capabilitie
   assert.equal(getBotProfile('martinfish').id, 'iwc-smartin')
   assert.equal(getBotProfile('geometricfish').name, 'GeometricFish')
   assert.equal(getBotProfile('witty-alien').name, 'Witty Alien')
-  assert.equal(getBotProfile('witty-alien').displayRating, 2400)
+  assert.equal(getBotProfile('witty-alien').displayRating, 2550)
   assert.equal(getBotProfile('witty-alien').countryCode, 'bg')
   assert.equal(getBotProfile('witty-alien').capabilities.sacrificeSpecialist, true)
 })
 
 test('each rated bot uses its stated internal strength', () => {
-  const mubassar = getBotProfile('mubassar').strengthPolicy.engineElo
-  const ayden = getBotProfile('ayden').strengthPolicy.engineElo
-  const akshit = getBotProfile('akshit').strengthPolicy.engineElo
-  const witty = getBotProfile('witty-alien').strengthPolicy.engineElo
-  assert.equal(mubassar, getBotProfile('mubassar').displayRating)
-  assert.equal(ayden, getBotProfile('ayden').displayRating)
-  assert.equal(akshit, getBotProfile('akshit').displayRating)
-  assert.equal(witty, getBotProfile('witty-alien').displayRating)
-  assert.ok(mubassar > akshit)
-  assert.ok(akshit > ayden)
+  for (const id of ['mubassar', 'ayden', 'akshit', 'brian', 'kirk', 'alexander', 'witty-alien']) {
+    const profile = getBotProfile(id)
+    assert.equal(calculationProfile(profile).elo, profile.displayRating, id)
+  }
+})
+
+test('a rated player bot does not override Stockfish strength to favor a much stronger style move', () => {
+  const game = new Chess()
+  const candidates = [
+    { uci: 'e2e3', score: -45, rank: 1 },
+    { uci: 'g1f3', score: 25, rank: 2 },
+  ]
+  const decision = chooseCoachMove(game, candidates, getBotProfile('akshit'), {}, false, () => 0.99)
+  assert.equal(decision.move.san, 'e3')
 })
 
 test('an invalid restored bot id keeps the default profile and repertoire aligned', async () => {

@@ -3087,7 +3087,7 @@ button {
   }
 
   .bot-family-gallery {
-    grid-auto-columns: minmax(102px, 116px);
+    grid-auto-columns: minmax(112px, 124px);
     padding: 12px;
   }
 

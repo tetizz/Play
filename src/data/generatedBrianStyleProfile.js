@@ -1,558 +1,532 @@
 // Generated from the same public games as generatedRecentBrianRepertoireBook.js.
 // This compact profile lets the runtime preserve Brian's recurring plans outside exact book positions.
-// Sources: chess.com:Bdot=632, lichess:BrianART=883(17 skipped).
-// Generated at 2026-08-03T01:46:50.503Z.
+// Sources: chess.com:Bdot=615, lichess:BrianART=874(26 skipped).
+// Generated at 2026-11-27T03:40:42.989Z.
 // Do not edit by hand; run npm run build:repertoires.
 export const GENERATED_BRIAN_STYLE_PROFILE = {
-  "generatedAt": "2026-08-03T01:46:50.503Z",
-  "sampleSize": 1515,
-  "recentWeight": 768.76,
+  "generatedAt": "2026-11-27T03:40:42.989Z",
+  "sourceCoverage": [
+    {
+      "site": "chess.com",
+      "username": "Bdot",
+      "acceptedGames": 615,
+      "skippedGames": 0,
+      "earliestPlayedAt": "2023-06-07T01:10:17.000Z",
+      "latestPlayedAt": "2026-10-20T18:38:08.000Z"
+    },
+    {
+      "site": "lichess",
+      "username": "BrianART",
+      "acceptedGames": 874,
+      "skippedGames": 26,
+      "earliestPlayedAt": "2026-04-17T01:55:58.000Z",
+      "latestPlayedAt": "2026-11-26T23:36:31.000Z"
+    }
+  ],
+  "sampleSize": 1489,
+  "recentWeight": 652.378,
   "sources": {
     "chess.com": {
-      "games": 632,
-      "recentWeight": 91.647
+      "games": 615,
+      "recentWeight": 159.699
     },
     "lichess": {
-      "games": 883,
-      "recentWeight": 677.114
+      "games": 874,
+      "recentWeight": 492.679
     }
   },
   "byColor": {
     "white": {
-      "games": 760,
-      "recentWeight": 383.813,
+      "games": 744,
+      "recentWeight": 324.381,
       "results": {
-        "wins": 443,
-        "losses": 286,
-        "draws": 31
+        "wins": 435,
+        "losses": 277,
+        "draws": 32
       },
       "motifWeights": {
-        "capture": 0.222,
-        "check": 0.078,
+        "capture": 0.226,
+        "check": 0.079,
         "castle": 0.023,
-        "pawnPush": 0.271,
-        "queenMove": 0.13,
-        "rookMove": 0.168,
-        "kingMove": 0.122,
-        "flankPawn": 0.101,
-        "center": 0.156,
-        "development": 0.077,
-        "earlyQueen": 0.007
+        "pawnPush": 0.265,
+        "queenMove": 0.134,
+        "rookMove": 0.166,
+        "kingMove": 0.118,
+        "flankPawn": 0.098,
+        "center": 0.159,
+        "development": 0.078,
+        "earlyQueen": 0.009
       },
       "pieceSquareWeights": {
         "p:d4": 1,
-        "n:c3": 0.848,
-        "n:f3": 0.737,
-        "p:e4": 0.55,
-        "b:d3": 0.459,
-        "b:f4": 0.451,
-        "p:e3": 0.438,
-        "k:g1": 0.372,
-        "p:h4": 0.258,
-        "p:d5": 0.217,
-        "p:c3": 0.214,
-        "n:e5": 0.212,
-        "p:e5": 0.209,
-        "n:e2": 0.161,
-        "r:e1": 0.148,
-        "p:c5": 0.141,
-        "b:c4": 0.126,
-        "p:f4": 0.124,
-        "p:h3": 0.122,
-        "n:e4": 0.108,
-        "p:g3": 0.106,
-        "p:h5": 0.104,
-        "q:d3": 0.101,
-        "b:g5": 0.1,
-        "q:d4": 0.097,
-        "p:a3": 0.096,
-        "p:g4": 0.095,
-        "q:d2": 0.093,
-        "b:e3": 0.092,
-        "b:g2": 0.088,
-        "p:c4": 0.087,
-        "b:e2": 0.082,
-        "p:f3": 0.082,
-        "b:b5": 0.08,
-        "q:e2": 0.061,
-        "n:f6": 0.06
+        "n:c3": 0.84,
+        "n:f3": 0.755,
+        "p:e4": 0.643,
+        "b:d3": 0.445,
+        "k:g1": 0.41,
+        "b:f4": 0.399,
+        "p:e3": 0.376,
+        "p:e5": 0.226,
+        "p:h4": 0.225,
+        "p:c3": 0.219,
+        "p:d5": 0.201,
+        "n:e5": 0.172,
+        "n:e4": 0.154,
+        "b:c4": 0.152,
+        "n:e2": 0.14,
+        "r:e1": 0.139,
+        "q:d3": 0.137,
+        "p:c5": 0.133,
+        "q:d4": 0.132,
+        "b:g5": 0.123,
+        "p:f4": 0.118,
+        "p:h3": 0.111,
+        "b:e3": 0.102,
+        "b:b5": 0.099,
+        "q:d2": 0.096,
+        "b:e2": 0.094,
+        "p:g3": 0.091,
+        "q:e2": 0.086,
+        "p:a3": 0.082,
+        "p:h5": 0.081,
+        "p:g4": 0.081,
+        "k:c1": 0.08,
+        "b:g2": 0.078,
+        "p:c4": 0.071,
+        "p:f3": 0.071
       },
       "favoritePieceSetups": [
         {
           "key": "p:d4",
-          "weight": 394.653
+          "weight": 326.332
         },
         {
           "key": "n:c3",
-          "weight": 334.828
+          "weight": 274.012
         },
         {
           "key": "n:f3",
-          "weight": 291.006
+          "weight": 246.53
         },
         {
           "key": "p:e4",
-          "weight": 217.167
+          "weight": 209.858
         },
         {
           "key": "b:d3",
-          "weight": 181.342
-        },
-        {
-          "key": "b:f4",
-          "weight": 177.894
-        },
-        {
-          "key": "p:e3",
-          "weight": 172.779
+          "weight": 145.06
         },
         {
           "key": "k:g1",
-          "weight": 146.752
+          "weight": 133.768
+        },
+        {
+          "key": "b:f4",
+          "weight": 130.344
+        },
+        {
+          "key": "p:e3",
+          "weight": 122.782
+        },
+        {
+          "key": "p:e5",
+          "weight": 73.673
         },
         {
           "key": "p:h4",
-          "weight": 101.627
-        },
-        {
-          "key": "p:d5",
-          "weight": 85.771
+          "weight": 73.564
         },
         {
           "key": "p:c3",
-          "weight": 84.457
+          "weight": 71.362
         },
         {
-          "key": "n:e5",
-          "weight": 83.6
+          "key": "p:d5",
+          "weight": 65.546
         }
       ],
       "openingLines": [
         {
           "key": "e4 c6 d4 d5 Nc3 dxe4 Nxe4 Nf6",
-          "weight": 11.497
-        },
-        {
-          "key": "d4 Nf6 Nc3 e6 Bf4 d5 e3 Bd6",
-          "weight": 6.817
-        },
-        {
-          "key": "d4 d5 Nc3 c6 Bf4 Nf6 e3 Bf5",
-          "weight": 6.202
-        },
-        {
-          "key": "e4 e6 d4 d5 Nc3 Nf6 e5 Nfd7",
-          "weight": 5.388
-        },
-        {
-          "key": "e4 c6 d4 d5 Nc3 dxe4 Nxe4 Bf5",
-          "weight": 5.022
+          "weight": 13.018
         },
         {
           "key": "e4 e5 d4 exd4 Qxd4 Nc6 Qd3 Nf6",
-          "weight": 4.441
-        },
-        {
-          "key": "e4 d5 exd5 Qxd5 Nc3 Qd8 Nf3 Nf6",
-          "weight": 4.215
+          "weight": 9.057
         },
         {
           "key": "d4 Nf6 Nc3 g6 Bf4 d6 e3 Bg7",
-          "weight": 4.078
+          "weight": 5.246
+        },
+        {
+          "key": "e4 c6 d4 d5 Nc3 dxe4 Nxe4 Bf5",
+          "weight": 5.076
+        },
+        {
+          "key": "d4 d5 Nc3 c6 Bf4 Nf6 e3 Bf5",
+          "weight": 4.646
+        },
+        {
+          "key": "e4 c5 d4 cxd4 Qxd4 Nc6 Qd3 g6",
+          "weight": 4.615
+        },
+        {
+          "key": "d4 Nf6 Nc3 e6 Bf4 d5 e3 Bd6",
+          "weight": 3.941
         },
         {
           "key": "e4 c6 d4 d5 Nc3 dxe4 Nxe4 Nd7",
-          "weight": 4.019
+          "weight": 3.61
         },
         {
-          "key": "d4 c6 Nc3 d5 Bf4 Nf6 e3 g6",
-          "weight": 3.996
+          "key": "e4 d5 exd5 Qxd5 Nc3 Qd8 Nf3 Nf6",
+          "weight": 3.528
+        },
+        {
+          "key": "e4 e6 d4 d5 Nc3 dxe4 Nxe4 Nf6",
+          "weight": 3.357
         }
       ],
       "commonPawnStructures": [
         {
           "key": "a2-b2-c2-d4-e3-f2-g2-h2",
-          "weight": 72
-        },
-        {
-          "key": "a2-b2-c2-d4-f2-g2-h2",
-          "weight": 31.943
+          "weight": 48.759
         },
         {
           "key": "a2-b2-c2-e4-f2-g2-h2",
-          "weight": 22.181
+          "weight": 34.544
         },
         {
-          "key": "a2-b2-c2-d4-e3-f2-g2-h4",
-          "weight": 15.043
-        },
-        {
-          "key": "a2-b2-c2-d4-e3-f2-g2-h5",
-          "weight": 11.928
+          "key": "a2-b2-c2-d4-f2-g2-h2",
+          "weight": 32.806
         },
         {
           "key": "a2-b2-c2-e3-f2-g2-h2",
-          "weight": 10.487
+          "weight": 10.662
         },
         {
-          "key": "a2-b2-c2-d4-f2-f4-g2-h2",
-          "weight": 10.091
+          "key": "a2-b2-c2-d4-e3-f2-g2-h4",
+          "weight": 10.473
         },
         {
-          "key": "a2-b2-c2-d4-f2-g2-h3",
-          "weight": 10.021
+          "key": "a2-b2-c2-d4-e3-f2-g2-h5",
+          "weight": 8.975
         },
         {
           "key": "a2-b2-c3-d4-f2-g2-h2",
-          "weight": 9.551
+          "weight": 7.6
         },
         {
-          "key": "a2-b2-c2-d4-e3-f2-g2",
-          "weight": 8.946
+          "key": "a2-b2-c2-d4-f2-g2-h3",
+          "weight": 7.04
+        },
+        {
+          "key": "a2-b2-c2-e5-f2-g2-h2",
+          "weight": 6.472
+        },
+        {
+          "key": "a2-b2-c2-d2-f2-g2-h2",
+          "weight": 6.193
         }
       ],
       "timeControls": [
         {
           "key": "bullet",
-          "weight": 379.287
+          "weight": 321.855
         },
         {
           "key": "blitz",
-          "weight": 4.51
+          "weight": 2.516
         },
         {
           "key": "rapid",
-          "weight": 0.016
+          "weight": 0.01
         }
       ],
       "endgameHabits": {
-        "positions": 1834.341,
-        "kingMoveRate": 0.36,
-        "pawnMoveRate": 0.237,
-        "captureRate": 0.147,
-        "checkRate": 0.135
+        "positions": 1509.968,
+        "kingMoveRate": 0.349,
+        "pawnMoveRate": 0.232,
+        "captureRate": 0.153,
+        "checkRate": 0.139
       }
     },
     "black": {
-      "games": 755,
-      "recentWeight": 384.947,
+      "games": 745,
+      "recentWeight": 327.997,
       "results": {
-        "wins": 402,
-        "losses": 318,
-        "draws": 35
+        "wins": 377,
+        "losses": 330,
+        "draws": 38
       },
       "motifWeights": {
-        "capture": 0.225,
-        "check": 0.064,
+        "capture": 0.224,
+        "check": 0.065,
         "castle": 0.02,
-        "pawnPush": 0.272,
-        "queenMove": 0.128,
-        "rookMove": 0.15,
-        "kingMove": 0.135,
-        "flankPawn": 0.094,
-        "center": 0.152,
+        "pawnPush": 0.268,
+        "queenMove": 0.124,
+        "rookMove": 0.154,
+        "kingMove": 0.136,
+        "flankPawn": 0.089,
+        "center": 0.153,
         "development": 0.072,
         "earlyQueen": 0.004
       },
       "pieceSquareWeights": {
         "p:d5": 1,
-        "p:c6": 0.725,
-        "n:f6": 0.711,
-        "p:e6": 0.531,
-        "n:d7": 0.455,
-        "b:d6": 0.368,
-        "k:g8": 0.284,
-        "b:g4": 0.257,
-        "n:c6": 0.24,
-        "p:e4": 0.232,
-        "b:f5": 0.229,
-        "p:e5": 0.213,
-        "p:c5": 0.135,
-        "p:g6": 0.12,
+        "p:c6": 0.72,
+        "n:f6": 0.695,
+        "p:e6": 0.525,
+        "n:d7": 0.419,
+        "b:d6": 0.334,
+        "k:g8": 0.271,
+        "b:g4": 0.258,
+        "n:c6": 0.253,
+        "b:f5": 0.232,
+        "p:e4": 0.226,
+        "p:e5": 0.192,
+        "p:c5": 0.146,
+        "b:e7": 0.12,
         "n:e4": 0.108,
-        "r:e8": 0.105,
-        "b:e7": 0.098,
-        "p:h5": 0.097,
-        "p:h6": 0.097,
-        "p:f6": 0.095,
-        "p:d4": 0.093,
-        "p:a6": 0.092,
-        "q:c7": 0.089,
-        "b:f3": 0.075,
-        "b:g7": 0.073,
-        "n:e5": 0.07,
-        "q:e7": 0.065,
+        "p:g6": 0.105,
+        "p:h5": 0.095,
+        "p:d4": 0.094,
+        "p:f6": 0.092,
+        "p:h6": 0.09,
+        "r:e8": 0.087,
+        "p:a6": 0.086,
+        "q:c7": 0.085,
+        "b:f3": 0.076,
+        "b:g7": 0.067,
         "p:c4": 0.065,
-        "b:g6": 0.063,
-        "b:h5": 0.061,
-        "b:d3": 0.056,
-        "q:b6": 0.052,
-        "b:e6": 0.051,
-        "n:e7": 0.049,
-        "p:b6": 0.046,
-        "b:c5": 0.043
+        "q:a5": 0.064,
+        "b:d3": 0.063,
+        "q:e7": 0.06,
+        "n:e5": 0.059,
+        "b:e6": 0.058,
+        "q:b6": 0.051,
+        "n:e7": 0.05,
+        "b:g6": 0.048,
+        "n:d5": 0.046,
+        "b:h5": 0.044
       },
       "favoritePieceSetups": [
         {
           "key": "p:d5",
-          "weight": 472.949
+          "weight": 409.368
         },
         {
           "key": "p:c6",
-          "weight": 342.83
+          "weight": 294.554
         },
         {
           "key": "n:f6",
-          "weight": 336.121
+          "weight": 284.374
         },
         {
           "key": "p:e6",
-          "weight": 250.912
+          "weight": 214.725
         },
         {
           "key": "n:d7",
-          "weight": 215.159
+          "weight": 171.615
         },
         {
           "key": "b:d6",
-          "weight": 174.227
+          "weight": 136.865
         },
         {
           "key": "k:g8",
-          "weight": 134.138
+          "weight": 110.959
         },
         {
           "key": "b:g4",
-          "weight": 121.497
+          "weight": 105.448
         },
         {
           "key": "n:c6",
-          "weight": 113.547
-        },
-        {
-          "key": "p:e4",
-          "weight": 109.496
+          "weight": 103.553
         },
         {
           "key": "b:f5",
-          "weight": 108.35
+          "weight": 94.955
+        },
+        {
+          "key": "p:e4",
+          "weight": 92.683
         },
         {
           "key": "p:e5",
-          "weight": 100.934
+          "weight": 78.45
         }
       ],
       "openingLines": [
         {
           "key": "e4 c6 d4 d5 Nc3 dxe4 Nxe4 Nf6",
-          "weight": 21.018
+          "weight": 16.703
         },
         {
           "key": "e4 c6 Nf3 d5 exd5 cxd5 d4 Nf6",
-          "weight": 11.226
-        },
-        {
-          "key": "e4 c6 d4 d5 e5 Bf5 h4 h5",
-          "weight": 10.333
-        },
-        {
-          "key": "Nf3 c6 g3 d5 Bg2 Nf6 O-O Nbd7",
-          "weight": 8.205
-        },
-        {
-          "key": "e4 c6 d4 d5 exd5 cxd5 c4 Nf6",
-          "weight": 7.391
-        },
-        {
-          "key": "e4 c6 d4 d5 e5 Bf5 Nf3 e6",
-          "weight": 7.18
+          "weight": 9.994
         },
         {
           "key": "e4 c6 d4 d5 exd5 cxd5 Bd3 Nc6",
-          "weight": 6.877
+          "weight": 9.885
         },
         {
-          "key": "e4 c6 Nc3 d5 d4 dxe4 Nxe4 Nf6",
-          "weight": 6.522
+          "key": "e4 c6 d4 d5 e5 Bf5 Bd3 Bxd3",
+          "weight": 8.392
         },
         {
-          "key": "d4 c6 Nf3 d5 c4 Nf6 Nc3 e6",
-          "weight": 6.203
+          "key": "e4 c6 d4 d5 exd5 cxd5 c4 Nf6",
+          "weight": 8.002
+        },
+        {
+          "key": "e4 c6 d4 d5 e5 Bf5 h4 h5",
+          "weight": 7.976
         },
         {
           "key": "e4 c6 d4 d5 Nd2 dxe4 Nxe4 Nf6",
-          "weight": 5.815
+          "weight": 6.683
+        },
+        {
+          "key": "e4 c6 Nc3 d5 d4 dxe4 Nxe4 Nf6",
+          "weight": 6.176
+        },
+        {
+          "key": "Nf3 c6 g3 d5 Bg2 Nf6 O-O Nbd7",
+          "weight": 5.919
+        },
+        {
+          "key": "e4 c6 Nc3 d5 Nf3 dxe4 Nxe4 Nf6",
+          "weight": 5.88
         }
       ],
       "commonPawnStructures": [
         {
           "key": "a7-b7-c6-d5-e6-f7-g7-h7",
-          "weight": 55.399
+          "weight": 49.745
         },
         {
           "key": "a7-b7-c6-d5-e7-f7-g7-h7",
-          "weight": 31.271
-        },
-        {
-          "key": "a7-b7-c6-f6-f7-g7-h7",
-          "weight": 25.778
+          "weight": 29.864
         },
         {
           "key": "a7-b7-c6-e7-f7-g7-h7",
-          "weight": 24.579
+          "weight": 23.65
         },
         {
-          "key": "a6-b7-d5-e7-f7-g7-h7",
-          "weight": 18.64
-        },
-        {
-          "key": "a7-b7-c6-d5-e5-f7-g7-h7",
-          "weight": 15.714
-        },
-        {
-          "key": "a7-b7-c5-d5-e6-f7-g7-h7",
-          "weight": 14.585
+          "key": "a7-b7-c6-f6-f7-g7-h7",
+          "weight": 21.396
         },
         {
           "key": "a7-b7-d5-e7-f7-g7-h7",
-          "weight": 13.645
+          "weight": 16.584
         },
         {
           "key": "a7-b7-d5-e6-f7-g7-h7",
-          "weight": 12.8
+          "weight": 14.28
         },
         {
-          "key": "a7-b7-c6-d5-e6-f7-g7-h6",
-          "weight": 11.974
+          "key": "a6-b7-d5-e7-f7-g7-h7",
+          "weight": 13.32
+        },
+        {
+          "key": "a7-b7-c6-d5-e5-f7-g7-h7",
+          "weight": 11.127
+        },
+        {
+          "key": "a7-b7-d5-e7-f7-g6-h7",
+          "weight": 10.389
+        },
+        {
+          "key": "a7-b7-c5-d5-e6-f7-g7-h7",
+          "weight": 9.879
         }
       ],
       "timeControls": [
         {
           "key": "bullet",
-          "weight": 379.993
+          "weight": 322.33
         },
         {
           "key": "blitz",
-          "weight": 3.976
+          "weight": 3.376
         },
         {
           "key": "classical",
-          "weight": 0.978
+          "weight": 1.458
+        },
+        {
+          "key": "unknown",
+          "weight": 0.833
         }
       ],
       "endgameHabits": {
-        "positions": 1605.123,
-        "kingMoveRate": 0.438,
-        "pawnMoveRate": 0.215,
-        "captureRate": 0.145,
-        "checkRate": 0.109
+        "positions": 1507.046,
+        "kingMoveRate": 0.439,
+        "pawnMoveRate": 0.197,
+        "captureRate": 0.14,
+        "checkRate": 0.108
       }
     }
   },
   "knownWeakMoves": [
     {
-      "history": "r1bqkbnr/pppp1ppp/2n5/8/3QP3/8/PPP2PPP/RNB1KBNR w KQkq -",
-      "san": "Qd3",
-      "games": 9,
-      "winRate": 0.222,
-      "lossRate": 0.778,
-      "recentWeight": 7.729
+      "history": "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq -",
+      "san": "Nc3",
+      "games": 23,
+      "winRate": 0.238,
+      "lossRate": 0.762,
+      "recentWeight": 13.346
     },
     {
       "history": "rnbqkbnr/ppp2ppp/4p3/8/3Pp3/2N5/PPP2PPP/R1BQKBNR w KQkq -",
       "san": "Nxe4",
-      "games": 6,
-      "winRate": 0,
-      "lossRate": 1,
-      "recentWeight": 4.978
+      "games": 13,
+      "winRate": 0.154,
+      "lossRate": 0.846,
+      "recentWeight": 8.168
     },
     {
-      "history": "r1bqk2r/1p3ppp/p1n1pn2/2bp4/5B2/2NBPN2/PPP2PPP/R2QK2R w KQkq -",
-      "san": "O-O",
-      "games": 6,
+      "history": "rn1qkbnr/pp2pppp/2p3b1/8/3P4/6N1/PPP2PPP/R1BQKBNR w KQkq -",
+      "san": "h4",
+      "games": 9,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 4.611
+      "recentWeight": 5.076
     },
     {
-      "history": "r1bqkb1r/pppp1ppp/2n2n2/8/4P3/3Q4/PPP2PPP/RNB1KBNR w KQkq -",
-      "san": "Nc3",
-      "games": 5,
-      "winRate": 0.2,
-      "lossRate": 0.8,
-      "recentWeight": 4.441
-    },
-    {
-      "history": "rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq -",
-      "san": "d5",
-      "games": 19,
-      "winRate": 0.211,
-      "lossRate": 0.789,
-      "recentWeight": 4.194
-    },
-    {
-      "history": "rn1qkb1r/pp2pppp/2p2n2/3p1b2/3P4/5NP1/PPP1PPBP/RNBQ1RK1 b kq -",
-      "san": "h6",
-      "games": 5,
-      "winRate": 0.2,
-      "lossRate": 0.8,
-      "recentWeight": 3.993
-    },
-    {
-      "history": "rnbqkb1r/1p2pppp/p4n2/3p4/3P1B2/2N2N2/PP2PPPP/R2QKB1R b KQkq -",
-      "san": "Nc6",
-      "games": 5,
-      "winRate": 0.2,
-      "lossRate": 0.8,
-      "recentWeight": 3.984
-    },
-    {
-      "history": "rnbqkbnr/pp3ppp/4p3/2pp4/4P3/2P2N2/PP1P1PPP/RNBQKB1R w KQkq -",
-      "san": "exd5",
-      "games": 5,
-      "winRate": 0.2,
-      "lossRate": 0.8,
-      "recentWeight": 3.97
-    },
-    {
-      "history": "r1bqkb1r/pp1n1ppp/2p2n2/3Pp3/8/5NP1/PP1PPPBP/RNBQ1RK1 b kq -",
-      "san": "cxd5",
-      "games": 4,
+      "history": "rn1qkbnr/pp2pppp/2p5/5b2/3PN3/8/PPP2PPP/R1BQKBNR w KQkq -",
+      "san": "Ng3",
+      "games": 9,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 3.434
+      "recentWeight": 5.076
     },
     {
-      "history": "r1bqkb1r/pp1npppp/2p2n2/3p4/2P5/5NP1/PP1PPPBP/RNBQ1RK1 b kq -",
-      "san": "e5",
-      "games": 4,
+      "history": "rnbqkbnr/pp2pppp/2p5/3p4/3P1B2/2N5/PPP1PPPP/R2QKBNR b KQkq -",
+      "san": "Nf6",
+      "games": 8,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 3.434
+      "recentWeight": 4.347
     },
     {
       "history": "rn1qkbnr/pp2ppp1/2p3bp/8/3P3P/6N1/PPP2PP1/R1BQKBNR w KQkq -",
       "san": "Nh3",
-      "games": 5,
-      "winRate": 0.2,
-      "lossRate": 0.8,
-      "recentWeight": 3.261
+      "games": 7,
+      "winRate": 0.143,
+      "lossRate": 0.857,
+      "recentWeight": 3.95
     },
     {
-      "history": "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -",
-      "san": "d5",
-      "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 3.207
-    },
-    {
-      "history": "rnbqkb1r/pp3ppp/2p1pn2/3P4/3P4/2N2N2/PP2PPPP/R1BQKB1R b KQkq -",
-      "san": "exd5",
-      "games": 5,
-      "winRate": 0.2,
-      "lossRate": 0.8,
-      "recentWeight": 3.177
+      "history": "r1bqkb1r/1p2pppp/p1n2n2/3p4/3P1B2/2N1PN2/PP3PPP/R2QKB1R b KQkq -",
+      "san": "Bg4",
+      "games": 6,
+      "winRate": 0.167,
+      "lossRate": 0.833,
+      "recentWeight": 3.403
     },
     {
       "history": "rnbqkb1r/pp2pppp/2p2N2/8/8/5N2/PPPP1PPP/R1BQKB1R b KQkq -",
@@ -560,7 +534,143 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 8,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 3.159
+      "recentWeight": 3.128
+    },
+    {
+      "history": "rnbqkbnr/pp1ppppp/2p5/8/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq -",
+      "san": "d5",
+      "games": 6,
+      "winRate": 0.167,
+      "lossRate": 0.833,
+      "recentWeight": 2.894
+    },
+    {
+      "history": "rnbqkbnr/pp2pppp/2p5/3p4/3P1B2/4P3/PPP2PPP/RN1QKBNR b KQkq -",
+      "san": "Nf6",
+      "games": 6,
+      "winRate": 0.167,
+      "lossRate": 0.833,
+      "recentWeight": 2.894
+    },
+    {
+      "history": "r1bqkbnr/pp1npppp/2p5/8/3PN3/8/PPP2PPP/R1BQKBNR w KQkq -",
+      "san": "Nf3",
+      "games": 5,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.726
+    },
+    {
+      "history": "rn1qkb1r/pp3pp1/2p1pn1p/3p1b2/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 b kq -",
+      "san": "Nbd7",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.599
+    },
+    {
+      "history": "rn1qkb1r/pp2pppp/2p2n2/3p1b2/3P4/5NP1/PPP1PPBP/RNBQ1RK1 b kq -",
+      "san": "h6",
+      "games": 5,
+      "winRate": 0.2,
+      "lossRate": 0.8,
+      "recentWeight": 2.554
+    },
+    {
+      "history": "rnbqkb1r/pp2pppp/2p2n2/3P4/3P4/5N2/PP2PPPP/RNBQKB1R b KQkq -",
+      "san": "cxd5",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.552
+    },
+    {
+      "history": "rnbqkb1r/1p2pppp/p4n2/3p4/3P1B2/2N2N2/PP2PPPP/R2QKB1R b KQkq -",
+      "san": "Nc6",
+      "games": 5,
+      "winRate": 0.2,
+      "lossRate": 0.8,
+      "recentWeight": 2.548
+    },
+    {
+      "history": "rnbqkbnr/pp3ppp/4p3/2pp4/4P3/2P2N2/PP1P1PPP/RNBQKB1R w KQkq -",
+      "san": "exd5",
+      "games": 5,
+      "winRate": 0.2,
+      "lossRate": 0.8,
+      "recentWeight": 2.539
+    },
+    {
+      "history": "rnbqkb1r/ppp2ppp/4pn2/8/3PN3/8/PPP2PPP/R1BQKBNR w KQkq -",
+      "san": "Bd3",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.509
+    },
+    {
+      "history": "rnbqkb1r/pp2pppp/2p2n2/3p4/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq -",
+      "san": "Bg4",
+      "games": 5,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.474
+    },
+    {
+      "history": "r1bqkb1r/1p2pppp/p1n2n2/3p4/3P1B2/2N4P/PPP2PP1/R2QKBNR w KQkq -",
+      "san": "Nf3",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.433
+    },
+    {
+      "history": "rn1qkb1r/pp2ppp1/2p2n1p/3p1b2/2PP4/5NP1/PP2PPBP/RNBQ1RK1 b kq -",
+      "san": "e6",
+      "games": 4,
+      "winRate": 0,
+      "lossRate": 1,
+      "recentWeight": 2.391
+    },
+    {
+      "history": "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -",
+      "san": "d5",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.359
+    },
+    {
+      "history": "r1bqkb1r/pp1n1ppp/2p2n2/3Pp3/8/5NP1/PP1PPPBP/RNBQ1RK1 b kq -",
+      "san": "cxd5",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.196
+    },
+    {
+      "history": "r1bqkb1r/pp1npppp/2p2n2/3p4/2P5/5NP1/PP1PPPBP/RNBQ1RK1 b kq -",
+      "san": "e5",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.196
+    },
+    {
+      "history": "rnbqkb1r/pp3ppp/5n2/2pp4/3P4/2P2N2/PP3PPP/RNBQKB1R w KQkq -",
+      "san": "Bb5+",
+      "games": 4,
+      "winRate": 0.25,
+      "lossRate": 0.75,
+      "recentWeight": 2.183
+    },
+    {
+      "history": "rnbq1rk1/pp3ppp/2pb1p2/8/3P4/3BBN2/PPP2PPP/R2QK2R b KQ -",
+      "san": "Re8",
+      "games": 4,
+      "winRate": 0,
+      "lossRate": 1,
+      "recentWeight": 2.088
     },
     {
       "history": "rnbqkb1r/pp2pppp/2p2B2/3p4/3P4/5N2/PPP1PPPP/RN1QKB1R b KQkq -",
@@ -568,7 +678,7 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0,
       "lossRate": 1,
-      "recentWeight": 3.147
+      "recentWeight": 2.013
     },
     {
       "history": "rnbqkbnr/pp2pppp/2p5/3p2B1/3P4/5N2/PPP1PPPP/RN1QKB1R b KQkq -",
@@ -576,23 +686,15 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0,
       "lossRate": 1,
-      "recentWeight": 3.147
+      "recentWeight": 2.013
     },
     {
-      "history": "rnbqkbnr/pp1ppppp/2p5/8/2P5/6P1/PP1PPP1P/RNBQKBNR b KQkq -",
-      "san": "d5",
-      "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 3.126
-    },
-    {
-      "history": "rnbq1rk1/p1p2ppp/1p2pn2/3p4/3P1P2/2NB1N2/PPP2PPP/R2QK2R w KQ -",
+      "history": "r1bqkb1r/pppp1ppp/2n2n2/8/2BpP3/5N2/PPP2PPP/RNBQK2R w KQkq -",
       "san": "O-O",
       "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 2.953
+      "winRate": 0,
+      "lossRate": 1,
+      "recentWeight": 1.907
     },
     {
       "history": "rnbqkbnr/pp1ppppp/2p5/8/8/3P4/PPPNPPPP/R1BQKBNR b KQkq -",
@@ -600,55 +702,47 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0,
       "lossRate": 1,
-      "recentWeight": 2.883
+      "recentWeight": 1.844
     },
     {
-      "history": "rnbq1rk1/ppp2ppp/4pn2/3p4/3P1P2/2NB4/PPP2PPP/R2QK1NR w KQ -",
-      "san": "Nf3",
+      "history": "rnbqkbnr/pp2pppp/2p5/3P4/2P5/8/PP1P1PPP/RNBQKBNR b KQkq -",
+      "san": "cxd5",
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.419
+      "recentWeight": 1.806
     },
     {
-      "history": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq -",
-      "san": "c5",
+      "history": "rnbqkb1r/pp3ppp/2p2p2/8/2B5/5N2/PPPP1PPP/R1BQK2R b KQkq -",
+      "san": "Bd6",
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.275
+      "recentWeight": 1.573
     },
     {
-      "history": "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-      "san": "Nc3",
-      "games": 5,
+      "history": "rnbqk2r/pp3ppp/2pb1p2/8/3P4/4BN2/PPP2PPP/R2QKB1R b KQkq -",
+      "san": "O-O",
+      "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 2.219
+      "recentWeight": 1.525
     },
     {
-      "history": "rnbqkb1r/pp2pppp/2p2n2/6N1/8/5N2/PPPP1PPP/R1BQKB1R b KQkq -",
-      "san": "Bf5",
+      "history": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
+      "san": "d4",
       "games": 5,
       "winRate": 0.2,
       "lossRate": 0.8,
-      "recentWeight": 2.204
+      "recentWeight": 1.396
     },
     {
-      "history": "rn1qkbnr/pp3ppp/4p3/2ppPb2/3P4/2P2N2/PP2BPPP/RNBQK2R b KQkq -",
-      "san": "Nc6",
-      "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 2.202
-    },
-    {
-      "history": "r1bqkb1r/pp1n1ppp/2p1pn2/3p4/3P1B2/2NBP3/PPP2PPP/R2QK1NR w KQkq -",
-      "san": "Nf3",
-      "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 1.955
+      "history": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq -",
+      "san": "e6",
+      "games": 7,
+      "winRate": 0,
+      "lossRate": 1,
+      "recentWeight": 1.273
     },
     {
       "history": "rn2kbnr/pp3pp1/1qp1p3/3pP1Bp/3P3P/3Q4/PPPN1PP1/R3K1NR b KQkq -",
@@ -656,31 +750,7 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 1.782
-    },
-    {
-      "history": "rnbqkb1r/pp3ppp/2p2p2/8/3P4/3B4/PPP2PPP/R1BQK1NR b KQkq -",
-      "san": "Bd6",
-      "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 1.722
-    },
-    {
-      "history": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq -",
-      "san": "e6",
-      "games": 6,
-      "winRate": 0,
-      "lossRate": 1,
-      "recentWeight": 0.95
-    },
-    {
-      "history": "rnbqk2r/pp2ppbp/2p2np1/3p4/3P1B2/2NBP3/PPP2PPP/R2QK1NR w KQkq -",
-      "san": "h4",
-      "games": 4,
-      "winRate": 0.25,
-      "lossRate": 0.75,
-      "recentWeight": 0.867
+      "recentWeight": 1.14
     },
     {
       "history": "rnbqkb1r/pppp1ppp/4pn2/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq -",
@@ -688,15 +758,15 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 0.866
+      "recentWeight": 0.554
     },
     {
-      "history": "rnbqkbnr/pp1ppppp/2p5/8/8/2N2N2/PPPPPPPP/R1BQKB1R b KQkq -",
-      "san": "d5",
+      "history": "rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq -",
+      "san": "Nf6",
       "games": 5,
-      "winRate": 0,
-      "lossRate": 1,
-      "recentWeight": 0.7
+      "winRate": 0.2,
+      "lossRate": 0.8,
+      "recentWeight": 0.101
     },
     {
       "history": "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/4P3/PPP2PPP/RN1QKBNR b KQkq -",
@@ -704,7 +774,7 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 4,
       "winRate": 0.25,
       "lossRate": 0.75,
-      "recentWeight": 0.101
+      "recentWeight": 0.064
     },
     {
       "history": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq -",
@@ -712,15 +782,7 @@ export const GENERATED_BRIAN_STYLE_PROFILE = {
       "games": 5,
       "winRate": 0,
       "lossRate": 1,
-      "recentWeight": 0.099
-    },
-    {
-      "history": "rnbqk1nr/ppp1bppp/4p3/3P4/3P4/2N5/PP2PPPP/R1BQKBNR b KQkq -",
-      "san": "exd5",
-      "games": 4,
-      "winRate": 0,
-      "lossRate": 1,
-      "recentWeight": 0.071
+      "recentWeight": 0.063
     }
   ]
 }

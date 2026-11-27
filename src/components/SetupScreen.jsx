@@ -304,7 +304,7 @@ function BotPortrait({ profile }) {
           <h1>{profile.fullName}</h1>
           {Number.isFinite(profile.displayRating)
             ? <span>{ratingLabel(profile.displayRating)}</span>
-            : <span>{profileRuleLabel(profile)}</span>}
+            : profile.strengthLabel ? <span>{profile.strengthLabel}</span> : null}
           <CountryFlag code={profile.countryCode} label={profile.country} />
         </div>
         {profile.intro ? <p>{profile.intro}</p> : null}
@@ -323,7 +323,7 @@ function BotSeat({ color, profile, value, onChange }) {
         <h2>{profile.fullName}</h2>
         {Number.isFinite(profile.displayRating)
           ? <span>{ratingLabel(profile.displayRating)}</span>
-          : <span>{profileRuleLabel(profile)}</span>}
+          : profile.strengthLabel ? <span>{profile.strengthLabel}</span> : null}
         <CountryFlag code={profile.countryCode} label={profile.country} />
       </div>
       {profile.intro ? <p>{profile.intro}</p> : null}
@@ -359,11 +359,12 @@ function profileRuleLabel(profile) {
 
 function profileRosterLabel(profile) {
   if (profile.capabilities?.videoVariant) return profileRuleLabel(profile)
+  if (profile.strengthLabel) return profile.strengthLabel
   return `${profile.title ? `${profile.title} ` : ''}${ratingLabel(profile.displayRating)}`
 }
 
 function profileSelectionLabel(profile) {
   return Number.isFinite(profile.displayRating)
     ? ratingLabel(profile.displayRating)
-    : `- ${profileRuleLabel(profile)}`
+    : `- ${profile.strengthLabel || profileRuleLabel(profile)}`
 }

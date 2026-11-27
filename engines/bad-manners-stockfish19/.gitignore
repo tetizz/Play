@@ -1,0 +1,6 @@
+dist/
+toolchain/
+stockfish19-src/src/*.o
+stockfish19-src/src/*.exe
+stockfish19-src/src/*.nnue
+stockfish19-src/src/.depend

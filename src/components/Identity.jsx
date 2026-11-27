@@ -49,7 +49,9 @@ export function PlayerStrip({
       <div className="player-details">
         <div className="player-name">
           <strong>{profile.name}</strong>
-          <EloRating rating={rating} event={ratingState?.event} />
+          {profile.strengthLabel
+            ? <span>{profile.strengthLabel}</span>
+            : <EloRating rating={rating} event={ratingState?.event} />}
         </div>
         <CapturedMaterial material={material} />
       </div>

@@ -2,8 +2,8 @@
 // Recency uses a 180-day half-life, so newer games influence move choice more.
 // Chess.com window: all public monthly archives. Lichess cap: latest 900 games per account.
 // Opening depth: first 32 plies, max 12 moves per position.
-// Sources: chess.com:AlexanderL=4481(1 skipped), lichess:AlexLenderman=729(171 skipped).
-// Generated at 2026-08-04T01:08:48.054Z.
+// Sources: chess.com:AlexanderL=4481(1 skipped), lichess:AlexLenderman=731(169 skipped).
+// Generated at 2026-11-27T03:37:15.509Z.
 // Do not edit by hand; run npm run build:repertoires.
 export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
   "2r2rk1/pbqnbppp/1p3n2/2pp4/3P4/1PNBPN2/PB2QPPP/R2R2K1 w - -": [
@@ -13,7 +13,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -24,7 +24,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -35,7 +35,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -46,7 +46,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -57,30 +57,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
-    }
-  ],
-  "r1b1k1nr/pp1pppbp/2n3p1/q3P3/5B2/2N2N2/PP3PPP/R2QKB1R w KQkq -": [
-    {
-      "san": "Qd5",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-24T15:42:17.000Z"
-    }
-  ],
-  "r1b1kb1r/pp2pppp/2nq1n2/1B1pN3/8/1QN1P3/PP1P1PPP/R1B1K2R w KQkq -": [
-    {
-      "san": "d4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T17:00:24.000Z"
     }
   ],
   "r1b1kb1r/ppp1qppp/2n5/4P3/4Q3/2N5/PPP2PPP/R1B1KB1R b KQkq -": [
@@ -90,7 +68,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -101,7 +79,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -112,7 +90,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -123,41 +101,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
-    }
-  ],
-  "r1b1kbnr/pp3ppp/1qn1p3/2ppP3/3P4/2P2N2/PP2BPPP/RNBQK2R b KQkq -": [
-    {
-      "san": "cxd4",
-      "games": 10,
-      "wins": 4,
-      "losses": 4,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-21T17:19:23.000Z"
-    }
-  ],
-  "r1b1kbnr/pp3ppp/1qn1p3/2ppP3/3P4/2PB1N2/PP3PPP/RNBQK2R b KQkq -": [
-    {
-      "san": "cxd4",
-      "games": 6,
-      "wins": 5,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-12-13T17:40:48.000Z"
-    }
-  ],
-  "r1b1kbnr/pp3ppp/1qn1p3/3pP3/3p4/2PB1N2/PP3PPP/RNBQ1RK1 b kq -": [
-    {
-      "san": "Bd7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-12-13T17:40:48.000Z"
     }
   ],
   "r1b1kbnr/ppq1pppp/2n5/3p4/3P4/2PB4/PP2NPPP/RNBQK2R b KQkq -": [
@@ -167,41 +112,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-02T15:16:01.000Z"
-    }
-  ],
-  "r1b2b1r/ppk1pppp/2n2n2/4p1N1/2B5/2N5/PP3PPP/R1B1K2R w KQ -": [
-    {
-      "san": "Nxf7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "r1b2br1/ppk1pNpp/2n2n2/4p3/2B5/2N5/PP3PPP/R1B1K2R w KQ -": [
-    {
-      "san": "Nb5+",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "r1b2rk1/ppb2ppp/2nq1n2/1B1p4/3N4/1P2P3/PB1N1PPP/R2Q1RK1 w - -": [
-    {
-      "san": "N2f3",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T16:17:14.000Z"
     }
   ],
   "r1b2rk1/ppq1ppbp/2np1np1/8/2PN4/1P4P1/PB2PPBP/RN1Q1RK1 w - -": [
@@ -211,19 +123,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-22T15:16:46.000Z"
-    }
-  ],
-  "r1bk1b1r/pp2pppp/2n2n2/4p3/2B5/2N2N2/PP3PPP/R1B1K2R w KQ -": [
-    {
-      "san": "Ng5",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
   "r1bq1rk1/1pp1n1b1/p2p1n2/2PPp1pp/4Pp2/2NN1P2/PP2BBPP/2RQ1RK1 w - -": [
@@ -233,7 +134,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
     }
   ],
@@ -244,7 +145,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-04-04T15:03:47.000Z"
     }
   ],
@@ -255,7 +156,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-21T16:23:34.000Z"
     }
   ],
@@ -266,19 +167,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.021,
-      "latestPlayedAt": "2022-09-27T21:13:39.000Z"
-    }
-  ],
-  "r1bq1rk1/p1pp1ppp/2p2n2/8/1b2P3/2NB4/PPP2PPP/R1BQK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
       "recentWeight": 0.013,
-      "latestPlayedAt": "2022-09-20T21:37:03.000Z"
+      "latestPlayedAt": "2022-09-27T21:13:39.000Z"
     }
   ],
   "r1bq1rk1/p2n1ppp/1ppbpn2/3p4/2PP4/1PN1PN2/PB2BPPP/R2QK2R w KQ -": [
@@ -288,7 +178,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-07-04T16:17:23.000Z"
     }
   ],
@@ -299,7 +189,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.105,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T16:04:26.000Z"
     }
   ],
@@ -310,7 +200,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T16:04:26.000Z"
     }
   ],
@@ -321,7 +211,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-07-04T16:17:23.000Z"
     }
   ],
@@ -332,7 +222,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.105,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T16:04:26.000Z"
     }
   ],
@@ -343,7 +233,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-29T17:56:06.000Z"
     }
   ],
@@ -354,7 +244,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-23T18:22:20.000Z"
     }
   ],
@@ -365,19 +255,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.023,
-      "latestPlayedAt": "2023-06-06T15:37:43.000Z"
-    }
-  ],
-  "r1bq1rk1/pp2bppp/2n1p3/3pPn2/3P4/3B1N2/PPN2PPP/R1BQ1RK1 b - -": [
-    {
-      "san": "Bd7",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
       "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-13T18:09:44.000Z"
+      "latestPlayedAt": "2023-06-06T15:37:43.000Z"
     }
   ],
   "r1bq1rk1/pp2bppp/2n2n2/1Bpp4/8/1P2PN2/PB1P1PPP/RN1Q1RK1 w - -": [
@@ -387,7 +266,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T16:28:19.000Z"
     }
   ],
@@ -398,7 +277,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
     }
   ],
@@ -409,7 +288,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2024-01-14T00:11:48.000Z"
     }
   ],
@@ -420,19 +299,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T16:06:54.000Z"
-    }
-  ],
-  "r1bq1rk1/pp2ppbp/2n2np1/3p4/3P4/1QN1PN2/PP1BBPPP/R4RK1 w - -": [
-    {
-      "san": "Rfc1",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:30:24.000Z"
     }
   ],
   "r1bq1rk1/pp2ppbp/2np1np1/2p5/2P5/1P3NP1/PB1PPPBP/RN1Q1RK1 w - -": [
@@ -442,19 +310,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-23T18:22:20.000Z"
-    }
-  ],
-  "r1bq1rk1/pp2ppbp/2np1np1/2p5/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 w - -": [
-    {
-      "san": "d5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T15:17:50.000Z"
     }
   ],
   "r1bq1rk1/pp2ppbp/2np1np1/8/2Pp4/1P3NP1/PB2PPBP/RN1Q1RK1 w - -": [
@@ -464,30 +321,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
-      "latestPlayedAt": "2023-08-23T18:22:20.000Z"
-    }
-  ],
-  "r1bq1rk1/pp2ppbp/2np2p1/2p5/2PPn3/1P3NP1/PB2PPBP/RN1Q1RK1 w - -": [
-    {
-      "san": "Nbd2",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
       "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:55:37.000Z"
-    }
-  ],
-  "r1bq1rk1/pp2ppbp/3p1np1/n1pP4/2P5/2N2NP1/PP2PPBP/R1BQ1RK1 w - -": [
-    {
-      "san": "Nd2",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T15:17:50.000Z"
+      "latestPlayedAt": "2023-08-23T18:22:20.000Z"
     }
   ],
   "r1bq1rk1/pp3pbp/2p2ppB/3n4/2BP4/5N1P/PPPQ1PP1/R4RK1 b - -": [
@@ -497,7 +332,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-04-18T16:05:11.000Z"
     }
   ],
@@ -508,7 +343,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -519,7 +354,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -530,7 +365,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
@@ -541,7 +376,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
@@ -552,19 +387,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
-    }
-  ],
-  "r1bq1rk1/pp3ppp/4pn2/2b5/8/3B1N2/PPP1QPPP/R1B2RK1 b - -": [
-    {
-      "san": "b6",
-      "games": 3,
-      "wins": 0,
-      "losses": 0,
-      "draws": 3,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-07-25T23:04:55.000Z"
     }
   ],
   "r1bq1rk1/ppb2ppp/2n2n2/1B1p4/3N4/1P2P3/PB3PPP/RN1Q1RK1 w - -": [
@@ -574,7 +398,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -585,30 +409,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 29,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
-    }
-  ],
-  "r1bq1rk1/ppp1ppbp/2np1np1/8/2PP4/2N2NP1/PP2PPBP/R1BQK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 9,
-      "wins": 7,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-24T15:14:04.000Z"
-    }
-  ],
-  "r1bq1rk1/ppp1ppbp/2np1np1/8/2PPP3/2N2N2/PP2BPPP/R1BQK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 14,
-      "wins": 11,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-03-24T17:27:03.000Z"
     }
   ],
   "r1bq1rk1/ppp1ppbp/2np1np1/8/3P4/1P3NP1/PBP1PPBP/RN1QK2R w KQ -": [
@@ -618,7 +420,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-07-04T21:16:46.000Z"
     }
   ],
@@ -629,7 +431,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-21T15:05:51.000Z"
     }
   ],
@@ -640,7 +442,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 41,
       "losses": 11,
       "draws": 5,
-      "recentWeight": 0.059,
+      "recentWeight": 0.038,
       "latestPlayedAt": "2023-03-24T17:27:03.000Z"
     },
     {
@@ -649,7 +451,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 29,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
     }
   ],
@@ -660,7 +462,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T17:27:03.000Z"
     }
   ],
@@ -671,7 +473,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 9,
       "draws": 3,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-02-04T18:05:19.000Z"
     }
   ],
@@ -682,7 +484,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-21T16:23:34.000Z"
     }
   ],
@@ -693,19 +495,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.076,
+      "recentWeight": 0.049,
       "latestPlayedAt": "2024-08-23T19:49:52.000Z"
-    }
-  ],
-  "r1bq1rk1/ppp3bp/2np1np1/4ppB1/2PPP3/2N2N2/PP2BPPP/R2Q1RK1 w - -": [
-    {
-      "san": "dxe5",
-      "games": 3,
-      "wins": 1,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-04T18:05:19.000Z"
     }
   ],
   "r1bq1rk1/ppp3bp/2np1pp1/4p1B1/2PPP1n1/2N2N2/PP2BPPP/R2Q1RK1 w - -": [
@@ -715,7 +506,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 5,
       "draws": 3,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-02-04T18:05:19.000Z"
     }
   ],
@@ -726,29 +517,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.016,
-      "latestPlayedAt": "2023-02-04T18:05:19.000Z"
-    }
-  ],
-  "r1bq1rk1/ppp3bp/3p1np1/4npB1/2P1P3/2N2N2/PP2BPPP/R2Q1RK1 w - -": [
-    {
-      "san": "Nxe5",
-      "games": 2,
-      "wins": 0,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-04T18:05:19.000Z"
-    }
-  ],
-  "r1bq1rk1/ppp3bp/5np1/4ppB1/2P1P3/2N5/PP2BPPP/R2Q1RK1 w - -": [
-    {
-      "san": "Qxd8",
-      "games": 2,
-      "wins": 0,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.011,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-02-04T18:05:19.000Z"
     }
   ],
@@ -759,7 +528,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 3,
-      "recentWeight": 0.032,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-08-22T15:56:34.000Z"
     },
     {
@@ -768,7 +537,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
     }
   ],
@@ -779,7 +548,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 7,
       "draws": 3,
-      "recentWeight": 0.043,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-08-29T16:26:59.000Z"
     }
   ],
@@ -790,7 +559,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
     }
   ],
@@ -801,7 +570,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-29T16:26:59.000Z"
     }
   ],
@@ -812,7 +581,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:36:00.000Z"
     }
   ],
@@ -823,7 +592,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
     }
   ],
@@ -834,7 +603,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 20,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
     }
   ],
@@ -845,7 +614,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
     }
   ],
@@ -856,7 +625,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 20,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T15:07:53.000Z"
     }
   ],
@@ -867,7 +636,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.054,
+      "recentWeight": 0.034,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
     }
   ],
@@ -878,19 +647,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.06,
+      "recentWeight": 0.038,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
-    }
-  ],
-  "r1bqk1nr/pp1pppbp/2n3p1/2p5/8/5NP1/PPPPPPBP/RNBQ1RK1 w kq -": [
-    {
-      "san": "c3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-25T22:06:09.000Z"
     }
   ],
   "r1bqk1nr/pp1pppbp/2n3p1/4P3/8/2N2N2/PP3PPP/R1BQKB1R w KQkq -": [
@@ -900,41 +658,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-03-24T15:42:17.000Z"
-    }
-  ],
-  "r1bqk1nr/pp2bppp/2npp3/8/2B1P3/2N2N2/PP3PPP/R1BQ1RK1 w kq -": [
-    {
-      "san": "Qe2",
-      "games": 5,
-      "wins": 4,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-03-14T15:26:46.000Z"
-    }
-  ],
-  "r1bqk1nr/pp2ppbp/2n3p1/2pp4/8/2P2NP1/PP1PPPBP/RNBQ1RK1 w kq -": [
-    {
-      "san": "d4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-25T22:06:09.000Z"
-    }
-  ],
-  "r1bqk1nr/pp2ppbp/2n3p1/3p4/3p4/2P2NP1/PP2PPBP/RNBQ1RK1 w kq -": [
-    {
-      "san": "cxd4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-25T22:06:09.000Z"
     }
   ],
   "r1bqk1nr/ppp1ppbp/2np2p1/8/2BPP3/5N2/PPP2PPP/RNBQK2R w KQkq -": [
@@ -944,7 +669,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T16:12:40.000Z"
     }
   ],
@@ -955,19 +680,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.117,
+      "recentWeight": 0.075,
       "latestPlayedAt": "2024-12-17T14:38:54.000Z"
-    }
-  ],
-  "r1bqk1nr/pppn1pbp/3p2p1/4p3/2PP4/5NP1/PP2PPBP/RNBQ1RK1 b kq -": [
-    {
-      "san": "Ne7",
-      "games": 3,
-      "wins": 1,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T15:04:47.000Z"
     }
   ],
   "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq -": [
@@ -977,7 +691,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-12-28T18:18:39.000Z"
     }
   ],
@@ -988,7 +702,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T16:18:20.000Z"
     }
   ],
@@ -999,7 +713,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.073,
+      "recentWeight": 0.047,
       "latestPlayedAt": "2024-08-23T19:44:33.000Z"
     }
   ],
@@ -1010,7 +724,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2022-09-27T21:13:39.000Z"
     }
   ],
@@ -1021,7 +735,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2022-09-27T21:13:39.000Z"
     }
   ],
@@ -1032,7 +746,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.029,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-08-29T15:27:51.000Z"
     }
   ],
@@ -1043,7 +757,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:14:40.000Z"
     }
   ],
@@ -1054,19 +768,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.023,
-      "latestPlayedAt": "2023-06-06T15:37:43.000Z"
-    }
-  ],
-  "r1bqk2r/pp2bppp/2n1p3/3pPn2/3P4/3B1N2/PPN2PPP/R1BQK2R b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
       "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-13T18:09:44.000Z"
+      "latestPlayedAt": "2023-06-06T15:37:43.000Z"
     }
   ],
   "r1bqk2r/pp2bppp/2n2n2/1Bpp4/8/1P2PN2/PB1P1PPP/RN1QK2R w KQkq -": [
@@ -1076,7 +779,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T16:28:19.000Z"
     }
   ],
@@ -1087,30 +790,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2024-01-14T00:11:48.000Z"
-    }
-  ],
-  "r1bqk2r/pp2bppp/2np1n2/4p3/2B1P3/2N2N2/PP2QPPP/R1BR2K1 w kq -": [
-    {
-      "san": "Be3",
-      "games": 8,
-      "wins": 5,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-14T15:26:46.000Z"
-    }
-  ],
-  "r1bqk2r/pp2bppp/2nppn2/8/2B1P3/2N2N2/PP2QPPP/R1B2RK1 w kq -": [
-    {
-      "san": "Rd1",
-      "games": 8,
-      "wins": 5,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-14T15:26:46.000Z"
     }
   ],
   "r1bqk2r/pp2bppp/4pn2/6B1/3N4/5B2/PPP2PPP/R2Q1RK1 b kq -": [
@@ -1120,7 +801,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-23T13:09:05.000Z"
     }
   ],
@@ -1131,19 +812,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.066,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-21T19:19:29.000Z"
-    }
-  ],
-  "r1bqk2r/pp3ppp/1b2pn2/8/3N4/2PBB3/PP3PPP/R2Q1RK1 b kq -": [
-    {
-      "san": "O-O",
-      "games": 5,
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-03-24T17:12:08.000Z"
     }
   ],
   "r1bqk2r/pp3ppp/2nb1n2/1Bpp4/8/1P2PN2/PB1P1PPP/RN1QK2R w KQkq -": [
@@ -1153,7 +823,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -1164,30 +834,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T21:51:37.000Z"
-    }
-  ],
-  "r1bqk2r/pp3ppp/4pn2/2b5/3N4/3BB3/PPP2PPP/R2Q1RK1 b kq -": [
-    {
-      "san": "Bb6",
-      "games": 6,
-      "wins": 5,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-03-24T17:12:08.000Z"
-    }
-  ],
-  "r1bqk2r/pp3ppp/4pn2/2b5/8/1N1B4/PPP2PPP/R1BQ1RK1 b kq -": [
-    {
-      "san": "Bb6",
-      "games": 6,
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-09T15:05:48.000Z"
     }
   ],
   "r1bqk2r/pp3ppp/4pn2/2b5/8/3B1N2/PPP2PPP/R1BQ1RK1 b kq -": [
@@ -1197,7 +845,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 5,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-07-25T23:04:55.000Z"
     }
   ],
@@ -1208,7 +856,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T12:57:38.000Z"
     }
   ],
@@ -1219,7 +867,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2024-01-07T23:50:05.000Z"
     }
   ],
@@ -1230,7 +878,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.068,
+      "recentWeight": 0.044,
       "latestPlayedAt": "2024-08-23T19:44:33.000Z"
     }
   ],
@@ -1241,19 +889,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-12-26T17:47:37.000Z"
-    }
-  ],
-  "r1bqk2r/pppn1ppp/4pb2/6B1/3P3P/5N2/PPP2PP1/R2QKB1R b KQkq -": [
-    {
-      "san": "h6",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-27T15:07:00.000Z"
     }
   ],
   "r1bqk2r/pppnbppp/3p1n2/4p3/2PPP3/2N2N2/PP3PPP/R1BQKB1R w KQkq -": [
@@ -1263,7 +900,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:14:40.000Z"
     }
   ],
@@ -1274,19 +911,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-06-27T15:07:00.000Z"
-    }
-  ],
-  "r1bqk2r/pppnnpbp/3p2p1/4p3/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 b kq -": [
-    {
-      "san": "O-O",
-      "games": 4,
-      "wins": 2,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T15:04:47.000Z"
     }
   ],
   "r1bqk2r/pppnppbp/3p1np1/8/2PPP3/2N2N2/PP3PPP/R1BQKB1R w KQkq -": [
@@ -1296,7 +922,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -1307,7 +933,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2022-09-27T21:13:39.000Z"
     }
   ],
@@ -1318,7 +944,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T16:18:20.000Z"
     }
   ],
@@ -1329,7 +955,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-27T19:50:03.000Z"
     }
   ],
@@ -1340,7 +966,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T16:18:20.000Z"
     }
   ],
@@ -1351,7 +977,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-05-16T16:29:54.000Z"
     }
   ],
@@ -1362,7 +988,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:10:48.000Z"
     }
   ],
@@ -1373,7 +999,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-06T15:07:37.000Z"
     }
   ],
@@ -1384,7 +1010,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-12-26T16:28:02.000Z"
     }
   ],
@@ -1395,7 +1021,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-08-29T15:27:51.000Z"
     }
   ],
@@ -1406,7 +1032,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:10:48.000Z"
     }
   ],
@@ -1417,7 +1043,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:10:48.000Z"
     }
   ],
@@ -1428,7 +1054,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.033,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-06-27T15:57:53.000Z"
     }
   ],
@@ -1439,7 +1065,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.033,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-06-27T15:57:53.000Z"
     }
   ],
@@ -1450,7 +1076,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -1461,7 +1087,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -1472,7 +1098,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-12-25T22:11:06.000Z"
     }
   ],
@@ -1483,7 +1109,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-05T15:36:54.000Z"
     }
   ],
@@ -1494,7 +1120,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-06T15:07:37.000Z"
     }
   ],
@@ -1505,19 +1131,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-06T15:37:43.000Z"
-    }
-  ],
-  "r1bqkb1r/pp1ppppp/1nn5/4P3/2Bp4/2P2N2/PP3PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "Bb3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-01-03T17:59:05.000Z"
     }
   ],
   "r1bqkb1r/pp1ppppp/2n2n2/2p5/2P5/2N2N2/PP1PPPPP/R1BQKB1R w KQkq -": [
@@ -1527,28 +1142,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-06T15:37:43.000Z"
-    },
-    {
-      "san": "d4",
-      "games": 14,
-      "wins": 10,
-      "losses": 2,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-07T19:37:29.000Z"
-    }
-  ],
-  "r1bqkb1r/pp1ppppp/2n2n2/8/2Pp4/2N2N2/PP2PPPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "Nxd4",
-      "games": 13,
-      "wins": 9,
-      "losses": 2,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-07T19:37:29.000Z"
     }
   ],
   "r1bqkb1r/pp1ppppp/2n5/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R w KQkq -": [
@@ -1558,17 +1153,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.018,
-      "latestPlayedAt": "2022-12-13T17:19:18.000Z"
-    },
-    {
-      "san": "Bc4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
       "recentWeight": 0.012,
-      "latestPlayedAt": "2023-01-03T17:59:05.000Z"
+      "latestPlayedAt": "2022-12-13T17:19:18.000Z"
     }
   ],
   "r1bqkb1r/pp2nppp/2n1p3/2ppP3/3P4/N1P2N2/PP3PPP/R1BQKB1R b KQkq -": [
@@ -1578,7 +1164,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-13T18:09:44.000Z"
     }
   ],
@@ -1589,19 +1175,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-13T18:09:44.000Z"
-    }
-  ],
-  "r1bqkb1r/pp2pp1p/2n2np1/1Bpp4/8/1P2PN2/PBPP1PPP/RN1QK2R w KQkq -": [
-    {
-      "san": "c4",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-09T15:15:42.000Z"
     }
   ],
   "r1bqkb1r/pp2pp1p/2n2p2/2Pp4/8/4P3/PPP2PPP/RN1QKBNR w KQkq -": [
@@ -1611,19 +1186,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.074,
+      "recentWeight": 0.047,
       "latestPlayedAt": "2024-08-27T19:32:00.000Z"
-    }
-  ],
-  "r1bqkb1r/pp2pp1p/2np1np1/8/2PNP3/2N5/PP3PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "Be2",
-      "games": 8,
-      "wins": 6,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-07T23:30:54.000Z"
     }
   ],
   "r1bqkb1r/pp2pppp/1nnp4/4P3/2BP4/5N2/PP3PPP/RNBQK2R w KQkq -": [
@@ -1633,19 +1197,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.018,
-      "latestPlayedAt": "2022-11-15T17:06:33.000Z"
-    }
-  ],
-  "r1bqkb1r/pp2pppp/2n2n2/1B1p4/8/1QN1PN2/PP1P1PPP/R1B1K2R w KQkq -": [
-    {
-      "san": "Ne5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
       "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T17:00:24.000Z"
+      "latestPlayedAt": "2022-11-15T17:06:33.000Z"
     }
   ],
   "r1bqkb1r/pp2pppp/2n2n2/2pp4/3P1B2/4PN2/PPPN1PPP/R2QKB1R b KQkq -": [
@@ -1655,19 +1208,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.106,
+      "recentWeight": 0.068,
       "latestPlayedAt": "2024-12-24T16:56:41.000Z"
-    }
-  ],
-  "r1bqkb1r/pp2pppp/2n2n2/2pp4/8/1P2PN2/PBPP1PPP/RN1QKB1R w KQkq -": [
-    {
-      "san": "Bb5",
-      "games": 12,
-      "wins": 11,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-05-09T15:15:42.000Z"
     }
   ],
   "r1bqkb1r/pp2pppp/2n2n2/3p4/3P1B2/2N1P3/PP3PPP/R2QKBNR b KQkq -": [
@@ -1677,7 +1219,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.313,
+      "recentWeight": 0.201,
       "latestPlayedAt": "2024-12-24T19:31:44.000Z"
     }
   ],
@@ -1688,7 +1230,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.069,
+      "recentWeight": 0.044,
       "latestPlayedAt": "2024-08-27T19:50:03.000Z"
     }
   ],
@@ -1699,17 +1241,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 4,
       "draws": 3,
-      "recentWeight": 0.108,
+      "recentWeight": 0.07,
       "latestPlayedAt": "2024-12-24T23:14:27.000Z"
-    },
-    {
-      "san": "Bb5",
-      "games": 5,
-      "wins": 5,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-08-23T16:41:21.000Z"
     }
   ],
   "r1bqkb1r/pp2pppp/2n2n2/3p4/3P4/2N2N2/PP2PPPP/R1BQKB1R w KQkq -": [
@@ -1719,30 +1252,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 26,
       "losses": 3,
       "draws": 8,
-      "recentWeight": 0.227,
+      "recentWeight": 0.146,
       "latestPlayedAt": "2024-12-30T01:03:07.000Z"
-    }
-  ],
-  "r1bqkb1r/pp2pppp/2n2n2/4p3/2B5/2N2N2/PP3PPP/R1BQK2R w KQkq -": [
-    {
-      "san": "Qxd8+",
-      "games": 6,
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "r1bqkb1r/pp2pppp/2n5/3np3/2BP4/5N2/PP3PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "dxe5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-12-13T17:19:18.000Z"
     }
   ],
   "r1bqkb1r/pp2pppp/2np1n2/8/2B1P3/2N2N2/PP3PPP/R1BQK2R w KQkq -": [
@@ -1752,7 +1263,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.057,
+      "recentWeight": 0.037,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -1763,7 +1274,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2022-12-13T17:19:18.000Z"
     }
   ],
@@ -1774,7 +1285,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-12-25T22:11:06.000Z"
     }
   ],
@@ -1785,7 +1296,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -1796,19 +1307,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.212,
+      "recentWeight": 0.136,
       "latestPlayedAt": "2024-12-24T17:44:55.000Z"
-    }
-  ],
-  "r1bqkb1r/pp3ppp/2n1p3/3pPn2/3P4/5N2/PPN2PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Be7",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-13T18:09:44.000Z"
     }
   ],
   "r1bqkb1r/pp3ppp/2n1pn2/2pp4/2P5/1P2PN2/PB1P1PPP/RN1QKB1R w KQkq -": [
@@ -1818,7 +1318,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.056,
+      "recentWeight": 0.036,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -1829,7 +1329,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.212,
+      "recentWeight": 0.136,
       "latestPlayedAt": "2024-12-24T17:44:55.000Z"
     }
   ],
@@ -1840,19 +1340,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-09-12T21:51:37.000Z"
-    }
-  ],
-  "r1bqkb1r/pp3ppp/2n2n2/1Bpp4/3P4/4PN2/PP3PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 3,
-      "wins": 2,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-09-20T23:04:22.000Z"
     }
   ],
   "r1bqkb1r/pp3ppp/2n2n2/2pp4/3P4/5NP1/PP2PPBP/RNBQK2R w KQkq -": [
@@ -1862,7 +1351,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2024-01-14T00:11:48.000Z"
     }
   ],
@@ -1873,7 +1362,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.055,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -1884,7 +1373,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.066,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-27T19:37:51.000Z"
     }
   ],
@@ -1895,7 +1384,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.079,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2024-08-21T19:25:32.000Z"
     }
   ],
@@ -1906,7 +1395,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T14:54:39.000Z"
     }
   ],
@@ -1917,7 +1406,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-05-09T16:42:01.000Z"
     }
   ],
@@ -1928,7 +1417,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-21T13:27:10.000Z"
     }
   ],
@@ -1939,7 +1428,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-07-25T23:04:55.000Z"
     }
   ],
@@ -1950,7 +1439,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.131,
+      "recentWeight": 0.084,
       "latestPlayedAt": "2024-08-23T13:09:05.000Z"
     }
   ],
@@ -1961,7 +1450,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-05-09T16:42:01.000Z"
     }
   ],
@@ -1972,19 +1461,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T16:56:41.000Z"
-    }
-  ],
-  "r1bqkb1r/ppp1pppp/1nn5/8/8/1BN5/PPPPNPPP/R1BQK2R b KQkq -": [
-    {
-      "san": "Bf5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:37:34.000Z"
     }
   ],
   "r1bqkb1r/ppp1pppp/2n2n2/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq -": [
@@ -1994,7 +1472,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2005,7 +1483,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2016,7 +1494,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2027,7 +1505,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2038,7 +1516,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-24T17:07:10.000Z"
     }
   ],
@@ -2049,7 +1527,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.054,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2024-01-17T20:59:10.000Z"
     }
   ],
@@ -2060,7 +1538,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2024-01-07T23:50:05.000Z"
     }
   ],
@@ -2071,7 +1549,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T14:54:39.000Z"
     }
   ],
@@ -2082,17 +1560,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-27T19:37:51.000Z"
-    },
-    {
-      "san": "Bd6",
-      "games": 3,
-      "wins": 2,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-21T16:15:51.000Z"
     }
   ],
   "r1bqkb1r/ppp2ppp/4pn2/8/3P4/3B1N2/PPP2PPP/R1BQK2R b KQkq -": [
@@ -2102,7 +1571,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 4,
       "draws": 6,
-      "recentWeight": 0.07,
+      "recentWeight": 0.045,
       "latestPlayedAt": "2023-08-21T13:27:10.000Z"
     }
   ],
@@ -2113,7 +1582,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.073,
+      "recentWeight": 0.047,
       "latestPlayedAt": "2024-08-23T19:44:33.000Z"
     }
   ],
@@ -2124,7 +1593,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 3,
       "draws": 5,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-07-25T21:55:39.000Z"
     }
   ],
@@ -2135,7 +1604,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:14:40.000Z"
     }
   ],
@@ -2146,7 +1615,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.071,
+      "recentWeight": 0.046,
       "latestPlayedAt": "2024-08-21T19:25:32.000Z"
     }
   ],
@@ -2157,7 +1626,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-05-16T16:29:54.000Z"
     }
   ],
@@ -2168,7 +1637,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 4,
       "draws": 3,
-      "recentWeight": 0.03,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-06-27T15:07:00.000Z"
     }
   ],
@@ -2179,7 +1648,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T14:54:39.000Z"
     }
   ],
@@ -2190,7 +1659,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 26,
       "losses": 12,
       "draws": 12,
-      "recentWeight": 0.251,
+      "recentWeight": 0.161,
       "latestPlayedAt": "2024-08-27T19:37:51.000Z"
     }
   ],
@@ -2201,7 +1670,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-29T17:56:06.000Z"
     }
   ],
@@ -2212,7 +1681,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 6,
       "draws": 5,
-      "recentWeight": 0.113,
+      "recentWeight": 0.072,
       "latestPlayedAt": "2024-08-23T13:09:05.000Z"
     },
     {
@@ -2221,7 +1690,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.071,
+      "recentWeight": 0.046,
       "latestPlayedAt": "2024-08-21T19:25:32.000Z"
     }
   ],
@@ -2232,7 +1701,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-13T17:16:41.000Z"
     }
   ],
@@ -2243,7 +1712,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:14:40.000Z"
     }
   ],
@@ -2254,7 +1723,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.342,
+      "recentWeight": 0.219,
       "latestPlayedAt": "2025-10-29T00:59:54.000Z"
     }
   ],
@@ -2265,7 +1734,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2024-02-12T23:47:38.000Z"
     }
   ],
@@ -2276,7 +1745,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2287,7 +1756,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-27T21:13:39.000Z"
     }
   ],
@@ -2298,7 +1767,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T12:57:38.000Z"
     }
   ],
@@ -2309,7 +1778,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2320,7 +1789,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-20T21:37:03.000Z"
     }
   ],
@@ -2331,7 +1800,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-27T21:13:39.000Z"
     }
   ],
@@ -2342,7 +1811,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.081,
+      "recentWeight": 0.052,
       "latestPlayedAt": "2024-01-17T20:59:10.000Z"
     }
   ],
@@ -2353,7 +1822,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T15:52:37.000Z"
     }
   ],
@@ -2364,7 +1833,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2375,7 +1844,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T16:18:20.000Z"
     }
   ],
@@ -2386,19 +1855,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.021,
-      "latestPlayedAt": "2022-12-06T16:36:28.000Z"
-    }
-  ],
-  "r1bqkbnr/1ppp1ppp/p1n5/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
       "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
+      "latestPlayedAt": "2022-12-06T16:36:28.000Z"
     }
   ],
   "r1bqkbnr/pp1npp1p/3p2p1/3P4/4PP2/2N5/PP4PP/R1BQKBNR w KQkq -": [
@@ -2408,7 +1866,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -2419,7 +1877,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-06T15:07:37.000Z"
     }
   ],
@@ -2430,7 +1888,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:54:07.000Z"
     },
     {
@@ -2439,7 +1897,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.029,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-09-05T15:36:54.000Z"
     }
   ],
@@ -2450,19 +1908,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T18:23:38.000Z"
-    }
-  ],
-  "r1bqkbnr/pp1ppp1p/2n3p1/1Bp5/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-12-06T16:16:12.000Z"
     }
   ],
   "r1bqkbnr/pp1ppppp/2n5/1Bp5/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq -": [
@@ -2472,19 +1919,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.124,
+      "recentWeight": 0.08,
       "latestPlayedAt": "2024-12-17T15:18:00.000Z"
-    }
-  ],
-  "r1bqkbnr/pp1ppppp/2n5/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Bb5",
-      "games": 8,
-      "wins": 7,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-12-06T16:16:12.000Z"
     }
   ],
   "r1bqkbnr/pp1ppppp/2n5/2p5/8/1P3N2/P1PPPPPP/RNBQKB1R w KQkq -": [
@@ -2494,7 +1930,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T21:16:18.000Z"
     }
   ],
@@ -2505,7 +1941,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.14,
+      "recentWeight": 0.09,
       "latestPlayedAt": "2024-08-21T19:54:07.000Z"
     }
   ],
@@ -2516,7 +1952,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 18,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-09-05T15:36:54.000Z"
     }
   ],
@@ -2527,7 +1963,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-09-19T16:03:54.000Z"
     }
   ],
@@ -2538,7 +1974,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -2549,7 +1985,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -2560,7 +1996,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.057,
+      "recentWeight": 0.037,
       "latestPlayedAt": "2023-09-19T16:03:54.000Z"
     }
   ],
@@ -2571,7 +2007,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.113,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-24T23:14:27.000Z"
     }
   ],
@@ -2582,7 +2018,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-27T19:50:03.000Z"
     }
   ],
@@ -2593,7 +2029,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 0,
       "draws": 3,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-02T15:16:01.000Z"
     }
   ],
@@ -2604,7 +2040,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -2615,7 +2051,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.069,
+      "recentWeight": 0.044,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2626,7 +2062,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.062,
+      "recentWeight": 0.04,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     },
     {
@@ -2635,7 +2071,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-03-13T18:09:44.000Z"
     },
     {
@@ -2644,19 +2080,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 6,
       "draws": 3,
-      "recentWeight": 0.024,
-      "latestPlayedAt": "2023-02-21T17:19:23.000Z"
-    }
-  ],
-  "r1bqkbnr/pp3ppp/2npp3/8/2B1P3/2N2N2/PP3PPP/R1BQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 9,
-      "wins": 6,
-      "losses": 2,
-      "draws": 1,
       "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-14T15:26:46.000Z"
+      "latestPlayedAt": "2023-02-21T17:19:23.000Z"
     }
   ],
   "r1bqkbnr/ppp1pppp/2n5/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq -": [
@@ -2666,7 +2091,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2677,7 +2102,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.029,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2024-01-14T00:33:55.000Z"
     }
   ],
@@ -2688,7 +2113,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -2699,7 +2124,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-10-09T22:34:32.000Z"
     }
   ],
@@ -2710,7 +2135,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-10-09T22:34:32.000Z"
     }
   ],
@@ -2721,7 +2146,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T14:54:39.000Z"
     }
   ],
@@ -2732,7 +2157,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 61,
       "losses": 23,
       "draws": 21,
-      "recentWeight": 0.504,
+      "recentWeight": 0.323,
       "latestPlayedAt": "2024-08-27T19:37:51.000Z"
     }
   ],
@@ -2743,7 +2168,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.206,
+      "recentWeight": 0.132,
       "latestPlayedAt": "2024-12-24T16:19:13.000Z"
     }
   ],
@@ -2754,30 +2179,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 3,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq -": [
-    {
-      "san": "Bc5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-26T21:46:24.000Z"
-    }
-  ],
-  "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "exd4",
-      "games": 4,
-      "wins": 3,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-30T15:07:37.000Z"
     }
   ],
   "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/2P2N2/PP1PQPPP/RNB1KB1R b KQkq -": [
@@ -2787,7 +2190,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.342,
+      "recentWeight": 0.22,
       "latestPlayedAt": "2025-10-29T00:43:19.000Z"
     }
   ],
@@ -2798,7 +2201,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 27,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.079,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     },
     {
@@ -2807,7 +2210,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.061,
+      "recentWeight": 0.039,
       "latestPlayedAt": "2023-12-28T18:18:39.000Z"
     },
     {
@@ -2816,7 +2219,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.029,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-01-03T16:03:43.000Z"
     }
   ],
@@ -2827,7 +2230,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T12:57:38.000Z"
     }
   ],
@@ -2838,7 +2241,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 27,
       "losses": 9,
       "draws": 3,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2022-02-22T16:15:03.000Z"
     }
   ],
@@ -2849,7 +2252,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.05,
+      "recentWeight": 0.032,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     },
     {
@@ -2858,7 +2261,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2022-09-20T21:37:03.000Z"
     }
   ],
@@ -2869,7 +2272,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
     }
   ],
@@ -2880,7 +2283,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
@@ -2891,19 +2294,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-08-29T16:26:59.000Z"
-    }
-  ],
-  "r1bqr1k1/pppn1pbp/3p1np1/4p3/2PPP3/2N2NP1/PP3PBP/R1BQ1RK1 w - -": [
-    {
-      "san": "Re1",
-      "games": 2,
-      "wins": 0,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T17:07:14.000Z"
     }
   ],
   "r1bqr1k1/pppn1pbp/3p1np1/8/2PNP3/2N5/PPQ1BPPP/R1B2RK1 w - -": [
@@ -2913,30 +2305,52 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-29T16:26:59.000Z"
     }
   ],
-  "r1bqr1k1/pppn1pbp/3p1np1/8/2PpP3/2N2NP1/PP3PBP/R1BQR1K1 w - -": [
+  "r2q1b1r/pp1n1k1p/2p1p1p1/8/2BP2Q1/8/PPP2PPP/R1B1K2R w KQ -": [
     {
-      "san": "Nxd4",
-      "games": 2,
-      "wins": 0,
+      "san": "Qxe6+",
+      "games": 1,
+      "wins": 1,
       "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T17:07:14.000Z"
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
-  "r1br2k1/ppp3bp/5np1/4ppB1/2P1P3/2N5/PP2BPPP/R4RK1 w - -": [
+  "r2q1b1r/pp1n2kp/2p1Q1p1/8/2BP4/8/PPP2PPP/R1B1K2R w KQ -": [
     {
-      "san": "Nd5",
-      "games": 2,
-      "wins": 0,
+      "san": "Qf7#",
+      "games": 1,
+      "wins": 1,
       "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-04T18:05:19.000Z"
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
+    }
+  ],
+  "r2q1b1r/pp1nk1pp/2p1p3/8/6Q1/8/PPPP1PPP/R1B1KB1R w KQ -": [
+    {
+      "san": "d4",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
+    }
+  ],
+  "r2q1b1r/pp1nk2p/2p1p1p1/8/3P2Q1/8/PPP2PPP/R1B1KB1R w KQ -": [
+    {
+      "san": "Bc4",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "r2q1rk1/1b1n1ppp/pp1b1n2/2pp4/8/1P2PNP1/PB1PNPBP/2RQK2R w K -": [
@@ -2946,7 +2360,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-12-26T17:47:37.000Z"
     }
   ],
@@ -2957,7 +2371,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-17T16:43:51.000Z"
     }
   ],
@@ -2968,30 +2382,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-21T15:28:42.000Z"
-    }
-  ],
-  "r2q1rk1/1p1b1pbp/n2p1np1/p2Pp3/4P3/2N2N1P/PP2BPP1/R1BQ1RK1 w - -": [
-    {
-      "san": "Be3",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-05-02T15:57:39.000Z"
-    }
-  ],
-  "r2q1rk1/1ppb1pbp/n2p1np1/p1PPp3/4P3/2N2N1P/PP2BPP1/R1BQ1RK1 w - -": [
-    {
-      "san": "cxd6",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-05-02T15:57:39.000Z"
     }
   ],
   "r2q1rk1/p1p2ppp/2p2n2/3P3b/1b6/2NB1P2/PPP3PP/R1BQ1RK1 w - -": [
@@ -3001,7 +2393,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-20T21:28:40.000Z"
     }
   ],
@@ -3012,7 +2404,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-20T21:28:40.000Z"
     }
   ],
@@ -3023,7 +2415,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-07-04T16:17:23.000Z"
     }
   ],
@@ -3034,7 +2426,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-24T16:50:38.000Z"
     }
   ],
@@ -3045,7 +2437,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -3056,7 +2448,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.047,
+      "recentWeight": 0.03,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -3067,30 +2459,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-01-31T17:13:58.000Z"
-    }
-  ],
-  "r2q1rk1/pbppb1pp/1p2pn2/2nP1p2/2PN4/P1N3P1/1P2PPBP/R1BQ1RK1 b - -": [
-    {
-      "san": "a5",
-      "games": 3,
-      "wins": 1,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-03T17:46:57.000Z"
-    }
-  ],
-  "r2q1rk1/pbppb1pp/np2pn2/3P1p2/2P5/P1N2NP1/1P2PPBP/R1BQ1RK1 b - -": [
-    {
-      "san": "Nc5",
-      "games": 3,
-      "wins": 1,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-03T17:46:57.000Z"
     }
   ],
   "r2q1rk1/pp1bppbp/2np1np1/8/2PN4/1P4P1/PB2PPBP/RN1Q1RK1 w - -": [
@@ -3100,7 +2470,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:22:20.000Z"
     }
   ],
@@ -3111,30 +2481,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
-    }
-  ],
-  "r2q1rk1/pp2ppbp/2np2p1/2p2b2/2PP3N/1P4P1/PB1nPPBP/R2Q1RK1 w - -": [
-    {
-      "san": "Qxd2",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:55:37.000Z"
-    }
-  ],
-  "r2q1rk1/pp2ppbp/2np2p1/2p2b2/2PPn3/1P3NP1/PB1NPPBP/R2Q1RK1 w - -": [
-    {
-      "san": "Nh4",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:55:37.000Z"
     }
   ],
   "r2q1rk1/pp3pBp/2p1bpp1/3n4/2BP4/5N1P/PPPQ1PP1/R4RK1 b - -": [
@@ -3144,7 +2492,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-04-18T16:05:11.000Z"
     }
   ],
@@ -3155,7 +2503,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
     }
   ],
@@ -3166,7 +2514,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-09-19T15:05:37.000Z"
     }
   ],
@@ -3177,7 +2525,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-09-19T15:05:37.000Z"
     }
   ],
@@ -3188,7 +2536,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-29T15:54:58.000Z"
     }
   ],
@@ -3199,19 +2547,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.111,
+      "recentWeight": 0.072,
       "latestPlayedAt": "2024-12-24T22:39:51.000Z"
-    }
-  ],
-  "r2qk2r/pbpn1ppp/1p2p3/3pP3/2PPn3/B2BQN2/P4PPP/R4RK1 b kq -": [
-    {
-      "san": "Nc3",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
     }
   ],
   "r2qk2r/pbpn1ppp/1p3n2/3p4/3P4/bP1BPN2/P4PPP/RN1Q1RK1 w kq -": [
@@ -3221,7 +2558,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T22:39:51.000Z"
     }
   ],
@@ -3232,7 +2569,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -3243,7 +2580,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-05-16T16:29:54.000Z"
     }
   ],
@@ -3254,7 +2591,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.043,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-08-29T15:54:58.000Z"
     }
   ],
@@ -3265,7 +2602,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-27T19:50:03.000Z"
     }
   ],
@@ -3276,7 +2613,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.042,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-08-29T15:54:58.000Z"
     }
   ],
@@ -3287,7 +2624,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T22:39:51.000Z"
     }
   ],
@@ -3298,7 +2635,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T22:39:51.000Z"
     }
   ],
@@ -3309,7 +2646,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-08-29T15:54:58.000Z"
     },
     {
@@ -3318,7 +2655,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-07-25T21:26:20.000Z"
     }
   ],
@@ -3329,7 +2666,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.035,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     }
   ],
@@ -3340,7 +2677,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     }
   ],
@@ -3351,7 +2688,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     }
   ],
@@ -3362,7 +2699,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.035,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     }
   ],
@@ -3373,7 +2710,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T23:14:27.000Z"
     }
   ],
@@ -3384,7 +2721,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T19:26:28.000Z"
     }
   ],
@@ -3395,7 +2732,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-12-28T18:00:12.000Z"
     }
   ],
@@ -3406,17 +2743,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
-    },
-    {
-      "san": "Nge7",
-      "games": 5,
-      "wins": 3,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2022-09-20T22:50:40.000Z"
     }
   ],
   "r2qkbnr/pp1b1ppp/2n1p3/3pP3/3P4/5N2/PP2BPPP/RNBQK2R b KQkq -": [
@@ -3426,7 +2754,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     }
   ],
@@ -3437,7 +2765,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:03:54.000Z"
     }
   ],
@@ -3448,7 +2776,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:03:54.000Z"
     }
   ],
@@ -3459,7 +2787,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:44:00.000Z"
     }
   ],
@@ -3470,7 +2798,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T22:50:40.000Z"
     }
   ],
@@ -3481,7 +2809,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.208,
+      "recentWeight": 0.134,
       "latestPlayedAt": "2024-12-24T20:05:18.000Z"
     }
   ],
@@ -3492,7 +2820,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-13T17:44:14.000Z"
     }
   ],
@@ -3503,7 +2831,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.329,
+      "recentWeight": 0.212,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
     }
   ],
@@ -3514,41 +2842,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.329,
+      "recentWeight": 0.212,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
-    }
-  ],
-  "r3k1nr/ppq2ppp/2nbp1B1/3p4/3P3Q/2P2P2/PP2N1PP/RNB2RK1 b kq -": [
-    {
-      "san": "fxg6",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:16:01.000Z"
-    }
-  ],
-  "r3k1nr/ppq2ppp/2nbp3/3p3b/3P3Q/2PB1P2/PP2N1PP/RNB2RK1 b kq -": [
-    {
-      "san": "Bg6",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:16:01.000Z"
-    }
-  ],
-  "r3k1nr/ppq2ppp/2nbp3/3p4/3P2b1/2PB1P2/PP2N1PP/RNB1QRK1 b kq -": [
-    {
-      "san": "Bh5",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:16:01.000Z"
     }
   ],
   "r3kb1r/ppp1pppp/2n2n2/3q4/3P4/2P5/PP2NPPP/RNBQ1RK1 b kq -": [
@@ -3558,7 +2853,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-04-04T15:36:14.000Z"
     }
   ],
@@ -3569,7 +2864,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -3580,7 +2875,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-02T15:16:01.000Z"
     }
   ],
@@ -3591,7 +2886,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-05-02T15:16:01.000Z"
     }
   ],
@@ -3602,7 +2897,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
     }
   ],
@@ -3613,7 +2908,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-20T21:28:40.000Z"
     }
   ],
@@ -3624,30 +2919,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2022-09-20T21:28:40.000Z"
-    }
-  ],
-  "r4rk1/p1p2ppp/2P2n2/7b/8/2qB1P2/P1P3PP/R1BQ1R1K w - -": [
-    {
-      "san": "Rb1",
-      "games": 3,
-      "wins": 2,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-09-20T16:40:53.000Z"
-    }
-  ],
-  "r4rk1/p1p2ppp/4bn2/4q3/Q1p5/2N3P1/PP2PP1P/R1B2RK1 w - -": [
-    {
-      "san": "Bf4",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-03-14T16:12:29.000Z"
     }
   ],
   "r4rk1/pb1nqppp/1ppbpn2/3p4/2PP4/1PN1PN2/PBQ1BPPP/R4RK1 w - -": [
@@ -3657,19 +2930,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-07-04T16:17:23.000Z"
-    }
-  ],
-  "r4rk1/ppb2ppp/2nq1n2/1B1p4/3N2b1/1P2PN2/PB3PPP/R2Q1RK1 w - -": [
-    {
-      "san": "Bxc6",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T16:17:14.000Z"
     }
   ],
   "r4rk1/ppqbppbp/2np1np1/8/2PN4/1PN3P1/PB2PPBP/R2Q1RK1 w - -": [
@@ -3679,52 +2941,41 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-22T15:16:46.000Z"
     }
   ],
-  "rn1q1rk1/1bp1ppbp/p2p1np1/1p1P4/2P1P3/6P1/PP1N1PBP/RNBQ1RK1 w - -": [
+  "rn1q1b1r/pp2k1pp/2p1p3/8/6n1/8/PPPPQPPP/R1B1KB1R w KQ -": [
     {
-      "san": "Nc3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:02:59.000Z"
-    }
-  ],
-  "rn1q1rk1/1bppppbp/p4np1/1p1P4/2P5/6P1/PP1NPPBP/RNBQ1RK1 w - -": [
-    {
-      "san": "e4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:02:59.000Z"
-    }
-  ],
-  "rn1q1rk1/1pp2pbp/3p1np1/p2Pp3/2P1P1b1/2N2N2/PP2BPPP/R1BQ1RK1 w - -": [
-    {
-      "san": "h3",
-      "games": 2,
+      "san": "Qxg4",
+      "games": 1,
       "wins": 1,
       "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-05-02T15:57:39.000Z"
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
-  "rn1q1rk1/1ppb1pbp/3p1np1/p2Pp3/2P1P3/2N2N1P/PP2BPP1/R1BQ1RK1 w - -": [
+  "rn1q1b1r/pp2k1pp/2p1pn2/4N3/6b1/8/PPPPQPPP/R1B1KB1R w KQ -": [
     {
-      "san": "c5",
-      "games": 2,
+      "san": "Nxg4",
+      "games": 1,
       "wins": 1,
       "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-05-02T15:57:39.000Z"
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
+    }
+  ],
+  "rn1q1b1r/pp3kpp/2p1pn2/8/6b1/5N2/PPPPQPPP/R1B1KB1R w KQ -": [
+    {
+      "san": "Ne5+",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "rn1q1rk1/p1p2ppp/1p2pn2/3p4/2PP1P2/6P1/PP1Q1PBP/RN3RK1 b - -": [
@@ -3734,7 +2985,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-06-06T15:27:52.000Z"
     }
   ],
@@ -3745,7 +2996,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -3756,19 +3007,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-27T15:37:27.000Z"
-    }
-  ],
-  "rn1q1rk1/pb1pbppp/1p2pn2/3P4/2P5/2NB1N2/PP3PPP/R1BQ1RK1 b - -": [
-    {
-      "san": "Na6",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T21:28:08.000Z"
     }
   ],
   "rn1q1rk1/pb1pppbp/1p3np1/2p5/2P5/1P3NP1/PB1PPPBP/RN1Q1RK1 w - -": [
@@ -3778,7 +3018,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-09-19T16:16:54.000Z"
     }
   ],
@@ -3789,19 +3029,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-27T15:37:27.000Z"
-    }
-  ],
-  "rn1q1rk1/pb2bppp/1pp1pn2/3p4/2PP4/1PNBPN2/PB3PPP/R2QK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:29:07.000Z"
     }
   ],
   "rn1q1rk1/pb2ppbp/1p1p1np1/2p5/2P5/1PN2NP1/PB1PPPBP/R2Q1RK1 w - -": [
@@ -3811,7 +3040,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:16:54.000Z"
     }
   ],
@@ -3822,19 +3051,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-09-05T15:17:24.000Z"
-    }
-  ],
-  "rn1q1rk1/pbp1bppp/1p3n2/3p4/3P4/2N2NP1/PP2PPBP/R1BQ1RK1 w - -": [
-    {
-      "san": "Bf4",
-      "games": 5,
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-16T15:38:57.000Z"
     }
   ],
   "rn1q1rk1/pbp2ppp/1p1b1n2/3p4/3P4/1P1BPN2/P4PPP/RNBQ1RK1 w - -": [
@@ -3844,7 +3062,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
     }
   ],
@@ -3855,7 +3073,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
     }
   ],
@@ -3866,41 +3084,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-01-31T17:13:58.000Z"
-    }
-  ],
-  "rn1q1rk1/pbppb1pp/1p2pn2/3P1p2/2P5/P1N2NP1/1P2PPBP/R1BQK2R b KQ -": [
-    {
-      "san": "Na6",
-      "games": 3,
-      "wins": 1,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-03T17:46:57.000Z"
-    }
-  ],
-  "rn1q1rk1/pbppb1pp/1p2pn2/5p2/2PP4/P1N2NP1/1P2PPBP/R1BQ1RK1 b - -": [
-    {
-      "san": "Ne4",
-      "games": 5,
-      "wins": 2,
-      "losses": 3,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-02-21T16:38:24.000Z"
-    }
-  ],
-  "rn1q1rk1/pbppppbp/1p3np1/3P4/2P5/5NP1/PP2PPBP/RNBQ1RK1 b - -": [
-    {
-      "san": "e6",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-25T22:28:44.000Z"
     }
   ],
   "rn1q1rk1/pbppppbp/1p3np1/8/2P5/1P3NP1/PB1PPPBP/RN1Q1RK1 b - -": [
@@ -3910,19 +3095,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-07-04T16:32:36.000Z"
-    }
-  ],
-  "rn1q1rk1/pbppppbp/1p3np1/8/2PP4/5NP1/PP2PPBP/RNBQ1RK1 w - -": [
-    {
-      "san": "d5",
-      "games": 12,
-      "wins": 8,
-      "losses": 2,
-      "draws": 2,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-04T15:02:59.000Z"
     }
   ],
   "rn1q1rk1/pbppppbp/1p3np1/8/8/1P3NP1/PBPPPPBP/RN1Q1RK1 w - -": [
@@ -3932,19 +3106,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:16:54.000Z"
-    }
-  ],
-  "rn1q1rk1/pbppppbp/5np1/1p1P4/2P5/5NP1/PP2PPBP/RNBQ1RK1 w - -": [
-    {
-      "san": "Nfd2",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:02:59.000Z"
     }
   ],
   "rn1q1rk1/pp2ppbp/2p2np1/3p1b2/3P4/2P2NP1/PP1NPPBP/R1BQ1RK1 w - -": [
@@ -3954,7 +3117,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.21,
+      "recentWeight": 0.135,
       "latestPlayedAt": "2024-12-24T17:55:00.000Z"
     }
   ],
@@ -3965,17 +3128,6 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.019,
-      "latestPlayedAt": "2023-06-13T15:30:24.000Z"
-    }
-  ],
-  "rn1q1rk1/pp2ppbp/5np1/3p4/3P2b1/2N1PN2/PP2BPPP/R1BQ1RK1 w - -": [
-    {
-      "san": "Qb3",
-      "games": 4,
-      "wins": 3,
-      "losses": 0,
-      "draws": 1,
       "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-13T15:30:24.000Z"
     }
@@ -3987,7 +3139,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.032,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-08-23T17:16:30.000Z"
     }
   ],
@@ -3998,7 +3150,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-02-03T19:13:54.000Z"
     }
   ],
@@ -4009,7 +3161,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-02T15:57:39.000Z"
     }
   ],
@@ -4020,7 +3172,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-06-06T15:27:52.000Z"
     }
   ],
@@ -4031,7 +3183,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-09-19T15:05:37.000Z"
     }
   ],
@@ -4042,19 +3194,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-06-06T15:27:52.000Z"
-    }
-  ],
-  "rn1qk1nr/pbp1ppbp/1p1p2p1/8/3PP3/3B1N2/PPP2PPP/RNBQ1RK1 w kq -": [
-    {
-      "san": "c4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T15:17:29.000Z"
     }
   ],
   "rn1qk1nr/pbpp1ppp/1p2p3/8/1b1PP3/2NB1N2/PPP2PPP/R1BQK2R b KQkq -": [
@@ -4064,28 +3205,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.089,
+      "recentWeight": 0.057,
       "latestPlayedAt": "2024-08-21T19:24:38.000Z"
-    },
-    {
-      "san": "d5",
-      "games": 2,
-      "wins": 0,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-04-04T15:54:30.000Z"
-    }
-  ],
-  "rn1qk1nr/pbpp1ppp/1p2p3/8/1bPP4/2N2N2/PPQ1PPPP/R1B1KB1R b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 6,
-      "wins": 5,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-02-21T16:17:40.000Z"
     }
   ],
   "rn1qk1nr/pbpp1ppp/1p2p3/8/1bPP4/5NP1/PP1BPP1P/RN1QKB1R b KQkq -": [
@@ -4095,7 +3216,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-06-06T15:27:52.000Z"
     }
   ],
@@ -4106,7 +3227,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-09-19T15:05:37.000Z"
     }
   ],
@@ -4117,7 +3238,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 3,
-      "recentWeight": 0.06,
+      "recentWeight": 0.038,
       "latestPlayedAt": "2024-01-14T00:20:53.000Z"
     }
   ],
@@ -4128,7 +3249,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T22:27:44.000Z"
     }
   ],
@@ -4139,30 +3260,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-05-16T16:07:41.000Z"
-    }
-  ],
-  "rn1qk1nr/pbppppbp/1p4p1/8/3P4/5NP1/PPP1PPBP/RNBQ1RK1 b kq -": [
-    {
-      "san": "Nf6",
-      "games": 5,
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-07-25T22:28:44.000Z"
-    }
-  ],
-  "rn1qk1nr/pbppppbp/1p4p1/8/3PP3/3B1N2/PPP2PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T15:17:29.000Z"
     }
   ],
   "rn1qk2r/p1p2ppp/1p2pn2/3p4/2PP1P2/6P1/PP1Q1PBP/RN2K2R b KQkq -": [
@@ -4172,7 +3271,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-06T15:27:52.000Z"
     }
   ],
@@ -4183,7 +3282,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T13:40:05.000Z"
     }
   ],
@@ -4194,19 +3293,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-27T15:37:27.000Z"
-    }
-  ],
-  "rn1qk2r/pb1pbppp/1p2pn2/8/2PP4/2NB1N2/PP3PPP/R1BQ1RK1 b kq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T21:28:08.000Z"
     }
   ],
   "rn1qk2r/pb2bppp/1p1ppn2/2p5/2P5/2N2NP1/PP1PPPBP/R1BQR1K1 w kq -": [
@@ -4216,7 +3304,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:44:14.000Z"
     }
   ],
@@ -4227,7 +3315,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -4238,19 +3326,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
-    }
-  ],
-  "rn1qk2r/pbp2ppp/1p1bpn2/3p4/2P5/1PN1PN2/PB1P1PPP/R2QKB1R w KQkq -": [
-    {
-      "san": "cxd5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-09T16:26:47.000Z"
     }
   ],
   "rn1qk2r/pbp2ppp/1p1bpn2/3p4/2PP4/3BPN2/PP3PPP/RNBQ1RK1 w kq -": [
@@ -4260,107 +3337,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
-    }
-  ],
-  "rn1qk2r/pbp2ppp/1p2p3/3pP3/1b1Pn3/2NB1N2/PPP1QPPP/R1B2RK1 b kq -": [
-    {
-      "san": "Bxc3",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
-    }
-  ],
-  "rn1qk2r/pbp2ppp/1p2p3/3pP3/3P4/2nBQN2/P1P2PPP/R1B2RK1 b kq -": [
-    {
-      "san": "Ne4",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
-    }
-  ],
-  "rn1qk2r/pbp2ppp/1p2p3/3pP3/3Pn3/2PB1N2/P1P1QPPP/R1B2RK1 b kq -": [
-    {
-      "san": "Nxc3",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
-    }
-  ],
-  "rn1qk2r/pbp2ppp/1p2p3/3pP3/3Pn3/B2BQN2/P1P2PPP/R4RK1 b kq -": [
-    {
-      "san": "Nd7",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
-    }
-  ],
-  "rn1qk2r/pbp2ppp/1p2pn2/3pP3/1b1P4/2NB1N2/PPP1QPPP/R1B1K2R b KQkq -": [
-    {
-      "san": "Ne4",
-      "games": 4,
-      "wins": 2,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
-    }
-  ],
-  "rn1qk2r/pbpp1pbp/1p2pnp1/8/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 b kq -": [
-    {
-      "san": "Ne4",
-      "games": 7,
-      "wins": 4,
-      "losses": 3,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-01-03T23:43:42.000Z"
-    }
-  ],
-  "rn1qk2r/pbpp1ppp/1p2pn2/8/1b1PP3/2NB1N2/PPP1QPPP/R1B1K2R b KQkq -": [
-    {
-      "san": "d5",
-      "games": 6,
-      "wins": 2,
-      "losses": 1,
-      "draws": 3,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-06-06T16:55:25.000Z"
-    }
-  ],
-  "rn1qk2r/pbpp1ppp/1p2pn2/8/1bPP4/2N1PN2/PP1B1PPP/R2QKB1R b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 3,
-      "wins": 2,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:39:41.000Z"
-    }
-  ],
-  "rn1qk2r/pbpp2pp/1p1bpn2/3P1p2/2P5/P1N2NP1/1P2PP1P/R1BQKB1R b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 5,
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-09-04T16:05:35.000Z"
     }
   ],
   "rn1qk2r/pbpp2pp/1p1bpn2/3P1p2/2P5/P1N3P1/1P2PPBP/R1BQK1NR b KQkq -": [
@@ -4370,52 +3348,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-01-31T17:13:58.000Z"
-    }
-  ],
-  "rn1qk2r/pbppb1pp/1p2pn2/5p2/2PP4/P1N2NP1/1P2PPBP/R1BQK2R b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 6,
-      "wins": 2,
-      "losses": 3,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2022-09-06T22:02:45.000Z"
-    }
-  ],
-  "rn1qk2r/pbppb1pp/1p2pn2/5p2/2PP4/P4NP1/1P2PPBP/RNBQ1RK1 b kq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-21T16:38:24.000Z"
-    }
-  ],
-  "rn1qk2r/pbppbppp/1p2pn2/8/3P4/5NP1/PPP1PPBP/RNBQ1RK1 w kq -": [
-    {
-      "san": "c4",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:38:57.000Z"
-    }
-  ],
-  "rn1qk2r/pbppppbp/1p3np1/8/2P5/5NP1/PP1PPPBP/RNBQ1RK1 w kq -": [
-    {
-      "san": "d4",
-      "games": 16,
-      "wins": 10,
-      "losses": 3,
-      "draws": 3,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-04T15:02:59.000Z"
     }
   ],
   "rn1qk2r/pbppppbp/1p3np1/8/2PP4/5NP1/PP2PPBP/RNBQ1RK1 b kq -": [
@@ -4425,30 +3359,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-07-25T22:28:44.000Z"
-    }
-  ],
-  "rn1qk2r/ppp1bpp1/4pn1p/3p1b2/4P3/1P1P2P1/PBPN1PBP/R2QK1NR b KQkq -": [
-    {
-      "san": "Bh7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-24T16:38:23.000Z"
-    }
-  ],
-  "rn1qk2r/ppp1bppb/4pn1p/3p4/4P3/1P1P2P1/PBPNNPBP/R2QK2R b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-24T16:38:23.000Z"
     }
   ],
   "rn1qkb1r/1b3ppp/p3pn2/1pp5/3P4/2N1PN2/PP2BPPP/R1BQ1RK1 w kq -": [
@@ -4458,7 +3370,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-24T15:44:13.000Z"
     }
   ],
@@ -4469,52 +3381,30 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T17:04:44.000Z"
     }
   ],
-  "rn1qkb1r/1p2pppp/p1p2n2/3p1b2/2PP4/2N1PN2/PP3PPP/R1BQKB1R w KQkq -": [
+  "rn1qkb1r/1p1b1ppp/p3p3/2pNP3/3P4/5N2/PPP2PPP/R1BQK2R b KQkq -": [
     {
-      "san": "Ne5",
-      "games": 6,
-      "wins": 4,
-      "losses": 0,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-02T15:25:00.000Z"
-    }
-  ],
-  "rn1qkb1r/1p3ppp/p1p1pn2/3pN3/2PPb1P1/2N1P3/PP3P1P/R1BQKB1R w KQkq -": [
-    {
-      "san": "f3",
-      "games": 2,
-      "wins": 2,
+      "san": "exd5",
+      "games": 1,
+      "wins": 1,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:25:00.000Z"
+      "recentWeight": 0.897,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
-  "rn1qkb1r/1p3ppp/p1p1pn2/3pNb2/2PP4/2N1P3/PP3PPP/R1BQKB1R w KQkq -": [
+  "rn1qkb1r/1p1b1ppp/p7/2ppP3/3P4/5N2/PPP2PPP/R1BQ1RK1 b kq -": [
     {
-      "san": "g4",
-      "games": 2,
-      "wins": 2,
+      "san": "Nc6",
+      "games": 1,
+      "wins": 1,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:25:00.000Z"
-    }
-  ],
-  "rn1qkb1r/1p3ppp/p1p1pnb1/3pN3/2PP2P1/2N1PP2/PP5P/R1BQKB1R w KQkq -": [
-    {
-      "san": "h4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:25:00.000Z"
+      "recentWeight": 0.897,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rn1qkb1r/pb1p1ppp/1p2pn2/2p5/2P5/1P3NP1/P2PPPBP/RNBQ1RK1 b kq -": [
@@ -4524,19 +3414,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T13:40:05.000Z"
-    }
-  ],
-  "rn1qkb1r/pb1p1ppp/1p2pn2/2p5/2P5/2N2NP1/PP1PPPBP/R1BQ1RK1 b kq -": [
-    {
-      "san": "Be7",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T15:27:18.000Z"
     }
   ],
   "rn1qkb1r/pb1p1ppp/1p2pn2/2p5/2P5/2N2NP1/PP1PPPBP/R1BQK2R w KQkq -": [
@@ -4546,7 +3425,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:44:14.000Z"
     }
   ],
@@ -4557,7 +3436,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.029,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-06-27T15:37:27.000Z"
     }
   ],
@@ -4568,7 +3447,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-05-09T16:26:47.000Z"
     }
   ],
@@ -4579,7 +3458,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-08-29T15:54:58.000Z"
     }
   ],
@@ -4590,30 +3469,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 4,
-      "recentWeight": 0.56,
+      "recentWeight": 0.359,
       "latestPlayedAt": "2025-10-31T02:25:09.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp1p1p/1p2pnp1/8/2PP4/5NP1/PP2PPBP/RNBQ1RK1 b kq -": [
-    {
-      "san": "Bg7",
-      "games": 5,
-      "wins": 3,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-01-03T23:43:42.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp1ppp/1p2pn2/4P3/2P5/2N2N2/PP1P1PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Ne4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:04:40.000Z"
     }
   ],
   "rn1qkb1r/pbpp1ppp/1p2pn2/8/2P5/5NP1/PP1PPPBP/RNBQ1RK1 b kq -": [
@@ -4623,19 +3480,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-21T13:40:05.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp1ppp/1p2pn2/8/2PP4/2N1PN2/PP3PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Bb4",
-      "games": 4,
-      "wins": 3,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:39:41.000Z"
     }
   ],
   "rn1qkb1r/pbpp1ppp/1p2pn2/8/2PP4/P1N2N2/1P2PPPP/R1BQKB1R b KQkq -": [
@@ -4645,30 +3491,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
-      "latestPlayedAt": "2023-08-22T21:06:30.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp1ppp/1p2pn2/8/3P4/5NP1/PPP1PPBP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 3,
-      "wins": 1,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-16T15:38:57.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp1ppp/1p2pn2/8/8/1P3NP1/PBPPPP1P/RN1QKB1R w KQkq -": [
-    {
-      "san": "Bg2",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
       "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T15:05:12.000Z"
+      "latestPlayedAt": "2023-08-22T21:06:30.000Z"
     }
   ],
   "rn1qkb1r/pbpp1ppp/1p2pn2/8/8/3P1NP1/PPP1PPBP/RNBQ1RK1 b kq -": [
@@ -4678,7 +3502,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T16:52:44.000Z"
     }
   ],
@@ -4689,7 +3513,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T17:04:44.000Z"
     }
   ],
@@ -4700,7 +3524,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.08,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2024-08-21T19:39:50.000Z"
     }
   ],
@@ -4711,41 +3535,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-01-31T17:13:58.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp2pp/1p2pn2/5p2/2PP4/P1N2NP1/1P2PP1P/R1BQKB1R b KQkq -": [
-    {
-      "san": "Be7",
-      "games": 6,
-      "wins": 2,
-      "losses": 3,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2022-09-06T22:02:45.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpp2pp/1p2pn2/5p2/2PP4/P4NP1/1P2PPBP/RNBQK2R b KQkq -": [
-    {
-      "san": "Be7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-21T16:38:24.000Z"
-    }
-  ],
-  "rn1qkb1r/pbpppp1p/1p3np1/8/2P5/5NP1/PP1PPPBP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 17,
-      "wins": 10,
-      "losses": 4,
-      "draws": 3,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-04T15:02:59.000Z"
     }
   ],
   "rn1qkb1r/pbpppppp/1p3n2/8/2P5/5NP1/PP1PPP1P/RNBQKB1R w KQkq -": [
@@ -4755,7 +3546,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 7,
       "draws": 4,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-07-04T15:02:59.000Z"
     }
   ],
@@ -4766,7 +3557,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T21:37:42.000Z"
     }
   ],
@@ -4777,7 +3568,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:39:19.000Z"
     }
   ],
@@ -4788,7 +3579,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.039,
+      "recentWeight": 0.025,
       "latestPlayedAt": "2023-11-08T00:55:32.000Z"
     }
   ],
@@ -4799,7 +3590,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T17:27:22.000Z"
     }
   ],
@@ -4810,19 +3601,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T17:00:24.000Z"
-    }
-  ],
-  "rn1qkb1r/pp2pppp/2p2n2/3p1b2/2PP4/2N1PN2/PP3PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "e6",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:39:22.000Z"
     }
   ],
   "rn1qkb1r/pp2pppp/2p2n2/3p1b2/2PP4/5NP1/PP2PP1P/RNBQKB1R w KQkq -": [
@@ -4832,8 +3612,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:50:38.000Z"
+    }
+  ],
+  "rn1qkb1r/pp2pppp/2p2n2/8/4N1b1/5N2/PPPPQPPP/R1B1KB1R w KQkq -": [
+    {
+      "san": "Neg5",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "rn1qkb1r/pp2pppp/5n2/3p1b2/8/2N1PN2/PP1P1PPP/R1BQKB1R w KQkq -": [
@@ -4843,7 +3634,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T17:00:24.000Z"
     }
   ],
@@ -4854,8 +3645,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:50:38.000Z"
+    }
+  ],
+  "rn1qkb1r/pp3ppp/2p1pn2/6N1/6b1/5N2/PPPPQPPP/R1B1KB1R w KQkq -": [
+    {
+      "san": "Nxf7",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.901,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "rn1qkb1r/ppp1pppp/5n2/3p1b2/8/1P3N2/PBPPPPPP/RN1QKB1R w KQkq -": [
@@ -4865,19 +3667,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.056,
+      "recentWeight": 0.036,
       "latestPlayedAt": "2023-08-22T21:35:21.000Z"
-    }
-  ],
-  "rn1qkb1r/ppp1pppp/5n2/3p3b/7N/1P5P/PBPPPPP1/RN1QKB1R w KQkq -": [
-    {
-      "san": "g4",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-27T15:17:37.000Z"
     }
   ],
   "rn1qkb1r/ppp1pppp/5n2/3P4/3P2b1/5P2/PPP3PP/RNBQKBNR b KQkq -": [
@@ -4887,7 +3678,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:19:48.000Z"
     }
   ],
@@ -4898,7 +3689,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.046,
+      "recentWeight": 0.03,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
     }
   ],
@@ -4909,7 +3700,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-04-04T15:36:14.000Z"
     }
   ],
@@ -4920,19 +3711,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
-    }
-  ],
-  "rn1qkb1r/ppp1pppp/5n2/3p4/6bN/1P6/PBPPPPPP/RN1QKB1R w KQkq -": [
-    {
-      "san": "h3",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-27T15:17:37.000Z"
     }
   ],
   "rn1qkb1r/ppp1pppp/5n2/8/2pP2b1/4PN2/PP3PPP/RNBQKB1R w KQkq -": [
@@ -4942,30 +3722,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-05-02T16:28:48.000Z"
-    }
-  ],
-  "rn1qkb1r/ppp1pppp/5nb1/3p4/6PN/1P5P/PBPPPP2/RN1QKB1R w KQkq -": [
-    {
-      "san": "d3",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-27T15:17:37.000Z"
-    }
-  ],
-  "rn1qkb1r/ppp1pppp/5nb1/3p4/7N/1P6/PBPPPPPP/RN1QKB1R w KQkq -": [
-    {
-      "san": "Nxg6",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-14T23:17:58.000Z"
     }
   ],
   "rn1qkb1r/ppp2ppp/4bn2/8/2PP4/2N2P2/PP4PP/R1BQKBNR b KQkq -": [
@@ -4975,41 +3733,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:19:48.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpp1ppp/1p2p3/8/2P1P3/2N2N2/PP1P1PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:04:40.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpp1ppp/1p2p3/8/2P1P3/2N3P1/PP1P1P1P/R1BQKBNR b KQkq -": [
-    {
-      "san": "f5",
-      "games": 5,
-      "wins": 3,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-01-03T22:28:03.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpp1ppp/1p2p3/8/2P5/5NP1/PP1PPPBP/RNBQK2R b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 5,
-      "wins": 4,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-01-03T23:43:42.000Z"
     }
   ],
   "rn1qkbnr/pbpp1ppp/1p2p3/8/2PP4/2N2N2/PP2PPPP/R1BQKB1R b KQkq -": [
@@ -5019,7 +3744,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 28,
       "losses": 6,
       "draws": 4,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-02-21T16:17:40.000Z"
     }
   ],
@@ -5030,7 +3755,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.105,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T23:41:58.000Z"
     }
   ],
@@ -5041,7 +3766,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.105,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T16:29:28.000Z"
     }
   ],
@@ -5052,7 +3777,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.07,
+      "recentWeight": 0.045,
       "latestPlayedAt": "2023-09-19T15:05:37.000Z"
     }
   ],
@@ -5063,7 +3788,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 9,
       "draws": 5,
-      "recentWeight": 0.138,
+      "recentWeight": 0.088,
       "latestPlayedAt": "2024-08-21T19:39:50.000Z"
     },
     {
@@ -5072,7 +3797,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.032,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-08-22T21:25:17.000Z"
     }
   ],
@@ -5083,7 +3808,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 5,
       "draws": 0,
-      "recentWeight": 0.024,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-02-21T16:38:24.000Z"
     }
   ],
@@ -5094,19 +3819,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 3,
       "draws": 3,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-01-14T00:20:53.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpp1ppp/1p2p3/8/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 13,
-      "wins": 8,
-      "losses": 3,
-      "draws": 2,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-01-01T02:11:49.000Z"
     }
   ],
   "rn1qkbnr/pbpp1ppp/1p2p3/8/3PP3/2N2N2/PPP2PPP/R1BQKB1R b KQkq -": [
@@ -5116,7 +3830,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.1,
+      "recentWeight": 0.064,
       "latestPlayedAt": "2024-08-21T19:24:38.000Z"
     }
   ],
@@ -5127,7 +3841,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.045,
+      "recentWeight": 0.029,
       "latestPlayedAt": "2023-12-26T16:52:44.000Z"
     }
   ],
@@ -5138,19 +3852,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.095,
+      "recentWeight": 0.061,
       "latestPlayedAt": "2024-08-21T19:39:50.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpp2pp/1p2p3/5p2/2P1P3/2N3P1/PP1P1PBP/R1BQK1NR b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 5,
-      "wins": 3,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-01-03T22:28:03.000Z"
     }
   ],
   "rn1qkbnr/pbpp2pp/1p2p3/5p2/2PP4/4PN2/PP2BPPP/RNBQK2R b KQkq -": [
@@ -5160,7 +3863,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.105,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T23:41:58.000Z"
     }
   ],
@@ -5171,19 +3874,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 8,
       "draws": 3,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-02-28T16:20:07.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpp2pp/1p2p3/5p2/2PP4/P4NP1/1P2PP1P/RNBQKB1R b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 4,
-      "wins": 3,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-21T16:38:24.000Z"
     }
   ],
   "rn1qkbnr/pbpppp1p/1p4p1/8/2P5/5NP1/PP1PPPBP/RNBQK2R b KQkq -": [
@@ -5193,41 +3885,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-05-16T16:07:41.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpppp1p/1p4p1/8/3PP3/3B4/PPP2PPP/RNBQK1NR w KQkq -": [
-    {
-      "san": "Nf3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T15:17:29.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpppp1p/1p4p1/8/8/5NP1/PPPPPPBP/RNBQ1RK1 b kq -": [
-    {
-      "san": "Bg7",
-      "games": 15,
-      "wins": 11,
-      "losses": 4,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T17:06:03.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpppppp/1p6/8/2P1P3/2N5/PP1P1PPP/R1BQKBNR b KQkq -": [
-    {
-      "san": "e6",
-      "games": 7,
-      "wins": 4,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-01-03T22:28:03.000Z"
     }
   ],
   "rn1qkbnr/pbpppppp/1p6/8/2P5/5NP1/PP1PPP1P/RNBQKB1R b KQkq -": [
@@ -5237,7 +3896,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-05-16T16:07:41.000Z"
     }
   ],
@@ -5248,19 +3907,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.08,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2024-08-21T19:39:50.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpppppp/1p6/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "Bd3",
-      "games": 6,
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-23T15:17:29.000Z"
     }
   ],
   "rn1qkbnr/pbpppppp/1p6/8/4P3/2N2N2/PPPP1PPP/R1BQKB1R b KQkq -": [
@@ -5270,19 +3918,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 5,
-      "recentWeight": 0.093,
+      "recentWeight": 0.06,
       "latestPlayedAt": "2024-08-21T19:24:38.000Z"
-    }
-  ],
-  "rn1qkbnr/pbpppppp/1p6/8/8/5NP1/PPPPPPBP/RNBQK2R b KQkq -": [
-    {
-      "san": "g6",
-      "games": 16,
-      "wins": 11,
-      "losses": 5,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T17:06:03.000Z"
     }
   ],
   "rn1qkbnr/pbpppppp/8/1p6/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -": [
@@ -5292,7 +3929,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-09-05T15:51:42.000Z"
     }
   ],
@@ -5303,7 +3940,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.208,
+      "recentWeight": 0.134,
       "latestPlayedAt": "2024-12-24T19:48:50.000Z"
     }
   ],
@@ -5314,30 +3951,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-21T19:29:53.000Z"
-    }
-  ],
-  "rn1qkbnr/pp2pppp/2p5/3p1b2/2P5/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "cxd5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:05:31.000Z"
-    }
-  ],
-  "rn1qkbnr/pp2pppp/2p5/3p4/2P3b1/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "cxd5",
-      "games": 4,
-      "wins": 4,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:08:11.000Z"
     }
   ],
   "rn1qkbnr/pp2pppp/2p5/3p4/4P1b1/2N2N1P/PPPP1PP1/R1BQKB1R b KQkq -": [
@@ -5347,7 +3962,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.048,
+      "recentWeight": 0.031,
       "latestPlayedAt": "2024-06-02T23:39:58.000Z"
     }
   ],
@@ -5358,19 +3973,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.048,
+      "recentWeight": 0.031,
       "latestPlayedAt": "2024-06-02T23:39:58.000Z"
-    }
-  ],
-  "rn1qkbnr/pp2pppp/2p5/3P4/8/4Pb2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Qxf3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:08:11.000Z"
     }
   ],
   "rn1qkbnr/pp2pppp/2p5/3pPb2/3P3P/8/PPP2PP1/RNBQKBNR b KQkq -": [
@@ -5380,19 +3984,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-21T19:29:53.000Z"
-    }
-  ],
-  "rn1qkbnr/pp2pppp/8/3p1b2/8/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Qb3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:05:31.000Z"
     }
   ],
   "rn1qkbnr/pp3pp1/2p1p3/3pPb1p/2PP3P/2N5/PP3PP1/R1BQKBNR b KQkq -": [
@@ -5402,7 +3995,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:29:53.000Z"
     }
   ],
@@ -5413,7 +4006,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T16:38:23.000Z"
     }
   ],
@@ -5424,7 +4017,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-13T15:05:31.000Z"
     }
   ],
@@ -5435,7 +4028,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T16:23:13.000Z"
     }
   ],
@@ -5446,7 +4039,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.442,
+      "recentWeight": 0.283,
       "latestPlayedAt": "2025-02-17T17:44:00.000Z"
     }
   ],
@@ -5457,7 +4050,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T20:05:18.000Z"
     }
   ],
@@ -5468,7 +4061,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.337,
+      "recentWeight": 0.217,
       "latestPlayedAt": "2025-02-17T17:44:00.000Z"
     }
   ],
@@ -5479,7 +4072,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.115,
+      "recentWeight": 0.074,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
     }
   ],
@@ -5490,7 +4083,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
     }
   ],
@@ -5501,7 +4094,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
     }
   ],
@@ -5512,7 +4105,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-24T15:44:13.000Z"
     }
   ],
@@ -5523,7 +4116,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
     }
   ],
@@ -5534,7 +4127,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-04-04T15:36:14.000Z"
     }
   ],
@@ -5545,7 +4138,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
     }
   ],
@@ -5556,7 +4149,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.069,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
     }
   ],
@@ -5567,7 +4160,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.115,
+      "recentWeight": 0.074,
       "latestPlayedAt": "2024-12-24T17:07:03.000Z"
     }
   ],
@@ -5578,7 +4171,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -5589,7 +4182,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -5600,19 +4193,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
-    }
-  ],
-  "rnb1kb1r/ppp1pp1p/6p1/8/4P3/2P2N2/PP3PPP/R1BqKB1R w KQkq -": [
-    {
-      "san": "Kxd1",
-      "games": 10,
-      "wins": 5,
-      "losses": 2,
-      "draws": 3,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-14T21:56:47.000Z"
     }
   ],
   "rnb1kb1r/ppp1pppp/5n2/3q4/3P4/8/PP2PPPP/RNBQKBNR w KQkq -": [
@@ -5622,7 +4204,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -5633,7 +4215,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.052,
+      "recentWeight": 0.033,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -5644,7 +4226,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 4,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-21T13:02:52.000Z"
     }
   ],
@@ -5655,7 +4237,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -5666,7 +4248,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-24T17:04:37.000Z"
     }
   ],
@@ -5677,7 +4259,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.052,
+      "recentWeight": 0.033,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -5688,30 +4270,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-12-26T23:05:51.000Z"
-    }
-  ],
-  "rnb1kbnr/pp2pppp/8/2pq4/8/2P5/PP1P1PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "d4",
-      "games": 3,
-      "wins": 1,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-09-13T16:29:10.000Z"
-    }
-  ],
-  "rnb1kbnr/pp3ppp/4p3/2pq4/3P4/5N2/PPPN1PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "cxd4",
-      "games": 39,
-      "wins": 29,
-      "losses": 5,
-      "draws": 5,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-07T22:06:46.000Z"
     }
   ],
   "rnb1kbnr/ppp1pppp/8/3q4/8/8/PPPP1PPP/RNBQKBNR w KQkq -": [
@@ -5721,7 +4281,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.052,
+      "recentWeight": 0.033,
       "latestPlayedAt": "2023-12-28T17:44:27.000Z"
     }
   ],
@@ -5732,7 +4292,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-30T00:51:03.000Z"
     }
   ],
@@ -5743,7 +4303,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.211,
+      "recentWeight": 0.135,
       "latestPlayedAt": "2024-12-30T01:13:21.000Z"
     }
   ],
@@ -5754,7 +4314,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-21T15:28:42.000Z"
     }
   ],
@@ -5765,19 +4325,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.31,
+      "recentWeight": 0.199,
       "latestPlayedAt": "2024-12-24T19:52:21.000Z"
-    }
-  ],
-  "rnbq1rk1/p1p1bppp/1p2p3/3n4/8/1PN1PN2/PB1P1PPP/R2QKB1R w KQ -": [
-    {
-      "san": "Nxd5",
-      "games": 12,
-      "wins": 9,
-      "losses": 1,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-02-21T16:56:59.000Z"
     }
   ],
   "rnbq1rk1/p1p1bppp/1p2pn2/3p4/2P5/1PN1PN2/PB1P1PPP/R2QKB1R w KQ -": [
@@ -5787,7 +4336,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 31,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.041,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-09-05T15:17:24.000Z"
     }
   ],
@@ -5798,19 +4347,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.425,
+      "recentWeight": 0.273,
       "latestPlayedAt": "2024-12-24T19:52:21.000Z"
-    }
-  ],
-  "rnbq1rk1/p1p1bppp/1p3n2/3p4/3P4/1PN1PN2/P4PPP/R1BQKB1R w KQ -": [
-    {
-      "san": "Bb2",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-01-31T16:04:22.000Z"
     }
   ],
   "rnbq1rk1/p1p1bppp/1p3n2/3p4/8/1PN1PN2/PB1P1PPP/R2QKB1R w KQ -": [
@@ -5820,7 +4358,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-09-05T15:17:24.000Z"
     }
   ],
@@ -5831,19 +4369,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.206,
+      "recentWeight": 0.132,
       "latestPlayedAt": "2024-12-24T19:44:58.000Z"
-    }
-  ],
-  "rnbq1rk1/p1p2ppp/1p1b1n2/3p4/3P4/3BPN2/PP3PPP/RNBQ1RK1 w - -": [
-    {
-      "san": "b3",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-31T23:56:25.000Z"
     }
   ],
   "rnbq1rk1/p1p2ppp/1p2pn2/8/2QP4/P4N2/1P2PPPP/R1B1KB1R w KQ -": [
@@ -5853,19 +4380,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
-    }
-  ],
-  "rnbq1rk1/p3bppp/1pp1pn2/3p4/2PP4/1PN1PN2/PB3PPP/R2QKB1R w KQ -": [
-    {
-      "san": "Bd3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:29:07.000Z"
     }
   ],
   "rnbq1rk1/p3bppp/1pp1pn2/3p4/2PP4/2N2NP1/PP2PPBP/R1BQ1RK1 w - -": [
@@ -5875,7 +4391,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.029,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-11-08T01:15:00.000Z"
     }
   ],
@@ -5886,19 +4402,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.206,
+      "recentWeight": 0.132,
       "latestPlayedAt": "2024-12-24T17:55:00.000Z"
-    }
-  ],
-  "rnbq1rk1/pp2bppp/2p1pn2/3p4/2P5/1PN1PN2/PB1P1PPP/R2QKB1R w KQ -": [
-    {
-      "san": "d4",
-      "games": 11,
-      "wins": 11,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-04T15:29:07.000Z"
     }
   ],
   "rnbq1rk1/pp2bppp/2p1pn2/3p4/2PP4/2N2NP1/PP2PPBP/R1BQK2R w KQ -": [
@@ -5908,7 +4413,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-24T16:04:26.000Z"
     }
   ],
@@ -5919,7 +4424,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:15:00.000Z"
     }
   ],
@@ -5930,7 +4435,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-30T00:51:03.000Z"
     }
   ],
@@ -5941,7 +4446,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2023-12-26T16:06:54.000Z"
     }
   ],
@@ -5952,7 +4457,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.235,
+      "recentWeight": 0.151,
       "latestPlayedAt": "2024-12-30T00:51:03.000Z"
     }
   ],
@@ -5963,7 +4468,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.062,
+      "recentWeight": 0.04,
       "latestPlayedAt": "2023-12-26T16:06:54.000Z"
     }
   ],
@@ -5974,19 +4479,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T16:06:54.000Z"
-    }
-  ],
-  "rnbq1rk1/pp2ppbp/2p2np1/3p4/2P5/1P3NP1/PB1PPPBP/RN1QK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:24:34.000Z"
     }
   ],
   "rnbq1rk1/pp2ppbp/2p2np1/3p4/2PP4/2N1PN2/PP2BPPP/R1BQK2R w KQ -": [
@@ -5996,7 +4490,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 4,
       "draws": 4,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-06-13T15:30:24.000Z"
     }
   ],
@@ -6007,7 +4501,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-06-06T16:26:19.000Z"
     }
   ],
@@ -6018,7 +4512,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.314,
+      "recentWeight": 0.202,
       "latestPlayedAt": "2024-12-24T20:01:37.000Z"
     }
   ],
@@ -6029,7 +4523,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-06-06T16:26:19.000Z"
     }
   ],
@@ -6040,7 +4534,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-22T15:16:46.000Z"
     }
   ],
@@ -6051,7 +4545,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -6062,30 +4556,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-22T15:16:46.000Z"
-    }
-  ],
-  "rnbq1rk1/pp2ppbp/5np1/3p4/3P4/1QN1PN2/PP2BPPP/R1B2RK1 w - -": [
-    {
-      "san": "Bd2",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:30:24.000Z"
-    }
-  ],
-  "rnbq1rk1/pp3ppp/2pb1p2/8/3P4/2PB4/PP2NPPP/R1BQK2R b KQ -": [
-    {
-      "san": "Re8",
-      "games": 3,
-      "wins": 2,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
   "rnbq1rk1/pp3ppp/2pb4/3p4/2PPn3/3B1N2/PP3PPP/RNBQR1K1 b - -": [
@@ -6095,7 +4567,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.344,
+      "recentWeight": 0.221,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     }
   ],
@@ -6106,7 +4578,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.049,
+      "recentWeight": 0.031,
       "latestPlayedAt": "2023-07-04T16:17:23.000Z"
     }
   ],
@@ -6117,19 +4589,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.017,
-      "latestPlayedAt": "2023-08-29T16:06:58.000Z"
-    }
-  ],
-  "rnbq1rk1/pp3ppp/3b4/2pp4/8/1P2PN2/PB1P1PPP/R2QKB1R w KQ -": [
-    {
-      "san": "Be2",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
       "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-09T15:39:32.000Z"
+      "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
   "rnbq1rk1/pp3ppp/3bpn2/2pp4/2P5/1PN1PN2/PB1P1PPP/R2QKB1R w KQ -": [
@@ -6139,7 +4600,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
@@ -6150,7 +4611,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-24T16:38:09.000Z"
     }
   ],
@@ -6161,7 +4622,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:36:00.000Z"
     }
   ],
@@ -6172,7 +4633,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 4,
       "draws": 0,
-      "recentWeight": 0.056,
+      "recentWeight": 0.036,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
     }
   ],
@@ -6183,7 +4644,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 57,
       "losses": 5,
       "draws": 6,
-      "recentWeight": 0.05,
+      "recentWeight": 0.032,
       "latestPlayedAt": "2023-12-26T16:06:54.000Z"
     }
   ],
@@ -6194,7 +4655,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 4,
       "draws": 3,
-      "recentWeight": 0.66,
+      "recentWeight": 0.424,
       "latestPlayedAt": "2024-12-30T00:51:03.000Z"
     }
   ],
@@ -6205,7 +4666,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-14T16:12:29.000Z"
     }
   ],
@@ -6216,17 +4677,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.441,
+      "recentWeight": 0.283,
       "latestPlayedAt": "2025-10-18T21:17:28.000Z"
-    },
-    {
-      "san": "O-O",
-      "games": 14,
-      "wins": 8,
-      "losses": 4,
-      "draws": 2,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-02-14T23:54:49.000Z"
     }
   ],
   "rnbq1rk1/ppp1bppp/5n2/2Pp4/3P4/3B1N2/PP3PPP/RNBQ1RK1 b - -": [
@@ -6236,7 +4688,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-06-27T15:30:04.000Z"
     }
   ],
@@ -6247,7 +4699,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-08-21T15:04:02.000Z"
     }
   ],
@@ -6258,7 +4710,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-06-06T17:07:14.000Z"
     }
   ],
@@ -6269,7 +4721,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-03-24T15:14:04.000Z"
     }
   ],
@@ -6280,17 +4732,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.042,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
-    },
-    {
-      "san": "Nc3",
-      "games": 3,
-      "wins": 2,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-17T16:08:08.000Z"
     }
   ],
   "rnbq1rk1/ppp1ppbp/3p1np1/8/2PPP3/2N2N2/PP3PPP/R1BQKB1R w KQ -": [
@@ -6300,7 +4743,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 146,
       "losses": 36,
       "draws": 25,
-      "recentWeight": 0.288,
+      "recentWeight": 0.185,
       "latestPlayedAt": "2024-08-23T19:49:52.000Z"
     }
   ],
@@ -6311,7 +4754,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.211,
+      "recentWeight": 0.135,
       "latestPlayedAt": "2024-12-30T01:13:21.000Z"
     },
     {
@@ -6320,19 +4763,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.032,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-08-23T17:16:30.000Z"
-    }
-  ],
-  "rnbq1rk1/ppp1ppbp/3p1np1/8/3PP3/2N2N2/PPP1BPPP/R1BQK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 5,
-      "wins": 5,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
   "rnbq1rk1/ppp1ppbp/3p1np1/8/8/1P3NP1/PBPPPPBP/RN1QK2R w KQ -": [
@@ -6342,7 +4774,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.102,
+      "recentWeight": 0.066,
       "latestPlayedAt": "2023-09-12T21:26:28.000Z"
     }
   ],
@@ -6353,19 +4785,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.108,
+      "recentWeight": 0.07,
       "latestPlayedAt": "2024-12-24T20:01:37.000Z"
-    }
-  ],
-  "rnbq1rk1/ppp1ppbp/6p1/3n4/3P4/4PN2/PP2BPPP/RNBQK2R w KQ -": [
-    {
-      "san": "O-O",
-      "games": 10,
-      "wins": 8,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-18T15:55:09.000Z"
     }
   ],
   "rnbq1rk1/ppp2pbp/3p1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQK2R w KQ -": [
@@ -6375,19 +4796,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 86,
       "losses": 23,
       "draws": 17,
-      "recentWeight": 0.202,
+      "recentWeight": 0.13,
       "latestPlayedAt": "2024-08-23T19:49:52.000Z"
-    }
-  ],
-  "rnbq1rk1/ppp2pbp/3p1np1/8/2PpP3/2N2N2/PP2BPPP/R1BQ1RK1 w - -": [
-    {
-      "san": "Nxd4",
-      "games": 15,
-      "wins": 9,
-      "losses": 2,
-      "draws": 4,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-03-24T16:01:54.000Z"
     }
   ],
   "rnbq1rk1/ppp2ppp/3b4/3p4/2PPn3/3B1N2/PP3PPP/RNBQ1RK1 b - -": [
@@ -6397,7 +4807,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.345,
+      "recentWeight": 0.221,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     }
   ],
@@ -6408,7 +4818,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-05-09T15:39:32.000Z"
     }
   ],
@@ -6419,7 +4829,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
@@ -6430,7 +4840,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.075,
+      "recentWeight": 0.048,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -6441,7 +4851,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.075,
+      "recentWeight": 0.048,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -6452,7 +4862,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -6463,7 +4873,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.032,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-12-26T16:39:28.000Z"
     }
   ],
@@ -6474,7 +4884,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:26:07.000Z"
     }
   ],
@@ -6485,7 +4895,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.066,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ],
@@ -6496,7 +4906,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 5,
       "draws": 4,
-      "recentWeight": 0.095,
+      "recentWeight": 0.061,
       "latestPlayedAt": "2024-08-23T19:49:52.000Z"
     }
   ],
@@ -6507,7 +4917,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-25T00:02:21.000Z"
     }
   ],
@@ -6518,30 +4928,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.033,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-06-06T17:07:14.000Z"
-    }
-  ],
-  "rnbq1rk1/ppppppbp/5np1/8/2PP4/2N1PN2/PP3PPP/R1BQKB1R b KQ -": [
-    {
-      "san": "d5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-06-30T21:34:40.000Z"
-    }
-  ],
-  "rnbq1rk1/ppppppbp/5np1/8/2PP4/6P1/PP2PPBP/RNBQK1NR w KQ -": [
-    {
-      "san": "Nc3",
-      "games": 11,
-      "wins": 7,
-      "losses": 1,
-      "draws": 3,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-24T15:14:04.000Z"
     }
   ],
   "rnbq1rk1/ppppppbp/5np1/8/3P4/5NP1/PPP1PPBP/RNBQK2R w KQ -": [
@@ -6551,7 +4939,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.52,
+      "recentWeight": 0.334,
       "latestPlayedAt": "2024-12-30T01:13:21.000Z"
     }
   ],
@@ -6562,7 +4950,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.096,
+      "recentWeight": 0.062,
       "latestPlayedAt": "2023-09-12T21:26:28.000Z"
     }
   ],
@@ -6573,7 +4961,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-08-22T17:05:24.000Z"
     }
   ],
@@ -6584,7 +4972,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 4,
       "draws": 7,
-      "recentWeight": 0.063,
+      "recentWeight": 0.04,
       "latestPlayedAt": "2023-08-29T16:43:43.000Z"
     }
   ],
@@ -6595,7 +4983,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 4,
       "draws": 6,
-      "recentWeight": 0.054,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2023-08-29T16:43:43.000Z"
     }
   ],
@@ -6606,19 +4994,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 5,
       "draws": 7,
-      "recentWeight": 0.095,
+      "recentWeight": 0.061,
       "latestPlayedAt": "2023-09-12T15:07:50.000Z"
-    }
-  ],
-  "rnbqk1nr/p1pp1ppp/1p2p3/8/2PPP3/8/PP1N1PPP/R2QKBNR b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 6,
-      "wins": 5,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-04-25T16:04:37.000Z"
     }
   ],
   "rnbqk1nr/p1pp1ppp/1p2p3/8/2PPP3/8/PP1Q1PPP/RN2KBNR b KQkq -": [
@@ -6628,7 +5005,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 4,
       "draws": 7,
-      "recentWeight": 0.081,
+      "recentWeight": 0.052,
       "latestPlayedAt": "2023-09-12T15:07:50.000Z"
     }
   ],
@@ -6639,7 +5016,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-04-18T16:05:11.000Z"
     }
   ],
@@ -6650,7 +5027,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-04-25T15:08:04.000Z"
     }
   ],
@@ -6661,7 +5038,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.105,
+      "recentWeight": 0.068,
       "latestPlayedAt": "2024-12-17T15:11:53.000Z"
     },
     {
@@ -6670,7 +5047,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.101,
+      "recentWeight": 0.065,
       "latestPlayedAt": "2024-12-17T15:01:47.000Z"
     }
   ],
@@ -6681,7 +5058,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-06-13T15:56:21.000Z"
     }
   ],
@@ -6692,7 +5069,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:54:53.000Z"
     }
   ],
@@ -6703,7 +5080,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:54:53.000Z"
     }
   ],
@@ -6714,19 +5091,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.105,
+      "recentWeight": 0.068,
       "latestPlayedAt": "2024-12-17T15:11:53.000Z"
-    }
-  ],
-  "rnbqk1nr/pp2ppbp/2p3p1/3p4/2P5/2N1PN2/PP1P1PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "d4",
-      "games": 6,
-      "wins": 3,
-      "losses": 1,
-      "draws": 2,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-13T15:30:24.000Z"
     }
   ],
   "rnbqk1nr/pp2ppbp/2p3p1/3p4/3PP3/2N2N2/PPP2PPP/R1BQKB1R w KQkq -": [
@@ -6736,7 +5102,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.101,
+      "recentWeight": 0.065,
       "latestPlayedAt": "2024-12-17T15:01:47.000Z"
     }
   ],
@@ -6747,7 +5113,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.101,
+      "recentWeight": 0.065,
       "latestPlayedAt": "2024-12-17T15:01:47.000Z"
     }
   ],
@@ -6758,7 +5124,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:54:53.000Z"
     }
   ],
@@ -6769,7 +5135,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 18,
       "losses": 4,
       "draws": 3,
-      "recentWeight": 0.232,
+      "recentWeight": 0.149,
       "latestPlayedAt": "2025-02-17T17:54:53.000Z"
     },
     {
@@ -6778,7 +5144,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-22T15:56:34.000Z"
     }
   ],
@@ -6789,19 +5155,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.119,
+      "recentWeight": 0.077,
       "latestPlayedAt": "2024-12-17T14:38:54.000Z"
-    }
-  ],
-  "rnbqk1nr/ppp1ppbp/3p2p1/8/3P4/5NP1/PPP1PPBP/RNBQK2R b KQkq -": [
-    {
-      "san": "Nd7",
-      "games": 5,
-      "wins": 2,
-      "losses": 3,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T15:04:47.000Z"
     }
   ],
   "rnbqk1nr/ppp1ppbp/3p2p1/8/3PP3/5N2/PPP2PPP/RNBQKB1R w KQkq -": [
@@ -6811,7 +5166,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 5,
       "draws": 0,
-      "recentWeight": 0.044,
+      "recentWeight": 0.028,
       "latestPlayedAt": "2023-08-21T15:04:02.000Z"
     }
   ],
@@ -6822,19 +5177,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-06-27T15:30:04.000Z"
-    }
-  ],
-  "rnbqk1nr/ppp2ppp/3b4/3p4/3P4/5N2/PPP2PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "c4",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-09-13T22:49:30.000Z"
     }
   ],
   "rnbqk1nr/ppp2ppp/3bp3/3p4/3P1B2/2N1P3/PPP2PPP/R2QKBNR b KQkq -": [
@@ -6844,7 +5188,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:33:24.000Z"
     }
   ],
@@ -6855,7 +5199,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T19:00:43.000Z"
     }
   ],
@@ -6866,7 +5210,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.256,
+      "recentWeight": 0.165,
       "latestPlayedAt": "2025-02-17T17:54:53.000Z"
     }
   ],
@@ -6877,7 +5221,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.117,
+      "recentWeight": 0.075,
       "latestPlayedAt": "2024-12-17T14:38:54.000Z"
     }
   ],
@@ -6888,7 +5232,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-04-25T15:08:04.000Z"
     }
   ],
@@ -6899,7 +5243,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 4,
       "draws": 0,
-      "recentWeight": 0.211,
+      "recentWeight": 0.136,
       "latestPlayedAt": "2024-12-17T15:11:53.000Z"
     }
   ],
@@ -6910,7 +5254,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 6,
       "draws": 3,
-      "recentWeight": 0.069,
+      "recentWeight": 0.044,
       "latestPlayedAt": "2023-09-12T15:39:38.000Z"
     }
   ],
@@ -6921,7 +5265,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.352,
+      "recentWeight": 0.226,
       "latestPlayedAt": "2025-10-31T01:34:13.000Z"
     }
   ],
@@ -6932,7 +5276,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-16T16:57:20.000Z"
     }
   ],
@@ -6943,7 +5287,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -6954,41 +5298,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.033,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-08-29T16:43:43.000Z"
-    }
-  ],
-  "rnbqk2r/p1p1nppp/1p6/3pP3/3P4/3B4/PP1Q1PPP/RN2K1NR b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-01-10T17:10:07.000Z"
-    }
-  ],
-  "rnbqk2r/p1p2ppp/1p1b1n2/3p4/3P4/3BPN2/PP3PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-31T23:56:25.000Z"
-    }
-  ],
-  "rnbqk2r/pp2bppp/2p1pn2/3p4/2P5/1PN1PN2/P2P1PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "Bb2",
-      "games": 12,
-      "wins": 12,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-07-04T15:29:07.000Z"
     }
   ],
   "rnbqk2r/pp2bppp/2p1pn2/3p4/2PP4/5NP1/PP2PPBP/RNBQK2R w KQkq -": [
@@ -6998,7 +5309,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:15:00.000Z"
     }
   ],
@@ -7009,7 +5320,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T15:37:45.000Z"
     }
   ],
@@ -7020,7 +5331,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 4,
       "draws": 4,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-06-13T15:30:24.000Z"
     }
   ],
@@ -7031,7 +5342,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -7042,19 +5353,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.066,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-21T19:19:29.000Z"
-    }
-  ],
-  "rnbqk2r/pp3ppp/2pb1p2/8/3P4/2PB4/PP3PPP/R1BQK1NR b KQkq -": [
-    {
-      "san": "O-O",
-      "games": 8,
-      "wins": 5,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
   "rnbqk2r/pp3ppp/2pbpn2/3p4/2P5/1PN1PN2/P2P1PPP/R1BQKB1R w KQkq -": [
@@ -7064,19 +5364,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-07-04T16:17:23.000Z"
-    }
-  ],
-  "rnbqk2r/pp3ppp/2pbpn2/3p4/2PP4/2N1PN2/PP3PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "Bd3",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
   "rnbqk2r/ppp1bppp/3p4/8/5B2/2P2N2/PPP2PPP/R2QKB1R b KQkq -": [
@@ -7086,7 +5375,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:36:00.000Z"
     }
   ],
@@ -7097,7 +5386,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
     }
   ],
@@ -7108,7 +5397,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-09-05T15:17:24.000Z"
     }
   ],
@@ -7119,7 +5408,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 67,
       "losses": 6,
       "draws": 6,
-      "recentWeight": 0.079,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2023-12-26T17:07:48.000Z"
     }
   ],
@@ -7130,7 +5419,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T15:06:34.000Z"
     }
   ],
@@ -7141,7 +5430,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:15:00.000Z"
     }
   ],
@@ -7152,7 +5441,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 4,
       "draws": 3,
-      "recentWeight": 0.667,
+      "recentWeight": 0.428,
       "latestPlayedAt": "2024-12-30T00:51:03.000Z"
     }
   ],
@@ -7163,7 +5452,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T16:04:26.000Z"
     }
   ],
@@ -7174,7 +5463,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-02-14T23:54:49.000Z"
     },
     {
@@ -7183,7 +5472,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-14T16:12:29.000Z"
     }
   ],
@@ -7194,19 +5483,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.329,
+      "recentWeight": 0.211,
       "latestPlayedAt": "2025-10-18T21:17:28.000Z"
-    }
-  ],
-  "rnbqk2r/ppp1bppp/4pn2/3p4/8/1P2PN2/PBPP1PPP/RN1QKB1R w KQkq -": [
-    {
-      "san": "c4",
-      "games": 7,
-      "wins": 4,
-      "losses": 3,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-30T15:15:05.000Z"
     }
   ],
   "rnbqk2r/ppp1bppp/5n2/2Pp4/3P4/3B1N2/PP3PPP/RNBQK2R b KQkq -": [
@@ -7216,7 +5494,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-06-27T15:30:04.000Z"
     }
   ],
@@ -7227,19 +5505,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 3,
       "draws": 8,
-      "recentWeight": 0.332,
+      "recentWeight": 0.213,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
-    }
-  ],
-  "rnbqk2r/ppp1bppp/8/3p4/3Pn3/3B1N2/PPP2PPP/RNBQ1RK1 b kq -": [
-    {
-      "san": "Nc6",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-07T17:33:46.000Z"
     }
   ],
   "rnbqk2r/ppp1ppbp/3p1np1/8/2BPP3/5N2/PPP2PPP/RNBQK2R w KQkq -": [
@@ -7249,7 +5516,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-08-21T15:04:02.000Z"
     }
   ],
@@ -7260,7 +5527,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 73,
       "losses": 19,
       "draws": 8,
-      "recentWeight": 0.145,
+      "recentWeight": 0.093,
       "latestPlayedAt": "2023-08-29T16:26:59.000Z"
     }
   ],
@@ -7271,7 +5538,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 4,
       "draws": 4,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-05-02T15:57:39.000Z"
     }
   ],
@@ -7282,7 +5549,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.052,
+      "recentWeight": 0.034,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
     }
   ],
@@ -7293,7 +5560,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 32,
       "losses": 8,
       "draws": 9,
-      "recentWeight": 0.055,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -7304,52 +5571,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 3,
-      "recentWeight": 0.373,
+      "recentWeight": 0.24,
       "latestPlayedAt": "2025-10-29T00:29:13.000Z"
-    }
-  ],
-  "rnbqk2r/ppp1ppbp/3p1np1/8/3PP3/2N2N2/PPP2PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "Be2",
-      "games": 6,
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "rnbqk2r/ppp1ppbp/6p1/3n4/3P4/4PN2/PP3PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Be2",
-      "games": 10,
-      "wins": 8,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-18T15:55:09.000Z"
-    }
-  ],
-  "rnbqk2r/ppp1ppbp/6p1/3p2B1/2PPn3/2N2N2/PP2PPPP/R2QKB1R w KQkq -": [
-    {
-      "san": "Bf4",
-      "games": 6,
-      "wins": 3,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-12-13T17:51:36.000Z"
-    }
-  ],
-  "rnbqk2r/ppp1ppbp/6p1/3p4/2PP1B2/2n2N2/PP2PPPP/R2QKB1R w KQkq -": [
-    {
-      "san": "bxc3",
-      "games": 5,
-      "wins": 2,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-12-13T17:51:36.000Z"
     }
   ],
   "rnbqk2r/ppp2ppp/3b1n2/2Pp4/3P4/5N2/PP3PPP/RNBQKB1R b KQkq -": [
@@ -7359,7 +5582,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-06-27T15:30:04.000Z"
     }
   ],
@@ -7370,7 +5593,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 3,
       "draws": 8,
-      "recentWeight": 0.332,
+      "recentWeight": 0.213,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
     }
   ],
@@ -7381,7 +5604,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.13,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:21:38.000Z"
     }
   ],
@@ -7392,7 +5615,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.345,
+      "recentWeight": 0.221,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     }
   ],
@@ -7403,7 +5626,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.043,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-05-09T15:39:32.000Z"
     }
   ],
@@ -7414,7 +5637,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 5,
       "draws": 3,
-      "recentWeight": 0.048,
+      "recentWeight": 0.031,
       "latestPlayedAt": "2023-12-26T17:47:37.000Z"
     }
   ],
@@ -7425,7 +5648,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:33:24.000Z"
     }
   ],
@@ -7436,7 +5659,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.122,
+      "recentWeight": 0.078,
       "latestPlayedAt": "2024-12-30T00:56:41.000Z"
     }
   ],
@@ -7447,7 +5670,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.032,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-12-26T16:39:28.000Z"
     }
   ],
@@ -7458,7 +5681,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:26:07.000Z"
     }
   ],
@@ -7469,19 +5692,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 4,
       "draws": 3,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
-    }
-  ],
-  "rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq -": [
-    {
-      "san": "Qc2",
-      "games": 60,
-      "wins": 36,
-      "losses": 16,
-      "draws": 8,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-03-24T16:18:38.000Z"
     }
   ],
   "rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PPQ1PPPP/R1B1KBNR b KQkq -": [
@@ -7491,7 +5703,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-10-06T01:14:52.000Z"
     }
   ],
@@ -7502,7 +5714,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-25T00:02:21.000Z"
     }
   ],
@@ -7513,7 +5725,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 99,
       "losses": 24,
       "draws": 13,
-      "recentWeight": 0.265,
+      "recentWeight": 0.17,
       "latestPlayedAt": "2024-08-23T19:49:52.000Z"
     }
   ],
@@ -7524,7 +5736,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.033,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-06-06T17:07:14.000Z"
     }
   ],
@@ -7535,7 +5747,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.129,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2025-02-17T17:32:52.000Z"
     },
     {
@@ -7544,19 +5756,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 36,
       "losses": 7,
       "draws": 9,
-      "recentWeight": 0.055,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
-    }
-  ],
-  "rnbqk2r/ppppppbp/5np1/8/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Nc3",
-      "games": 12,
-      "wins": 6,
-      "losses": 4,
-      "draws": 2,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-05-02T15:57:39.000Z"
     }
   ],
   "rnbqk2r/ppppppbp/5np1/8/2PP4/6P1/PP2PP1P/RNBQKBNR w KQkq -": [
@@ -7566,7 +5767,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 18,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-03-24T15:14:04.000Z"
     }
   ],
@@ -7577,7 +5778,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 3,
-      "recentWeight": 0.521,
+      "recentWeight": 0.334,
       "latestPlayedAt": "2024-12-30T01:13:21.000Z"
     }
   ],
@@ -7588,7 +5789,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.13,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2023-09-19T16:16:54.000Z"
     }
   ],
@@ -7599,8 +5800,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 4,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-22T17:05:24.000Z"
+    }
+  ],
+  "rnbqkb1r/1p1B1ppp/p3p3/2ppP3/3P4/2N2N2/PPP2PPP/R1BQK2R b KQkq -": [
+    {
+      "san": "Bxd7",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.897,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rnbqkb1r/1p2pppp/p1p2n2/3p4/2P5/2N1PN2/PP1P1PPP/R1BQKB1R w KQkq -": [
@@ -7610,17 +5822,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-30T16:29:16.000Z"
-    },
-    {
-      "san": "d4",
-      "games": 10,
-      "wins": 7,
-      "losses": 0,
-      "draws": 3,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-02T15:25:00.000Z"
     }
   ],
   "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq -": [
@@ -7630,7 +5833,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.061,
+      "recentWeight": 0.039,
       "latestPlayedAt": "2024-02-13T17:26:05.000Z"
     }
   ],
@@ -7641,7 +5844,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-21T14:17:14.000Z"
     }
   ],
@@ -7652,7 +5855,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.352,
+      "recentWeight": 0.226,
       "latestPlayedAt": "2025-10-31T01:34:13.000Z"
     }
   ],
@@ -7663,7 +5866,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.061,
+      "recentWeight": 0.039,
       "latestPlayedAt": "2024-02-13T17:26:05.000Z"
     }
   ],
@@ -7674,30 +5877,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-05T16:08:56.000Z"
-    }
-  ],
-  "rnbqkb1r/1p3ppp/p3pn2/2pP4/3P4/4PN2/PP1N1PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "exd5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:28:29.000Z"
-    }
-  ],
-  "rnbqkb1r/1p3ppp/p4n2/2Pp4/8/4PN2/PP1N1PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Bxc5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:28:29.000Z"
     }
   ],
   "rnbqkb1r/1pp2ppp/p3pn2/3p4/2P5/2N1PN2/PP1P1PPP/R1BQKB1R w KQkq -": [
@@ -7707,30 +5888,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 6,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-05-16T16:57:20.000Z"
-    }
-  ],
-  "rnbqkb1r/1pp2ppp/p3pn2/3p4/2PP4/4PN2/PP1N1PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "c5",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:28:29.000Z"
-    }
-  ],
-  "rnbqkb1r/1pp2ppp/p3pn2/8/2B5/2N1PN2/PP1P1PPP/R1BQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-02T16:16:49.000Z"
     }
   ],
   "rnbqkb1r/1pp2ppp/p3pn2/8/2BP4/4PN2/PP3PPP/RNBQK2R w KQkq -": [
@@ -7740,7 +5899,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T22:18:06.000Z"
     }
   ],
@@ -7751,7 +5910,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.066,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-21T19:48:37.000Z"
     }
   ],
@@ -7762,7 +5921,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-05-09T16:26:47.000Z"
     }
   ],
@@ -7773,17 +5932,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-08-29T15:54:58.000Z"
-    },
-    {
-      "san": "cxd5",
-      "games": 14,
-      "wins": 9,
-      "losses": 4,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-03T22:55:01.000Z"
     }
   ],
   "rnbqkb1r/p1p2ppp/1p2pn2/3p4/2PP4/4PN2/PP3PPP/RNBQKB1R w KQkq -": [
@@ -7793,28 +5943,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 4,
-      "recentWeight": 0.892,
+      "recentWeight": 0.573,
       "latestPlayedAt": "2025-10-31T02:25:09.000Z"
-    },
-    {
-      "san": "cxd5",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-31T23:56:25.000Z"
-    }
-  ],
-  "rnbqkb1r/p1p2ppp/1p3n2/3p4/3P4/4PN2/PP3PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Bd3",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-31T23:56:25.000Z"
     }
   ],
   "rnbqkb1r/p1pppppp/1p3n2/8/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq -": [
@@ -7824,19 +5954,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 7,
       "draws": 4,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-07-04T15:02:59.000Z"
-    }
-  ],
-  "rnbqkb1r/p1pppppp/1p3n2/8/2PP4/5N2/PP2PPPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 3,
-      "wins": 0,
-      "losses": 3,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-13T15:39:41.000Z"
     }
   ],
   "rnbqkb1r/p1pppppp/1p3n2/8/8/1P3N2/P1PPPPPP/RNBQKB1R w KQkq -": [
@@ -7846,19 +5965,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.081,
+      "recentWeight": 0.052,
       "latestPlayedAt": "2024-08-23T19:39:19.000Z"
-    }
-  ],
-  "rnbqkb1r/p1pppppp/1p3n2/8/8/5NP1/PPPPPPBP/RNBQK2R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T16:32:36.000Z"
     }
   ],
   "rnbqkb1r/p1pppppp/5n2/1p6/8/5NP1/PPPPPPBP/RNBQK2R b KQkq -": [
@@ -7868,7 +5976,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.182,
+      "recentWeight": 0.117,
       "latestPlayedAt": "2024-12-17T15:06:57.000Z"
     }
   ],
@@ -7879,8 +5987,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:44:14.000Z"
+    }
+  ],
+  "rnbqkb1r/pp1n1ppp/2p1p3/3pP3/B2P4/2N5/PPP2PPP/R1BQK1NR b KQkq -": [
+    {
+      "san": "c5",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.897,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rnbqkb1r/pp1n1ppp/4p3/2ppP3/3P4/2P2N2/PP1N1PPP/R1BQKB1R b KQkq -": [
@@ -7890,8 +6009,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-12-26T16:28:02.000Z"
+    }
+  ],
+  "rnbqkb1r/pp1n1ppp/4p3/2ppP3/B2P4/2N2N2/PPP2PPP/R1BQK2R b KQkq -": [
+    {
+      "san": "a6",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.897,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rnbqkb1r/pp1p1ppp/4pn2/2p5/2P5/2N2N2/PP1PPPPP/R1BQKB1R w KQkq -": [
@@ -7901,7 +6031,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.024,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-09-19T16:44:14.000Z"
     }
   ],
@@ -7912,7 +6042,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.039,
+      "recentWeight": 0.025,
       "latestPlayedAt": "2023-12-26T17:16:00.000Z"
     }
   ],
@@ -7923,7 +6053,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
     }
   ],
@@ -7934,7 +6064,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:27:05.000Z"
     }
   ],
@@ -7945,19 +6075,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
-    }
-  ],
-  "rnbqkb1r/pp1ppppp/2p2n2/8/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Nc3",
-      "games": 12,
-      "wins": 6,
-      "losses": 2,
-      "draws": 4,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-30T16:05:23.000Z"
     }
   ],
   "rnbqkb1r/pp1ppppp/5n2/2p5/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq -": [
@@ -7967,7 +6086,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 35,
       "losses": 6,
       "draws": 4,
-      "recentWeight": 0.071,
+      "recentWeight": 0.046,
       "latestPlayedAt": "2023-09-19T16:44:14.000Z"
     }
   ],
@@ -7978,17 +6097,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 4,
       "draws": 4,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
-    },
-    {
-      "san": "e3",
-      "games": 3,
-      "wins": 2,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-01-03T23:51:25.000Z"
     }
   ],
   "rnbqkb1r/pp1ppppp/5n2/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq -": [
@@ -7998,7 +6108,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-01-03T17:59:05.000Z"
     }
   ],
@@ -8009,7 +6119,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-13T16:45:40.000Z"
     }
   ],
@@ -8020,7 +6130,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T21:51:37.000Z"
     }
   ],
@@ -8031,7 +6141,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2022-12-13T17:19:18.000Z"
     }
   ],
@@ -8042,19 +6152,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-09-12T21:06:34.000Z"
-    }
-  ],
-  "rnbqkb1r/pp1ppppp/8/2pnP3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "d4",
-      "games": 3,
-      "wins": 1,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-01-03T17:59:05.000Z"
     }
   ],
   "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P5/PP3PPP/RNBQKBNR w KQkq -": [
@@ -8064,7 +6163,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-01-03T17:59:05.000Z"
     }
   ],
@@ -8075,7 +6174,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 5,
       "draws": 4,
-      "recentWeight": 0.024,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-03-07T23:24:08.000Z"
     }
   ],
@@ -8086,7 +6185,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -8097,19 +6196,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.141,
+      "recentWeight": 0.09,
       "latestPlayedAt": "2024-08-27T19:32:00.000Z"
-    }
-  ],
-  "rnbqkb1r/pp2pppp/2p2n2/3p4/2P5/2N2N2/PP1PPPPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "e3",
-      "games": 10,
-      "wins": 5,
-      "losses": 1,
-      "draws": 4,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-30T16:05:23.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/2p2n2/3p4/2P5/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
@@ -8119,17 +6207,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 83,
       "losses": 13,
       "draws": 10,
-      "recentWeight": 0.122,
+      "recentWeight": 0.079,
       "latestPlayedAt": "2023-08-29T15:27:51.000Z"
-    },
-    {
-      "san": "d4",
-      "games": 10,
-      "wins": 5,
-      "losses": 3,
-      "draws": 2,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-01-31T22:08:59.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/2N1P3/PP3PPP/R1BQKBNR b KQkq -": [
@@ -8139,19 +6218,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.208,
+      "recentWeight": 0.134,
       "latestPlayedAt": "2024-12-24T23:25:30.000Z"
-    }
-  ],
-  "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Bf5",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T15:39:22.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq -": [
@@ -8161,7 +6229,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 0,
       "draws": 5,
-      "recentWeight": 0.223,
+      "recentWeight": 0.143,
       "latestPlayedAt": "2024-12-30T01:03:07.000Z"
     },
     {
@@ -8170,7 +6238,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T18:50:38.000Z"
     }
   ],
@@ -8181,7 +6249,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.209,
+      "recentWeight": 0.134,
       "latestPlayedAt": "2024-12-24T19:21:49.000Z"
     }
   ],
@@ -8192,19 +6260,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/2p2n2/8/4N3/5N2/PPPP1PPP/R1BQKB1R w KQkq -": [
     {
       "san": "Qe2",
-      "games": 7,
-      "wins": 7,
+      "games": 8,
+      "wins": 8,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
-      "latestPlayedAt": "2023-12-25T22:11:06.000Z"
+      "recentWeight": 0.917,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/2p5/8/4n3/5N2/PPPPQPPP/R1B1KB1R w KQkq -": [
@@ -8214,7 +6282,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-25T22:11:06.000Z"
     }
   ],
@@ -8225,7 +6293,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.04,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -8236,19 +6304,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.092,
+      "recentWeight": 0.059,
       "latestPlayedAt": "2024-02-13T17:41:27.000Z"
-    }
-  ],
-  "rnbqkb1r/pp2pppp/3p4/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "cxd4",
-      "games": 5,
-      "wins": 4,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2022-11-15T17:06:33.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/5n2/2pp2B1/3P4/4P3/PPP2PPP/RN1QKBNR w KQkq -": [
@@ -8258,7 +6315,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.141,
+      "recentWeight": 0.09,
       "latestPlayedAt": "2024-08-27T19:32:00.000Z"
     }
   ],
@@ -8269,19 +6326,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T15:18:08.000Z"
-    }
-  ],
-  "rnbqkb1r/pp2pppp/5n2/2pp4/3P1B2/2N1P3/PPP2PPP/R2QKBNR b KQkq -": [
-    {
-      "san": "cxd4",
-      "games": 2,
-      "wins": 0,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-03-17T15:30:22.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/5n2/2pp4/3P1B2/4PN2/PPP2PPP/RN1QKB1R b KQkq -": [
@@ -8291,7 +6337,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.21,
+      "recentWeight": 0.135,
       "latestPlayedAt": "2024-12-24T17:44:55.000Z"
     }
   ],
@@ -8302,7 +6348,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.37,
+      "recentWeight": 0.237,
       "latestPlayedAt": "2025-10-31T03:00:50.000Z"
     }
   ],
@@ -8313,7 +6359,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -8324,7 +6370,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T15:29:01.000Z"
     }
   ],
@@ -8335,19 +6381,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.313,
+      "recentWeight": 0.201,
       "latestPlayedAt": "2024-12-24T19:31:44.000Z"
-    }
-  ],
-  "rnbqkb1r/pp2pppp/5n2/3p4/3P1B2/2N5/PPP2PPP/R2QKBNR b KQkq -": [
-    {
-      "san": "a6",
-      "games": 2,
-      "wins": 0,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-03-17T15:30:22.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/5n2/3p4/3P4/5N2/PP2PPPP/RNBQKB1R w KQkq -": [
@@ -8357,7 +6392,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 2,
       "draws": 7,
-      "recentWeight": 0.226,
+      "recentWeight": 0.145,
       "latestPlayedAt": "2024-12-30T01:03:07.000Z"
     }
   ],
@@ -8368,19 +6403,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.37,
+      "recentWeight": 0.237,
       "latestPlayedAt": "2025-10-31T03:00:50.000Z"
-    }
-  ],
-  "rnbqkb1r/pp2pppp/5n2/3p4/8/1QN1PN2/PP1P1PPP/R1B1KB1R w KQkq -": [
-    {
-      "san": "Bb5+",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T17:00:24.000Z"
     }
   ],
   "rnbqkb1r/pp2pppp/8/2pn4/8/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
@@ -8390,7 +6414,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T15:18:08.000Z"
     }
   ],
@@ -8401,7 +6425,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
     }
   ],
@@ -8412,7 +6436,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.066,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-21T19:19:29.000Z"
     }
   ],
@@ -8423,41 +6447,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 34,
       "losses": 4,
       "draws": 5,
-      "recentWeight": 0.101,
+      "recentWeight": 0.065,
       "latestPlayedAt": "2023-08-29T15:27:51.000Z"
-    }
-  ],
-  "rnbqkb1r/pp3ppp/2p1pn2/3p4/2PP4/2N1PN2/PP3PPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "a6",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-15T17:12:53.000Z"
-    }
-  ],
-  "rnbqkb1r/pp3ppp/2p1pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "e3",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "rnbqkb1r/pp3ppp/2p2p2/8/3P4/2P5/PP3PPP/R1BQKBNR b KQkq -": [
-    {
-      "san": "Bd6",
-      "games": 8,
-      "wins": 5,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
   "rnbqkb1r/pp3ppp/3p1n2/2pP4/8/2N5/PP2PPPP/R1BQKBNR w KQkq -": [
@@ -8467,19 +6458,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
-    }
-  ],
-  "rnbqkb1r/pp3ppp/4pn2/2p5/2BP4/4PN2/PP3PPP/RNBQ1RK1 b kq -": [
-    {
-      "san": "a6",
-      "games": 3,
-      "wins": 2,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-02-06T18:20:50.000Z"
     }
   ],
   "rnbqkb1r/pp3ppp/4pn2/2pp4/2P5/1P2PN2/P2P1PPP/RNBQKB1R w KQkq -": [
@@ -8489,7 +6469,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-05-16T16:17:14.000Z"
     }
   ],
@@ -8500,7 +6480,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-24T17:27:22.000Z"
     }
   ],
@@ -8511,7 +6491,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2024-01-14T00:11:48.000Z"
     }
   ],
@@ -8522,7 +6502,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.05,
+      "recentWeight": 0.032,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     }
   ],
@@ -8533,7 +6513,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2024-01-09T01:16:43.000Z"
     }
   ],
@@ -8544,7 +6524,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-24T17:27:22.000Z"
     }
   ],
@@ -8555,7 +6535,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2024-01-14T00:11:48.000Z"
     }
   ],
@@ -8566,17 +6546,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
-    },
-    {
-      "san": "Nc3",
-      "games": 13,
-      "wins": 9,
-      "losses": 3,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-02-08T18:49:22.000Z"
     }
   ],
   "rnbqkb1r/ppp1pp1p/3p1np1/8/3P4/5NP1/PPP1PP1P/RNBQKB1R w KQkq -": [
@@ -8586,52 +6557,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.373,
+      "recentWeight": 0.24,
       "latestPlayedAt": "2025-10-29T00:29:13.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/3p1np1/8/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "d4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/5np1/3p4/2P5/2N2N2/PP1PPPPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "cxd5",
-      "games": 25,
-      "wins": 15,
-      "losses": 7,
-      "draws": 3,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-03-14T21:56:47.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/5np1/3p4/2P5/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "cxd5",
-      "games": 14,
-      "wins": 9,
-      "losses": 2,
-      "draws": 3,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-18T15:55:09.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq -": [
-    {
-      "san": "Bg5",
-      "games": 7,
-      "wins": 5,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2022-12-13T17:51:36.000Z"
     }
   ],
   "rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq -": [
@@ -8641,41 +6568,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.34,
+      "recentWeight": 0.219,
       "latestPlayedAt": "2025-10-28T02:20:03.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/6p1/3n4/8/2N2N2/PP1PPPPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "e4",
-      "games": 10,
-      "wins": 5,
-      "losses": 2,
-      "draws": 3,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-14T21:56:47.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/6p1/3n4/8/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "d4",
-      "games": 13,
-      "wins": 9,
-      "losses": 1,
-      "draws": 3,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-18T15:55:09.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pp1p/6p1/8/4P3/2n2N2/PP1P1PPP/R1BQKB1R w KQkq -": [
-    {
-      "san": "dxc3",
-      "games": 10,
-      "wins": 5,
-      "losses": 2,
-      "draws": 3,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-14T21:56:47.000Z"
     }
   ],
   "rnbqkb1r/ppp1ppp1/5n1p/3p2B1/3P4/4P3/PPP2PPP/RN1QKBNR w KQkq -": [
@@ -8685,19 +6579,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T12:54:12.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pppp/1n6/8/8/1BN5/PPPP1PPP/R1BQK1NR b KQkq -": [
-    {
-      "san": "Nc6",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:37:34.000Z"
     }
   ],
   "rnbqkb1r/ppp1pppp/3p1n2/8/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq -": [
@@ -8707,7 +6590,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:14:40.000Z"
     }
   ],
@@ -8718,7 +6601,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.715,
+      "recentWeight": 0.459,
       "latestPlayedAt": "2025-10-29T00:59:54.000Z"
     },
     {
@@ -8727,7 +6610,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.04,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
     }
   ],
@@ -8738,30 +6621,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 28,
       "losses": 9,
       "draws": 9,
-      "recentWeight": 0.052,
+      "recentWeight": 0.033,
       "latestPlayedAt": "2023-07-25T21:55:39.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pppp/3p1n2/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "Nc3",
-      "games": 14,
-      "wins": 11,
-      "losses": 3,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-12-06T17:25:38.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pppp/3p1n2/8/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Nc3",
-      "games": 3,
-      "wins": 2,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
   "rnbqkb1r/ppp1pppp/5n2/3p2B1/3P4/8/PPP1PPPP/RN1QKBNR w KQkq -": [
@@ -8771,7 +6632,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.207,
+      "recentWeight": 0.133,
       "latestPlayedAt": "2024-08-27T19:32:00.000Z"
     }
   ],
@@ -8782,7 +6643,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T15:28:55.000Z"
     }
   ],
@@ -8793,7 +6654,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:19:48.000Z"
     }
   ],
@@ -8804,7 +6665,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -8815,7 +6676,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-03-17T15:30:22.000Z"
     },
     {
@@ -8824,7 +6685,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T16:52:30.000Z"
     }
   ],
@@ -8835,7 +6696,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 3,
       "draws": 5,
-      "recentWeight": 0.211,
+      "recentWeight": 0.135,
       "latestPlayedAt": "2024-12-24T17:44:55.000Z"
     }
   ],
@@ -8846,7 +6707,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.056,
+      "recentWeight": 0.036,
       "latestPlayedAt": "2023-12-29T17:59:13.000Z"
     }
   ],
@@ -8857,7 +6718,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 3,
       "draws": 6,
-      "recentWeight": 1.081,
+      "recentWeight": 0.694,
       "latestPlayedAt": "2025-10-31T02:25:09.000Z"
     },
     {
@@ -8866,7 +6727,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 1.022,
+      "recentWeight": 0.656,
       "latestPlayedAt": "2025-10-31T03:00:50.000Z"
     }
   ],
@@ -8877,7 +6738,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.085,
+      "recentWeight": 0.054,
       "latestPlayedAt": "2023-08-29T15:38:55.000Z"
     }
   ],
@@ -8888,7 +6749,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-22T21:35:21.000Z"
     }
   ],
@@ -8899,7 +6760,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.134,
+      "recentWeight": 0.086,
       "latestPlayedAt": "2023-09-05T15:17:24.000Z"
     }
   ],
@@ -8910,7 +6771,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-22T16:01:41.000Z"
     }
   ],
@@ -8921,7 +6782,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 169,
       "losses": 35,
       "draws": 29,
-      "recentWeight": 0.447,
+      "recentWeight": 0.287,
       "latestPlayedAt": "2023-12-26T17:47:37.000Z"
     }
   ],
@@ -8932,19 +6793,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-12-28T18:00:12.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pppp/5n2/8/2p5/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Bxc4",
-      "games": 16,
-      "wins": 15,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-03-21T15:53:51.000Z"
     }
   ],
   "rnbqkb1r/ppp1pppp/5n2/8/2pP4/4P3/PP3PPP/RNBQKBNR w KQkq -": [
@@ -8954,7 +6804,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T22:18:06.000Z"
     }
   ],
@@ -8965,7 +6815,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.018,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-05-02T16:28:48.000Z"
     }
   ],
@@ -8976,19 +6826,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp1pppp/8/3n4/2B5/2N5/PPPP1PPP/R1BQK1NR b KQkq -": [
-    {
-      "san": "Nb6",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-04-25T15:37:34.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/3p1n2/4p3/3PP3/2N2N2/PPP2PPP/R1BQKB1R b KQkq -": [
@@ -8998,30 +6837,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 3,
       "draws": 7,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-07-25T21:55:39.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp2ppp/3p1n2/4P3/4P3/2N5/PPP2PPP/R1BQKBNR b KQkq -": [
-    {
-      "san": "dxe5",
-      "games": 18,
-      "wins": 14,
-      "losses": 2,
-      "draws": 2,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2022-05-20T23:44:16.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp2ppp/3p1n2/4p3/8/1P2P3/PBPP1PPP/RN1QKBNR w KQkq -": [
-    {
-      "san": "d4",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-04-25T15:16:53.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/3p1n2/8/3P4/2N2N2/PPP2PPP/R1BQKB1R b KQkq -": [
@@ -9031,7 +6848,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-14T15:16:53.000Z"
     }
   ],
@@ -9042,7 +6859,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 8,
       "draws": 17,
-      "recentWeight": 0.465,
+      "recentWeight": 0.299,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     }
   ],
@@ -9053,7 +6870,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 4,
       "draws": 6,
-      "recentWeight": 0.377,
+      "recentWeight": 0.242,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     }
   ],
@@ -9064,7 +6881,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-03-14T22:07:03.000Z"
     },
     {
@@ -9073,19 +6890,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-08-23T18:36:00.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp2ppp/3p4/8/4n3/3B1N2/PPPP1PPP/RNBQK2R b KQkq -": [
-    {
-      "san": "d5",
-      "games": 2,
-      "wins": 0,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-02-07T18:24:09.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/3p4/8/4n3/5N2/PPPPQPPP/RNB1KB1R b KQkq -": [
@@ -9095,7 +6901,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 4,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-21T13:02:52.000Z"
     }
   ],
@@ -9106,7 +6912,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-08-23T18:36:00.000Z"
     }
   ],
@@ -9117,7 +6923,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 49,
       "losses": 7,
       "draws": 12,
-      "recentWeight": 0.135,
+      "recentWeight": 0.087,
       "latestPlayedAt": "2023-12-26T16:06:54.000Z"
     }
   ],
@@ -9128,7 +6934,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 69,
       "losses": 18,
       "draws": 13,
-      "recentWeight": 0.174,
+      "recentWeight": 0.111,
       "latestPlayedAt": "2023-12-26T17:47:37.000Z"
     },
     {
@@ -9137,7 +6943,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.124,
+      "recentWeight": 0.079,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
     },
     {
@@ -9146,7 +6952,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.035,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-01-31T23:56:25.000Z"
     }
   ],
@@ -9157,7 +6963,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 3,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:15:00.000Z"
     }
   ],
@@ -9168,7 +6974,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T15:06:34.000Z"
     }
   ],
@@ -9179,19 +6985,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/4PN2/PP3PPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "a6",
-      "games": 3,
-      "wins": 2,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:28:29.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq -": [
@@ -9201,7 +6996,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 5,
       "draws": 9,
-      "recentWeight": 1.46,
+      "recentWeight": 0.937,
       "latestPlayedAt": "2025-10-31T02:25:09.000Z"
     },
     {
@@ -9210,7 +7005,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.047,
+      "recentWeight": 0.03,
       "latestPlayedAt": "2023-12-25T00:42:06.000Z"
     }
   ],
@@ -9221,7 +7016,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 9,
       "draws": 7,
-      "recentWeight": 0.153,
+      "recentWeight": 0.098,
       "latestPlayedAt": "2024-08-21T19:44:31.000Z"
     }
   ],
@@ -9232,7 +7027,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.115,
+      "recentWeight": 0.074,
       "latestPlayedAt": "2024-12-30T00:56:41.000Z"
     }
   ],
@@ -9243,7 +7038,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.329,
+      "recentWeight": 0.211,
       "latestPlayedAt": "2025-10-18T21:17:28.000Z"
     }
   ],
@@ -9254,8 +7049,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-09-05T15:17:24.000Z"
+    }
+  ],
+  "rnbqkb1r/ppp2ppp/4pn2/3pP3/3P4/2N5/PPP2PPP/R1BQKBNR b KQkq -": [
+    {
+      "san": "Nfd7",
+      "games": 19,
+      "wins": 12,
+      "losses": 4,
+      "draws": 3,
+      "recentWeight": 0.899,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/4pn2/3pP3/3P4/8/PPPN1PPP/R1BQKBNR b KQkq -": [
@@ -9265,19 +7071,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 20,
       "losses": 6,
       "draws": 5,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-12-26T16:28:02.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp2ppp/4pn2/8/2B5/4PN2/PP1P1PPP/RNBQK2R w KQkq -": [
-    {
-      "san": "O-O",
-      "games": 13,
-      "wins": 12,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-03-21T15:53:51.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/4pn2/8/2BP4/4P3/PP3PPP/RNBQK1NR w KQkq -": [
@@ -9287,7 +7082,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T22:18:06.000Z"
     }
   ],
@@ -9298,7 +7093,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-05-02T16:16:49.000Z"
     }
   ],
@@ -9309,7 +7104,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-08-29T15:19:48.000Z"
     }
   ],
@@ -9320,7 +7115,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.08,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2024-08-21T19:44:31.000Z"
     }
   ],
@@ -9331,7 +7126,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:27:26.000Z"
     }
   ],
@@ -9342,30 +7137,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 4,
       "draws": 7,
-      "recentWeight": 0.461,
+      "recentWeight": 0.296,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
-    }
-  ],
-  "rnbqkb1r/ppp2ppp/5n2/3p4/3P4/5N2/PPP2PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Bd3",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-12-13T16:06:10.000Z"
-    }
-  ],
-  "rnbQkb1r/ppp2ppp/5n2/4p3/4P3/2N5/PPP2PPP/R1B1KBNR b KQkq -": [
-    {
-      "san": "Kxd8",
-      "games": 17,
-      "wins": 13,
-      "losses": 2,
-      "draws": 2,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2022-05-20T23:44:16.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/8/3p4/3Pn3/3B1N2/PPP2PPP/RNBQK2R b KQkq -": [
@@ -9375,7 +7148,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 0,
       "draws": 6,
-      "recentWeight": 0.345,
+      "recentWeight": 0.221,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     },
     {
@@ -9384,17 +7157,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-24T17:07:10.000Z"
-    },
-    {
-      "san": "Be7",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-07T17:33:46.000Z"
     }
   ],
   "rnbqkb1r/ppp2ppp/8/3pN3/3Pn3/3B4/PPP2PPP/RNBQK2R b KQkq -": [
@@ -9404,8 +7168,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-13T17:16:41.000Z"
+    }
+  ],
+  "rnbqkb1r/pppn1ppp/4p3/1B1pP3/3P4/2N5/PPP2PPP/R1BQK1NR b KQkq -": [
+    {
+      "san": "c6",
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "draws": 0,
+      "recentWeight": 0.897,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rnbqkb1r/pppn1ppp/4p3/3pP3/3P4/5N2/PPPN1PPP/R1BQKB1R b KQkq -": [
@@ -9415,7 +7190,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-26T16:28:02.000Z"
     }
   ],
@@ -9426,7 +7201,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:26:07.000Z"
     }
   ],
@@ -9437,7 +7212,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-24T17:04:37.000Z"
     }
   ],
@@ -9448,7 +7223,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.023,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-24T17:04:37.000Z"
     }
   ],
@@ -9459,7 +7234,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.073,
+      "recentWeight": 0.047,
       "latestPlayedAt": "2024-08-27T19:46:29.000Z"
     }
   ],
@@ -9470,7 +7245,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-05T16:08:56.000Z"
     }
   ],
@@ -9481,7 +7256,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 75,
       "losses": 14,
       "draws": 16,
-      "recentWeight": 0.204,
+      "recentWeight": 0.131,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     },
     {
@@ -9490,7 +7265,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-09-19T15:40:00.000Z"
     },
     {
@@ -9499,7 +7274,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:15:00.000Z"
     }
   ],
@@ -9510,7 +7285,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-10-06T01:14:52.000Z"
     }
   ],
@@ -9521,7 +7296,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 14,
       "draws": 9,
-      "recentWeight": 0.035,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
@@ -9532,7 +7307,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 4,
       "draws": 14,
-      "recentWeight": 0.315,
+      "recentWeight": 0.202,
       "latestPlayedAt": "2025-02-17T17:10:48.000Z"
     },
     {
@@ -9541,17 +7316,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 8,
       "draws": 7,
-      "recentWeight": 0.16,
+      "recentWeight": 0.103,
       "latestPlayedAt": "2024-08-21T19:44:31.000Z"
-    },
-    {
-      "san": "Nc3",
-      "games": 98,
-      "wins": 61,
-      "losses": 24,
-      "draws": 13,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-03-24T16:18:38.000Z"
     }
   ],
   "rnbqkb1r/pppp1ppp/4pn2/8/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq -": [
@@ -9561,7 +7327,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.117,
+      "recentWeight": 0.075,
       "latestPlayedAt": "2024-12-30T00:56:41.000Z"
     }
   ],
@@ -9572,7 +7338,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.773,
+      "recentWeight": 0.496,
       "latestPlayedAt": "2025-10-28T01:47:38.000Z"
     },
     {
@@ -9581,7 +7347,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.211,
+      "recentWeight": 0.135,
       "latestPlayedAt": "2024-12-30T00:51:03.000Z"
     }
   ],
@@ -9592,7 +7358,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 27,
       "losses": 9,
       "draws": 18,
-      "recentWeight": 0.49,
+      "recentWeight": 0.315,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     },
     {
@@ -9601,7 +7367,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.086,
+      "recentWeight": 0.055,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     },
     {
@@ -9610,7 +7376,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.082,
+      "recentWeight": 0.052,
       "latestPlayedAt": "2024-01-17T20:59:10.000Z"
     }
   ],
@@ -9621,7 +7387,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T20:00:43.000Z"
     }
   ],
@@ -9632,7 +7398,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-09-12T15:52:37.000Z"
     }
   ],
@@ -9643,7 +7409,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.042,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-09-19T15:57:13.000Z"
     }
   ],
@@ -9654,7 +7420,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.069,
+      "recentWeight": 0.044,
       "latestPlayedAt": "2023-09-19T15:30:25.000Z"
     }
   ],
@@ -9665,7 +7431,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T20:00:43.000Z"
     }
   ],
@@ -9676,7 +7442,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T15:52:37.000Z"
     },
     {
@@ -9685,7 +7451,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-13T17:16:41.000Z"
     }
   ],
@@ -9696,7 +7462,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-21T19:26:07.000Z"
     }
   ],
@@ -9707,7 +7473,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 124,
       "losses": 33,
       "draws": 20,
-      "recentWeight": 0.295,
+      "recentWeight": 0.189,
       "latestPlayedAt": "2024-08-23T19:49:52.000Z"
     },
     {
@@ -9716,7 +7482,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-25T00:02:21.000Z"
     },
     {
@@ -9725,17 +7491,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.033,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-06-06T17:07:14.000Z"
-    },
-    {
-      "san": "d4",
-      "games": 7,
-      "wins": 4,
-      "losses": 0,
-      "draws": 3,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-02T15:57:39.000Z"
     }
   ],
   "rnbqkb1r/pppppp1p/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq -": [
@@ -9745,7 +7502,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.039,
+      "recentWeight": 0.025,
       "latestPlayedAt": "2023-12-25T22:17:12.000Z"
     }
   ],
@@ -9756,7 +7513,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 56,
       "losses": 15,
       "draws": 14,
-      "recentWeight": 0.198,
+      "recentWeight": 0.127,
       "latestPlayedAt": "2025-02-17T17:32:52.000Z"
     },
     {
@@ -9765,7 +7522,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 20,
       "losses": 1,
       "draws": 6,
-      "recentWeight": 0.032,
+      "recentWeight": 0.021,
       "latestPlayedAt": "2023-03-24T15:14:04.000Z"
     }
   ],
@@ -9776,7 +7533,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.52,
+      "recentWeight": 0.334,
       "latestPlayedAt": "2024-12-30T01:13:21.000Z"
     }
   ],
@@ -9787,7 +7544,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.13,
+      "recentWeight": 0.083,
       "latestPlayedAt": "2023-09-19T16:16:54.000Z"
     }
   ],
@@ -9798,19 +7555,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 2,
       "draws": 4,
-      "recentWeight": 0.024,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-08-22T17:05:24.000Z"
-    }
-  ],
-  "rnbqkb1r/pppppppp/5n2/6B1/3P4/8/PPP1PPPP/RN1QKBNR b KQkq -": [
-    {
-      "san": "Ne4",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T16:12:08.000Z"
     }
   ],
   "rnbqkb1r/pppppppp/5n2/8/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq -": [
@@ -9820,7 +7566,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.029,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-09-12T21:37:42.000Z"
     },
     {
@@ -9829,7 +7575,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-09-05T16:08:56.000Z"
     }
   ],
@@ -9840,7 +7586,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -9851,7 +7597,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 37,
       "losses": 13,
       "draws": 13,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-10-06T01:14:52.000Z"
     },
     {
@@ -9860,17 +7606,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-12-25T22:17:12.000Z"
-    },
-    {
-      "san": "c5",
-      "games": 3,
-      "wins": 2,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-30T15:25:54.000Z"
     }
   ],
   "rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq -": [
@@ -9880,7 +7617,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 4,
       "draws": 11,
-      "recentWeight": 3.677,
+      "recentWeight": 2.36,
       "latestPlayedAt": "2025-10-31T03:00:50.000Z"
     },
     {
@@ -9889,7 +7626,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 222,
       "losses": 64,
       "draws": 61,
-      "recentWeight": 0.663,
+      "recentWeight": 0.426,
       "latestPlayedAt": "2025-02-17T17:32:52.000Z"
     },
     {
@@ -9898,7 +7635,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 35,
       "losses": 6,
       "draws": 5,
-      "recentWeight": 0.357,
+      "recentWeight": 0.229,
       "latestPlayedAt": "2024-08-27T19:46:29.000Z"
     },
     {
@@ -9907,7 +7644,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.047,
+      "recentWeight": 0.03,
       "latestPlayedAt": "2023-12-26T23:15:19.000Z"
     }
   ],
@@ -9918,7 +7655,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 4,
       "draws": 4,
-      "recentWeight": 0.05,
+      "recentWeight": 0.032,
       "latestPlayedAt": "2023-08-22T17:05:24.000Z"
     }
   ],
@@ -9929,7 +7666,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 293,
       "losses": 66,
       "draws": 61,
-      "recentWeight": 0.881,
+      "recentWeight": 0.566,
       "latestPlayedAt": "2024-12-25T00:02:21.000Z"
     },
     {
@@ -9938,7 +7675,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 18,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.282,
+      "recentWeight": 0.181,
       "latestPlayedAt": "2024-08-23T19:39:19.000Z"
     },
     {
@@ -9947,7 +7684,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.117,
+      "recentWeight": 0.075,
       "latestPlayedAt": "2024-12-30T01:13:21.000Z"
     }
   ],
@@ -9958,28 +7695,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.182,
+      "recentWeight": 0.117,
       "latestPlayedAt": "2024-12-17T15:06:57.000Z"
-    },
-    {
-      "san": "b6",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T16:32:36.000Z"
-    }
-  ],
-  "rnbqkb1r/pppppppp/8/8/3PnB2/8/PPP1PPPP/RN1QKBNR b KQkq -": [
-    {
-      "san": "c5",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T16:12:08.000Z"
     }
   ],
   "rnbqkbnr/1pp2ppp/p3p3/3P4/3P4/2N5/PP2PPPP/R1BQKBNR b KQkq -": [
@@ -9989,7 +7706,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 6,
       "draws": 1,
-      "recentWeight": 0.078,
+      "recentWeight": 0.05,
       "latestPlayedAt": "2024-08-21T19:48:37.000Z"
     }
   ],
@@ -10000,30 +7717,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.073,
+      "recentWeight": 0.047,
       "latestPlayedAt": "2024-08-21T19:48:37.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pp1ppp/1p2p3/8/2P5/2N2N2/PP1PPPPP/R1BQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 4,
-      "wins": 4,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-05-16T15:04:40.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pp1ppp/1p2p3/8/2P5/5NP1/PP1PPP1P/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 6,
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-01-03T23:43:42.000Z"
     }
   ],
   "rnbqkbnr/p1pp1ppp/1p2p3/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq -": [
@@ -10033,17 +7728,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 63,
       "losses": 14,
       "draws": 6,
-      "recentWeight": 0.141,
+      "recentWeight": 0.091,
       "latestPlayedAt": "2024-01-14T00:20:53.000Z"
-    },
-    {
-      "san": "Bb4",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:45:26.000Z"
     }
   ],
   "rnbqkbnr/p1pp1ppp/1p2p3/8/2PP4/5N2/PP2PPPP/RNBQKB1R b KQkq -": [
@@ -10053,7 +7739,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 49,
       "losses": 13,
       "draws": 6,
-      "recentWeight": 0.092,
+      "recentWeight": 0.059,
       "latestPlayedAt": "2023-09-19T15:05:37.000Z"
     }
   ],
@@ -10064,7 +7750,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.053,
+      "recentWeight": 0.034,
       "latestPlayedAt": "2023-05-16T17:07:36.000Z"
     }
   ],
@@ -10075,19 +7761,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 5,
       "draws": 7,
-      "recentWeight": 0.099,
+      "recentWeight": 0.063,
       "latestPlayedAt": "2023-09-12T15:07:50.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pp1ppp/1p2p3/8/3P4/5NP1/PPP1PP1P/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 7,
-      "wins": 2,
-      "losses": 4,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-01-17T16:07:27.000Z"
     }
   ],
   "rnbqkbnr/p1pp1ppp/1p2p3/8/8/5NP1/PPPPPPBP/RNBQK2R b KQkq -": [
@@ -10097,7 +7772,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.055,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2023-12-26T16:52:44.000Z"
     }
   ],
@@ -10108,7 +7783,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-03-14T21:39:57.000Z"
     }
   ],
@@ -10119,19 +7794,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 12,
       "losses": 4,
       "draws": 5,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-05-23T15:27:18.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pppppp/1p6/8/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 10,
-      "wins": 6,
-      "losses": 2,
-      "draws": 2,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-15T00:04:29.000Z"
     }
   ],
   "rnbqkbnr/p1pppppp/1p6/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq -": [
@@ -10141,19 +7805,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.077,
+      "recentWeight": 0.049,
       "latestPlayedAt": "2024-08-21T19:39:50.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pppppp/1p6/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 6,
-      "wins": 4,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-07-25T22:28:44.000Z"
     }
   ],
   "rnbqkbnr/p1pppppp/1p6/8/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -": [
@@ -10163,30 +7816,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 7,
-      "recentWeight": 0.102,
+      "recentWeight": 0.065,
       "latestPlayedAt": "2024-08-21T19:24:38.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pppppp/1p6/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "d4",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-23T15:17:29.000Z"
-    }
-  ],
-  "rnbqkbnr/p1pppppp/1p6/8/8/5NP1/PPPPPP1P/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bb7",
-      "games": 16,
-      "wins": 11,
-      "losses": 5,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T17:06:03.000Z"
     }
   ],
   "rnbqkbnr/p1pppppp/8/1p6/8/5N2/PPPPPPPP/RNBQKB1R w KQkq -": [
@@ -10196,7 +7827,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-09-05T15:51:42.000Z"
     }
   ],
@@ -10207,7 +7838,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T19:06:42.000Z"
     }
   ],
@@ -10218,7 +7849,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.03,
+      "recentWeight": 0.019,
       "latestPlayedAt": "2023-12-26T23:05:51.000Z"
     }
   ],
@@ -10229,7 +7860,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T16:17:38.000Z"
     }
   ],
@@ -10240,7 +7871,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.053,
+      "recentWeight": 0.034,
       "latestPlayedAt": "2023-12-26T17:16:00.000Z"
     }
   ],
@@ -10251,7 +7882,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:27:05.000Z"
     }
   ],
@@ -10262,30 +7893,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-19T16:27:05.000Z"
-    }
-  ],
-  "rnbqkbnr/pp1ppp1p/2p3p1/8/3PP3/2N5/PPP2PPP/R1BQKBNR b KQkq -": [
-    {
-      "san": "Bg7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-14T22:57:54.000Z"
-    }
-  ],
-  "rnbqkbnr/pp1ppp1p/2p3p1/8/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bg7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-02-14T23:44:32.000Z"
     }
   ],
   "rnbqkbnr/pp1ppp1p/2p3p1/8/3PPP2/8/PPP3PP/RNBQKBNR b KQkq -": [
@@ -10295,7 +7904,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-07-04T15:16:16.000Z"
     }
   ],
@@ -10306,7 +7915,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:48:23.000Z"
     }
   ],
@@ -10317,7 +7926,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:48:23.000Z"
     }
   ],
@@ -10328,7 +7937,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-06-13T15:56:21.000Z"
     }
   ],
@@ -10339,7 +7948,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.352,
+      "recentWeight": 0.226,
       "latestPlayedAt": "2025-10-31T01:34:13.000Z"
     }
   ],
@@ -10350,7 +7959,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 56,
       "losses": 12,
       "draws": 11,
-      "recentWeight": 0.241,
+      "recentWeight": 0.155,
       "latestPlayedAt": "2024-08-23T19:54:34.000Z"
     },
     {
@@ -10359,7 +7968,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.044,
+      "recentWeight": 0.028,
       "latestPlayedAt": "2023-07-04T15:16:16.000Z"
     }
   ],
@@ -10370,7 +7979,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 2,
       "draws": 4,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
@@ -10381,19 +7990,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.094,
+      "recentWeight": 0.061,
       "latestPlayedAt": "2024-06-02T23:39:58.000Z"
     }
   ],
   "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -": [
     {
       "san": "Nc3",
-      "games": 9,
-      "wins": 9,
+      "games": 10,
+      "wins": 10,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.027,
-      "latestPlayedAt": "2023-12-25T22:11:06.000Z"
+      "recentWeight": 0.918,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     },
     {
       "san": "Nf3",
@@ -10401,7 +8010,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-23T15:40:12.000Z"
     }
   ],
@@ -10412,7 +8021,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.126,
+      "recentWeight": 0.081,
       "latestPlayedAt": "2024-12-17T15:18:00.000Z"
     },
     {
@@ -10421,7 +8030,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:48:23.000Z"
     }
   ],
@@ -10432,7 +8041,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 34,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.26,
+      "recentWeight": 0.167,
       "latestPlayedAt": "2024-08-21T19:54:07.000Z"
     },
     {
@@ -10441,7 +8050,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 32,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.117,
+      "recentWeight": 0.075,
       "latestPlayedAt": "2024-02-13T17:41:27.000Z"
     },
     {
@@ -10450,7 +8059,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.091,
+      "recentWeight": 0.058,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -10461,7 +8070,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 74,
       "losses": 10,
       "draws": 3,
-      "recentWeight": 0.092,
+      "recentWeight": 0.059,
       "latestPlayedAt": "2023-09-12T21:06:34.000Z"
     },
     {
@@ -10470,7 +8079,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.045,
+      "recentWeight": 0.029,
       "latestPlayedAt": "2023-08-22T21:16:18.000Z"
     },
     {
@@ -10479,19 +8088,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-09-12T21:51:37.000Z"
-    }
-  ],
-  "rnbqkbnr/pp1ppppp/8/2p5/8/6P1/PPPPPP1P/RNBQKBNR w KQkq -": [
-    {
-      "san": "Bg2",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-25T22:06:09.000Z"
     }
   ],
   "rnbqkbnr/pp1ppppp/8/8/3p4/5N2/PPP1PPPP/RNBQKB1R w KQkq -": [
@@ -10501,7 +8099,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 64,
       "losses": 6,
       "draws": 3,
-      "recentWeight": 0.091,
+      "recentWeight": 0.059,
       "latestPlayedAt": "2023-09-12T21:06:34.000Z"
     }
   ],
@@ -10512,7 +8110,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 33,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.255,
+      "recentWeight": 0.163,
       "latestPlayedAt": "2024-08-21T19:54:07.000Z"
     }
   ],
@@ -10523,19 +8121,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.165,
+      "recentWeight": 0.106,
       "latestPlayedAt": "2024-08-21T19:54:07.000Z"
-    }
-  ],
-  "rnbqkbnr/pp1ppppp/8/8/4P3/2Pp4/PP3PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "Bxd3",
-      "games": 6,
-      "wins": 5,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-01-03T22:07:06.000Z"
     }
   ],
   "rnbqkbnr/pp1ppppp/8/8/8/2p2N2/PP2PPPP/RNBQKB1R w KQkq -": [
@@ -10545,19 +8132,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 38,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.089,
+      "recentWeight": 0.057,
       "latestPlayedAt": "2023-09-12T21:06:34.000Z"
-    }
-  ],
-  "rnbqkbnr/pp2pp1p/2p3p1/3p4/2P5/4PN2/PP1P1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "Nc3",
-      "games": 6,
-      "wins": 3,
-      "losses": 1,
-      "draws": 2,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-13T15:30:24.000Z"
     }
   ],
   "rnbqkbnr/pp2pp1p/2p3p1/3pP3/3P1P2/8/PPP3PP/RNBQKBNR b KQkq -": [
@@ -10567,7 +8143,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-07-04T15:16:16.000Z"
     }
   ],
@@ -10578,7 +8154,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.352,
+      "recentWeight": 0.226,
       "latestPlayedAt": "2025-10-31T01:34:13.000Z"
     }
   ],
@@ -10589,7 +8165,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.43,
+      "recentWeight": 0.276,
       "latestPlayedAt": "2024-12-24T23:25:30.000Z"
     }
   ],
@@ -10600,7 +8176,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-03-21T16:02:49.000Z"
     }
   ],
@@ -10611,7 +8187,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 29,
       "losses": 11,
       "draws": 5,
-      "recentWeight": 0.125,
+      "recentWeight": 0.081,
       "latestPlayedAt": "2024-12-24T23:14:27.000Z"
     },
     {
@@ -10620,7 +8196,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 29,
       "losses": 7,
       "draws": 7,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-08-23T18:50:38.000Z"
     }
   ],
@@ -10631,7 +8207,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T19:31:44.000Z"
     }
   ],
@@ -10642,7 +8218,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 0,
       "draws": 4,
-      "recentWeight": 0.141,
+      "recentWeight": 0.091,
       "latestPlayedAt": "2024-08-23T19:54:34.000Z"
     }
   ],
@@ -10653,7 +8229,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 3,
       "draws": 2,
-      "recentWeight": 0.022,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
@@ -10664,39 +8240,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.048,
+      "recentWeight": 0.031,
       "latestPlayedAt": "2024-06-02T23:39:58.000Z"
     }
   ],
   "rnbqkbnr/pp2pppp/2p5/3p4/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq -": [
     {
       "san": "Nf3",
-      "games": 6,
-      "wins": 6,
+      "games": 7,
+      "wins": 7,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
-      "latestPlayedAt": "2023-12-25T22:11:06.000Z"
-    }
-  ],
-  "rnbqkbnr/pp2pppp/2p5/3p4/4P3/3P1N2/PPP2PPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "g6",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T16:08:23.000Z"
-    },
-    {
-      "san": "dxe4",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T16:06:29.000Z"
+      "recentWeight": 0.917,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "rnbqkbnr/pp2pppp/2p5/3p4/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -": [
@@ -10706,7 +8262,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.02,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2023-05-23T15:40:12.000Z"
     }
   ],
@@ -10717,7 +8273,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 25,
       "losses": 6,
       "draws": 2,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-06T16:08:11.000Z"
     }
   ],
@@ -10728,7 +8284,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.074,
+      "recentWeight": 0.048,
       "latestPlayedAt": "2024-08-21T19:29:53.000Z"
     }
   ],
@@ -10739,19 +8295,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-05-02T15:37:34.000Z"
     }
   ],
   "rnbqkbnr/pp2pppp/2p5/8/4p3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq -": [
     {
       "san": "Nxe4",
-      "games": 7,
-      "wins": 7,
+      "games": 8,
+      "wins": 8,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
-      "latestPlayedAt": "2023-12-25T22:11:06.000Z"
+      "recentWeight": 0.917,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     }
   ],
   "rnbqkbnr/pp2pppp/3p4/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq -": [
@@ -10761,7 +8317,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.04,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -10772,7 +8328,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 1,
       "draws": 3,
-      "recentWeight": 0.103,
+      "recentWeight": 0.066,
       "latestPlayedAt": "2024-02-13T17:41:27.000Z"
     }
   ],
@@ -10783,7 +8339,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:58:54.000Z"
     }
   ],
@@ -10794,7 +8350,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.092,
+      "recentWeight": 0.059,
       "latestPlayedAt": "2024-02-13T17:41:27.000Z"
     }
   ],
@@ -10805,7 +8361,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-29T17:38:59.000Z"
     }
   ],
@@ -10816,7 +8372,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-29T17:38:59.000Z"
     }
   ],
@@ -10827,7 +8383,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.203,
+      "recentWeight": 0.13,
       "latestPlayedAt": "2024-12-17T15:34:51.000Z"
     }
   ],
@@ -10838,7 +8394,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.013,
       "latestPlayedAt": "2022-09-27T21:36:54.000Z"
     }
   ],
@@ -10849,7 +8405,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.032,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     },
     {
@@ -10858,7 +8414,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-05-09T16:50:27.000Z"
     }
   ],
@@ -10869,7 +8425,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 22,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.038,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-09-19T16:03:54.000Z"
     },
     {
@@ -10878,7 +8434,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-29T17:38:59.000Z"
     }
   ],
@@ -10889,7 +8445,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 10,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.046,
+      "recentWeight": 0.029,
       "latestPlayedAt": "2024-01-09T01:16:43.000Z"
     }
   ],
@@ -10900,7 +8456,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T19:31:44.000Z"
     }
   ],
@@ -10911,7 +8467,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 0,
       "draws": 3,
-      "recentWeight": 0.086,
+      "recentWeight": 0.055,
       "latestPlayedAt": "2024-08-23T19:54:34.000Z"
     }
   ],
@@ -10922,7 +8478,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.067,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2024-08-27T19:50:03.000Z"
     }
   ],
@@ -10933,7 +8489,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 10,
       "draws": 3,
-      "recentWeight": 0.122,
+      "recentWeight": 0.078,
       "latestPlayedAt": "2024-12-24T23:14:27.000Z"
     }
   ],
@@ -10944,30 +8500,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-29T16:17:38.000Z"
-    }
-  ],
-  "rnbqkbnr/pp3ppp/4p3/2pP4/3P4/3B4/PPP2PPP/RNBQK1NR b KQkq -": [
-    {
-      "san": "exd5",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-01-03T17:10:42.000Z"
-    }
-  ],
-  "rnbqkbnr/pp3ppp/4p3/2pP4/3P4/8/PPPN1PPP/R1BQKBNR b KQkq -": [
-    {
-      "san": "Qxd5",
-      "games": 45,
-      "wins": 31,
-      "losses": 8,
-      "draws": 6,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-07T22:06:46.000Z"
     }
   ],
   "rnbqkbnr/pp3ppp/4p3/2pp4/3PP3/5N2/PPPN1PPP/R1BQKB1R b KQkq -": [
@@ -10977,7 +8511,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 4,
       "draws": 4,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-04-18T15:15:34.000Z"
     }
   ],
@@ -10988,7 +8522,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.208,
+      "recentWeight": 0.134,
       "latestPlayedAt": "2024-12-24T19:48:50.000Z"
     },
     {
@@ -10997,7 +8531,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 38,
       "losses": 11,
       "draws": 7,
-      "recentWeight": 0.125,
+      "recentWeight": 0.08,
       "latestPlayedAt": "2023-12-26T17:55:07.000Z"
     },
     {
@@ -11006,30 +8540,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.02,
-      "latestPlayedAt": "2023-05-16T16:44:52.000Z"
-    }
-  ],
-  "rnbqkbnr/pp3ppp/8/2pp4/3P4/3B1N2/PPP2PPP/RNBQK2R b KQkq -": [
-    {
-      "san": "c4",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
       "recentWeight": 0.013,
-      "latestPlayedAt": "2023-01-03T17:10:42.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp1pp1p/3p2p1/8/3P4/5NP1/PPP1PP1P/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bg7",
-      "games": 7,
-      "wins": 3,
-      "losses": 4,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-03-24T15:04:47.000Z"
+      "latestPlayedAt": "2023-05-16T16:44:52.000Z"
     }
   ],
   "rnbqkbnr/ppp1pp1p/6p1/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq -": [
@@ -11039,30 +8551,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.341,
+      "recentWeight": 0.219,
       "latestPlayedAt": "2025-10-28T02:20:03.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp1pp1p/6p1/3p4/8/4PN2/PPPP1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "c4",
-      "games": 14,
-      "wins": 11,
-      "losses": 1,
-      "draws": 2,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-06-13T15:30:24.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp1pppp/3p4/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "g6",
-      "games": 13,
-      "wins": 8,
-      "losses": 4,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2023-03-24T15:04:47.000Z"
     }
   ],
   "rnbqkbnr/ppp1pppp/3p4/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq -": [
@@ -11072,17 +8562,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 3,
       "draws": 4,
-      "recentWeight": 0.048,
+      "recentWeight": 0.031,
       "latestPlayedAt": "2023-08-23T17:16:30.000Z"
-    },
-    {
-      "san": "e4",
-      "games": 11,
-      "wins": 7,
-      "losses": 4,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2022-12-13T16:35:15.000Z"
     }
   ],
   "rnbqkbnr/ppp1pppp/3p4/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -": [
@@ -11092,7 +8573,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 32,
       "losses": 9,
       "draws": 10,
-      "recentWeight": 0.063,
+      "recentWeight": 0.04,
       "latestPlayedAt": "2023-07-25T21:55:39.000Z"
     }
   ],
@@ -11103,28 +8584,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-12-26T22:17:51.000Z"
-    },
-    {
-      "san": "e4",
-      "games": 4,
-      "wins": 3,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp1pppp/8/3p4/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "d4",
-      "games": 3,
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
   "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq -": [
@@ -11134,7 +8595,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 5,
       "draws": 3,
-      "recentWeight": 0.544,
+      "recentWeight": 0.349,
       "latestPlayedAt": "2024-12-24T23:25:30.000Z"
     },
     {
@@ -11143,7 +8604,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.22,
+      "recentWeight": 0.141,
       "latestPlayedAt": "2024-12-17T15:34:51.000Z"
     },
     {
@@ -11152,19 +8613,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 6,
       "draws": 5,
-      "recentWeight": 0.094,
+      "recentWeight": 0.06,
       "latestPlayedAt": "2024-08-21T19:48:37.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq -": [
-    {
-      "san": "c5",
-      "games": 5,
-      "wins": 4,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-09-20T21:16:49.000Z"
     }
   ],
   "rnbqkbnr/ppp1pppp/8/3p4/3P4/2N5/PPP1PPPP/R1BQKBNR b KQkq -": [
@@ -11174,7 +8624,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 4,
       "draws": 2,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-08-22T16:52:30.000Z"
     },
     {
@@ -11183,7 +8633,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 2,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-07-25T22:43:28.000Z"
     }
   ],
@@ -11194,7 +8644,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 4,
       "draws": 11,
-      "recentWeight": 0.222,
+      "recentWeight": 0.142,
       "latestPlayedAt": "2024-12-24T17:44:55.000Z"
     },
     {
@@ -11203,7 +8653,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.172,
+      "recentWeight": 0.111,
       "latestPlayedAt": "2024-12-24T22:06:31.000Z"
     }
   ],
@@ -11214,7 +8664,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 130,
       "losses": 45,
       "draws": 24,
-      "recentWeight": 0.566,
+      "recentWeight": 0.363,
       "latestPlayedAt": "2024-12-24T23:14:27.000Z"
     },
     {
@@ -11223,7 +8673,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.114,
+      "recentWeight": 0.073,
       "latestPlayedAt": "2024-12-24T19:26:28.000Z"
     },
     {
@@ -11232,7 +8682,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 21,
       "losses": 5,
       "draws": 1,
-      "recentWeight": 0.056,
+      "recentWeight": 0.036,
       "latestPlayedAt": "2023-12-29T17:59:13.000Z"
     }
   ],
@@ -11243,7 +8693,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.072,
+      "recentWeight": 0.046,
       "latestPlayedAt": "2023-12-28T17:44:27.000Z"
     }
   ],
@@ -11254,7 +8704,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 32,
       "losses": 10,
       "draws": 5,
-      "recentWeight": 0.042,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-07-25T21:06:29.000Z"
     }
   ],
@@ -11265,7 +8715,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-03-24T16:38:23.000Z"
     }
   ],
@@ -11276,7 +8726,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 272,
       "losses": 50,
       "draws": 37,
-      "recentWeight": 0.641,
+      "recentWeight": 0.411,
       "latestPlayedAt": "2024-01-14T00:33:55.000Z"
     },
     {
@@ -11285,7 +8735,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.126,
+      "recentWeight": 0.081,
       "latestPlayedAt": "2023-08-23T17:52:54.000Z"
     },
     {
@@ -11294,7 +8744,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.027,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -11305,7 +8755,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.206,
+      "recentWeight": 0.132,
       "latestPlayedAt": "2024-12-24T16:19:13.000Z"
     }
   ],
@@ -11316,19 +8766,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 18,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.183,
+      "recentWeight": 0.118,
       "latestPlayedAt": "2023-12-28T18:00:12.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp1pppp/8/8/1PPp4/5N2/P2PPPPP/RNBQKB1R b KQkq -": [
-    {
-      "san": "g6",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-07-14T16:49:02.000Z"
     }
   ],
   "rnbqkbnr/ppp1pppp/8/8/2pP4/8/PP2PPPP/RNBQKBNR w KQkq -": [
@@ -11338,7 +8777,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.104,
+      "recentWeight": 0.067,
       "latestPlayedAt": "2024-12-24T22:18:06.000Z"
     },
     {
@@ -11347,7 +8786,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-05-02T16:28:48.000Z"
     }
   ],
@@ -11358,19 +8797,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:44:27.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/3p4/4p3/8/1P6/PBPPPPPP/RN1QKBNR w KQkq -": [
-    {
-      "san": "e3",
-      "games": 3,
-      "wins": 1,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-04-25T15:16:53.000Z"
     }
   ],
   "rnbqkbnr/ppp2ppp/4p3/3p4/2P5/6P1/PP1PPPBP/RNBQK1NR b KQkq -": [
@@ -11380,7 +8808,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-05-09T17:04:28.000Z"
     },
     {
@@ -11389,7 +8817,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-22T15:06:34.000Z"
     }
   ],
@@ -11400,7 +8828,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 7,
       "draws": 2,
-      "recentWeight": 0.095,
+      "recentWeight": 0.061,
       "latestPlayedAt": "2024-08-21T19:48:37.000Z"
     }
   ],
@@ -11411,17 +8839,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 8,
       "draws": 4,
-      "recentWeight": 0.25,
+      "recentWeight": 0.161,
       "latestPlayedAt": "2024-12-24T16:38:09.000Z"
-    },
-    {
-      "san": "Nc3",
-      "games": 32,
-      "wins": 16,
-      "losses": 10,
-      "draws": 6,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2022-08-30T22:53:32.000Z"
     }
   ],
   "rnbqkbnr/ppp2ppp/4p3/3p4/3P1B2/2N5/PPP1PPPP/R2QKBNR b KQkq -": [
@@ -11431,7 +8850,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:33:24.000Z"
     }
   ],
@@ -11442,50 +8861,28 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 51,
       "losses": 10,
       "draws": 17,
-      "recentWeight": 0.641,
+      "recentWeight": 0.411,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
     }
   ],
   "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/2N5/PPP2PPP/R1BQKBNR b KQkq -": [
+    {
+      "san": "Nf6",
+      "games": 49,
+      "wins": 33,
+      "losses": 8,
+      "draws": 8,
+      "recentWeight": 0.9,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
+    },
     {
       "san": "dxe4",
       "games": 90,
       "wins": 52,
       "losses": 23,
       "draws": 15,
-      "recentWeight": 0.688,
+      "recentWeight": 0.442,
       "latestPlayedAt": "2025-02-17T17:44:00.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/3B4/PPP2PPP/RNBQK1NR b KQkq -": [
-    {
-      "san": "c5",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-01-03T17:10:42.000Z"
-    },
-    {
-      "san": "dxe4",
-      "games": 12,
-      "wins": 11,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-12-06T16:05:25.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "exd5",
-      "games": 6,
-      "wins": 3,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-12-13T16:06:10.000Z"
     }
   ],
   "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPPN1PPP/R1BQKBNR b KQkq -": [
@@ -11495,7 +8892,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 12,
       "draws": 10,
-      "recentWeight": 0.277,
+      "recentWeight": 0.178,
       "latestPlayedAt": "2024-12-24T22:50:40.000Z"
     },
     {
@@ -11504,7 +8901,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 50,
       "losses": 15,
       "draws": 10,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-04-18T15:15:34.000Z"
     },
     {
@@ -11513,7 +8910,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 25,
       "losses": 6,
       "draws": 6,
-      "recentWeight": 0.028,
+      "recentWeight": 0.018,
       "latestPlayedAt": "2023-12-26T16:28:02.000Z"
     }
   ],
@@ -11524,7 +8921,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.066,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:20:02.000Z"
     }
   ],
@@ -11535,28 +8932,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.091,
+      "recentWeight": 0.058,
       "latestPlayedAt": "2024-08-23T19:27:26.000Z"
-    },
-    {
-      "san": "exd5",
-      "games": 8,
-      "wins": 8,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2022-09-13T22:49:30.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/4p3/3P4/4P3/8/PP1P1PPP/RNBQKBNR b KQkq -": [
-    {
-      "san": "exd5",
-      "games": 2,
-      "wins": 1,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-09T16:15:39.000Z"
     }
   ],
   "rnbqkbnr/ppp2ppp/4p3/3p4/8/4PN2/PPPP1PPP/RNBQKB1R w KQkq -": [
@@ -11566,7 +8943,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-08-29T16:06:58.000Z"
     }
   ],
@@ -11577,7 +8954,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 47,
       "losses": 13,
       "draws": 8,
-      "recentWeight": 0.353,
+      "recentWeight": 0.227,
       "latestPlayedAt": "2024-12-24T19:48:50.000Z"
     }
   ],
@@ -11588,19 +8965,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.035,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-12-26T22:06:09.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/4p3/8/3PB3/8/PPP2PPP/RNBQK1NR b KQkq -": [
-    {
-      "san": "Nf6",
-      "games": 12,
-      "wins": 11,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-12-06T16:05:25.000Z"
     }
   ],
   "rnbqkbnr/ppp2ppp/4p3/8/3PN3/8/PPP2PPP/R1BQKBNR b KQkq -": [
@@ -11610,7 +8976,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 68,
       "losses": 31,
       "draws": 22,
-      "recentWeight": 0.523,
+      "recentWeight": 0.336,
       "latestPlayedAt": "2024-08-27T19:37:51.000Z"
     },
     {
@@ -11619,7 +8985,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.442,
+      "recentWeight": 0.283,
       "latestPlayedAt": "2025-02-17T17:44:00.000Z"
     }
   ],
@@ -11630,7 +8996,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-28T17:53:07.000Z"
     }
   ],
@@ -11641,7 +9007,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:27:26.000Z"
     }
   ],
@@ -11652,7 +9018,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 4,
       "draws": 10,
-      "recentWeight": 0.462,
+      "recentWeight": 0.297,
       "latestPlayedAt": "2025-10-18T21:32:01.000Z"
     },
     {
@@ -11661,7 +9027,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.042,
+      "recentWeight": 0.027,
       "latestPlayedAt": "2023-12-26T16:16:50.000Z"
     },
     {
@@ -11670,41 +9036,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 3,
       "draws": 5,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-06-27T15:30:04.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/8/3p4/3P4/8/PPP2PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "Nf3",
-      "games": 4,
-      "wins": 3,
-      "losses": 0,
-      "draws": 1,
-      "recentWeight": 0.01,
-      "latestPlayedAt": "2022-12-13T16:06:10.000Z"
-    }
-  ],
-  "rnbqkbnr/ppp2ppp/8/3p4/8/5N2/PPPP1PPP/RNBQKB1R w KQkq -": [
-    {
-      "san": "d4",
-      "games": 8,
-      "wins": 8,
-      "losses": 0,
-      "draws": 0,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2022-09-13T22:49:30.000Z"
-    }
-  ],
-  "rnbqkbnr/pppp1ppp/4p3/8/2P1P3/8/PP1P1PPP/RNBQKBNR b KQkq -": [
-    {
-      "san": "d5",
-      "games": 4,
-      "wins": 2,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-09T16:15:39.000Z"
     }
   ],
   "rnbqkbnr/pppp1ppp/4p3/8/2P5/5N2/PP1PPPPP/RNBQKB1R b KQkq -": [
@@ -11714,7 +9047,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 9,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-05-16T15:04:40.000Z"
     }
   ],
@@ -11725,7 +9058,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.037,
+      "recentWeight": 0.024,
       "latestPlayedAt": "2023-08-22T15:06:34.000Z"
     }
   ],
@@ -11736,7 +9069,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 137,
       "losses": 37,
       "draws": 19,
-      "recentWeight": 0.506,
+      "recentWeight": 0.325,
       "latestPlayedAt": "2024-12-24T23:41:58.000Z"
     }
   ],
@@ -11747,7 +9080,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 6,
       "draws": 3,
-      "recentWeight": 0.032,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-12-26T23:05:51.000Z"
     }
   ],
@@ -11758,7 +9091,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:33:24.000Z"
     }
   ],
@@ -11769,7 +9102,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 12,
       "draws": 7,
-      "recentWeight": 0.179,
+      "recentWeight": 0.115,
       "latestPlayedAt": "2024-12-30T00:56:41.000Z"
     },
     {
@@ -11778,7 +9111,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 46,
       "losses": 17,
       "draws": 6,
-      "recentWeight": 0.153,
+      "recentWeight": 0.098,
       "latestPlayedAt": "2023-12-27T19:06:42.000Z"
     },
     {
@@ -11787,7 +9120,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 27,
       "losses": 17,
       "draws": 5,
-      "recentWeight": 0.044,
+      "recentWeight": 0.028,
       "latestPlayedAt": "2023-03-24T15:47:13.000Z"
     },
     {
@@ -11796,7 +9129,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 7,
       "draws": 2,
-      "recentWeight": 0.018,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-08-22T21:52:58.000Z"
     }
   ],
@@ -11807,7 +9140,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.433,
+      "recentWeight": 0.278,
       "latestPlayedAt": "2025-10-18T21:49:05.000Z"
     },
     {
@@ -11816,28 +9149,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 4,
       "draws": 7,
-      "recentWeight": 0.218,
+      "recentWeight": 0.14,
       "latestPlayedAt": "2024-12-24T16:29:28.000Z"
-    },
-    {
-      "san": "e4",
-      "games": 9,
-      "wins": 7,
-      "losses": 1,
-      "draws": 1,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-05-16T15:56:35.000Z"
     }
   ],
   "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -": [
     {
       "san": "d5",
-      "games": 531,
-      "wins": 345,
+      "games": 532,
+      "wins": 346,
       "losses": 106,
       "draws": 80,
-      "recentWeight": 2.063,
-      "latestPlayedAt": "2025-10-18T21:32:01.000Z"
+      "recentWeight": 2.221,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     }
   ],
   "rnbqkbnr/pppp1ppp/4p3/8/4P3/3P4/PPP2PPP/RNBQKBNR b KQkq -": [
@@ -11847,7 +9171,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 18,
       "losses": 2,
       "draws": 3,
-      "recentWeight": 0.079,
+      "recentWeight": 0.051,
       "latestPlayedAt": "2024-08-23T13:20:02.000Z"
     }
   ],
@@ -11858,7 +9182,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 39,
       "losses": 2,
       "draws": 4,
-      "recentWeight": 0.044,
+      "recentWeight": 0.028,
       "latestPlayedAt": "2023-12-26T22:06:09.000Z"
     }
   ],
@@ -11869,7 +9193,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.039,
+      "recentWeight": 0.025,
       "latestPlayedAt": "2023-12-28T17:53:07.000Z"
     },
     {
@@ -11878,17 +9202,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2024-02-13T00:07:15.000Z"
-    },
-    {
-      "san": "d4",
-      "games": 18,
-      "wins": 15,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.015,
-      "latestPlayedAt": "2022-12-13T16:06:10.000Z"
     }
   ],
   "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPPQPPP/RNB1KBNR b KQkq -": [
@@ -11898,7 +9213,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.42,
+      "recentWeight": 0.269,
       "latestPlayedAt": "2025-10-29T00:43:19.000Z"
     }
   ],
@@ -11909,7 +9224,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 4,
       "losses": 0,
       "draws": 2,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T19:27:26.000Z"
     },
     {
@@ -11918,7 +9233,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.019,
+      "recentWeight": 0.012,
       "latestPlayedAt": "2023-03-14T21:39:57.000Z"
     }
   ],
@@ -11929,7 +9244,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 5,
       "draws": 2,
-      "recentWeight": 0.055,
+      "recentWeight": 0.035,
       "latestPlayedAt": "2023-12-26T16:52:44.000Z"
     }
   ],
@@ -11940,7 +9255,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 4,
       "draws": 0,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T19:00:43.000Z"
     }
   ],
@@ -11951,7 +9266,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -11962,7 +9277,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 2,
       "draws": 2,
-      "recentWeight": 0.041,
+      "recentWeight": 0.026,
       "latestPlayedAt": "2023-12-28T18:21:16.000Z"
     }
   ],
@@ -11973,7 +9288,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 59,
       "losses": 22,
       "draws": 26,
-      "recentWeight": 0.756,
+      "recentWeight": 0.485,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     },
     {
@@ -11982,7 +9297,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 1,
       "draws": 4,
-      "recentWeight": 0.073,
+      "recentWeight": 0.047,
       "latestPlayedAt": "2024-02-12T23:47:38.000Z"
     }
   ],
@@ -11993,7 +9308,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.408,
+      "recentWeight": 0.262,
       "latestPlayedAt": "2025-10-29T00:43:19.000Z"
     }
   ],
@@ -12004,7 +9319,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 51,
       "losses": 4,
       "draws": 5,
-      "recentWeight": 0.147,
+      "recentWeight": 0.094,
       "latestPlayedAt": "2023-12-28T18:18:39.000Z"
     },
     {
@@ -12013,7 +9328,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.039,
+      "recentWeight": 0.025,
       "latestPlayedAt": "2023-12-28T18:04:57.000Z"
     },
     {
@@ -12022,7 +9337,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.026,
+      "recentWeight": 0.017,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     }
   ],
@@ -12033,7 +9348,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 30,
       "losses": 10,
       "draws": 3,
-      "recentWeight": 0.031,
+      "recentWeight": 0.02,
       "latestPlayedAt": "2023-04-25T15:16:53.000Z"
     }
   ],
@@ -12044,19 +9359,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 19,
       "losses": 6,
       "draws": 1,
-      "recentWeight": 0.341,
+      "recentWeight": 0.219,
       "latestPlayedAt": "2025-10-28T01:59:54.000Z"
-    }
-  ],
-  "rnbqkbnr/pppp1ppp/8/8/3pP3/8/PPP2PPP/RNBQKBNR w KQkq -": [
-    {
-      "san": "c3",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-06-30T21:19:56.000Z"
     }
   ],
   "rnbqkbnr/ppppp1pp/8/5p2/3P4/8/PPP1PPPP/RNBQKBNR w KQkq -": [
@@ -12066,7 +9370,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.065,
+      "recentWeight": 0.042,
       "latestPlayedAt": "2024-08-23T13:03:42.000Z"
     }
   ],
@@ -12077,19 +9381,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.016,
-      "latestPlayedAt": "2023-08-21T13:18:19.000Z"
-    }
-  ],
-  "rnbqkbnr/pppppp1p/6p1/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq -": [
-    {
-      "san": "Bg7",
-      "games": 2,
-      "wins": 2,
-      "losses": 0,
-      "draws": 0,
       "recentWeight": 0.01,
-      "latestPlayedAt": "2023-05-02T17:06:26.000Z"
+      "latestPlayedAt": "2023-08-21T13:18:19.000Z"
     }
   ],
   "rnbqkbnr/pppppp1p/6p1/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq -": [
@@ -12099,7 +9392,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.082,
+      "recentWeight": 0.052,
       "latestPlayedAt": "2024-08-27T19:40:50.000Z"
     }
   ],
@@ -12110,7 +9403,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 16,
       "losses": 10,
       "draws": 2,
-      "recentWeight": 0.259,
+      "recentWeight": 0.166,
       "latestPlayedAt": "2025-02-17T17:54:53.000Z"
     },
     {
@@ -12119,7 +9412,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.203,
+      "recentWeight": 0.13,
       "latestPlayedAt": "2024-12-17T15:11:53.000Z"
     }
   ],
@@ -12130,17 +9423,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.034,
+      "recentWeight": 0.022,
       "latestPlayedAt": "2023-05-02T16:44:22.000Z"
-    },
-    {
-      "san": "Nf6",
-      "games": 2,
-      "wins": 1,
-      "losses": 1,
-      "draws": 0,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2022-11-15T16:27:48.000Z"
     }
   ],
   "rnbqkbnr/pppppp1p/6p1/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq -": [
@@ -12150,7 +9434,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 13,
       "losses": 6,
       "draws": 3,
-      "recentWeight": 0.359,
+      "recentWeight": 0.231,
       "latestPlayedAt": "2025-10-28T02:20:03.000Z"
     },
     {
@@ -12159,19 +9443,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 28,
       "losses": 7,
       "draws": 3,
-      "recentWeight": 0.077,
+      "recentWeight": 0.049,
       "latestPlayedAt": "2023-09-12T15:39:38.000Z"
-    }
-  ],
-  "rnbqkbnr/pppppp1p/6p1/8/8/5NP1/PPPPPP1P/RNBQKB1R b KQkq -": [
-    {
-      "san": "Bg7",
-      "games": 2,
-      "wins": 0,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2023-07-04T21:04:58.000Z"
     }
   ],
   "rnbqkbnr/pppppppp/8/8/1P6/8/P1PPPPPP/RNBQKBNR b KQkq -": [
@@ -12181,7 +9454,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 3,
       "losses": 4,
       "draws": 1,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2023-08-23T19:00:43.000Z"
     }
   ],
@@ -12192,7 +9465,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 0,
       "losses": 3,
       "draws": 1,
-      "recentWeight": 0.469,
+      "recentWeight": 0.301,
       "latestPlayedAt": "2025-10-31T01:34:13.000Z"
     },
     {
@@ -12201,7 +9474,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 9,
       "draws": 7,
-      "recentWeight": 0.122,
+      "recentWeight": 0.078,
       "latestPlayedAt": "2024-08-21T19:39:50.000Z"
     },
     {
@@ -12210,7 +9483,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 15,
       "losses": 2,
       "draws": 0,
-      "recentWeight": 0.051,
+      "recentWeight": 0.033,
       "latestPlayedAt": "2023-08-22T15:06:34.000Z"
     },
     {
@@ -12219,7 +9492,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 5,
       "losses": 6,
       "draws": 2,
-      "recentWeight": 0.024,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-08-23T18:02:12.000Z"
     }
   ],
@@ -12230,7 +9503,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 329,
       "losses": 134,
       "draws": 73,
-      "recentWeight": 1.223,
+      "recentWeight": 0.785,
       "latestPlayedAt": "2025-02-17T17:21:38.000Z"
     },
     {
@@ -12239,7 +9512,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 47,
       "losses": 25,
       "draws": 26,
-      "recentWeight": 1.208,
+      "recentWeight": 0.776,
       "latestPlayedAt": "2024-12-24T23:25:30.000Z"
     },
     {
@@ -12248,7 +9521,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 98,
       "losses": 29,
       "draws": 19,
-      "recentWeight": 0.15,
+      "recentWeight": 0.096,
       "latestPlayedAt": "2023-12-28T18:09:45.000Z"
     },
     {
@@ -12257,7 +9530,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 8,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.036,
+      "recentWeight": 0.023,
       "latestPlayedAt": "2023-08-22T16:45:24.000Z"
     },
     {
@@ -12266,7 +9539,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 6,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.023,
+      "recentWeight": 0.015,
       "latestPlayedAt": "2023-02-14T23:44:32.000Z"
     },
     {
@@ -12275,19 +9548,19 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 25,
       "losses": 6,
       "draws": 5,
-      "recentWeight": 0.016,
+      "recentWeight": 0.01,
       "latestPlayedAt": "2022-02-01T16:18:29.000Z"
     }
   ],
   "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -": [
     {
       "san": "e6",
-      "games": 636,
-      "wins": 441,
+      "games": 637,
+      "wins": 442,
       "losses": 111,
       "draws": 84,
-      "recentWeight": 2.581,
-      "latestPlayedAt": "2025-10-29T00:43:19.000Z"
+      "recentWeight": 2.554,
+      "latestPlayedAt": "2026-10-29T21:26:05.000Z"
     },
     {
       "san": "e5",
@@ -12295,7 +9568,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 87,
       "losses": 25,
       "draws": 34,
-      "recentWeight": 0.897,
+      "recentWeight": 0.576,
       "latestPlayedAt": "2025-10-31T02:40:46.000Z"
     },
     {
@@ -12304,7 +9577,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 93,
       "losses": 17,
       "draws": 16,
-      "recentWeight": 0.399,
+      "recentWeight": 0.256,
       "latestPlayedAt": "2024-08-23T19:54:34.000Z"
     },
     {
@@ -12313,7 +9586,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 35,
       "losses": 5,
       "draws": 5,
-      "recentWeight": 0.187,
+      "recentWeight": 0.12,
       "latestPlayedAt": "2023-12-28T18:00:12.000Z"
     },
     {
@@ -12322,7 +9595,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 115,
       "losses": 12,
       "draws": 17,
-      "recentWeight": 0.071,
+      "recentWeight": 0.046,
       "latestPlayedAt": "2023-12-28T17:48:23.000Z"
     },
     {
@@ -12331,7 +9604,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 37,
       "losses": 6,
       "draws": 9,
-      "recentWeight": 0.066,
+      "recentWeight": 0.043,
       "latestPlayedAt": "2023-07-25T21:55:39.000Z"
     },
     {
@@ -12340,7 +9613,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.045,
+      "recentWeight": 0.029,
       "latestPlayedAt": "2023-05-02T16:44:22.000Z"
     }
   ],
@@ -12351,7 +9624,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 20,
       "losses": 6,
       "draws": 1,
-      "recentWeight": 0.341,
+      "recentWeight": 0.219,
       "latestPlayedAt": "2025-10-28T01:59:54.000Z"
     },
     {
@@ -12360,17 +9633,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 7,
       "losses": 2,
       "draws": 1,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-03-24T16:38:23.000Z"
-    },
-    {
-      "san": "e6",
-      "games": 10,
-      "wins": 7,
-      "losses": 2,
-      "draws": 1,
-      "recentWeight": 0.013,
-      "latestPlayedAt": "2022-09-20T16:02:29.000Z"
     }
   ],
   "rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq -": [
@@ -12380,7 +9644,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 1,
       "draws": 0,
-      "recentWeight": 0.107,
+      "recentWeight": 0.068,
       "latestPlayedAt": "2024-12-30T01:08:38.000Z"
     }
   ],
@@ -12391,7 +9655,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 51,
       "losses": 20,
       "draws": 17,
-      "recentWeight": 0.762,
+      "recentWeight": 0.489,
       "latestPlayedAt": "2025-10-31T02:08:35.000Z"
     },
     {
@@ -12400,7 +9664,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 17,
       "losses": 7,
       "draws": 5,
-      "recentWeight": 0.266,
+      "recentWeight": 0.171,
       "latestPlayedAt": "2024-12-17T15:06:57.000Z"
     },
     {
@@ -12409,7 +9673,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 14,
       "losses": 5,
       "draws": 5,
-      "recentWeight": 0.204,
+      "recentWeight": 0.131,
       "latestPlayedAt": "2024-12-17T15:18:00.000Z"
     },
     {
@@ -12418,7 +9682,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 12,
       "draws": 8,
-      "recentWeight": 0.142,
+      "recentWeight": 0.091,
       "latestPlayedAt": "2024-08-21T19:24:38.000Z"
     },
     {
@@ -12427,7 +9691,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 24,
       "losses": 14,
       "draws": 5,
-      "recentWeight": 0.128,
+      "recentWeight": 0.082,
       "latestPlayedAt": "2023-12-26T16:52:44.000Z"
     },
     {
@@ -12436,28 +9700,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 3,
       "draws": 0,
-      "recentWeight": 0.083,
+      "recentWeight": 0.053,
       "latestPlayedAt": "2024-08-27T19:40:50.000Z"
-    },
-    {
-      "san": "d6",
-      "games": 10,
-      "wins": 4,
-      "losses": 5,
-      "draws": 1,
-      "recentWeight": 0.014,
-      "latestPlayedAt": "2023-03-24T15:04:47.000Z"
-    }
-  ],
-  "rnbqkbnr/pppppppp/8/8/8/6P1/PPPPPP1P/RNBQKBNR b KQkq -": [
-    {
-      "san": "e6",
-      "games": 14,
-      "wins": 8,
-      "losses": 5,
-      "draws": 1,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-06-06T16:16:02.000Z"
     }
   ],
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -": [
@@ -12467,7 +9711,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 593,
       "losses": 178,
       "draws": 131,
-      "recentWeight": 6.897,
+      "recentWeight": 4.427,
       "latestPlayedAt": "2025-10-31T03:00:50.000Z"
     },
     {
@@ -12476,17 +9720,17 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 889,
       "losses": 185,
       "draws": 131,
-      "recentWeight": 2.92,
+      "recentWeight": 1.875,
       "latestPlayedAt": "2025-10-28T02:20:03.000Z"
     },
     {
       "san": "e4",
-      "games": 292,
-      "wins": 245,
+      "games": 293,
+      "wins": 246,
       "losses": 28,
       "draws": 19,
-      "recentWeight": 0.931,
-      "latestPlayedAt": "2024-08-21T19:54:07.000Z"
+      "recentWeight": 1.498,
+      "latestPlayedAt": "2026-10-30T23:37:52.000Z"
     },
     {
       "san": "b3",
@@ -12494,7 +9738,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 103,
       "losses": 27,
       "draws": 17,
-      "recentWeight": 0.136,
+      "recentWeight": 0.087,
       "latestPlayedAt": "2023-08-22T17:05:24.000Z"
     },
     {
@@ -12503,7 +9747,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 23,
       "losses": 5,
       "draws": 5,
-      "recentWeight": 0.061,
+      "recentWeight": 0.039,
       "latestPlayedAt": "2023-12-27T17:30:34.000Z"
     },
     {
@@ -12512,7 +9756,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 11,
       "losses": 5,
       "draws": 1,
-      "recentWeight": 0.025,
+      "recentWeight": 0.016,
       "latestPlayedAt": "2023-07-25T22:06:09.000Z"
     }
   ],
@@ -12523,7 +9767,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 1,
       "draws": 1,
-      "recentWeight": 0.017,
+      "recentWeight": 0.011,
       "latestPlayedAt": "2023-09-12T16:06:39.000Z"
     }
   ],
@@ -12534,41 +9778,8 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 1,
       "losses": 0,
       "draws": 1,
-      "recentWeight": 0.021,
+      "recentWeight": 0.014,
       "latestPlayedAt": "2023-11-08T01:52:12.000Z"
-    }
-  ],
-  "rnbqr1k1/pp3pbp/2pp1np1/8/2PNP3/2N2P2/PP2B1PP/R1BQ1RK1 w - -": [
-    {
-      "san": "Bf4",
-      "games": 10,
-      "wins": 7,
-      "losses": 1,
-      "draws": 2,
-      "recentWeight": 0.011,
-      "latestPlayedAt": "2023-03-24T16:01:54.000Z"
-    }
-  ],
-  "rnbqr1k1/pp3ppp/2pb1p2/8/3P4/2PB4/PPQ1NPPP/R1B1K2R b KQ -": [
-    {
-      "san": "h5",
-      "games": 7,
-      "wins": 5,
-      "losses": 2,
-      "draws": 0,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-05-02T15:37:34.000Z"
-    }
-  ],
-  "rnbqr1k1/ppp2pbp/3p1np1/8/2PNP3/2N5/PP2BPPP/R1BQ1RK1 w - -": [
-    {
-      "san": "f3",
-      "games": 14,
-      "wins": 8,
-      "losses": 2,
-      "draws": 4,
-      "recentWeight": 0.012,
-      "latestPlayedAt": "2023-03-24T16:01:54.000Z"
     }
   ],
   "rnr3k1/p2q1p1p/bp2pp2/2P5/8/P4N2/1PQ1PPPP/R3KB1R w KQ -": [
@@ -12578,7 +9789,7 @@ export const GENERATED_RECENT_ALEXANDER_REPERTOIRE_BOOK = {
       "wins": 2,
       "losses": 0,
       "draws": 0,
-      "recentWeight": 0.064,
+      "recentWeight": 0.041,
       "latestPlayedAt": "2024-08-21T19:36:11.000Z"
     }
   ]

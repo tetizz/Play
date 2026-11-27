@@ -1,0 +1,32 @@
+Stockfish version: 19
+Release tag: sf_19
+Release page: https://github.com/official-stockfish/Stockfish/releases/tag/sf_19
+Source tree: https://github.com/official-stockfish/Stockfish/tree/sf_19
+License: GNU General Public License version 3
+
+The verified portable build includes:
+
+- stockfish-windows-x86-64.exe
+- Copying.txt
+- stockfish-source-sf_19.zip
+
+Pinned release archive SHA-256:
+3c8bf1f9ea66a09350a40df4f632288285ac206d99f33ab5842c408fc30b48a7
+
+Pinned extracted executable SHA-256:
+45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0
+
+Pinned source archive SHA-256:
+024a509d7af387218bd59c559473a71a1d6b411885010543891495119a671119
+
+Pinned license SHA-256:
+3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986
+
+Release commit: edb0d9db6731067ec50ce619ff372b463bc4dd5d
+Release asset: stockfish-windows-x86-64-universal.zip
+Upstream executable: stockfish/stockfish-windows-x86-64-universal.exe
+The executable is unchanged and renamed to the stable application filename.
+Archive digest matches the GitHub immutable sf_19 release asset digest.
+Source archive and extracted executable hashes were measured from the official
+release/tag downloads; the source declares version 19 and its Copying.txt matches.
+Verification date: 2026-09-08

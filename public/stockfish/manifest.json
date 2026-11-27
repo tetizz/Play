@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "package": "@lichess-org/stockfish-web",
+  "version": "0.5.0",
+  "engineVersion": "19",
+  "variant": "lite",
+  "npmIntegrity": "sha512-4p+bnJKr+ufCanyaqUFJkvajVf443sg51+OPnDKjAi91kiY8DGAbfjj5WlmWybwILOF7ouPEjeCYwlPUV3EU3g==",
+  "webSourceCommit": "931c33470b0c80756c99dfb05008d951aaa8f751",
+  "engineSourceCommit": "edb0d9db6731067ec50ce619ff372b463bc4dd5d",
+  "sourceManifestSha256": "b04c7aa1d855109e8f2609ca6b6c71f2a15cca56af37f5ab7f50494a2b7d5901",
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "nn-61e7af4bb97d.nnue",
+      "bytes": 1166381,
+      "sha256": "61e7af4bb97d51eeeb25d322916f86513b5cd3a827ce189c98c6e31946f99e5b"
+    },
+    {
+      "path": "sf_19_smallnet.js",
+      "bytes": 28643,
+      "sha256": "114751d6f0c1e98dfedb9eb1928ac86fb763bab2b5282f24e2d7865156abac2e"
+    },
+    {
+      "path": "sf_19_smallnet.wasm",
+      "bytes": 516671,
+      "sha256": "7e6629d0e1226a0d20c9c2c71c69dd3dccbe260a25f0053d3e5e4e5acea77fbc"
+    },
+    {
+      "path": "stockfish-19-worker.js",
+      "bytes": 2378,
+      "sha256": "0bd72f0fe7361e70e2638d64a7b32f27dc9ff0b27236e7c4cd40077c4bb25701"
+    },
+    {
+      "path": "stockfish-source-sf_19.zip",
+      "bytes": 373314,
+      "sha256": "024a509d7af387218bd59c559473a71a1d6b411885010543891495119a671119"
+    },
+    {
+      "path": "STOCKFISH-SOURCE.md",
+      "bytes": 3057,
+      "sha256": "568c47f074dab71cd373ced0aa9066f5d97277f7e985da5e0bacdc8f44d78f6d"
+    },
+    {
+      "path": "stockfish-web-source-931c334.zip",
+      "bytes": 72160,
+      "sha256": "1621ac0ea67c467b7360b9579ed1bfd8e4c215a792e6916fc41beb9aff0f2601"
+    }
+  ]
+}

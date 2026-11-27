@@ -151,7 +151,7 @@ export function ReviewWorkspace({ controller }) {
       <aside className="review-sidebar">
         <div className="review-heading">
           <div>
-            <span className="eyebrow">{review?.engine || 'Stockfish 18'}</span>
+            <span className="eyebrow">{review?.engine || 'Stockfish 19'}</span>
             <h1>Game Review</h1>
             {displayedResult ? <p>{displayedResult}</p> : null}
           </div>

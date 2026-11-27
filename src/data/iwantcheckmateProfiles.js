@@ -25,11 +25,9 @@ function videoVariant({
 }) {
   const resolvedCategory = category
     || (id === 'iwc-smartin' || id.includes('martin') ? 'martin' : 'stockfish')
-  const defaultAvatar = imageAvatar(
-    name,
-    avatar,
-    avatarScale ?? 1,
-  )
+  const defaultAvatar = typeof avatar === 'string'
+    ? imageAvatar(name, avatar, avatarScale ?? 1)
+    : Object.freeze({ ...avatar })
   const resolvedIdentityStates = identityStates
     ? Object.freeze(Object.fromEntries(
         Object.entries(identityStates).map(([state, identity]) => [
@@ -214,13 +212,22 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     movePolicy: { type: 'rating-strength' },
   }),
   videoVariant({
+    id: 'iwc-torturefish',
+    name: 'TortureFish',
+    avatar: { type: 'placeholder', text: 'TF' },
+    description: 'Removes every enemy piece before delivering checkmate.',
+    videoId: null,
+    videoTitle: 'Stockfish, But It Takes 31 Pieces Before Checkmating You',
+    movePolicy: { type: 'clear-board-before-mate', allLegalMoves: true },
+  }),
+  videoVariant({
     id: 'iwc-random-blunder',
     name: 'BlunderFish',
     avatar: 'blunderfish-profile.png',
     description: 'Plays full strength, with a 5% chance to make a real blunder.',
     videoId: 'ROkJSsMOfu0',
     videoTitle: 'Stockfish, But 5% Chance of Blundering Every Move',
-    movePolicy: { type: 'random-blunder', chance: 0.05, minimumLossCp: 200 },
+    movePolicy: { type: 'random-blunder', chance: 0.05, minimumLossCp: 200, allLegalMoves: true },
   }),
   videoVariant({
     id: 'geometricfish',
@@ -228,28 +235,29 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     rating: 3600,
     category: 'stockfish',
     avatar: 'geometricfish-profile.jpeg',
-    description: 'Chooses among its strongest ideas in a geometric pattern.',
+    description: 'Plays the best move half the time, second-best a quarter, and continues down the ranking.',
     videoId: 'Y0zYxMYDDWQ',
     videoTitle: 'Stockfish, But It Plays nth Best Move Where P(n) = (1/2)^n',
-    movePolicy: { type: 'geometric-ranked', count: 6, firstWeight: 0.5 },
+    movePolicy: { type: 'geometric-ranked', firstWeight: 0.5, allLegalMoves: true },
   }),
   videoVariant({
     id: 'iwc-clockfish',
     name: 'ClockFish',
-    rating: 100,
+    rating: 0,
     avatar: 'clockfish-profile.jpeg',
-    description: 'Starts at 100 Elo and climbs to 3600 over five seconds of your turn.',
+    description: 'Resets to 0 Elo each turn and gains 100 Elo at a time, reaching 3600 after five seconds.',
     videoId: '0rlkE-CYRoc',
     videoTitle: 'Stockfish, But It Gains 3600 ELO in 5 Seconds…',
     portraitSourceUrl: 'https://iwantcheckmate.com/bot-images/clockfish.jpeg',
-    initialElo: 100,
-    minElo: 100,
+    initialElo: 0,
+    minElo: 0,
     maxElo: 3600,
     movePolicy: {
       type: 'time-ramp-strength',
-      startElo: 100,
+      startElo: 0,
       endElo: 3600,
       durationMs: 5000,
+      ratingStep: 100,
     },
   }),
   videoVariant({
@@ -280,7 +288,7 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     videoId: 'My1sUnkiNfU',
     videoTitle: 'Stockfish, But It Wants to Capture Your Queen...',
     portraitSourceUrl: 'https://iwantcheckmate.com/bot-images/simpfish.jpeg',
-    movePolicy: { type: 'queen-hunter', allLegalMoves: true },
+    movePolicy: { type: 'queen-hunter', allLegalMoves: true, maximumLossCp: 80 },
   }),
   videoVariant({
     id: 'iwc-checkfish',
@@ -318,7 +326,7 @@ export const IWANTCHECKMATE_VIDEO_PROFILES = Object.freeze([
     description: 'Chooses the move that keeps the evaluation closest to 0.00.',
     videoId: 'mUmTeprNjzU',
     videoTitle: 'Stockfish, But It Plays for 0.00 Evaluation',
-    movePolicy: { type: 'target-evaluation', targetCp: 0 },
+    movePolicy: { type: 'target-evaluation', targetCp: 0, allLegalMoves: true },
   }),
   videoVariant({
     id: 'iwc-second-best',

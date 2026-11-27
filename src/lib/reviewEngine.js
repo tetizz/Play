@@ -202,7 +202,7 @@ export async function reviewGameWithStockfish({
   }
 
   return finalizeReview({
-    engine: 'Stockfish 18',
+    engine: 'Stockfish 19',
     game,
     positions,
     moments,

@@ -9,12 +9,12 @@ import { getBotProfile } from '../src/data/botProfiles.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '..')
-const downloadsRoot = path.resolve(repoRoot, '..')
 const DEFAULT_ENGINE_PATH = path.join(
-  downloadsRoot,
-  'BadMannersStockfish',
+  repoRoot,
+  'engines',
+  'bad-manners-stockfish19',
   'dist',
-  'BadMannersStockfish18.exe',
+  'BadMannersStockfish19.exe',
 )
 const ENGINE_PATH = process.env.BAD_MANNERS_ENGINE_PATH || DEFAULT_ENGINE_PATH
 const LIMIT = Number(process.argv.find((arg) => arg.startsWith('--limit='))?.split('=')[1] || 200)
@@ -29,7 +29,7 @@ const PUBLIC_OUT = process.argv.find((arg) => arg.startsWith('--public-out='))?.
   path.join(repoRoot, 'public', 'private', 'bad-manners-kbnk-trixize-200.json')
 
 const BAD_MANNERS_OPTIONS = [
-  ['BadMannersMode', 'true'],
+  ['BadMannersMode', 'Maximum'],
   ['KBNMateChallenge', 'true'],
   ['RequirePureKBNFinal', 'true'],
   ['PromoteMissingMinor', 'true'],

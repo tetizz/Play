@@ -7,19 +7,19 @@ import { Chess } from 'chess.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '..')
-const downloadsRoot = path.resolve(repoRoot, '..')
 const DEFAULT_ENGINE_PATH = path.join(
-  downloadsRoot,
-  'BadMannersStockfish',
+  repoRoot,
+  'engines',
+  'bad-manners-stockfish19',
   'dist',
-  'BadMannersStockfish18.exe',
+  'BadMannersStockfish19.exe',
 )
 const ENGINE_PATH = process.env.BAD_MANNERS_ENGINE_PATH || DEFAULT_ENGINE_PATH
 const PORT = Number(process.env.BAD_MANNERS_PORT || 47818)
 const HOST = process.env.BAD_MANNERS_HOST || '127.0.0.1'
 
 const ENGINE_OPTIONS = [
-  ['BadMannersMode', 'true'],
+  ['BadMannersMode', 'Maximum'],
   ['KBNMateChallenge', 'true'],
   ['RequirePureKBNFinal', 'true'],
   ['PromoteMissingMinor', 'true'],
@@ -158,8 +158,15 @@ class UciEngine {
     if (!line.startsWith('bestmove')) return
     const bestmove = line.split(/\s+/)[1]
     const lines = sortedLines(this.searchState.lines)
-    if (!lines.length && bestmove && bestmove !== '(none)') {
-      lines.push({ uci: bestmove, score: null, mate: null, rank: 1, pv: [bestmove] })
+    if (bestmove && bestmove !== '(none)' && bestmove !== '0000') {
+      // The custom search may choose a challenge move after the last PV report.
+      // Preserve the actual bestmove; never attach a different move's score.
+      const chosenIndex = lines.findIndex((line) => line.uci === bestmove)
+      const chosen = chosenIndex >= 0
+        ? lines.splice(chosenIndex, 1)[0]
+        : { uci: bestmove, score: null, mate: null, pv: [bestmove] }
+      lines.unshift(chosen)
+      lines.forEach((line, index) => { line.rank = index + 1 })
     }
     const state = this.searchState
     this.searchState = null

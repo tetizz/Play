@@ -34,7 +34,7 @@ const PROFILES = {
     styleFile: 'generatedAkshitStyleProfile.js',
     styleExport: 'GENERATED_AKSHIT_STYLE_PROFILE',
     accounts: [
-      { site: 'chess.com', username: 'knightmanuveur_12' },
+      { site: 'chess.com', username: 'knightmaneuver_12' },
     ],
   },
   brian: {
@@ -110,15 +110,25 @@ const PROFILES = {
 const requestedProfile = process.argv.includes('--profile')
   ? process.argv[process.argv.indexOf('--profile') + 1]
   : 'all'
+const requestedArchiveMonths = process.argv.includes('--archive-months')
+  ? Number(process.argv[process.argv.indexOf('--archive-months') + 1])
+  : null
+if (requestedArchiveMonths !== null && (!Number.isInteger(requestedArchiveMonths) || requestedArchiveMonths < 1)) {
+  throw new Error('--archive-months requires a positive integer')
+}
 
 if (requestedProfile === 'all') {
+  const failedProfiles = []
   for (const profileId of Object.keys(PROFILES)) {
-    const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), '--profile', profileId], {
+    const options = ['--profile', profileId]
+    if (requestedArchiveMonths !== null) options.push('--archive-months', String(requestedArchiveMonths))
+    const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), ...options], {
       stdio: 'inherit',
     })
-    if (result.status !== 0) process.exit(result.status || 1)
+    if (result.status !== 0) failedProfiles.push(profileId)
   }
-  process.exit(0)
+  if (failedProfiles.length) console.error(`Repertoire refresh failed for: ${failedProfiles.join(', ')}`)
+  process.exit(failedProfiles.length ? 1 : 0)
 }
 
 const PROFILE = PROFILES[requestedProfile]
@@ -126,9 +136,9 @@ if (!PROFILE) throw new Error(`Unknown profile "${requestedProfile}"`)
 const BOOK_OUTPUT_PATH = new URL(`../src/data/${PROFILE.bookFile}`, import.meta.url)
 const STYLE_OUTPUT_PATH = new URL(`../src/data/${PROFILE.styleFile}`, import.meta.url)
 const HALF_LIFE_DAYS = 180
-const CHESSCOM_ARCHIVE_MONTHS = Object.hasOwn(PROFILE, 'chessComArchiveMonths')
+const CHESSCOM_ARCHIVE_MONTHS = requestedArchiveMonths ?? (Object.hasOwn(PROFILE, 'chessComArchiveMonths')
   ? PROFILE.chessComArchiveMonths
-  : 30
+  : 30)
 const MAX_LICHESS_GAMES_PER_ACCOUNT = 900
 const MAX_BOOK_PLIES = PROFILE.maxBookPlies || 24
 const MAX_MOVES_PER_POSITION = PROFILE.maxMovesPerPosition || 8
@@ -139,6 +149,8 @@ const ACCOUNTS = PROFILE.accounts
 const now = new Date()
 const book = {}
 const sourceStats = []
+const failedSources = []
+const sourceCoverage = []
 const styleAccumulator = {
   games: 0,
   recentWeight: 0,
@@ -156,6 +168,8 @@ for (const account of ACCOUNTS) {
       : await fetchLichessGames(account.username)
     let acceptedGames = 0
     let skippedGames = 0
+    let earliestPlayedAt = null
+    let latestPlayedAt = null
     for await (const gameRecord of games) {
       try {
         const parsedGame = parsePlayerGame(account.username, gameRecord)
@@ -166,6 +180,8 @@ for (const account of ACCOUNTS) {
         addGameToBook(parsedGame)
         addGameToStyle(account.site, parsedGame)
         acceptedGames += 1
+        if (!earliestPlayedAt || parsedGame.playedAt < earliestPlayedAt) earliestPlayedAt = parsedGame.playedAt
+        if (!latestPlayedAt || parsedGame.playedAt > latestPlayedAt) latestPlayedAt = parsedGame.playedAt
       } catch (error) {
         skippedGames += 1
         if (skippedGames <= 3) {
@@ -177,14 +193,27 @@ for (const account of ACCOUNTS) {
       `${account.site}:${account.username}=${acceptedGames}`
       + (skippedGames ? `(${skippedGames} skipped)` : ''),
     )
+    sourceCoverage.push({
+      site: account.site,
+      username: account.username,
+      acceptedGames,
+      skippedGames,
+      earliestPlayedAt: earliestPlayedAt?.toISOString() || null,
+      latestPlayedAt: latestPlayedAt?.toISOString() || null,
+    })
   } catch (error) {
+    failedSources.push(`${account.site}:${account.username}`)
     sourceStats.push(`${account.site}:${account.username}=0(error)`)
     console.warn(`Skipping ${account.site}:${account.username}: ${error.message}`)
   }
 }
 
+if (failedSources.length) {
+  throw new Error(`Repertoire refresh incomplete for ${PROFILE.label}: ${failedSources.join(', ')}. Existing repertoire and style data were preserved.`)
+}
+
 if (styleAccumulator.games === 0) {
-  console.warn(`No ${PROFILE.label} games were loaded. Existing generated repertoire and style data were preserved.`)
+  throw new Error(`No ${PROFILE.label} games were loaded. Existing generated repertoire and style data were preserved.`)
 } else {
   const sortedBook = buildSortedBook()
   const learnedStyle = buildLearnedStyle(sortedBook)
@@ -233,7 +262,7 @@ function parsePlayerGame(accountUsername, gameRecord) {
   if (!playerColor) return null
 
   const playedAt = gameRecord.playedAt || dateFromHeaders(headers)
-  if (!playedAt) return null
+  if (!playedAt || !Number.isFinite(playedAt.getTime()) || playedAt > now) return null
 
   return {
     headers,
@@ -398,6 +427,7 @@ function buildSortedBook() {
 function buildLearnedStyle(sortedBook) {
   return {
     generatedAt: now.toISOString(),
+    sourceCoverage,
     sampleSize: styleAccumulator.games,
     recentWeight: round(styleAccumulator.recentWeight),
     sources: Object.fromEntries(
@@ -519,7 +549,7 @@ function pawnStructureSignature(game, playerColor) {
 }
 
 function classifyTimeControl(timeControl = '') {
-  const [baseText, incrementText = '0'] = timeControl.split('+')
+  const [baseText, incrementText = '0'] = (timeControl || '').split('+')
   const base = Number(baseText)
   const increment = Number(incrementText)
   if (!Number.isFinite(base) || base <= 0) return 'unknown'
@@ -595,6 +625,7 @@ async function fetchLichessGames(username) {
   url.searchParams.set('evals', 'false')
   url.searchParams.set('opening', 'false')
   const response = await fetch(url, {
+    signal: AbortSignal.timeout(120000),
     headers: {
       Accept: 'application/x-chess-pgn',
         'User-Agent': 'play-bots-repertoire/2.0',

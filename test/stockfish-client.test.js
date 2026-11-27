@@ -2,9 +2,11 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createStockfishClient } from '../src/lib/stockfishClient.js'
 
-test('Stockfish bestMoves keeps its array contract when worker startup fails', async () => {
+test('Stockfish starts the pinned 19 lite module worker and keeps its array contract on startup failure', async () => {
+  let createdWorker
   const client = createStockfishClient({
-    workerFactory: () => {
+    workerFactory: (url, options) => {
+      createdWorker = { url, options }
       throw new Error('worker unavailable')
     },
   })
@@ -13,6 +15,8 @@ test('Stockfish bestMoves keeps its array contract when worker startup fails', a
     await client.bestMoves('8/8/8/8/8/8/8/K6k w - - 0 1'),
     [],
   )
+  assert.equal(createdWorker.url.endsWith('stockfish/stockfish-19-worker.js?variant=lite'), true)
+  assert.deepEqual(createdWorker.options, { type: 'module' })
 })
 
 test('Stockfish waits for readyok and returns sanitized final principal variations', async () => {
@@ -109,6 +113,34 @@ test('Stockfish limited strength never substitutes a full-strength line when bes
 
   assert.deepEqual(await result, [])
   assert.equal(worker.commands.includes('setoption name UCI_Elo value 3000'), true)
+  client.destroy()
+})
+
+test('Stockfish clamps and rounds strength to the advertised range on every search', async () => {
+  const worker = new FakeStockfishWorker()
+  const client = createStockfishClient({ workerFactory: () => worker })
+  const fen = '8/8/8/8/8/8/8/K6k w - - 0 1'
+  const first = client.bestMove(fen, { elo: 4000 })
+  await nextTurn()
+  worker.emit('option name UCI_Elo type spin default 1320 min 1320 max 3190')
+  worker.emit('readyok')
+  await nextTurn()
+  assert.equal(worker.commands.includes('setoption name UCI_Elo value 3190'), true)
+  worker.emit('bestmove a1a2')
+  await first
+
+  for (const [requested, expected] of [[500, 1320], [2200.8, 2201]]) {
+    const result = client.bestMove(fen, { elo: requested })
+    await nextTurn()
+    assert.equal(worker.commands.includes(`setoption name UCI_Elo value ${expected}`), true)
+    worker.emit('bestmove a1a2')
+    await result
+  }
+  const review = client.analyze(fen)
+  await nextTurn()
+  assert.equal(worker.commands.at(-4), 'setoption name UCI_LimitStrength value false')
+  worker.emit('bestmove a1a2')
+  await review
   client.destroy()
 })
 

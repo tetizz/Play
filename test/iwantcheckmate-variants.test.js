@@ -28,6 +28,7 @@ const EXPECTED_NAMES = [
   'Smartin',
   'Martin',
   'TiredFish',
+  'TortureFish',
   'BlunderFish',
   'GeometricFish',
   'ClockFish',
@@ -76,7 +77,7 @@ test('IWantCheckmate exposes distinct profiles from the public source roster', (
     assert.equal(profile.dialoguePolicy, 'iwantcheckmate')
     assert.equal(profile.capabilities.silentDialogue, false)
     assert.match(profile.source.videoUrl, /^https:\/\/(?:www\.youtube\.com\/watch\?v=|iwantcheckmate\.com\/)/)
-    assert.match(profile.avatar.src, /^\.\/assets\/iwantcheckmate\/.+-profile\.(?:png|jpeg|svg)$/)
+    if (profile.avatar.type === 'image') assert.match(profile.avatar.src, /^\.\/assets\/iwantcheckmate\/.+-profile\.(?:png|jpeg|svg)$/)
     assert.ok(profile.intro.length > 20)
     assert.equal(profile.intro, profile.videoLabel)
   }

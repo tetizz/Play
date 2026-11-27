@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { createRequire } from 'node:module'
+import createStockfish from '@lichess-org/stockfish-web/sf_19_smallnet.js'
 import { Chess } from 'chess.js'
 
 const input = process.argv[2]
@@ -12,15 +12,16 @@ if (!input || !output) {
   throw new Error('Usage: node scripts/buildReviewFixture.mjs input.pgn output.json [depth] [multiPv]')
 }
 
-const require = createRequire(import.meta.url)
-const initializeStockfish = require('stockfish')
-const originalLog = console.log
 let messageHandler = () => {}
-console.log = (...parts) => messageHandler(parts.join(' '))
-const engine = await initializeStockfish('lite-single')
+const engine = await createStockfish({
+  listen: (line) => messageHandler(String(line)),
+  onError: (line) => messageHandler(`info string ${line}`),
+})
+const networkPath = new URL('../public/stockfish/nn-61e7af4bb97d.nnue', import.meta.url)
+engine.setNnueBuffer(new Uint8Array(fs.readFileSync(networkPath)), 0)
 
 function send(command) {
-  engine.sendCommand(command)
+  engine.uci(command)
 }
 
 function analyzeFen(fen) {
@@ -54,7 +55,7 @@ for (const move of moves) {
 
 const analyses = []
 for (let index = 0; index < positions.length - 1; index += 1) {
-  originalLog(`Analyzing ${index + 1}/${positions.length - 1}`)
+  console.log(`Analyzing ${index + 1}/${positions.length - 1}`)
   analyses.push(await analyzeFen(positions[index]))
 }
 
@@ -84,10 +85,9 @@ const records = moves.map((move, index) => {
   }
 })
 
-console.log = originalLog
 fs.writeFileSync(path.resolve(output), `${JSON.stringify(records, null, 2)}\n`)
 send('quit')
-originalLog(`Wrote ${records.length} review records to ${output}`)
+console.log(`Wrote ${records.length} review records to ${output}`)
 
 function parseLine(message) {
   const rank = Number(message.match(/\bmultipv\s+(\d+)/)?.[1] || 1)

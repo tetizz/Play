@@ -4,6 +4,7 @@ import { BOT_PROFILES, getBotProfile, loadBotStyleProfile } from '../data/botPro
 import { isIWantCheckmateProfile } from '../data/iwantcheckmateProfiles'
 import {
   guaranteedMateInOneCandidates,
+  imaginaryPawnQueenFen,
   isEvilMartinAwake,
   isMartinDerivedProfile,
   resolveIWantCheckmateAvatar,
@@ -34,7 +35,13 @@ import {
 } from '../lib/badMannersClient'
 import { buildFallbackFinalReview, reviewGameWithStockfish } from '../lib/reviewEngine'
 import { createStockfishClient } from '../lib/stockfishClient'
-import { analyzeEveryLegalMove, analyzeCandidatesWithRetry, assertCandidateOperation, CandidateAnalysisError, requestCandidateMoves, requestCandidateScore } from '../lib/candidateAnalysis'
+import {
+  analyzeCandidatesWithRetry,
+  assertCandidateOperation,
+  CandidateAnalysisError,
+  requestCandidateMoves,
+  requestCandidateScore,
+} from '../lib/candidateAnalysis'
 export { analyzeCandidatesWithRetry } from '../lib/candidateAnalysis'
 import {
   createTablebaseClient,
@@ -328,20 +335,16 @@ export function useGameController(defaultBotId) {
     const current = variantEventsRef.current
     const previousEvents = current[targetProfile.id] || emptyVariantEvents()
     const now = Date.now()
-    const startElo = Number(policy.startElo ?? targetProfile.variant?.initialElo ?? 100)
-    const endElo = Number(policy.endElo ?? targetProfile.variant?.maxElo ?? 3600)
-    const durationMs = Math.max(1, Number(policy.durationMs || 5000))
-    const reset = options.reset === true
-    const startedAt = reset || !Number.isFinite(previousEvents.clockStartedAt)
-      ? now
-      : previousEvents.clockStartedAt
-    const progress = reset ? 0 : Math.min(1, Math.max(0, (now - startedAt) / durationMs))
-    const rating = Math.round(startElo + (endElo - startElo) * progress)
-    const marker = `clock:${ply}:${rating}:${startedAt}`
+    const startedAt = previousEvents.clockStartedAt
+    if (!options.reset && !Number.isFinite(startedAt)) return current
+    const elapsedMs = options.reset ? 0 : Math.max(0, now - startedAt)
+    const rating = clockRating(policy, elapsedMs)
+    const clockStartedAt = options.reset ? now : null
+    const marker = `clock:${ply}:${rating}:${clockStartedAt ?? 'locked'}`
     const nextEvents = {
       ...previousEvents,
       currentElo: rating,
-      clockStartedAt: startedAt,
+      clockStartedAt,
       applied: appendVariantMarker(previousEvents.applied, marker),
     }
     const next = { ...current, [targetProfile.id]: nextEvents }
@@ -349,7 +352,7 @@ export function useGameController(defaultBotId) {
     setVariantEvents(next)
 
     if (
-      options.announce !== false &&
+      !options.reset &&
       Number.isFinite(previousEvents.currentElo) &&
       previousEvents.currentElo !== rating
     ) {
@@ -357,7 +360,7 @@ export function useGameController(defaultBotId) {
         targetProfile,
         marker,
         rating - previousEvents.currentElo,
-        `${((now - startedAt) / 1000).toFixed(1)} seconds elapsed`,
+        `${(elapsedMs / 1000).toFixed(1)} seconds elapsed`,
       )
     }
     return next
@@ -415,8 +418,10 @@ export function useGameController(defaultBotId) {
       count: 16,
       timeout: 2600,
     }
-    const candidates = variantType === 'opponent-worst-move'
-      ? await analyzeEveryLegalMove(variantClientRef.current, before, probePolicy, operation)
+    const candidates = variantType === 'opponent-worst-move' || mirrorsOpponentRank
+      ? await analyzeCandidatesWithRetry(
+          variantClientRef.current, gameplayClientRef.current, before, probePolicy, true, operation,
+        )
       : await requestCandidateMoves(variantClientRef.current, beforeFen, probePolicy, operation)
     assertCandidateOperation(operation)
     const best = candidates[0]
@@ -428,6 +433,9 @@ export function useGameController(defaultBotId) {
     }
     const playedUci = moveToUci(played)
     let playedLine = candidates.find((candidate) => candidate.uci === playedUci) || null
+    if (mirrorsOpponentRank) {
+      return setVariantOpponentRank(targetProfile, playedLine?.rank, ply)
+    }
     if (!playedLine) {
       const after = gameFromHistory(baseHistory)
       const replyScore = await requestCandidateScore(variantClientRef.current, after.fen(), {
@@ -445,10 +453,6 @@ export function useGameController(defaultBotId) {
         showEloEvent(targetProfile, `assessment:${ply}`, 0, 'move check unavailable')
       }
       return variantEventsRef.current
-    }
-    if (mirrorsOpponentRank) {
-      const rank = Number.isFinite(playedLine.rank) ? Number(playedLine.rank) : 99
-      return setVariantOpponentRank(targetProfile, rank, ply)
     }
     const eventField = variantType === 'opponent-best-move'
       ? 'opponentBestMoves'
@@ -472,13 +476,16 @@ export function useGameController(defaultBotId) {
 
   const ratingFor = useCallback((targetProfile) => {
     if (!isIWantCheckmateProfile(targetProfile)) {
-      return { rating: targetProfile.displayRating, event: null }
+      const rating = beltMode && targetProfile.capabilities.beltMode
+        ? targetProfile.strengthPolicy.belt.engineElo
+        : targetProfile.displayRating
+      return { rating, event: null }
     }
     return {
       rating: runningVariantElo(targetProfile, variantEvents[targetProfile.id]),
       event: eloDropEvent?.botId === targetProfile.id ? eloDropEvent : null,
     }
-  }, [eloDropEvent, variantEvents])
+  }, [beltMode, eloDropEvent, variantEvents])
 
   const commitHistory = useCallback((nextHistory, nextLastMove = null) => {
     historyRef.current = nextHistory
@@ -607,20 +614,21 @@ export function useGameController(defaultBotId) {
     clearTimeout(timerRef.current)
     gameplayClientRef.current?.cancelAll()
     setTurnState('bot-delay')
+    const beforeGame = gameFromHistory(baseHistory)
+    const side = beforeGame.turn()
+    const activeHumanColor = humanColorOverride || humanColor
+    const automatedProfile = gameMode === 'bots'
+      ? side === 'w' ? whiteProfile : blackProfile
+      : profile
+    if (baseHistory.length) setTimedVariantElo(automatedProfile, baseHistory.length)
     const activeDelay = delay ?? (gameMode === 'bots' ? BOT_MATCH_DELAY_MS : BOT_DELAY_MS)
     timerRef.current = setTimeout(async () => {
       if (generationRef.current !== token) return
-      const beforeGame = gameFromHistory(baseHistory)
       if (isAutomaticGameOver(beforeGame)) {
         finishGame(beforeGame, beforeGame.history())
         return
       }
 
-      const side = beforeGame.turn()
-      const activeHumanColor = humanColorOverride || humanColor
-      const automatedProfile = gameMode === 'bots'
-        ? side === 'w' ? whiteProfile : blackProfile
-        : profile
       if (gameMode === 'player') {
         const playerTurn = activeHumanColor === 'white' ? 'w' : 'b'
         if (side === playerTurn) {
@@ -649,12 +657,6 @@ export function useGameController(defaultBotId) {
       }
       const activeBelt = beltRef.current && automatedProfile.capabilities.beltMode
       let activeVariantEvents = variantEventsRef.current
-      if (automatedProfile.variant?.movePolicy?.type === 'time-ramp-strength') {
-        activeVariantEvents = setTimedVariantElo(
-          automatedProfile,
-          baseHistory.length,
-        )
-      }
       const variantEloAtTurnStart = isIWantCheckmateProfile(automatedProfile)
         ? runningVariantElo(
             automatedProfile,
@@ -663,15 +665,12 @@ export function useGameController(defaultBotId) {
         : null
       try {
         activeVariantEvents = await assessVariantOpponentMove(automatedProfile, baseHistory, candidateOperation)
-      } catch (error) {
-        if (error instanceof CandidateAnalysisError) {
-          if (generationRef.current === token) {
-            setAnalysisError('Analysis did not finish. Retry this turn.')
-            setTurnState('bot-error')
-          }
-          return
+      } catch {
+        if (generationRef.current === token) {
+          setAnalysisError('Stockfish could not finish checking the last move.')
+          setTurnState('bot-error')
         }
-        // Retain the current persisted Elo when a one-off trigger probe is unavailable.
+        return
       }
       if (generationRef.current !== token) return
       const engineEloOverride = isIWantCheckmateProfile(automatedProfile)
@@ -763,7 +762,7 @@ export function useGameController(defaultBotId) {
       if (!decision) {
         const enginePolicy = calculationProfile(automatedProfile, activeBelt, beforeGame, engineEloOverride)
         let candidates
-        let engineSearchFailed = false
+        let pawnQueenCandidates
         try {
           const guaranteedMates = isMartinDerivedProfile(automatedProfile)
             ? guaranteedMateInOneCandidates(beforeGame)
@@ -795,10 +794,21 @@ export function useGameController(defaultBotId) {
                 })
               : Promise.resolve([]),
           ])
-          candidates = mergeEngineCandidates(
-            engineCandidates || [],
-            [...(mateCandidates || []), ...guaranteedMates],
-          )
+          candidates = mateCandidates.length || guaranteedMates.length
+            ? mergeEngineCandidates(
+                engineCandidates,
+                [...mateCandidates, ...guaranteedMates],
+                Number.isFinite(enginePolicy.elo),
+              )
+            : engineCandidates
+          if (automatedProfile.variant?.movePolicy?.type === 'pawn-as-queen') {
+            const imaginedFen = imaginaryPawnQueenFen(beforeGame)
+            if (imaginedFen) {
+              pawnQueenCandidates = await requestCandidateMoves(
+                variantClientRef.current, imaginedFen, enginePolicy, candidateOperation,
+              )
+            }
+          }
           if (automatedProfile.variant?.movePolicy?.type === 'evil-martin') {
             const mode = resolveEvilMartinMode(
               automatedProfile,
@@ -838,23 +848,15 @@ export function useGameController(defaultBotId) {
             candidates = mergeEngineCandidates(candidates, verifiedObjectiveCandidates)
           }
           assertCandidateOperation(candidateOperation)
-        } catch (error) {
-          if (error instanceof CandidateAnalysisError) {
-            if (generationRef.current === token) {
-              mateClientRef.current?.cancelAll()
-              setAnalysisError('Analysis did not finish. Retry this turn.')
-              setTurnState('bot-error')
-            }
-            return
+        } catch {
+          if (generationRef.current === token) {
+            mateClientRef.current?.cancelAll()
+            setAnalysisError('Stockfish could not finish this turn.')
+            setTurnState('bot-error')
           }
-          candidates = []
-          engineSearchFailed = true
-        }
-        if (generationRef.current !== token) return
-        if (engineSearchFailed && isIWantCheckmateProfile(automatedProfile)) {
-          scheduleBotTurnRef.current?.(baseHistory, 650, activeHumanColor)
           return
         }
+        if (generationRef.current !== token) return
 
         decision = chooseCoachMove(
           beforeGame,
@@ -870,25 +872,14 @@ export function useGameController(defaultBotId) {
               activeVariantEvents[automatedProfile.id],
             ),
             evaluation: candidates?.[0]?.score,
+            pawnQueenCandidates,
           },
         )
       }
-      if (!decision?.move) {
-        if (isIWantCheckmateProfile(automatedProfile)) {
-          scheduleBotTurnRef.current?.(baseHistory, 650, activeHumanColor)
-          return
-        }
-        const fallbackMove = beforeGame.moves({ verbose: true })[0]
-        if (!fallbackMove) {
-          finishGame(beforeGame, beforeGame.history(), automatedProfile)
-          return
-        }
-        decision = {
-          move: fallbackMove,
-          source: 'legal-fallback',
-          rank: null,
-          score: null,
-        }
+      if (!decision?.move || decision.source === 'js-fallback') {
+        setAnalysisError('Stockfish did not return a playable move.')
+        setTurnState('bot-error')
+        return
       }
 
       const baseContext = moveContext(
@@ -924,13 +915,6 @@ export function useGameController(defaultBotId) {
           nextHistory.length,
         )
       }
-      if (automatedProfile.variant?.movePolicy?.type === 'time-ramp-strength') {
-        nextVariantEvents = setTimedVariantElo(
-          automatedProfile,
-          nextHistory.length,
-          { reset: true, announce: false },
-        )
-      }
       const variantEloAfterMove = isIWantCheckmateProfile(automatedProfile)
         ? runningVariantElo(
             automatedProfile,
@@ -946,6 +930,7 @@ export function useGameController(defaultBotId) {
           ? variantEloAfterMove - variantEloAtTurnStart
           : 0,
       }
+      setTimedVariantElo(automatedProfile, nextHistory.length, { reset: true })
       commitHistory(nextHistory, {
         from: decision.move.from,
         to: decision.move.to,
@@ -1120,7 +1105,9 @@ export function useGameController(defaultBotId) {
       : []
     setDialogueLog(openingDialogue)
     const initialVariantEvents = initializeTimedVariantEvents(
-      gameMode === 'bots' ? [whiteProfile, blackProfile] : [profile],
+      gameMode === 'bots'
+        ? [blackProfile]
+        : nextColor === 'white' ? [profile] : [],
     )
     variantEventsRef.current = initialVariantEvents
     setVariantEvents(initialVariantEvents)
@@ -1276,12 +1263,18 @@ export function useGameController(defaultBotId) {
     beltRef.current = activeBelt
     const restoredGame = gameFromHistory(nextHistory)
     if (gameMode === 'bots') {
+      const waitingProfile = restoredGame.turn() === 'w' ? blackProfile : whiteProfile
+      setTimedVariantElo(waitingProfile, nextHistory.length, { reset: true })
       scheduleBotTurn(nextHistory, 250)
       return
     }
     const playerTurn = humanColor === 'white' ? 'w' : 'b'
-    if (restoredGame.turn() === playerTurn) setTurnState('human')
-    else scheduleBotTurn(nextHistory, 250)
+    if (restoredGame.turn() === playerTurn) {
+      setTimedVariantElo(profile, nextHistory.length, { reset: true })
+      setTurnState('human')
+    } else {
+      scheduleBotTurn(nextHistory, 250)
+    }
   }
 
   function resign() {
@@ -1518,6 +1511,7 @@ export function isExactVariantTrigger(variantType, playedUci, candidates, option
 export function requiresEveryLegalMove(profile) {
   const policy = profile?.variant?.movePolicy
   return policy?.allLegalMoves === true ||
+    policy?.type === 'mirror-rank' ||
     policy?.type === 'target-evaluation' ||
     policy?.type === 'random-blunder'
 }
@@ -1577,14 +1571,14 @@ function parseVariantClockMarker(marker) {
     field !== 'clock' ||
     !Number.isFinite(Number(ply)) ||
     !Number.isFinite(Number(rating)) ||
-    !Number.isFinite(Number(startedAt))
+    (startedAt !== 'locked' && !Number.isFinite(Number(startedAt)))
   ) {
     return null
   }
   return {
     ply: Number(ply),
     rating: Number(rating),
-    startedAt: Number(startedAt),
+    startedAt: startedAt === 'locked' ? null : Number(startedAt),
   }
 }
 
@@ -1604,7 +1598,7 @@ function initializeTimedVariantEvents(profiles, now = Date.now()) {
   return Object.fromEntries((profiles || []).flatMap((targetProfile) => {
     const policy = targetProfile?.variant?.movePolicy
     if (policy?.type !== 'time-ramp-strength') return []
-    const rating = Number(policy.startElo ?? targetProfile.variant?.initialElo ?? 100)
+    const rating = clockRating(policy, 0)
     const events = {
       ...emptyVariantEvents(),
       currentElo: rating,
@@ -1613,6 +1607,12 @@ function initializeTimedVariantEvents(profiles, now = Date.now()) {
     }
     return [[targetProfile.id, events]]
   }))
+}
+
+function clockRating(policy, elapsedMs) {
+  const { startElo, endElo, durationMs, ratingStep = 1 } = policy
+  const progress = Math.min(1, elapsedMs / durationMs)
+  return startElo + Math.floor((endElo - startElo) * progress / ratingStep) * ratingStep
 }
 
 function shouldRunMateSafety(game, profile) {
@@ -1630,7 +1630,7 @@ function shouldRunMateSafety(game, profile) {
   )
 }
 
-function mergeEngineCandidates(primary, objective) {
+function mergeEngineCandidates(primary, objective, preserveSelected = false) {
   const byMove = new Map()
   for (const candidate of [...primary, ...objective]) {
     if (!candidate?.uci) continue
@@ -1654,6 +1654,9 @@ function mergeEngineCandidates(primary, objective) {
   }
   return [...byMove.values()]
     .sort((a, b) => {
+      if (preserveSelected && (a.uci === primary[0]?.uci || b.uci === primary[0]?.uci)) {
+        return a.uci === primary[0].uci ? -1 : 1
+      }
       const aMate = Number.isFinite(a.mate) && a.mate > 0 ? a.mate : Infinity
       const bMate = Number.isFinite(b.mate) && b.mate > 0 ? b.mate : Infinity
       if (aMate !== bMate) return aMate - bMate

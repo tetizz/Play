@@ -6,7 +6,6 @@ const BOT_PROFILE_LIST = [
     name: 'Mubassar',
     fullName: 'Mubassar',
     category: 'coach',
-    displayRating: 2300,
     title: 'NM',
     country: 'Bangladesh',
     countryCode: 'bd',
@@ -59,7 +58,6 @@ const BOT_PROFILE_LIST = [
     name: 'Ayden',
     fullName: 'Ayden Spellman',
     category: 'coach',
-    displayRating: 1900,
     country: 'United States',
     countryCode: 'us',
     avatar: {
@@ -80,7 +78,7 @@ const BOT_PROFILE_LIST = [
       perfectTheory: false,
     },
     strengthPolicy: {
-      engineElo: 1900,
+      engineElo: 1950,
       depth: 10,
       moveTime: 900,
       candidates: 5,
@@ -100,7 +98,6 @@ const BOT_PROFILE_LIST = [
     name: 'Akshit',
     fullName: 'Akshit Sharma',
     category: 'coach',
-    displayRating: 2007,
     country: 'Nepal',
     countryCode: 'np',
     avatar: {
@@ -111,11 +108,11 @@ const BOT_PROFILE_LIST = [
       scale: 1,
     },
     accounts: {
-      chesscom: ['knightmanuveur_12'],
+      chesscom: ['knightmaneuver_12'],
       lichess: [],
     },
     goal: 'A knight-focused tactical bot built from public games.',
-    intro: 'Akshit is the Knight Manuveur. If a knight can move, he will find a reason to move it.',
+    intro: 'If a knight can move, Akshit will find a reason to move it.',
     dialoguePolicy: 'akshit',
     capabilities: {
       beltMode: false,
@@ -134,7 +131,7 @@ const BOT_PROFILE_LIST = [
       knightRequiredGapCp: 45,
     },
     repertoireSource: {
-      chesscom: ['knightmanuveur_12'],
+      chesscom: ['knightmaneuver_12'],
       lichess: [],
       recentHalfLifeDays: 180,
     },
@@ -144,7 +141,7 @@ const BOT_PROFILE_LIST = [
     name: 'Trixize',
     fullName: 'Trixize',
     category: 'coach',
-    displayRating: 1550,
+    strengthLabel: 'Full strength',
     country: 'United States',
     countryCode: 'us',
     avatar: {
@@ -209,7 +206,6 @@ const BOT_PROFILE_LIST = [
     name: 'Brian',
     fullName: 'Brian Arthur',
     category: 'coach',
-    displayRating: 2400,
     country: 'United States',
     countryCode: 'us',
     avatar: {
@@ -225,7 +221,7 @@ const BOT_PROFILE_LIST = [
     dialoguePolicy: 'silent',
     capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
     strengthPolicy: {
-      engineElo: 2400, depth: 13, moveTime: 1200, candidates: 7,
+      engineElo: 2500, depth: 13, moveTime: 1200, candidates: 7,
       styleWindowCp: 16, bookWindowCp: 28, bookMinGames: 6, bookMinRecentWeight: 0.9,
     },
     repertoireSource: {
@@ -237,7 +233,6 @@ const BOT_PROFILE_LIST = [
     name: 'Kirk',
     fullName: 'Kirk',
     category: 'coach',
-    displayRating: 1700,
     country: 'United States',
     countryCode: 'us',
     avatar: {
@@ -253,7 +248,7 @@ const BOT_PROFILE_LIST = [
     dialoguePolicy: 'silent',
     capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
     strengthPolicy: {
-      engineElo: 1700, depth: 10, moveTime: 850, candidates: 5,
+      engineElo: 1850, depth: 10, moveTime: 850, candidates: 5,
       styleWindowCp: 26, bookWindowCp: 38, bookMinGames: 5, bookMinRecentWeight: 0.8,
     },
     repertoireSource: {
@@ -265,7 +260,6 @@ const BOT_PROFILE_LIST = [
     name: 'Aleksandr',
     fullName: 'Aleksandr Lenderman',
     category: 'coach',
-    displayRating: 2700,
     title: 'GM',
     country: 'United States',
     countryCode: 'us',
@@ -282,7 +276,7 @@ const BOT_PROFILE_LIST = [
     dialoguePolicy: 'silent',
     capabilities: { beltMode: false, knightSpecialist: false, perfectTheory: false },
     strengthPolicy: {
-      engineElo: 2700, depth: 15, moveTime: 1500, candidates: 8,
+      engineElo: 2600, depth: 15, moveTime: 1500, candidates: 8,
       styleWindowCp: 10, bookWindowCp: 20, bookMinGames: 6, bookMinRecentWeight: 0.75,
     },
     repertoireSource: {
@@ -294,7 +288,6 @@ const BOT_PROFILE_LIST = [
     name: 'Witty Alien',
     fullName: 'Witty Alien',
     category: 'coach',
-    displayRating: 2400,
     title: 'CM',
     country: 'Bulgaria',
     countryCode: 'bg',
@@ -309,7 +302,7 @@ const BOT_PROFILE_LIST = [
       chesscom: ['witty_alien'],
       lichess: [],
     },
-    goal: 'Aggressive practical chess built from a complete public game history.',
+    goal: 'Aggressive practical chess shaped by recent public games.',
     intro: 'Witty Alien lives for gambits, sacrifices, and attacks that refuse to stay quiet.',
     dialoguePolicy: 'witty-alien',
     capabilities: {
@@ -320,7 +313,7 @@ const BOT_PROFILE_LIST = [
       weightedRepertoire: true,
     },
     strengthPolicy: {
-      engineElo: 2400,
+      engineElo: 2550,
       depth: 14,
       moveTime: 1400,
       candidates: 8,
@@ -357,10 +350,15 @@ const BOT_PROFILE_LIST = [
       repertoireTemperature: 0.82,
     },
   },
-  ...IWANTCHECKMATE_VIDEO_PROFILES,
 ]
 
-export const BOT_PROFILES = Object.freeze(BOT_PROFILE_LIST)
+export const BOT_PROFILES = Object.freeze([
+  ...BOT_PROFILE_LIST.map((profile) => ({
+    ...profile,
+    displayRating: profile.strengthPolicy.engineElo,
+  })),
+  ...IWANTCHECKMATE_VIDEO_PROFILES,
+])
 export const DEFAULT_BOT_ID = 'mubassar'
 
 const styleCache = new Map()

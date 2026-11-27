@@ -1,0 +1,3 @@
+coi-serviceworker 0.1.7
+https://github.com/gzuidhof/coi-serviceworker/tree/v0.1.7
+MIT; see coi-serviceworker.LICENSE

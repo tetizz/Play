@@ -1,5 +1,7 @@
-const MAX_UCI_ELO = 3190
-const MIN_UCI_ELO = 1320
+import { STOCKFISH_ELO_RANGE } from './stockfishClient.js'
+
+const MAX_UCI_ELO = STOCKFISH_ELO_RANGE.max
+const MIN_UCI_ELO = STOCKFISH_ELO_RANGE.min
 const MARTIN_ELO = 250
 const MARTIN_OPENING_MOVES = 4
 const MARTIN_POLICY_TYPES = new Set([
@@ -125,7 +127,7 @@ export function selectIWantCheckmateCandidate(
   }
   if (policy.type === 'geometric-ranked') {
     return geometricRankChoice(
-      sorted.slice(0, Math.max(1, Number(policy.count || 6))),
+      sorted.slice(0, Math.max(1, Number(policy.count || sorted.length))),
       Number(policy.firstWeight || 0.5),
       random,
     )
@@ -149,10 +151,13 @@ export function selectIWantCheckmateCandidate(
     return sorted.find((candidate) => candidateGivesCheck(context.game, candidate)) || sorted[0]
   }
   if (policy.type === 'queen-hunter') {
-    return selectQueenHunterMove(context.game, sorted)
+    return selectQueenHunterMove(context.game, sorted, policy)
   }
   if (policy.type === 'pawn-as-queen') {
-    return selectPawnAsQueenMove(context.game, sorted)
+    return selectPawnAsQueenMove(sorted, context.pawnQueenCandidates)
+  }
+  if (policy.type === 'clear-board-before-mate') {
+    return selectClearBoardMove(context.game, sorted)
   }
   if (policy.type === 'random-blunder') {
     if (safeRandom(random) >= Number(policy.chance || 0)) return sorted[0]
@@ -565,14 +570,26 @@ function candidateGivesCheck(game, candidate) {
   return Boolean(after?.isCheck?.())
 }
 
-function selectQueenHunterMove(game, candidates) {
+function selectQueenHunterMove(game, candidates, policy) {
   if (!game?.fen || !game?.get) return candidates[0]
   const botColor = game.turn()
   const opponentColor = botColor === 'w' ? 'b' : 'w'
   const queenSquare = findPieceSquare(game, opponentColor, 'q')
   if (!queenSquare) return candidates[0]
 
-  return [...candidates].sort((a, b) =>
+  const withoutPrematureMate = candidates.filter((candidate) => {
+    const after = gameAfterCandidate(game, candidate)
+    return after && (!after.isCheckmate() || !findPieceSquare(after, opponentColor, 'q'))
+  })
+  const playable = withoutPrematureMate.length ? withoutPrematureMate : candidates
+  const bestScore = candidateScore(playable[0])
+  const maximumLoss = Number(policy.maximumLossCp ?? 80)
+  const safe = playable.filter((candidate) =>
+    bestScore - candidateScore(candidate) <= maximumLoss &&
+    isMateSafeMove(game, candidateUci(candidate)),
+  )
+  const hunting = safe.length ? safe : [playable[0]]
+  return [...hunting].sort((a, b) =>
     queenHunterPriority(game, b, botColor, opponentColor) -
       queenHunterPriority(game, a, botColor, opponentColor) ||
     a.rank - b.rank,
@@ -621,44 +638,36 @@ function principalVariationQueenCapturePly(game, candidate, botColor, opponentCo
   return null
 }
 
-function selectPawnAsQueenMove(game, candidates) {
-  if (!game?.fen || !game?.get) return candidates[0]
-  const botColor = game.turn()
-  const opponentColor = botColor === 'w' ? 'b' : 'w'
-  return [...candidates].sort((a, b) =>
-    pawnAsQueenPriority(game, b, botColor, opponentColor) -
-      pawnAsQueenPriority(game, a, botColor, opponentColor) ||
-    a.rank - b.rank,
-  )[0]
+export function imaginaryPawnQueenFen(game) {
+  if (!game?.fen || !game?.turn) return null
+  const fields = game.fen().split(' ')
+  const opponentPawn = game.turn() === 'w' ? /p/g : /P/g
+  const opponentQueen = game.turn() === 'w' ? 'q' : 'Q'
+  fields[0] = fields[0].replace(opponentPawn, opponentQueen)
+  fields[3] = '-'
+  return fields.join(' ')
 }
 
-function pawnAsQueenPriority(game, candidate, botColor, opponentColor) {
-  let priority = candidate?.move?.captured === 'p' ? 8000 : 0
-  const after = gameAfterCandidate(game, candidate)
-  if (!after) return priority
-
-  for (const square of pieceSquares(after, opponentColor, 'p')) {
-    priority += (after.attackers?.(square, botColor)?.length || 0) * 500
+function selectPawnAsQueenMove(candidates, imaginaryCandidates) {
+  const actualMoves = new Map(candidates.map((candidate) => [candidateUci(candidate), candidate]))
+  for (const candidate of normalizeCandidates(imaginaryCandidates)) {
+    const legal = actualMoves.get(candidateUci(candidate))
+    if (legal) return legal
   }
-  const destination = candidate?.move?.to
-  if (destination && pawnAttacksSquare(after, opponentColor, destination)) {
-    priority -= 6000
-  }
-  return priority
+  return candidates[0]
 }
 
-function pawnAttacksSquare(game, color, target) {
-  const targetFile = target.charCodeAt(0) - 97
-  const targetRank = Number(target[1])
-  const pawnRank = targetRank + (color === 'w' ? -1 : 1)
-  if (pawnRank < 1 || pawnRank > 8) return false
-  return [-1, 1].some((offset) => {
-    const pawnFile = targetFile + offset
-    if (pawnFile < 0 || pawnFile > 7) return false
-    const square = `${String.fromCharCode(97 + pawnFile)}${pawnRank}`
-    const piece = game.get(square)
-    return piece?.color === color && piece?.type === 'p'
-  })
+function selectClearBoardMove(game, candidates) {
+  if (!game?.fen || !game?.turn) return candidates[0]
+  const opponentColor = game.turn() === 'w' ? 'b' : 'w'
+  return candidates.find((candidate) => {
+    const after = gameAfterCandidate(game, candidate)
+    if (!after) return false
+    if (!after.isCheckmate()) return true
+    return !after.board().flat().some((piece) =>
+      piece?.color === opponentColor && piece.type !== 'k',
+    )
+  }) || candidates[0]
 }
 
 function gameAfterCandidate(game, candidate) {

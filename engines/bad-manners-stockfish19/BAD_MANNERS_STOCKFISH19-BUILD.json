@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "product": "Bad Manners Stockfish 19",
+  "verificationDate": "2026-09-08",
+  "upstream": {
+    "repository": "https://github.com/official-stockfish/Stockfish",
+    "releaseTag": "sf_19",
+    "commit": "edb0d9db6731067ec50ce619ff372b463bc4dd5d",
+    "sourceArchiveSha256": "024A509D7AF387218BD59C559473A71A1D6B411885010543891495119A671119",
+    "officialUniversalExeSha256": "45BC8E4969147DB9C2EB533810637994619BFF0EACC81CCFD9854394901BCBD0",
+    "licenseSha256": "3972DC9744F6499F0F9B2DBF76696F2AE7AD8AF9B23DDE66D6AF86C9DFB36986"
+  },
+  "build": {
+    "architecture": "x86-64-avx2",
+    "compiler": "llvm-mingw clang 22.1.7",
+    "script": "scripts/build_stockfish19.ps1",
+    "executable": "dist/BadMannersStockfish19.exe",
+    "executableBytes": 101117440,
+    "executableSha256": "D2BFB7DEF6A27E9F60784D2402703F59B831F3D47C08E508383F9CD4981AB9EF"
+  },
+  "customSourceSha256": {
+    "src/Makefile": "F9E1C6619967019175333D16FCBB92DC68A8D1A4E3A5CC39E0F0E12A68CFAEAA",
+    "src/engine.cpp": "A3282CF923E92260D75836454F002EA20FDFB264820A6626ED1DA1A570B4E244",
+    "src/engine.h": "02A31EBBBA96B6952B387AFB5577074A91D9183A9646AD30FFAEF4757CB770E8",
+    "src/misc.cpp": "7FDF573C2CA6EEE6945756E053F5C4D0538AD639D1DA407F50241075558AE4A5",
+    "src/search.cpp": "905C6EA0F589DB90C9A7CB82A8E57AC68EDF7531622453E046E32F37EBCD4976",
+    "src/uci.cpp": "8B993312212ED9AA025C4C995F49A784FD29CD3975903FF3041A367C7E5475CA",
+    "src/bad_manners.cpp": "A711D7FB574D7DC1C0E16E2DF305277550AADEF07641E1AC0F4E5DFB41C83941",
+    "src/bad_manners.h": "14BA06B77C6C3C7F331484F38B7B220178A8FD82A1B870E80BA57142032EB051",
+    "src/ucioption.cpp": "8F849106516A1D53C6907AE5CD2D813954A3DA618F1D06EAAB483460C706312D"
+  },
+  "verification": {
+    "command": "python scripts/source_smoke.py",
+    "preservedAssertStatements": 165,
+    "currentAssertStatements": 171,
+    "corpusEntries": 31,
+    "challengeReportsChecked": 30,
+    "offModeBaselineParity": true,
+    "startPositionPerftDepth3Nodes": 8902,
+    "invalidFenPathsChecked": 2,
+    "result": "pass",
+    "strictUciParser": "python-chess",
+    "comboDefault": "Off",
+    "comboVariants": [
+      "Off",
+      "Safe",
+      "Aggressive",
+      "Maximum",
+      "Puzzle"
+    ],
+    "strictUciResult": "pass"
+  }
+}

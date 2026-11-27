@@ -22,13 +22,14 @@ export function buildSmoothPath(coordinates, width = null) {
 }
 
 export function evaluationBarDisplay(point, result = '', isFinal = false) {
-  if (isFinal && /white wins/i.test(result)) {
+  const normalizedResult = String(result || '').trim().toLowerCase()
+  if (isFinal && (normalizedResult === '1-0' || /white wins/i.test(result))) {
     return { percent: 100, label: '1-0', side: 'white' }
   }
-  if (isFinal && /black wins/i.test(result)) {
+  if (isFinal && (normalizedResult === '0-1' || /black wins/i.test(result))) {
     return { percent: 0, label: '0-1', side: 'black' }
   }
-  if (isFinal && /draw/i.test(result)) {
+  if (isFinal && (normalizedResult === '1/2-1/2' || /draw/i.test(result))) {
     return { percent: 50, label: '½-½', side: 'white' }
   }
 

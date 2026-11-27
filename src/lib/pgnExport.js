@@ -70,7 +70,7 @@ function resultCode(result, { white, black, game }) {
   if (normalized === '0-1' || normalized.startsWith('black wins')) return '0-1'
   if (winnerMatches(normalized, white)) return '1-0'
   if (winnerMatches(normalized, black)) return '0-1'
-  if (normalized.includes('draw') || normalized.includes('stalemate')) return '1/2-1/2'
+  if (normalized === '1/2-1/2' || normalized.includes('draw') || normalized.includes('stalemate')) return '1/2-1/2'
   return '*'
 }
 

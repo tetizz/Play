@@ -101,6 +101,27 @@ test('review PGN export resolves player and bot names to the correct result colo
   assert.match(botWin, /1\. e4 e5 0-1/)
 })
 
+test('standard review result codes survive PGN export and final evaluation display', () => {
+  for (const [result, percent, label, side] of [
+    ['1-0', 100, '1-0', 'white'],
+    ['0-1', 0, '0-1', 'black'],
+    ['1/2-1/2', 50, '½-½', 'white'],
+  ]) {
+    const review = buildFallbackFinalReview(['e4', 'e5'], result)
+    const finalPoint = review.graph.at(-1)
+    assert.equal(finalPoint.percent, percent)
+    assert.deepEqual(evaluationBarDisplay(finalPoint, review.result, true), { percent, label, side })
+    const exported = new Chess()
+    exported.loadPgn(buildGamePgn({
+      history: ['e4', 'e5'],
+      result: review.result,
+      gameMode: 'player',
+      humanColor: 'white',
+    }))
+    assert.equal(exported.getHeaders().Result, result)
+  }
+})
+
 test('valid and invalid premoves settle without leaving an unresolved turn', () => {
   const afterBot = ['e4']
   const valid = applyPremove(afterBot, { from: 'e7', to: 'e5' })

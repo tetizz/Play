@@ -1246,7 +1246,10 @@ export function useGameController(defaultBotId) {
   function undo() {
     if (phase !== 'game' || !history.length) return
     cancelWork()
-    const count = Math.min(2, history.length)
+    const playerTurn = humanColor === 'white' ? 'w' : 'b'
+    const count = gameMode === 'player' && game.turn() !== playerTurn
+      ? 1
+      : Math.min(2, history.length)
     const nextHistory = history.slice(0, history.length - count)
     const nextVariantEvents = pruneVariantEvents(variantEventsRef.current, nextHistory.length)
     variantEventsRef.current = nextVariantEvents
@@ -1268,7 +1271,6 @@ export function useGameController(defaultBotId) {
       scheduleBotTurn(nextHistory, 250)
       return
     }
-    const playerTurn = humanColor === 'white' ? 'w' : 'b'
     if (restoredGame.turn() === playerTurn) {
       setTimedVariantElo(profile, nextHistory.length, { reset: true })
       setTurnState('human')

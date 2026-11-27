@@ -31,6 +31,10 @@ export function loadSession() {
     const parsed = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')
     if (!parsed || !Array.isArray(parsed.history)) return null
     const game = gameFromHistory(parsed.history)
+    const automaticGameOver = isAutomaticGameOver(game)
+    let phase = parsed.phase
+    if (phase === 'game' && automaticGameOver) phase = 'review'
+    if (phase === 'review' && !automaticGameOver && !parsed.reviewResult) phase = 'game'
     return {
       botId: parsed.botId,
       gameMode: parsed.gameMode === 'bots' ? 'bots' : 'player',
@@ -39,11 +43,7 @@ export function loadSession() {
       colorChoice: parsed.colorChoice,
       humanColor: parsed.humanColor,
       history: game.history(),
-      phase: parsed.phase === 'review' &&
-        !isAutomaticGameOver(game) &&
-        !parsed.reviewResult
-        ? 'game'
-        : parsed.phase,
+      phase,
       beltMode: Boolean(parsed.beltMode),
       lastMove: parsed.lastMove || null,
       premoveQueue: Array.isArray(parsed.premoveQueue) ? parsed.premoveQueue : [],

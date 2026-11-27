@@ -557,6 +557,30 @@ test('a manually finished review remains a review after session restoration', ()
   }
 })
 
+test('restored active games enter review only at an automatic ending', () => {
+  const previousLocalStorage = globalThis.localStorage
+  const repetition = ['Nf3', 'Nf6', 'Ng1', 'Ng8']
+  const cases = [
+    { history: ['f3', 'e5', 'g4', 'Qh4#'], expected: 'review' },
+    { history: Array.from({ length: 4 }, () => repetition).flat(), expected: 'review' },
+    { history: Array.from({ length: 2 }, () => repetition).flat(), expected: 'game' },
+    { history: ['e4', 'e5'], expected: 'game' },
+  ]
+  try {
+    for (const { history, expected } of cases) {
+      globalThis.localStorage = {
+        getItem() {
+          return JSON.stringify({ phase: 'game', history })
+        },
+      }
+      assert.equal(loadSession().phase, expected)
+    }
+  } finally {
+    if (previousLocalStorage) globalThis.localStorage = previousLocalStorage
+    else delete globalThis.localStorage
+  }
+})
+
 test('session restoration preserves best-move Martin counters and markers', () => {
   const previousLocalStorage = globalThis.localStorage
   globalThis.localStorage = {

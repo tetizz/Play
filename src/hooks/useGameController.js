@@ -1425,6 +1425,23 @@ export function pruneVariantEvents(events, maxPly) {
       return Number.isFinite(ply) && ply <= maxPly
     })
     const next = emptyVariantEvents()
+    // Older saves retained only the latest 240 markers. Preserve counters for
+    // omitted events only while the rewind remains within that retained tail.
+    const retainedTailStart = (current.applied || [])
+      .filter((marker) => !String(marker).startsWith('mode:'))
+      .map(variantMarkerPly)
+      .filter(Number.isFinite)
+      .reduce((oldest, ply) => Math.min(oldest, ply), Infinity)
+    const retainsOmittedEvents = maxPly > 0 && maxPly >= retainedTailStart
+    for (const [field, initial] of Object.entries(next)) {
+      if (typeof initial !== 'number') continue
+      const recordedCount = (current.applied || []).filter((marker) =>
+        String(marker).startsWith(`${field}:`),
+      ).length
+      next[field] = retainsOmittedEvents
+        ? Math.max(0, (Number(current[field]) || 0) - recordedCount)
+        : 0
+    }
     for (const marker of remaining) {
       const [field] = marker.split(':')
       if (field === 'mode') {
@@ -1534,15 +1551,8 @@ export function resolveEvilMartinMode(profile, candidates, events = {}) {
   }
 }
 
-function appendVariantMarker(applied, marker) {
-  const markers = [...(applied || []), marker]
-  if (markers.length <= 240) return markers
-  const modeMarkers = markers.filter((candidate) => String(candidate).startsWith('mode:'))
-  const eventMarkers = markers
-    .filter((candidate) => !String(candidate).startsWith('mode:'))
-    .slice(-Math.max(0, 240 - modeMarkers.length))
-  const retained = new Set([...modeMarkers, ...eventMarkers])
-  return markers.filter((candidate) => retained.has(candidate))
+export function appendVariantMarker(applied, marker) {
+  return [...(applied || []), marker]
 }
 
 function variantMarkerPly(marker) {

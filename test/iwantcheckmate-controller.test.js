@@ -3,6 +3,7 @@ import test from 'node:test'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createServer } from 'vite'
+import { normalizeVariantEvents } from '../src/lib/gameSession.js'
 
 const vite = await createServer({
   appType: 'custom',
@@ -10,6 +11,7 @@ const vite = await createServer({
 })
 const {
   analyzeCandidatesWithRetry,
+  appendVariantMarker,
   assessVariantMove,
   isExactVariantTrigger,
   pruneVariantEvents,
@@ -237,6 +239,59 @@ test('undo reconstruction derives Evil Martin mode from retained markers', () =>
   assert.equal(afterWake.botMoves, 1)
   assert.equal(afterWake.botCaptures, 2)
   assert.equal(afterWake.opponentNonBestMoves, 2)
+})
+
+test('variant event history survives reload and undo beyond 240 markers', () => {
+  let applied = []
+  for (let turn = 0; turn < 300; turn += 1) {
+    applied = appendVariantMarker(applied, `opponentNonBestMoves:${turn * 2 + 1}`)
+    applied = appendVariantMarker(applied, `botMoves:${turn * 2 + 2}`)
+  }
+  const saved = normalizeVariantEvents({
+    martin: { botMoves: 300, opponentNonBestMoves: 300, applied },
+  })
+  assert.equal(saved.martin.applied.length, 600)
+  const rewound = pruneVariantEvents(saved, 2).martin
+  assert.equal(rewound.botMoves, 1)
+  assert.equal(rewound.opponentNonBestMoves, 1)
+  assert.deepEqual(rewound.applied, ['opponentNonBestMoves:1', 'botMoves:2'])
+})
+
+test('recent undo preserves aggregate counters from previously truncated saves', () => {
+  const applied = Array.from({ length: 300 }, (_, turn) => [
+    `opponentNonBestMoves:${turn * 2 + 1}`,
+    `botMoves:${turn * 2 + 2}`,
+  ]).flat().slice(-240)
+  const rewound = pruneVariantEvents({
+    martin: { botMoves: 300, opponentNonBestMoves: 300, applied },
+  }, 598).martin
+  assert.equal(rewound.botMoves, 299)
+  assert.equal(rewound.opponentNonBestMoves, 299)
+})
+
+test('rewinding a legacy capped save to the start clears omitted move counters', () => {
+  const applied = Array.from({ length: 300 }, (_, turn) => [
+    `opponentNonBestMoves:${turn * 2 + 1}`,
+    `botMoves:${turn * 2 + 2}`,
+  ]).flat().slice(-240)
+  const start = pruneVariantEvents({
+    martin: { botMoves: 300, opponentNonBestMoves: 300, applied },
+  }, 0).martin
+  assert.equal(start.botMoves, 0)
+  assert.equal(start.opponentNonBestMoves, 0)
+  assert.deepEqual(start.applied, [])
+})
+
+test('legacy counters are not retained when undo crosses a partially saved ply', () => {
+  const rewound = pruneVariantEvents({
+    martin: {
+      botMoves: 1,
+      botCaptures: 1,
+      applied: ['botCaptures:361'],
+    },
+  }, 360).martin
+  assert.equal(rewound.botMoves, 0)
+  assert.equal(rewound.botCaptures, 0)
 })
 test('best-move Martin records only the non-best opponent counter', () => {
   const profile = {

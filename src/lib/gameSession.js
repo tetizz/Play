@@ -78,7 +78,7 @@ export function normalizeVariantEvents(input) {
         currentElo: Number.isFinite(events.currentElo) ? Number(events.currentElo) : null,
         evilAwake: Boolean(events.evilAwake),
         applied: Array.isArray(events.applied)
-          ? events.applied.filter((entry) => typeof entry === 'string').slice(-240)
+          ? events.applied.filter((entry) => typeof entry === 'string')
           : [],
       }]]
     }),

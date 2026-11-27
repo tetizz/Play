@@ -26,8 +26,12 @@ export function createStockfishClient({
     if (worker) return worker
     const baseUrl = import.meta.env?.BASE_URL || './'
     worker = workerFactory(engineUrl || `${baseUrl}${ENGINE_FILE}`, { type: 'module' })
-    worker.onmessage = ({ data }) => handleMessage(String(data))
+    const currentWorker = worker
+    worker.onmessage = ({ data }) => {
+      if (worker === currentWorker) handleMessage(String(data))
+    }
     worker.onerror = (error) => {
+      if (worker !== currentWorker) return
       rejectReady(error instanceof Error ? error : new Error('Stockfish worker failed'))
       emit('Stockfish unavailable')
       if (active) settleActive(emptyResult(active))

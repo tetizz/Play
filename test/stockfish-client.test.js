@@ -197,6 +197,49 @@ test('Stockfish cancellation settles a request waiting for worker readiness', as
   assert.equal(goCommands(worker).length, 0)
 })
 
+test('late messages from a cancelled worker cannot finish a replacement search', async () => {
+  const workers = [new FakeStockfishWorker(), new FakeStockfishWorker()]
+  let nextWorker = 0
+  const client = createStockfishClient({ workerFactory: () => workers[nextWorker++] })
+  const first = client.bestMove('8/8/8/8/8/8/8/K6k w - - 0 1')
+  workers[0].emit('readyok')
+  await nextTurn()
+  client.cancelAll()
+  assert.equal(await first, null)
+
+  const replacement = client.bestMove('8/8/8/8/8/8/8/1K5k w - - 0 1')
+  workers[1].emit('readyok')
+  await nextTurn()
+  workers[0].emit('info depth 8 score cp 900 pv a1a2')
+  workers[0].emit('bestmove a1a2')
+  workers[1].emit('info depth 8 score cp 20 pv b1b2')
+  workers[1].emit('bestmove b1b2')
+
+  assert.equal(await replacement, 'b1b2')
+  client.destroy()
+})
+
+test('a late error from a cancelled worker cannot terminate its replacement', async () => {
+  const workers = [new FakeStockfishWorker(), new FakeStockfishWorker()]
+  let nextWorker = 0
+  const client = createStockfishClient({ workerFactory: () => workers[nextWorker++] })
+  const first = client.bestMove('8/8/8/8/8/8/8/K6k w - - 0 1')
+  workers[0].emit('readyok')
+  await nextTurn()
+  client.cancelAll()
+  assert.equal(await first, null)
+
+  const replacement = client.bestMove('8/8/8/8/8/8/8/1K5k w - - 0 1')
+  workers[1].emit('readyok')
+  await nextTurn()
+  workers[0].onerror(new Error('late failure'))
+  workers[1].emit('bestmove b1b2')
+
+  assert.equal(await replacement, 'b1b2')
+  assert.equal(workers[1].terminated, false)
+  client.destroy()
+})
+
 class FakeStockfishWorker {
   constructor() {
     this.commands = []

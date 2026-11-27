@@ -67,7 +67,7 @@ import {
   premovePieceAt,
 } from '../lib/premoveRules'
 
-const restored = typeof localStorage === 'undefined' ? null : loadSession()
+const restored = loadSession()
 const PLAYER = Object.freeze({ name: 'player', rating: 100, countryCode: 'us' })
 const BOT_DELAY_MS = 850
 const BOT_MATCH_DELAY_MS = 450
